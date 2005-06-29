@@ -1,0 +1,7 @@
+Tiny Applications Collection TODO List
+
+* tuptime
+  - add support for BSD systems
+  - add command line options for setting location of uptime files
+  - add command line options for setting uptime nad idle
+  - add configuration file with location of uptime files (far future)
