@@ -1,0 +1,26 @@
+
+                     Tiny Applications Collection
+
+Last update: $Date: 2005/06/30 10:04:10 $
+
+Tiny Applications Collection is a set of small programs, shell scripts
+and other  things which may be  usefull in everyday life  ;) There are
+only a  few tools at  the moment but  I hope to  add more in  the near
+future.
+
+If you have written utility which may be usefull for other and want to
+share it  please email me at  mn86/AT/o2.pl, I'll be glad  to add your
+utility to the collection.
+
+At the moment the collection include:
+
+ * malloc -  a small program  which allocates memory.   Sounds stupid?
+   Mayby,  but in  theory it  can  help freeing  memory and  therefore
+   speeding up the PC.
+
+ * tuptime  - my  personal favourite  :)  Displays total  (sum of  all
+   uptimes) and biggest uptime.
+
+More  documentation about  each  utility is  usually  provided in  the
+source  code  or  utility's   README  file  which  is  usually  called
+README.<utility-name>.
