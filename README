@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/06/30 11:06:03 $
+                     $Date: 2005/06/30 12:20:10 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -12,6 +12,10 @@ share it  please email me at  mn86/AT/o2.pl, I'll be glad  to add your
 utility to the collection.
 
 At the moment the collection include:
+
+ * load - shows CPU load, memory and net traffic statistics.  It's
+   mostly ment for people who are curious how to callculate such
+   statistics or use some code from the file in their programs.
 
  * malloc -  a small program  which allocates memory.   Sounds stupid?
    Mayby,  but in  theory it  can  help freeing  memory and  therefore

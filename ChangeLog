@@ -1,5 +1,8 @@
 2005-06-30  Michal Nazarewicz  <m86@o2.pl>
 
+	* load.c: New file
+	* README, TODO: load added
+
 	* the-book-of-mozilla.txt, quotes.txt: New file
 	* README: the-book-of-mozilla.txt and quotes.txt added
 
@@ -8,8 +11,8 @@
 	* tuptime.c: Don't die if buptime have only 2 numbers
 
 	* README, malloc.c: New file
-	* TODO, .cvsignore: malloc added
+	* TODO: malloc added
 
 2005-06-29  Michal Nazarewicz  <m86@o2.pl>
 
-	* .cvsignore, LICENSE, LICENSE.AFL, TODO, tuptime.c: New file.
+	* LICENSE, LICENSE.AFL, TODO, tuptime.c: New file.
