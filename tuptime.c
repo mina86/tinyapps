@@ -1,6 +1,6 @@
 /*
  * tuptime - Shows total and biggest uptime
- * $Id: tuptime.c,v 1.1 2005/06/29 13:40:39 mina86 Exp $
+ * $Id: tuptime.c,v 1.2 2005/06/30 10:09:50 mina86 Exp $
  * Copyright (C) 2005 by Michal Nazareicz (mn86/AT/o2.pl)
  * Licensed under the Academic Free License version 2.1.
  */
@@ -81,6 +81,7 @@ void print_uptime(char *title, double uptime, double idle) {
 
 /* Main */
 int main (int argc, char **argv) {
+	int i;
 	char *c, mode;
 	FILE *fp;
 	double uptime, idle, tuptime, tidle, muptime, midle;
@@ -137,8 +138,9 @@ int main (int argc, char **argv) {
 	if (fp==NULL) {
 		ERRS("could not open " BUPTIME " for reading (skipping)");
 		tuptime = tidle = 0;
-	} else if (fscanf(fp, "%lf %lf %lf %lf",
-					  &tuptime, &tidle, &muptime, &midle)!=4) {
+	}
+	i = fscanf(fp, "%lf %lf %lf %lf", &tuptime, &tidle, &muptime, &midle);
+	if (i!=2 && i!=4) {
 		ERRS("error reading " BUPTIME " (skipping)");
 		tuptime = tidle = 0;
 	}
