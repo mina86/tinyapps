@@ -1,6 +1,6 @@
 /*
  * Allocates specified amount of memory
- * $Id: malloc.c,v 1.1 2005/06/30 10:04:10 mina86 Exp $
+ * $Id: malloc.c,v 1.2 2005/06/30 10:11:25 mina86 Exp $
  * Copyright (C) 2005 by Michal Nazareicz (mn86/AT/o2.pl)
  * Licensed under the Academic Free License version 2.1.
  */
@@ -56,18 +56,18 @@ int main(int argc, char **argv) {
 	while (allocated<to_allocate && calloc(dot, 1024)!=NULL) {
 		putchar('.');
 		allocated += dot;
-		if ((d = (d+1) & 63)==0) print_size(allocated);
-	}
-
-	/* We didn't menage :( */
-	if (allocated < to_allocate) {
-		putchar('!');
-		return 1;
+		if ((d = (d+1) & 63)==0) {
+			print_size(allocated);
+		}
 	}
 
 	/* Return */
+	if (allocated < to_allocate) {
+		putchar('!');
+		d = 1;
+	}
 	if (d) {
 		print_size(allocated);
 	}
-	return 0;
+	return allocated < to_allocate ? 1 : 0;
 }
