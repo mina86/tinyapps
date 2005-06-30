@@ -1,5 +1,8 @@
 Tiny Applications Collection TODO List
 
+* malloc
+  - change way it displays progress
+
 * tuptime
   - add support for BSD systems
   - add command line options for setting location of uptime files
