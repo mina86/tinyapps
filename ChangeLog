@@ -1,11 +1,13 @@
 2005-06-30  Michal Nazarewicz  <m86@o2.pl>
 
+	* the-book-of-mozilla.txt, quotes.txt: New file
+	* README: the-book-of-mozilla.txt and quotes.txt added
+
 	* malloc.c: Displays size after error
 
 	* tuptime.c: Don't die if buptime have only 2 numbers
 
 	* README, malloc.c: New file
-
 	* TODO, .cvsignore: malloc added
 
 2005-06-29  Michal Nazarewicz  <m86@o2.pl>

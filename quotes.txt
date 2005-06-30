@@ -1,0 +1,1420 @@
+##                                      -*- Mode: text; fill-column: 75 -*-
+## Quotation Collection
+## $Id: quotes.txt,v 1.1 2005/06/30 11:06:03 mina86 Exp $
+## Copyright (c) 2003-2005 by Michal Nazarewicz
+## Licensed under the Academic Free License v. 2.1.
+##
+## To create a fortune compatible file use:
+##     egrep -v ^\# quotes.txt >qutoes
+##
+%
+ I have always found that mercy bears richer fruits than strict justice.
+	-- Abraham Lincoln (1809-1865)
+%
+ So far as the laws of mathematics refer to reality, they are not certain.
+ And so far as they are certain, they do not refer to reality.
+	-- Albert Einstein (1879-1955)
+%
+ I, at any rate, am convinced that He [God] does not throw dice.
+	-- Albert Einstein (1879-1955)
+%
+ Anyone who has never made a mistake has never tried anything new.
+	-- Albert Einstein (1879-1955)
+%
+ Do not worry about your difficulties in Mathematics. I can assure you mine
+are still greater.
+	-- Albert Einstein (1879-1955)
+%
+ Things should be made as simple as possible, but not any simpler.
+	-- Albert Einstein (1879-1955)
+%
+ I know not with what weapons World War III will be fought, but World War
+IV will be fought with sticks and stones.
+	-- Albert Einstein (1879-1955)
+%
+ The hardest thing to understand in the world is the income tax.
+	-- Albert Einstein (1879-1955)
+%
+ I should've been a plumber.
+	-- Albert Einstein (1879-1955)
+%
+ It's not that I'm so smart, it's just that I stay with problems longer.
+	-- Albert Einstein (1879-1955)
+%
+ Only two things are infinite, the universe and human stupidity, and I'm
+not sure about the former.
+	-- Albert Einstein (1879-1955)
+%
+ I never think of the future. It comes soon enough.
+	-- Albert Einstein (1879-1955)
+%
+ I don't know what is the speed of sound. I don't carry information in my
+mind that is readily available in books.
+	-- Albert Einstein (1879-1955)
+%
+ If my theory of relativity is proven correct, Germany will claim me as a
+German and France will say I am a man of the world. If it's proven wrong,
+France will say I am a German and Germany will say I am a Jew.
+	-- Albert Einstein (1879-1955)
+%
+ If we knew what we were doing, it wouldn't be called research, would it?
+	-- Albert Einstein (1879-1955)
+%
+ Black holes are where God divided by zero.
+	-- Albert Einstein (1879-1955)
+%
+ We can't solve problems by using the same kind of thinking we used when we
+created them.
+	-- Albert Einstein (1879-1955)
+%
+ Real Programmers always confuse Christmas and Halloween because Oct31
+== Dec25 !
+	-- Andrew Rutherford
+%
+ Wszystko ju¿ kiedy¶ by³o, wszystko ju¿ siê kiedy¶ wydarzy³o.  I wszystko
+ju¿ zosta³o kiedy¶ opisane.
+	-- Vysogota z Corvo
+	-- Andrzej Sapkowski, Pani Jeziora
+%
+ Potwór przest±pi³ z nogi na nogê, podrapa³ siê w ucho.
+ -S³uchaj no, ty -rzek³. -Czy ty siê mnie naprawdê nie boisz?
+ -A powinienem?
+	-- Andrzej Sapkowski, Ziarno Prawdy
+%
+ Tam za moment zacznie siê rze¼.  A za moment plus moment zjawi± siê
+pierwsi ranni.  Wszyscy wiedz±, co maj± robiæ, ka¿dy zna swoje obowi±zki i
+swoje miejsce.  Je¶li ka¿dy bêdzie przestrzega³, czego powinien
+przestrzegaæ, nic nie mo¿e pój¶æ ¼le.  Tam jakie¶ sto tysiêcy ludzi zacznie
+za chwilê kaleczyæ siê wzajemnie.  Na bardzo wyszukane sposoby.  Nas,
+wliczaj±c dwa pozosta³e szpitale, jest dwana¶cioro lekarzy.  Za nic w
+¶wiecie nie zdo³amy pomóc wszystkim potrzebuj±cym.  Nawet znikomemu
+procentowi potrzebuj±cych.  Nikt nawet tego nie oczekuje.  Ale my bêdziemy
+leczyæ.  Bo to jest, przepraszam za bana³, racja naszego istnienia.
+Pomagaæ potrzebuj±cym.  Pomo¿emy wiêc banalnie tylu, ilu zdo³amy pomóc.
+Nie damy rady zrobiæ du¿o wiêcej, ni¿ bêdziemy w stanie.  Ale postarajmy
+siê wszyscy, ¿eby to nie by³o mniej.
+	-- Rusty
+	-- Andrzej Sapkowski, Pani Jeziora
+%
+ Jedne z p³omyczków wysokie by³y i mocne, ¶wieci³y jasno i ¿ywo, inne za¶
+by³y malutkie, chwiejne i drgaj±ce, a ¶wiat³o ich ziemnia³o i zamiera³o.
+Na samym za¶ koñcu by³ jeden p³omyczek maleñki i tak s³aby, ¿e ledwie siê
+tli³, ledwie pe³ga³, ju¿ to rozb³yskuj±c w wielkim trudzie, ju¿ to gasn±c
+niemal¿e zupe³nie.
+ -Czyj jest ten gasn±cy ognik? -zapyta³ wied¼min.
+ -Twój -odrzek³a ¦mieræ.
+	-- Flourens Delannoy, Bajki i klechdy
+	-- Andrzej Sapkowski (1948-), Pani Jeziora
+%
+ Dobra, dobra.  ¯arty na bok, jak powiedzia³ król Dezmod, gdy w¶ród uczty
+go¶cie nagle zaczêli sinieæ i umieraæ.
+	-- Geralt
+	-- Andrzej Sapkowski (1948-), Pani Jeziora
+%
+ Od pietnastu lat piszê, pies z kulaw± nog± siê tym nie zainteresowa³, a
+teraz podobno jaki¶ k...a film nakrêcili.
+	-- Andrzej Sapkowski (1948-)
+%
+ Na wojence bywa ró¿nie,
+ Raz kto¶ komu¶ g³ówê ur¿nie,
+ Raz znów dadz± znaæ o zmierzchu,
+ ¯e kto¶ flaki ma na wierzchu
+	-- Nieznany autor, Na wojence
+	-- Andrzej Sapkowski (1948-), Wie¿a Jaskó³ki
+%
+ Zabójstwo jest zawsze zabójstwem, bez wzglêdu na motywy i okoliczno¶ci.
+Przeto ci, którzy zabijaj± lub przygotowuj± zabójstwo, to przestêpcy i
+zbrodniarze, bez wzglêdu na to, kim s±: królami, ksi±¿êtami, marsza³kami,
+sêdziami.  Nikt z tych, którzy obmy¶laj± i zadaj± przemoc, nie ma prawa
+uwa¿aæ siê za lepszego od zwyk³ego zbrodniarza.  Bo wszelka przemoc z
+natury swojej nieuchronnie wiedzie do zbrodni.
+	-- Nicodemus de Boot, Medytacie o ¿yciu, szczê¶ciu i pomy¶lno¶ci
+	-- Andrzej Sapkowski (1948-), Krew Elfów
+%
+ Wówczas rzek³a wró¿ka do wied¼mina: "Tak± ci dam radê: obuj ¿elazne buty,
+we¼ do rêki kostur ¿elazny.  Id¼ w ¿elaznych butach na koniec ¶wiata, a
+drogê przed sob± kosturem macaj, ³zami skrapiaj.  Id¼ przez ogieñ i wodê,
+nie ustawaj, wstecz siê nie ogl±daj.  A gdy ju¿ od wiatru i ¿aru wyschn±
+twe oczy tak, ¿e ju¿ ni jedna ³za z nich wyp³yn±æ nie zdo³a, wówczas na
+koñcu ¶wiata odnajdziesz to, czego szukasz i to, co kochasz.  Byæ mo¿e." I
+wied¼min poszed³ przez ogieñ i wodê, wstecz siê nie ogl±da³.  Ale nie wzi±³
+ni butów ¿elaznych, ni kostura.  Wzi±³ tylko swój miecz wied¼miñski.  Nie
+pos³ucha³ s³ów wró¿ki.  I dobrze zrobi³, bo to by³a z³a wró¿ka.
+	-- Flourens Delannoy, Bajki i klechdy
+	-- Andrzej Sapkowski (1948-), Chrzest Ognia
+%
+ Pozna³em w ¿yciu wielu wojskowych.  Zna³em marsza³ków, genera³ów,
+wojewodów i hetmanów, triumfatorów liczbych kampanii i bitew.
+Przys³uchiwa³em siê ich opowie¶ciom i wspomnieniom.  Widywa³em ich
+schylonych nad mapami, rysuj±cych na nich ró¿nokolorowe kreski, robi±cych
+plany, obmy¶laj±cych strategie.  W tej papierowej wojnie wszystko gra³o,
+wszystko funkcjonowa³o, wszystko by³o jasne i wszystko we wzorowym
+porz±dku.  Tak byæ musi, wyja¶nili wojskowi.  Armia to przede wszystkim
+porz±dek i ³ad.  Wojsko nie mo¿e istnieæ bez porz±dku i ³adu.  Tym
+dziwniejsze jest, ¿e prawdziwa wojna - a kilka prawdziwych wojen
+widzia³em - pod wzglêdem porz±dku i ³adu do z³udzenia przypomina ogarniêty
+po¿arem burdel.
+	-- Jaskier, Pó³ wieku poezji
+	-- Andrzej Sapkowski (1948-), Chrzest Ognia
+%
+ -Na Wielkie S³oñce. (...) Co¶ ty zrobi³a z w³osami, Assire?
+ -Umy³am.
+	-- Andrzej Sapkowski (1948-), Chrzest Ognia
+%
+ Biedaków nigdy nie staæ na nic, dlatego s± biedakami.
+	-- Codringher.
+	-- Andrzej Sapkowski (1948-), Czar Pogardy
+%
+ -Jedno jest na ¶wiecie prawo! -rycza³ gruby kap³an. -Prawo boskie! Ca³a
+natura temu prawu podlega, ca³a ziemia i wszystko, co na tej ziemi ¿yje! A
+czery i magia s± temu prawu przeciwne! Przeklêci wiêc s± czarownicy i
+bliski jest dzieñ gniewu, w którym ogieñ z niebios zniszczy ich plugaw±
+wyspê! Run± wówczas mury Loxii, Aretuzy i Garstangu, za którymi w³a¶nie
+zbieraj± siê ci poganie, by swe knowania obmy¶laæ! Run± te mury...
+ -I trza bêdzie, psia maæ, od nowa stawiaæ.
+	-- Andrzej Sapkowski (1948-), Czar Pogardy
+%
+ O mi³o¶ci wiem niewiele.  Z mi³o¶ci± jest jak z gruszk±.  Gruszka jest
+s³odka i ma kszta³t.  Spróbujcie zdefiniowaæ kszta³t gruszki.
+	-- Jaskier, Pó³ wieku poezji
+	-- Andrzej Sapkowski (1948-), Czar Pogardy
+%
+ Odejd¼ st±d i wychêdó¿ siê sam.
+	-- Egzorcyzm
+	-- Andrzej Sapkowski (1948-), Ostatnie ¯yczenie
+%
+ -Kto jest najszybszym szermierzem na ¶wiecie?
+ -Nie mam pojêcia.
+ -Nigdy nie zna³e¶ takiego?
+ -Zna³em wielu, którzy siê za takich uwa¿ali.
+ -Ha! Kim byli? Jak siê nazywali? Co potrafili?
+ -Wolnego, wolnego, dziewczyno. Nie znam odpowiedzi na te pytania. Czy
+to takie wa¿ne?
+ -Pewnie, ¿e wa¿ne! Chcia³abym wiedzieæ... kim tacy szermierze s±. I
+gdzie tacy s±.
+ -Gdzie s±, to ja wiem.
+ -Ha! Wiêc gdzie?
+ -Na cmentarzach.
+	-- Andrzej Sapkowski (1948-), Krew Elfów
+%
+ Nic, tylko by¶cie siê chêdo¿yli, w kó³ko, bez wyboru, z kim popad³o i
+gdzie popad³o.  A waszym kobietom wystarczy byle si±¶æ na mêskich portkach,
+by im brzuch urós³...  Czego¶ tak pokra¶nia³a, my¶la³by kto: maczek polny?
+Chcia³a¶ rozumieæ, tak czy nie? To i masz szczer± prawdê i wiern± historiê
+¶wiata, którym w³ada ten, kto sprawniej roz³upuje innym czaszki i w
+szybszym tempie nadmuchuje baby.  A z wami, lud¼mi, trudno konkurowaæ,
+zarówno w mordowaniu, jak i w chêdo¿eniu...
+	-- Yarpen Zigrin
+	-- Andrzej Sapkowski (1948-), Krew Elfów
+%
+Dobry elf, to martwy elf.
+	-- Marsza³ek Milan Raupenneck
+	-- Andrzej Sapkowski (1948-), Krew Elfów
+%
+ Nie mam nic przeciwko wied¼minom.  Niech sobie poluj± na wampiry.  Byleby
+tylko p³acili podatki.
+	-- Radowid III ¦mia³y
+	-- Andrzej Sapkowski (1948-), Krew Elfów
+%
+ Zaiste wielkiego trzeba zadufania i wielkiego za¶lepienia, by posokê
+lej±c± siê z szafotu nazwaæ sprawiedliwo¶ci±.
+	-- Vysogota z Corvo
+	-- Andrzej Sapkowski (1948-), Wie¿a Jaskó³ki
+%
+ Król bezgranicznie kocha³ sw± ma³¿onkê, królow±, a ona ca³ym sercem
+kocha³a jego.  Co¶ takiego musia³o skoñczyæ siê nieszczê¶ciem.
+	-- Flourens Delannoy, Bajki i klechdy
+	-- Andrzej Sapkowski (1948-), Wierza Jaskó³ki
+%
+ Computers make it easier to do a lot of things, but most of the things
+they make it easier to do don't need to be done.
+	-- Andy A. Rooney (1919-)
+%
+ A bullet to his head won't bring back the dead, but it'll lift the spirit
+of my people!
+	-- Asian Dub Foundation, Assassin
+%
+ Most men who are not married by the age of thirty-five are either
+homosexual or really smart.
+	-- Becky Rodenbeck
+%
+ Democracy is two wolves and a lamb voting on what to have for lunch.
+	-- Benjamin Franklin (1706-1790)
+%
+ Artificial Intelligence: the art of making computers that behave like the
+ones in movies.
+	-- Bill Bulko
+%
+ Spojrza³ w górê szybu kopalni.
+ Chc±c sprawdziæ, czy wóz w dó³ zje¿d¿a.
+ I zje¿d¿a³.
+	-- BioWare, Baldur's Gate
+%
+ Kiedy nie bêdê móg³ staæ o w³asnych si³ach, nadejdzie czas na ¶mieræ.
+	-- Dan M.
+	-- BioWare, Baldur's Gate
+%
+ Wszyscy umieraj±, tak to ju¿ jest w tym ¿yciu.
+	-- Russa
+	-- BioWare, Baldur's Gate
+%
+ No man is wise enough, nor good enough to be trusted with unlimited
+power.
+	-- Charles Colton
+%
+Trust no one.
+	-- Fox Mulder (David Duchowny)
+	-- Chris Carter (1956-), The X Files
+%
+In most of my work, the laws of physics rarely seems to apply.
+	-- Fox Mulder (David Duchowny)
+	-- Chris Carter (1956-), The X Files
+%
+ I don't understand why cheerleaders won't talk to me.  Maybe I don't throw
+five touchdowns against Newport High, but let's see one of those football
+morons program in assembly language!
+	-- Chris Lipe
+%
+ Treat your password like your toothbrush.  Don't let anybody else use it,
+and get a new one every six months.
+	-- Clifford Stoll
+%
+Many subjects aren't fun.  I wonder how the fun-to-learn teacher handles
+the Holocaust, Rape of Nanking, or American slavery...
+	-- Clifford Stoll
+%
+ The authority of the calculator dulls our critical sense...  how do you
+grade a student who says that two-thirds times three is 1.9999999?
+	-- Clifford Stoll
+%
+ With a computer, you're interacting with something, not someone.
+	-- Clifford Stoll
+%
+ Why is it drug addicts and computer afficionados are both called users?
+	-- Clifford Stoll
+%
+ My nie damy rady?!
+	-- Corwin
+%
+ ¬le, ¼le zawsze i wszêdzie.
+	-- Cyprian Kamil Norwid (1821-1883), Moja Pioseka [I]
+%
+ Innego koñca ¶wiata nie bêdzie.
+	-- Czes³aw Mi³osz (1911-2004), Piosnka o koñcu ¶wiata
+%
+ I may have invented control-alt-delete, but Bill Gates made it really
+famous.
+	-- David Bradley (1949-)
+%
+ Documentation is like sex: when it is good, it is very, very good; and
+when it is bad, it is better than nothing.
+	-- Dick Brandon
+%
+ Why should I go where everyone goes?
+ Why should I do what everyone does?
+	-- Die Toten Hosen, Pushed Again
+%
+ I hope, Buddha doesn't exist - one life is pain enough
+	-- deadflesh @ #unix @ IRCNet
+%
+ In the beginning the Universe was created.  This has made a lot of people
+very angry and been widely regarded as a bad move.
+	-- Douglas Noel Adams (1952-2001)
+%
+ In a world without walls and fences, who needs Windows and Gates?
+	-- Dino Esposito
+%
+ Nie jestem wariatem, jestem samolotem.
+	-- Dogbert
+%
+ Premature optimization is the root of all evil.
+	-- Donald Ervin Knuth (1938-)
+%
+ Beware of bugs in the above code; I have only proved it correct, not tried
+it.
+	-- Donald Ervin Knuth (1938-)
+%
+ The hardest thing is to go to sleep at night, when there are so many
+urgent things needing to be done.  A huge gap exists between what we know
+is possible with today's machines and what we have so far been able to
+finish.
+	-- Donald Ervin Knuth (1938-)
+%
+ The psychological profiling [of a programmer] is mostly the ability to
+shift levels of abstraction, from low level to high level.  To see
+something in the small and to see something in the large.
+	-- Donald Ervin Knuth (1938-)
+%
+ Any inaccuracies in this index may be explained by the fact that it has
+been sorted with the help of a computer.
+	-- Donald Ervin Knuth (1938-)
+%
+ The most important thing in the programming language is the name.  A
+language will not succeed without a good name.  I have recently invented a
+very good name and now I am looking for a suitable language.
+	-- Attributed to Donald Ervin Knuth (1938-)
+%
+ An algorithm must be seen to be believed.
+	-- Attributed to Donald Ervin Knuth (1938-)
+%
+ Slow down and enjoy life.  It's not only the scenery you miss by going too
+fast - you also miss the sense of where you are going and why.
+	-- Eddie Cantor (1892-1964)
+%
+ Computer Science is no more about computers than astronomy is about
+telescopes.
+	-- Edsger Wybe Dijkstra (1930-2002)
+%
+ The question of whether computers can think is like the question of
+whether submarines can swim.
+	-- Edsger Wybe Dijkstra (1930-2002)
+%
+ Learning BASIC causes permanent brain damage.
+	-- Edsger Wybe Dijkstra (1930-2002)
+%
+ Teaching BASIC should be a criminal offense.
+	-- Edsger Wybe Dijkstra (1930-2002)
+%
+ Program testing can be used to show the presence of bugs, but never to
+show their absence.
+	-- Edsger Wybe Dijkstra (1930-2002)
+%
+ Masochizm wynika z niewiedzy.
+	-- Edward Stachowski
+%
+ To sin by silence when we should protest makes cowards out of men.
+	-- Ella Wheeler Wilcox (1850-1919)
+%
+ Stopieñ ucywilizowania spo³eczno¶ci najlepiej oceniæ poznaj±c ich
+kryminalistów.
+	-- Fiodor Michaj³owicz Dostojewski (1821-1881)
+%
+ The essence of war is violence.  Moderation in war is imbecility.
+	-- Fisher
+%
+ The reason that there are so few good conversationalists is that most
+people are thinking about what they are going to say and not about what the
+others are saying.
+	-- Attribtued to François de La Rochefoucauld (1613-1680)
+%
+ Those who spend too much time on the little things usually become
+incapable of great ones.
+	-- Attribtued to François de La Rochefoucauld (1613-1680)
+%
+ How can we expect others to keep our secrets if we cannot keep them
+ourselves?
+	-- Attribtued to François de La Rochefoucauld (1613-1680)
+%
+ Only great men have great faults.
+	-- Attribtued to François de La Rochefoucauld (1613-1680)
+%
+ It is never more difficult to speak well than when one is ashamed to be
+silent.
+	-- Attribtued to François de La Rochefoucauld (1613-1680)
+%
+ Spory nie trwa³yby tak d³ugo, gdyby brak s³uszno¶ci by³ tylko po jednej
+stronie.
+	-- Attribtued to François de La Rochefoucauld (1613-1680)
+%
+ A jednak siê krêci!
+	-- Gallieo Gallei (1564-1642)
+%
+ Wolno¶æ oznacza odpowiedzialno¶æ.  Dlatego wiêkszo¶æ ludzi siê jej boi.
+	-- George Bernard Shaw (1856-1950)
+%
+ Don't try to do it.  Do it or don't do it.
+	-- Yoda
+	-- Gorge Walton Lucas Jr (1944-), Star Wars
+%
+ Ucz siê na cudzych b³êdach.  ¯ycie jest za krótkie, aby¶ zd±¿y³ je
+wszystkie pope³niæ.
+	-- Gilbert Becaud (1927-2001)
+%
+ Counting in binary is just like counting in decimal if you are all thumbs.
+	-- Glaser and Way
+%
+ Komisja to zespó³, który tylko wtedy jest w stanie co¶ zdzia³aæ, gdy
+sk³ada siê z trzech osób, z których jedna jest chora, a druga nieobecna.
+	-- H. van Loon
+%
+ Aby czuæ siê wolnym istnieje prosty sposób: nie szarpaæ i nie napinaæ
+smyczy.
+	-- Hans Krailsheimer
+%
+ Take my wife.  Please.
+	-- Henny Youngman (1906-1998)
+%
+ My wife is the sweetest, most tolerant, most beautiful woman in the world.
+This is a paid Political announcement.
+	-- Henny Youngman (1906-1998)
+%
+ If there's never been a suicide in your family, why don't you break the
+monotony?
+	-- Henny Youngman (1906-1998)
+%
+ Some people bring happiness wherever they go.  You bring happiness
+whenever you go.
+	-- Henny Youngman (1906-1998)
+%
+ Getting on a plane, I told the ticket lady, "Send one of my bags to New
+York, send one to Los Angeles, and send one to Miami." She said, "We can't
+do that!" I told her, "You did it last week!"
+	-- Henny Youngman (1906-1998)
+%
+ The patient says "Doctor, it hurts when I do this." "Then don't do that!"
+	-- Henny Youngman (1906-1998)
+%
+ I asked a Jewish man "Do you know where Michigan Avenue is?" He said
+"Yes", and walked away.
+	-- Henny Youngman (1906-1998)
+%
+ If my mother knew I did this for a living, she'd kill me.  She thinks I'm
+selling dope.
+	-- Henny Youngman (1906-1998)
+%
+ A woman says to a man, "I haven't seen you around here." "Yes, I just got
+out of jail for killing my wife." "So you're single."
+	-- Henny Youngman (1906-1998)
+%
+ My wife loves to shop at Bloomingdale's.  I bring her mail there twice a
+week.
+	-- Henny Youngman (1906-1998)
+%
+ Kiedy p³onie dom s±siadów, stawk± jest twój w³asny dom.
+	-- Horacy (65BC-8BC)
+%
+ If I have been able to see further, it was only because I stood on the
+shoulders of giants.
+	-- Sir Isaac Newton (1642-1727)
+%
+ God is Real, unless declared Integer.
+	-- J. Allan Toogood
+%
+ - We are but packets in the Internet of life.
+ - Amen, brother.
+	-- J. D. Frazer (1965-), UserFriendly
+%
+ One Ping to rule them all, One Ping to find them,
+ One Ping to bring them all and in the darkness bind them.
+	-- J. D. Frazer (1965-), UserFriendly
+%
+ There is only one satisfying way to boot a computer.
+	-- J. H. Goldfuss
+%
+ Houston, we have a problem.
+	-- James A. Lovell, Jr. (1928-)
+%
+ The optimist proclaims that we live in the best of all possible worlds;
+and the pessimist fears this is true.
+	-- James Branch Cabell (1879-1958)
+%
+ They have computers, and they may have other weapons of mass destruction.
+	-- Janet Reno (1938-)
+%
+ Dziwne jest to ¿ycie...  Jeste¶my ma³ymi dzieæmi, a nazajutrz mamy 50 lat,
+a ca³e dzieciñstwo mo¿emy zamkn±æ w ma³ym zardzewia³ym pude³eczku.
+	-- Dominique Bretodeau
+	-- Jean-Pierre Jeunet (1953-)
+		Le Fabuleux destin d'Amélie Poulain (a.k.a. Amelie)
+%
+ ¯ycie, to tylko niekoñcz±ca siê próba przedstawienia, które nigdy siê nie
+odbêdzie.
+	-- Jean-Pierre Jeunet (1953-)
+		Le Fabuleux destin d'Amélie Poulain (a.k.a. Amelie)
+%
+ Hardware: the parts of a computer that can be kicked.
+	-- Jeff Pesis
+%
+ Just 100 more lines of code...
+	-- Dwayne Duncan
+	-- Jeffrey T. Darlington, General Protection Fault
+%
+ There are two major products that come out of Berkeley: LSD and UNIX.  We
+don't believe this to be a coincidence.
+	-- Jeremy S. Anderson
+%
+ Normal people scare me...
+	-- Luna Lovegood
+	-- Joanne K. Rowling (1965-),
+		Harry Potter and the Order of the Phoenix
+%
+ He who hasn't hacked assembly language as a youth has no heart.  He who
+does as an adult has no brain.
+	-- John Moore
+%
+ Keep you doped with religion and sex and TV,
+ And you think youre so clever and classless and free,
+ But youre still fucking peasants as far as I can see.
+	-- John Winston Ono Lennon (1940-1980)
+%
+ Will the people in the cheaper seats clap your hands? All the rest of you,
+if you'll just rattle your jewelry.
+	-- John Winston Ono Lennon (1940-1980)
+%
+ Life is what happens to you while you're busy making other plans.
+	-- John Winston Ono Lennon (1940-1980)
+%
+ Music is everybody's possession.  It's only publishers who think that
+people own it.
+	-- John Winston Ono Lennon (1940-1980)
+%
+ Fixing Unix is easier than living with NT.
+	-- Jonathan Gilpin
+%
+ Those who make peaceful revolution impossible will make violent revolution
+inevitable.
+	-- John Fitzgerald Kennedy (1917-1963)
+%
+ Mankind must put an end to war or war will put an end to mankind.
+	-- John Fitzgerald Kennedy (1917-1963)
+%
+ If a free society cannot help the many who are poor, it cannot save the
+few who are rich.
+	-- John Fitzgerald Kennedy (1917-1963)
+%
+ War is the science of destruction.
+	-- Sir John Joseph Caldwell Abbott (1821-1893)
+%
+ Wielu spo¶ród ¿yj±cych zas³uguje na ¶mieræ.  A niejeden z tych, którzy
+umieraj±, zas³uguj± na ¿ycie.  Czy mo¿esz ich nim obdarzyæ? Nie b±d¼ wiêc
+tak pochopny w ferowaniu wyroków ¶mierci.  Nawet bowiem najm±drzejszy z
+Mêdrców nie wszystko wie.
+	-- Gandalf
+	-- John Ronald Reuel Tolkien (1892-1973), W³adca Pier¶cieni
+%
+ Chcieli¶my dobrze, a wysz³o jak zawsze...
+	 -- Attributed to Joseph Stalin (1879-1953)
+%
+ Ciemno¶æ, widzê ciemno¶æ, ciemno¶æ widzê.
+	-- Maks (Jerzy Sthur)
+	-- Juliusz Machulski (1955-), Seksmisja
+%
+ Wierze, ¿e Pan jednak mnie nie opu¶ci.
+ Jakby mia³ wzrok tak± zdobycz wypu¶ciæ.
+ Pan, ale który pytasz siê zdziwiony.
+ Otó¿ ten jeden z odpowiedniej strony.
+	-- Kazik Staszewski (1963-), Poznaj swój raj
+%
+ Chcecie mnie powiesiæ, to mnie powie¶cie.
+	-- Kazik Staszewski (1963-), Poznaj swój raj
+%
+ Hitler powtarza³ te¿, ¿e nie chce wojny wcale.
+	-- Kazik Staszewski (1963-), Mars napada
+%
+ Najs³abszym ogniwem w ka¿dym systemie bezpieczeñstwa s± ludzie.
+	-- Kevin David Mitnick (1963-)
+%
+ When all else fails, read the instructions.
+	-- L. Iasellio
+%
+ Only human.
+	-- Agent Brown
+	-- Larry & Andy Wachowski, The Matrix
+%
+ There is no spoon.
+	-- Spoon Boy
+	-- Larry & Andy Wachowski, The Matrix
+%
+ Do you think that's air you're breathing now?
+	-- Morpheus
+	-- Larry & Andy Wachowski, The Matrix
+%
+ Choice is an ilusion created between those with a power and those without.
+	-- Romero Vinci
+	-- Larry & Andy Wachowski, The Matrix
+%
+ And I don't like doing silly things (except on purpose).
+	-- Larry Wall (1954-)
+%
+ /* And you'll never guess what the dog had */
+ /*   in its mouth... */
+	-- Larry Wall (1954-) in stab.c from the perl source code
+%
+ Because . doesn't match \n.  [\0-\377] is the most efficient way to match
+everything currently.  Maybe \e should match everything.  And \E would
+of course match nothing.   :-)
+	-- Larry Wall (1954-)
+%
+ Be consistent.
+	-- Larry Wall (1954-) in the perl man page
+%
+ break;                          /* don't do magic till later */
+	-- Larry Wall (1954-) in stab.c from the perl source code
+%
+ #define NULL 0           /* silly thing is, we don't even use this */
+	-- Larry Wall (1954-) in perl.c from the perl source code
+%
+ #define SIGILL 6         /* blech */
+	-- Larry Wall (1954-) in perl.c from the perl source code
+%
+ Does the same as the system call of that name.
+ If you don't know what it does, don't worry about it.
+	-- Larry Wall (1954-) in the perl man page regarding chroot(2)
+%
+ double value;                /* or your money back! */
+ short changed;               /* so triple your money back! */
+	-- Larry Wall (1954-) in cons.c from the perl source code
+%
+ echo "Congratulations.  You aren't running Eunice."
+	-- Larry Wall (1954-) in Configure from the perl distribution
+%
+ echo $package has manual pages available in source form.
+ echo "However, you don't have nroff, so they're probably useless to you."
+	-- Larry Wall (1954-) in Configure from the perl distribution
+%
+ echo "Your stdio isn't very std."
+	-- Larry Wall (1954-) in Configure from the perl distribution
+%
+ I don't know if it's what you want, but it's what you get.  :-)
+	-- Larry Wall (1954-)
+%
+ If I don't document something, it's usually either for a good reason,
+or a bad reason.  In this case it's a good reason.  :-)
+	-- Larry Wall (1954-)
+%
+ if (instr(buf,sys_errlist[errno]))  /* you don't see this */
+	-- Larry Wall (1954-) in eval.c from the perl source code
+%
+ I think it's a new feature.  Don't tell anyone it was an accident.  :-)
+	-- Larry Wall (1954-) on s/foo/bar/eieio
+%
+ It is easier to port a shell than a shell script.
+	-- Larry Wall (1954-)
+%
+ Just don't create a file called -rf.  :-)
+	-- Larry Wall (1954-)
+%
+ Real programmers can write assembly code in any language.   :-)
+	-- Larry Wall (1954-)
+%
+ There are probably better ways to do that, but it would make the parser
+more complex.  I do, occasionally, struggle feebly against complexity...  :-)
+	-- Larry Wall (1954-)
+%
+ Odd that we think definitions are definitive.   :-)
+	-- Larry Wall (1954-)
+%
+ The computer should be doing the hard work.  That's what it's paid to do,
+after all.
+	-- Larry Wall (1954-)
+%
+ Even the White House has a press agent.  :-)
+	-- Larry Wall (1954-)
+%
+ I'm reminded of the day my daughter came in, looked over my shoulder at
+some Perl 4 code, and said, "What is that, swearing?"
+	-- Larry Wall (1954-)
+%
+ Shall we play a game?
+	-- Joshua (the computer)
+	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
+%
+ A strange game. The only winning move is not to play. How about a nice
+game of chess?
+	-- Joshua (the computer)
+	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
+%
+ Mr McKitrick, After a careful consideration I have came to the
+conclution that your defencesystem SUCKS!
+	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
+%
+ Mówca powinien wyczerpaæ temat, nie s³uchaczy.
+	-- Sir Leonard Spencer Churchill (1874-1965)
+%
+ No one can guarantee success in war, but only deserve it.
+	-- Sir Leonard Spencer Churchill (1874-1965)
+%
+ The grim fact is that we prepare for war like precocious giants and for
+peace like retarded pygmies.
+	-- Lester Bowles Pearson (1897-1972)
+%
+ Kotki maj± ten bardzo niedogodny zwyczaj (zauwa¿y³a pewnego razu Alicja),
+¿e cokolwiek im powiesz, one zawsze mrucz±.  Gdyby mrucza³y tylko zamiast
+"tak", a miaucza³y zamiast "nie", lub wed³ug jakiej¶ podobnej
+zasady -powiedzia³a Alicja, -wtedy mo¿na by³oby prowadziæ rozmowê.  Lecz
+jak mo¿esz rozmawiaæ z kim¶, kto zawsze mówi to samo?
+	-- Lewis Carroll (Charles Lutwidge Dodgson, 183-1898),
+		Through the Looking Glass
+%
+ Dijkstra probably hates me.
+	-- Linus Benedict Torvalds (1969-) in kernel/sched.c v1.1.42
+%
+ My name is Linus, and I am your God.
+	-- Linus Benedict Torvalds (1969-) at the Linux Expo, Durham NC. 1998
+%
+ Only wimps use tape backup: real men just upload their important stuff on
+ftp, and let the rest of the world mirror it.
+	-- Linus Benedict Torvalds (1969-)
+%
+ The memory management on the PowerPC can be used to frighten small
+children.
+	-- Linus Benedict Torvalds (1969-)
+%
+ The Linux philosophy is to laugh in face of danger.
+ Oops.  Wrong one.  'Do it yourself' That's it
+	-- Linus Benedict Torvalds (1969-)
+%
+ Talk is cheap.  Show me the code.
+	-- Linus Benedict Torvalds (1969-)
+%
+ I still maintain the point that designing a monolithic kernel in 1991 is a
+fundamental error.  Be thankful you are not my student.  You would not get
+a high grade for such a design :-)
+	-- Andrew Tanenbaum (wrote Minix) to Linus Torvalds
+%
+ Your job is being a professor and researcher: That's one hell of a good
+excuse for some of the brain-damages of Minix.
+	-- Linus Benedict Torvalds (1969-) to Andrew Tanenbaum (wrote Minix)
+%
+ Note that nobody reads every post in linux-kernel.  In fact, nobody who
+expects to have time left over to actually do any real kernel work will
+read even half.  Except Alan Cox, but he's actually not human, but about a
+thousand gnomes working in under-ground caves in Swansea.  None of the
+individual gnomes read all the postings either, they just work together
+really well.
+	-- Linus Benedict Torvalds (1969-)
+%
+ In short: just say NO TO DRUGS, and maybe you won't end up like the
+Hurd people.
+	-- Linus Benedict Torvalds (1969-)
+%
+If you still don't like it, that's ok: that's why I'm boss. I simply
+know better than you do.
+	-- Linus Benedict Torvalds (1969-)
+%
+ Some people have told me they don't think a fat penguin really embodies
+the grace of Linux, which just tells me they have never seen a angry
+penguin charging at them in excess of 100mph.  They'd be a lot more careful
+about what they say if they had.
+	-- Linus Benedict Torvalds (1969-)
+%
+ I'm an idiot..  At least this one [bug] took about 5 minutes to find..
+	-- Linus Benedict Torvalds (1969-) in response to a bug report
+%
+ If you want to travel around the world and be invited to speak at a lot of
+different places, just write a Unix operating system.
+	-- Linus Benedict Torvalds (1969-)
+%
+ Software is like sex; it's better when it's free.
+	-- Attributed to Linus Benedict Torvalds (1969-)
+%
+ How should I know if it works? That's what beta testers are for.  I only
+coded it.
+	-- Attributed to Linus Benedict Torvalds (1969-)
+%
+ Ala ma kota.
+	-- Marian Falski (1881-1974)
+%
+ Kiedy mam oczekiwac procesu za zniewazanie symboli religijnych przez
+publiczne uzywanie znaku dodawania?
+	-- Marek Szyjewski
+%
+ Being powerful is like being a lady.  If you have to tell people you are,
+you aren't.
+	-- Margaret Hilda Thatcher (1925-)
+%
+ Work and play are words used to describe the same thing under differing
+conditions.
+	-- Mark Twain (1835-1910)
+%
+ Lepiej jest nie odzywaæ siê wcale i wydawaæ siê g³upim, ni¿ odezwaæ siê i
+rozwiaæ wszelkie w±tpliwo¶ci.
+	-- Mark Twain (1835-1910)
+%
+ Nothing good ever comes of violence.
+	-- Martin Luther (1483-1546)
+%
+ [reason] is the Devil's greatest whore.
+	-- Martin Luther (1483-1546)
+%
+ I have a dream that my four little children will one day live in a nation
+where they will not be judged by the color of their skin but by the content
+of their character.
+	-- Dr. Martin Luther King Jr. (1929-1968)
+%
+ And I submit to you that if a man has not discovered something that he
+will die for, he isn't fit to live.
+	-- Dr. Martin Luther King Jr. (1929-1968)
+%
+ In the end, we will remember not the words of our enemies but the silence
+of our friends.
+	-- Attributed to Dr. Martin Luther King Jr. (1929-1968)
+%
+ Waving away a cloud of smoke, I look up, and am blinded by a bright, white
+light.  It's God.  No, not Richard Stallman, or Linus Torvalds, but God.
+In a booming voice, He says: "This is a sign.  Use Linux, the free UNIX
+system for the 386.
+	-- Matt Welsh
+%
+ Take a look to the sky just before you die.
+	-- Metallica, For Whom The Bell Tolls
+%
+ Before you judge me take a look at you.
+	-- Metallica, Holier Than Thou
+%
+ To secure peace is to prepare for war.
+	-- Metallica, Don't Tread on Me
+%
+ Life is ours, we live it our way
+	-- Metallica, Nothing Else Matters
+%
+ Careful what you wish,
+ Careful what you say,
+ Careful what you wish,
+ You may regret it,
+ Careful what you wish,
+ You just might get it.
+	-- Metallica, King Nothing
+%
+ Kill, it's such a friendly word,
+ Seems the only way,
+ For reaching out again
+	-- Metallica, Welcome Home (Sanitarium)
+%
+ Programming is like sex: one mistake and you have to support it for the
+rest of your life.
+	-- Michael Sinz
+%
+ ¯ycie to jedna wielka mistyfikacja.
+	-- Micha³ Pawel Nazarewicz (1986-)
+%
+ Tandeta nad tandetami i wszystko tandeta.
+	-- Micha³ Pawel Nazarewicz (1986-)
+%
+ Kiedy nie bêdê móg³ programowaæ, nadejdzie czas na ¶mieræ.
+	-- Micha³ Pawel Nazarewicz (1986-)
+%
+Bateryjki!...  Wszystko bateryjki!...  Zdaje im siê, ¿e robi±, co chc±, a
+robi± tylko, co im ka¿e system, tak ¶lepy jak one...
+	-- Micha³ Pawel Nazarewicz (1986-)
+%
+ A niechaj narodowie w¿dy postroni znaj±, ¿e Polacy nie gêsi, i¿ swój jêzyk
+maj±.
+	-- Miko³aj Rej (1505-1569)
+%
+ Look at things what we created, I'm not proud what we have done
+	-- Narnia, Angels are Crying
+%
+ That's one small step for [a] man, one giant leap for mankind.
+	-- Neil Armstrong (1930-)
+%
+ Houston, Tranquility Base here.  The Eagle has landed.
+	-- Neil Armstrong (1930-)
+%
+ Computing is not about computers any more.  It is about living.
+	-- Nicholas Negroponte (1943-)
+%
+ Isn't it odd how parents grieve if their child spends six hours a day on
+the 'Net, but are delighted if those same hours are spent reading books?
+	-- Nicholas Negroponte (1943-)
+%
+ If the code and the comments disagree, then both are probably wrong.
+	-- Norm Schryer
+%
+ They don't make bugs like Bunny anymore.
+	-- Olav Mjelde
+%
+ Besides, I think Slackware sounds better than 'Microsoft,' don't you?
+	-- Patrick J. Volkerding
+%
+ Man is ready to die for an idea, provided that ideas is not quite clear to
+him.
+	-- Paul Eldridge
+%
+ God may not play dice with the universe, but something strange is going on
+with the prime numbers.
+	-- Paul Erdos (1913-1996)
+%
+ UNIX is an operating system, OS/2 is half an operating system, Windows is
+a shell, and DOS is a boot partition virus.
+	-- Peter H. Coffin
+%
+  Well, I mean, there is no--there is no difference between a private life
+and a public life.  My--my life is my life, is The Truman Show.  The Truman
+Show is...  a lifestyle.
+	-- Meryl
+	-- Peter Weir (1944-), The Truman Show
+%
+ Trzeba milczeæ albo mówiæ rzeczy lepsze od milczenia.
+	-- Pitagoras (VI BC)
+%
+ Nie zapowiadaj tego, co zamierzasz uczyniæ, bo je¶li ci siê nie uda,
+wy¶miej± ciê.
+	-- Pittakos
+%
+ Cz³owiekiem jestem i nic co ludzkie nie jest mi obce.
+	-- Publius Terentius Afer (II BC)
+%
+ -Butch, whose motorcycle is this?
+ -It's a chopper.
+ -Whose chopper is this?
+ -Zed's.
+ -Who's Zed?
+ -Zed's dead, baby, Zed's dead.
+	-- Quentin Tarantino (1963-), Pulp Fiction
+%
+ PUMPKIN: Everybody be cool this is a robbery!
+ HONEY BUNNY: Any of you fuckin' pricks move and I'll execute every one of
+you motherfuckers!  Got that?
+	-- Quentin Tarantino (1963-), Pulp Fiction
+%
+ The path of the righteous man is beset on all sides by the
+inequities of the selfish and the tyranny of evil men.
+Blessed is he who, in the name of charity and good will,
+shepherds the weak through the valley of darkness, for he is truly
+his brother's keeper and the finder of lost children.
+And I will strike down upon thee with great vengeance and furious
+anger those who attempt to poison and destroy my brothers.
+And you will know my name is the Lord when I lay my vengeance upon you.
+	-- Jules
+	-- Quentin Tarantino (1963-), Pulp Fiction
+%
+ It has to start somewhere,
+ It has to start sometime,
+ What better place then here?
+ What better time than now?
+ All hell can't stop us now!
+	-- Rage Against the Machine, Guerilla Radio
+%
+ Love your country, but never trust its government.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ There are no dangerous weapons; there are only dangerous men.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ Violence, naked force, has settled more issues in history than has any
+other factor, and the contrary opinion is wishful thinking at its
+worst.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ $100 placed at 7 percent interest compounded quarterly for 200 years
+will increase to more than $l00,000,000-by which time it will be worth
+nothing.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ A generation which ignores history has no past-and no future.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ Always listen to experts. They'll tell you what can't be done, and
+why. Then do it.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ Anyone who cannot cope with mathematics is not fully human. At best he
+is a tolerable subhuman who has learned to wear shoes, bathe, and not
+make messes in the house.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ Climate is what you expect, weather is what you get.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ Courage is the complement of fear. A man who is fearless cannot be
+courageous. (He is also a fool.)
+	-- Robert Anson Heinlein (1907-1988)
+%
+ Democracy is based on the assumption that a million men are wiser than
+one man. How's that again? I missed something.
+ Autocracy is based on the assumption that one man is wiser than a
+million men. Let's play that over again, too. Who decides?
+	-- Robert Anson Heinlein (1907-1988)
+%
+Never underestimate the power of human stupidity.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ One man's "magic" is another man's engineering. "Supernatural" is a
+null word.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ Place your clothes and weapons where you can find them in the dark.
+	-- Robert Anson Heinlein (1907-1988)
+%
+ What a wonderful world it is that has girls in it!
+	-- Robert Anson Heinlein (1907-1988)
+%
+ Being right too soon is socially unacceptable.
+	-- Attribtued to Robert Anson Heinlein (1907-1988)
+%
+ ... one of the main causes of the fall of the Roman Empire was that,
+lacking zero, they had no way to indicate successful termination of
+their C programs.
+	-- Robert Firth
+%
+ The generation of random numbers is too important to be left to chance.
+	-- Robert R. Coveyou,
+%
+ To err is human - and to blame it on a computer is even more so.
+	-- Robert Orben (1927-)
+%
+ Anyone who quotes me in their sig is an idiot.
+	-- Rusty Russell
+%
+ Jedyna ró¿nica miêdzy mn± a wariatem to fakt, ¿e nie jestem wariatem.
+	-- Salvador Domenec Felip Jacint Dalí Domenech (1904-1989)
+%
+ I'm going to live forever, or die trying!
+	-- Attributed to Spider Robinson (1948-)
+%
+ (...) pewne zjawiska w najmniejszej skali zachodz± sposobem jakby
+kredytowym.  Mezony, te cz±steczki elementarne, naruszaj± czasem prawa
+zachowania, lecz czyni± to tak nies³ychanie szybko, ¿e go nie naruszaj±
+prawie.  To, co zakazane prawami fizyki, czyni± b³yskawicznie, jak gdyby
+nigdy nic, i zaraz potem znowu poddaj± siê tym prawom.  (...) a co, je¶liby
+Kosmos w skali najwiêkszej zrobi³ to samo? Je¿eli mezony mog± tak siê
+zachowaæ w u³amku sekundy tak drobnym, ¿e ca³a sekunda jest przy nim
+wieczno¶ci±, Kosmos, ze wzglêdu na swe rozmiary, musia³by siê w ów zakazany
+sposób zachowaæ odpowiednio d³u¿ej.  Na przyk³ad przez piêtna¶cie miliardów
+lat...
+	-- Stanis³aw Lem (1921-), Dzienniki Gwiazdowe, Podró¿ Osiemnasta
+%
+ Trzeba siê uczyæ, a nie chodziæ do szko³y.
+	-- Stanis³aw Lipiñski
+%
+ A poniewa¿ czujê siê jeszcze mniej kompetentny, chêtnie siê wypowiem.
+	-- Stanis³aw Tym (1937-)
+%
+ We think basically you watch television to turn your brain off, and you
+work on your computer when you want to turn your brain on.
+	-- Steve Jobs (1955-)
+%
+ If you live each day as if it was your last, someday you'll most certainly
+be right.
+	-- Steve Jobs (1955-)
+%
+ Sometimes when you innovate, you make mistakes.  It is best to admit them
+quickly, and get on with improving your other innovations.
+	-- Attributed to Steve Jobs (1955-)
+%
+You can't just ask customers what they want and then try to give that to
+them.  By the time you get it built, they'll want something new.
+	-- Attributed to Steve Jobs (1955-)
+%
+ You know, we don't grow most of the food we eat.  We wear clothes other
+people make.  We speak a language that other people developed.  We use a
+mathematics that other people evolved...  I mean, we're constantly taking
+things.  It's a wonderful, ecstatic feeling to create something that puts
+it back in the pool of human experience and knowledge.
+	-- Attributed to Steve Jobs (1955-)
+%
+ Never trust a computer you can't throw out a window.
+	-- Steve Wo¼niak (1950-)
+%
+ Wherever smart people work, doors are unlocked.
+	-- Attributed to Steve Wo¼niak (1950-)
+%
+ If toast always lands butter-side down, and cats always land on their
+feet, what happen if you strap toast on the back of a cat and drop it?
+	-- Steven Wright (1955-)
+%
+ Every so often, I like to go to the window, look up, and smile for a
+satellite picture.
+	-- Steven Wright (1955-)
+%
+ When he gets older, I'd tell him he used to have a brother, but he didn't
+obey.
+	-- Steven Wright (1955-)
+%
+ I woke up this morning and couldn't find my socks, so I called
+information.  She said they were behind the couch.  She was right.
+	-- Steven Wright (1955-)
+%
+ Right now I'm having amnesia and deja-vu at the same time.  I think I've
+forgotten this before.
+	-- Steven Wright (1955-)
+%
+ Someone sent me a postcard picture of the earth.  On the back it said,
+"Wish you were here."
+	-- Steven Wright (1955-)
+%
+ It's a good thing we have gravity or else when birds died they'd just stay
+right up there.  Hunters would be all confused.
+	-- Steven Wright (1955-)
+%
+ You can't have everything.  Where would you put it?
+	-- Steven Wright (1955-)
+%
+ Everywhere is walking distance if you have the time.
+	-- Steven Wright (1955-)
+%
+ Why is "abbreviated" such a long word?
+	-- Steven Wright (1955-)
+%
+ I think it's wrong that the game Monopoly is made by only one company.
+	-- Steven Wright (1955-)
+%
+ I'd kill for a Nobel Peace Prize.
+	-- Steven Wright (1955-)
+%
+ Borrow money from pessimists -- they don't expect it back.
+	-- Steven Wright (1955-)
+%
+ Half the people you know are below average.
+	-- Steven Wright (1955-)
+%
+ 99% of lawyers give the rest a bad name.
+	-- Steven Wright (1955-)
+%
+ 42.7% of all statistics are made up on the spot.
+	-- Steven Wright (1955-)
+%
+ All those who believe in psychokinesis, raise my hand.
+	-- Steven Wright (1955-)
+%
+ The early bird may get the worm, but the second mouse gets the cheese.
+	-- Steven Wright (1955-)
+%
+ How do you tell when you're out of invisible ink?
+	-- Steven Wright (1955-)
+%
+ If everything seems to be going well, you have obviously overlooked
+something.
+	-- Steven Wright (1955-)
+%
+ When everything is coming your way, you're in the wrong lane.
+	-- Steven Wright (1955-)
+%
+ Hard work pays off in the future, laziness pays off now.
+	-- Steven Wright (1955-)
+%
+ I intend to live forever -- so far, so good.
+	-- Steven Wright (1955-)
+%
+ If Barbie is so popular, why do you have to buy her friends?
+	-- Steven Wright (1955-)
+%
+ My mechanic told me, 'I couldn't repair your brakes, so I made your horn
+louder.'
+	-- Steven Wright (1955-)
+%
+ If at first you don't succeed, destroy all evidence that you tried.
+	-- Steven Wright (1955-)
+%
+ A conclusion is the place where you got tired of thinking.
+	-- Steven Wright (1955-)
+%
+ Experience is something you don't get until just after you need it.
+	-- Steven Wright (1955-)
+%
+ The hardness of the butter is proportional to the softness of the bread.
+	-- Steven Wright (1955-)
+%
+ To steal ideas from one person is plagiarism; to steal from many is
+research.
+	-- Steven Wright (1955-)
+%
+ The sooner you fall behind, the more time you'll have to catch up.
+	-- Steven Wright (1955-)
+%
+ Not with dreams but with blood and iron, shall a nation be moulded at
+last.
+	-- Swinburne
+%
+ The real danger is not that computers will begin to think like men, but
+that men will begin to think like computers.
+	-- Sydney J. Harris (1917-1986)
+%
+ Anyone who slaps a 'this page is best viewed with Browser X' label on a
+Web page appears to be yearning for the bad old days, before the Web, when
+you had very little chance of reading a document written on another
+computer, another word processor, or another network.
+	-- Sir Timothy John Berners-Lee (1955-)
+%
+ Base eight is just like base ten really, if you're missing two fingers.
+	-- Thomas Andrew Lehrer (1928-)
+%
+ It's people like that who make you realize how little you've accomplished.
+It is a sobering thought, for example, that when Mozart was my age, he had
+been dead for two years.
+	-- Thomas Andrew Lehrer (1928-)
+%
+ Po¿yteczna praca jest zawsze cicha i niezauwa¿alna.
+	-- To³stoj
+%
+ I don't even have an e-mail address.  I have reached an age where my main
+purpose is not to receive messages.
+	-- Umberto Eco (1932-)
+%
+ Because I felt like killing a Monk"
+	-- Attributed to Umberto Eco (1932-)
+		(asked why he wrote The Name of the Rose)
+%
+ Jesus Christ, who are these people?
+	-- William Henry Gates III (1955-)
+%
+ A right is not what someone gives you; it's what no one can take from you.
+	-- Attribtued to William Ramsey Clark (1927-)
+%
+ Life's but a walking shadow, a poor player
+ That struts and frets his hour upon the stage
+ And then is heard no more.  It is a tale
+ Told by an idiot, full of sound and fury,
+ Signifying nothing.
+	-- William Shakespeare (1564-1616)), Macbeth
+%
+ Life was like a box of chocolates. You never know what you're gonna get.
+	-- Forrest Gump's mom
+	-- Winstion Groom (1944-), Forrest Gump
+%
+ I guess sometimes there just aren't enough rocks.
+	-- Forrest Gump
+	-- Winstion Groom (1944-), Forrest Gump
+%
+ There's many a boy here today who looks on war as all glory, but, boys, it
+is all hell.
+	-- Gen. William Tecumseh Sherman (1820-1891)
+%
+ To takie typowo polskie.  Jak co¶ to ten, a jak ten to ten.
+	-- Wojciech Boratyñski (1967-)
+%
+ Móg³bym byæ waszym ojcem, gdybym siê postara³.
+	-- Wojciech Boratyñski (1967-)
+%
+ No co? Ka¿dy siê kiedy¶ urodzi³.
+	-- Wojciech Boratyñski (1967-)
+%
+ Mo¿e i tak nie jest, ale w gruncie rzeczy tak jest.
+	-- Wojciech Boratyñski (1967-)
+%
+ - Czyli jestem euroentuzjast±?
+ - No nie chcê ciê obraziæ.
+	-- Wojciech Boratyñski (1967-)
+%
+ I don't mind your thinking slowly; I mind your publishing faster than you
+think.
+	-- Attribtued to Wolfgang Ernst Pauli (1900-1958)
+%
+ This isn't right.  This isn't even wrong.
+	-- Attribtued to Wolfgang Ernst Pauli (1900-1958)
+%
+ /* You are not expected to understand this */
+	-- comment in the context-switching code of the V6 Unix kernel
+%
+ Welcome to DALNet! Where the men are men, the women are men, and the
+teenage girls are undercover FBI Agents!
+	-- DALNet IRC Welcome Message
+%
+ recursion n.: See Recursion
+	-- The Jargon File
+%
+ Vanitas vanitatum et omnia vanitas.
+ /Marno¶æ nad marno¶ciami i wszystko marno¶æ./
+	-- Ksiêga Koheleta
+%
+ No! I distinctly said 'Tie Strap A to hook B', it's not my fault if you
+matched up the letters.
+	-- Overheard at the NASA Control Room
+%
+ If we built this large wooden badger...
+	-- Overheard at the NASA Control Room
+%
+ How many times did I tell those Italian guys that pasta makes a bad tether?!
+	-- Overheard at the NASA Control Room
+%
+ Columbia, please repeat, sounded like you said 'OOPS'.
+%
+ Endless Loop: n., see Loop, Endless.
+ Loop, Endless: n., see Endless Loop.
+	-- Random Shack Data Processing Dictionary
+%
+ The one who says it cannot be done should never interrupt the one who is
+doing it.
+	-- The Roman Rule
+%
+ The world is coming to an end!  Repent and return those library books!
+%
+ 43rd Law of Computing: Anything that can go wr
+ Segmentation violation -- Core dumped
+%
+ Hey! I hate these Microsoft guys! What a rotten compiler! It only accepts
+16,384 local variables in a function!
+%
+ Stallman: "God told me I programmed the best editor in the world!"
+ Torvalds: "Well, God told *me* that I programmed the best OS in the
+world!"
+ Knuth: "Wait, wait - I never said that."
+%
+ The world is going for shut down.  Please log off.
+%
+ There are 10 kinds of people in the world, those that understand binary
+and those that don't.
+%
+ There are 10 kinds of people in the world, those that understand trinary,
+those that don't, and those that confuse it with binary.
+%
+ Life would be so much easier if we only had the source code.
+%
+ It is ridiculous claiming that video games influence children.  For
+instance, if Pac-man affected kids born in the eighties, we should by now
+have a bunch of teenagers who run around in darkened rooms and eat pills
+while listening to monotonous electronic music.
+%
+ UNIX is user-friendly.  It's just very selective about who its friends
+are.
+%
+ In 1945, peace broke out.
+%
+ Don't take life too seriously: it isn't permanent.
+%
+ The software said it requires Win95 or better, so I installed Linux.
+%
+ Linux, WinNT, MS-DOS - The Good, the Bad and the Ugly.
+%
+ Linux: The choice of a GNU generation
+%
+ Linux: Because a PC is a terrible thing to waste
+%
+ Linux: Because rebooting is for adding new hardware
+%
+ Linux: Where do you want to fly today?
+%
+ Computers are like airconditioners - they stop working properly if you
+open Windows.
+%
+ Who is General Failure and why is he reading my hard disk ?
+%
+ Jak kra¶æ to miliony, jak ruch*æ to ksiê¿niczki, a jak Linux to Slackware.
+%
+ If you think of MS-DOS as mono, and Windows as stereo, then Linux is Dolby
+Pro-Logic Surround Sound with Bass Boost and all the music is free.
+%
+ God, root, what's the difference?
+%
+ Jak rz±dzi siê siwatem i prowadzi go do wojen? Politycy ok³amuj±
+dziennikarzy, a gdy przeczytaj± te k³amstwa w gazetach, zaczynaj± w nie
+wierzyæ.
+%
+ Dzieci udaj± ¿o³nierzy.  To ma sens.  Dlaczego jednak ¿o³nierze udaj±
+dzieci.
+%
+ Ludzie s± jak Windows: Ka¿dy ma jakiego¶ wirusa.
+%
+ Mo¿e dla ¶wiata jeste¶ nikim, ale dla kogo¶ mo¿esz byæ ca³ym ¶wiatem.
+%
+ Nie nale¿y siê gniewaæ na bieg wypadków, nic ich to bowiem nie obchodzi.
+%
+ Z prawdziw± mi³o¶cia jest tak jak z pojawieniem siê duchów; wszyscy o nich
+mówi±, ale ma³o kto je widzia³.
+%
+ Cz³owiek jest jedynym stworzeniem, które za nêdzn± op³atê pomaszeruje, by
+morodowaæ nieznanych sobie ludzi, którzy mu nic z³ego ne uczynili i z
+którymi nie ma ¿adnych sporów.
+%
+ Na pocz±tku by³ chaos i tak ju¿ zosta³o.
+%
+ I surf the web, therefore I am.
+%
+ Give a man a match, and he'll be warm for a minute, but set him on fire,
+and he'll be warm for the rest of his life.
+%
+ To err is human, to forgive, beyond the scope of the Operating System.
+%
+ B±d¼ czujny, root nie ¶pi!
+%
+ Hey, ISPs, leav our packets alone!
+%
+ Never date a tennis player; to them love means nothing.
+%
+ No one who's seen it in action can say the phrase "government help"
+without either laughing or crying.
+%
+ Dobrze, czy ¼le - byle z nazwiskiem.
+%
+ Lubiê banery flashowe; bo ich nie widzê.

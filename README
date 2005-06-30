@@ -1,7 +1,6 @@
 
                      Tiny Applications Collection
-
-Last update: $Date: 2005/06/30 10:04:10 $
+                     $Date: 2005/06/30 11:06:03 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -17,6 +16,11 @@ At the moment the collection include:
  * malloc -  a small program  which allocates memory.   Sounds stupid?
    Mayby,  but in  theory it  can  help freeing  memory and  therefore
    speeding up the PC.
+
+ * quotes.txt - a collection of quotations, some are in Polish.
+
+ * the-book-of-mozilla - a collection of quotations from The Book of
+   Mozilla.
 
  * tuptime  - my  personal favourite  :)  Displays total  (sum of  all
    uptimes) and biggest uptime.
