@@ -1,5 +1,8 @@
 2005-07-01  Michal Nazarewicz  <m86@o2.pl>
 
+	* FvwmTransFocus.c: NewFiley
+	* README, TODO: FvwmTransFocus added
+
 	* cdiff.sed, cdiff.c: New file
 	* timer.c: New file
 	* README, TODO: cdiff and timer added
