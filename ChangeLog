@@ -1,3 +1,9 @@
+2005-07-01  Michal Nazarewicz  <m86@o2.pl>
+
+	* cdiff.sed, cdiff.c: New file
+	* timer.c: New file
+	* README, TODO: cdiff and timer added
+
 2005-06-30  Michal Nazarewicz  <m86@o2.pl>
 
 	* load.c: New file

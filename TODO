@@ -1,5 +1,9 @@
 Tiny Applications Collection TODO List
 
+* cdiff.c
+  - add support for more modes
+  - allow running as a wrapper
+
 * malloc
   - change way it displays progress
 
