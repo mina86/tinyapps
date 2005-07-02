@@ -1,8 +1,14 @@
 Tiny Applications Collection TODO List
 
-* cdiff.c
+* cdiff
   - add support for more modes
   - allow running as a wrapper
+
+* cutcom
+  - add command line comments style configruation options
+  - add support for more comment types
+  - add support for file names passed as arguments
+  - add support for inplace modifications
 
 * FvwmTransFocus
   - Nicer config (using *FvwmTransFocus: *)

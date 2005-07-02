@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/07/02 00:30:43 $
+                     $Date: 2005/07/02 11:51:12 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -19,6 +19,9 @@ At the moment the collection include:
 
  * cpuload.sh - tiny script showing the cpuload.  May be useful for
    people interested in how it is calculated (see also traf.sh and load).
+
+ * cutcom - removes C++ comments from stdin and outputs the result to
+   stdout.
 
  * FvwmTransFocus - an FVWM module which changes windows' opacity
    depending on focus.  Whn window looses focus it becomes more

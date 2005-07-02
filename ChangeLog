@@ -1,3 +1,8 @@
+2005-07-02  Michal Nazarewicz  <m86@o2.pl>
+
+	* cutcom.c: New file
+	* README, TODO: cutcom added
+
 2005-07-01  Michal Nazarewicz  <m86@o2.pl>
 
 	* cpuload.sh, traf.sh: New file
