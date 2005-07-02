@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/07/01 18:36:44 $
+                     $Date: 2005/07/02 00:30:43 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -13,13 +13,16 @@ utility to the collection.
 
 At the moment the collection include:
 
- * FvwmTransFocus - an FVWM module which changes windows' opacity
-   depending on focus.  Whn window looses focus it becomes more
-   transparent which looks "cool" ;) .
-
  * cdiff (C and sed versions) - adds ANSI codes to the output of diff
    making it a bit more readable.  Both versions reads input from
    stdin and sends output with added ANSI codes to stdout.
+
+ * cpuload.sh - tiny script showing the cpuload.  May be useful for
+   people interested in how it is calculated (see also traf.sh and load).
+
+ * FvwmTransFocus - an FVWM module which changes windows' opacity
+   depending on focus.  Whn window looses focus it becomes more
+   transparent which looks "cool" ;) .
 
  * load - shows CPU load, memory and net traffic statistics.  It's
    mostly ment for people who are curious how to callculate such
@@ -31,10 +34,15 @@ At the moment the collection include:
 
  * quotes.txt - a collection of quotations, some are in Polish.
 
- * timer - a timer.
-
  * the-book-of-mozilla - a collection of quotations from The Book of
    Mozilla.
+
+ * timer - a timer.
+
+ * traf.sh - tiny script showing traffic statistics.  Many things are
+   hardcoded in the source but it may be useful for future
+   modifications or to lear how traffic is calculated (see also
+   cpuload.sh and load).
 
  * tuptime  - my  personal favourite  :)  Displays total  (sum of  all
    uptimes) and biggest uptime.

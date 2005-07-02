@@ -1,5 +1,9 @@
 Tiny Applications Collection TODO List
 
+* cdiff.c
+  - add support for more modes
+  - allow running as a wrapper
+
 * FvwmTransFocus
   - Nicer config (using *FvwmTransFocus: *)
   - Set initial opacity for all windows after the module is started
@@ -7,15 +11,14 @@ Tiny Applications Collection TODO List
   - Refresh windows when background changed doesn't seem to work ;/
   - Print errors when debug enabled
 
-* cdiff.c
-  - add support for more modes
-  - allow running as a wrapper
-
 * malloc
   - change way it displays progress
 
 * timer
   - add synchronization (after some time timer may show invalid value)
+
+* traf.sh
+  - make user configrable scales
 
 * tuptime
   - add support for BSD systems

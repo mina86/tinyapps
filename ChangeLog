@@ -1,6 +1,9 @@
 2005-07-01  Michal Nazarewicz  <m86@o2.pl>
 
-	* FvwmTransFocus.c: NewFiley
+	* cpuload.sh, traf.sh: New file
+	* README: cpuload.sh and traf.sh added
+
+	* FvwmTransFocus.c: New file
 	* README, TODO: FvwmTransFocus added
 
 	* cdiff.sed, cdiff.c: New file
