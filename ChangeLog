@@ -1,5 +1,8 @@
 2005-07-02  Michal Nazarewicz  <m86@o2.pl>
 
+	* ai-pitr.pl, ai-sid.pl: New file
+	* README: ai added
+
 	* cutcom.c: New file
 	* README, TODO: cutcom added
 

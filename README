@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/07/02 11:51:12 $
+                     $Date: 2005/07/02 12:11:16 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -12,6 +12,15 @@ share it  please email me at  mn86/AT/o2.pl, I'll be glad  to add your
 utility to the collection.
 
 At the moment the collection include:
+
+ * ai-pitr.pl - it's a joke really.  It's an AI which might be
+   written by Pitr from UserFriendly - it is 6 lines of code and
+   answers questions just like Pitr's AI.  For more see:
+   http://ars.userfriendly.org/cartoons/?id=19990602
+
+ * ai-sid.pl - it's a joke as well.  It's an AI which might by written
+   by Sid - it behaves like Sid's AI and is 8 lines of code.  Fore
+   more see: http://ars.userfriendly.org/cartoons/?id=20001014
 
  * cdiff (C and sed versions) - adds ANSI codes to the output of diff
    making it a bit more readable.  Both versions reads input from
