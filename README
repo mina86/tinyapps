@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/07/02 14:35:40 $
+                     $Date: 2005/07/02 15:30:00 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -47,6 +47,13 @@ At the moment the collection include:
  * malloc -  a small program  which allocates memory.   Sounds stupid?
    Mayby,  but in  theory it  can  help freeing  memory and  therefore
    speeding up the PC.
+
+ * mpd-state - a program based on Avuton Olrich's state-utils for
+   saving and restoring MPD (Music Player Daemon) state.  It requires
+   libmpdclient.h and libmpdclient.c files to compile.
+
+ * mpd-state-wrapper.sh - a small shell script making mpd-state
+   behaving like Avuton Olrich's state-utils.
 
  * quotes.txt - a collection of quotations, some are in Polish.
 

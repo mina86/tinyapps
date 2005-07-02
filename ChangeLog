@@ -1,5 +1,10 @@
 2005-07-02  Michal Nazarewicz  <m86@o2.pl>
 
+	* mpd-state.c, mpd-state-wrapper.sh: New file
+	* libmpdclient.h, libmpdclient.c: New file
+	* Makefile: New file
+	* README, TODO: mpd-state and mpd-state-wrapper.sh added
+
 	* installkernel: New file
 	* README, TODO: installkernel added
 

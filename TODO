@@ -25,6 +25,10 @@ Tiny Applications Collection TODO List
 * malloc
   - change way it displays progress
 
+* mpd-state
+  - allow getting information from different sources (eg. playlist
+    from a server and other state from a file).
+
 * timer
   - add synchronization (after some time timer may show invalid value)
 
