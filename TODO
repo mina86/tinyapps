@@ -17,6 +17,11 @@ Tiny Applications Collection TODO List
   - Refresh windows when background changed doesn't seem to work ;/
   - Print errors when debug enabled
 
+* installkernel
+  - more fool proof version guessing
+  - add --patch option
+  - add --user option
+
 * malloc
   - change way it displays progress
 

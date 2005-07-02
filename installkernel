@@ -1,0 +1,264 @@
+#!/bin/bash
+##
+## installkernel - Script for installing Linux kernel
+## $Id: installkernel,v 1.1 2005/07/02 14:35:40 mina86 Exp $
+## Copyright (c) 2004,2005 by Michal Nazarewicz <mn86/AT/o2.pl>
+## Licensed under the Academic Free License version 2.1.
+##
+
+##
+## Version
+##
+echo 'Install Kernel  v0.5  (c) 2004,2005 by Micha³ Nazarewicz'
+echo '$Id: installkernel,v 1.1 2005/07/02 14:35:40 mina86 Exp $'
+echo
+
+
+##
+## Help
+##
+usage () {
+	cat<<END
+usage: installkernel [<options> <switches>] [<version> [<image> [<systemmap>]]]
+<options> are:
+  -h --help                Displays this screen and exits
+  -V --version             Displays vesion and exits
+     --dry-run             Only display what would be done               [no]
+  -a --arch=<arch>         Sets the ARCH variable                        [auto]
+     --cd=<dir>            Changes directory to <dir>
+
+  If you use short option which requires an arumgnet (eg. '-a') the argument
+  must be specified just after the option without whitespace or anything
+  (eg. '-ai386')
+
+<switches> are:
+  -i --compile-image       Runs 'make bzImage' to compile image          [no]
+  -I --install-image       Copies kernel to /boot directory              [yes]
+  -m --compile-modules     Runs 'make modules'                           [no]
+  -M --install-modules     Runs 'make modules_install'                   [no]
+     --install             Synonym of  --install-image --install-modules
+     --compile             Synonym of  --compile-image --compile-modules
+  -s --symlinks            Updates symlinks in /boot directory           [yes]
+  -l --lilo                Runs 'lilo' to update MBR entry               [yes]
+     --all                 Turns on all switches
+
+  You can add 'n' to short forms or 'no-' to long forms of switches to
+  disaable the feature. (eg -ns will disable updating of symlinks and
+  --no-install will disable installing of modules and image).
+
+<version>   kernel version (default: reads from include/linux/version.h)
+<image>     path to kernel image (default: arch/\$ARCH/boot/bzImage)
+<systemmap> path to System.map file (default: System.map)
+END
+#  -p --patch=<patch-file>  Applies a patch (decompresses if needed)
+#  -P --force-patch=<patch-file>  like -p but ignores *.rej files
+#  -r --reverse-patch=<patch-file>  Applies a reverse patch
+#  -R --force-reverse-patch=<patch-file>  Like -r but ignores *.rej files
+}
+
+
+
+##
+## Various things
+##
+ARG0="`basename "$0"`"
+error () {
+	ECODE="$1"
+	shift
+	printf "%s: %s\n" "$ARG0" "$*"
+	exit $ECODE
+}
+
+header () {
+	TITLE="$*"
+	printf "\e[32m=== \e[1m%s\e[0;32m " "$TITLE"
+	LOOP=$(( ${COLUMNS-80} - ${#TITLE} - 29))
+	while [ $LOOP -gt 0 ]; do
+		echo -n '='
+		LOOP=$(($LOOP -1))
+	done
+	date +" [%y/%m/%d %H:%M:%S] ==="
+	echo -en '\e[0m'
+}
+
+dry_run () {
+	echo -ne '\e[33m  RUN: '
+	printf "'%s' " "$@"
+	echo -e '\e[0m'
+}
+
+
+
+##
+## Init default options
+##
+VER=""
+IMG_PATH=""
+MAP_PATH=""
+
+RUN=""
+
+COMPILE_IMAGE="n"
+COMPILE_MODULES="n"
+INSTALL_IMAGE="y"
+INSTALL_MODULES="n"
+UPDATE_SYMLINKS="y"
+RUN_LILO="y"
+
+unset ARCH
+
+
+##
+## Function for patching the kernel
+##
+patch_kernel () {
+	header Patch file: "$2"
+	error 2 Patching not yet implemented
+
+#		case "$PATCH" in
+#			(*.bz2) bzip2 -cd "$PATCH" |patch -p1 || exit; ;;
+#			(*.gz) gzip -cd "$PATCH" |patch -p1 || exhit; ;;
+#			(*.Z) uncompress -c "$PATCH" |patch -p1 || exit; ;;
+#			(*) patch -p1 <$PATCH || exit
+#		esac
+}
+
+
+
+##
+## Parse arguments
+##
+while [ ! -z "$1" ]; do
+	PARAM=""
+	case "$1" in
+	(--help|-h) usage; exit; ;;
+	(--version|-V) exit; ;;
+
+	(--arch=*) ARCH="${1:7}"; ;;
+	(-a*) ARCH="${1:2}"; ;;
+
+	(--cd=*) $RUN cd "${1:5}" || exit 1; ;;
+#	(--*patch=*|-p|-P|-r|-R) patch_kernel "$1"; ;;
+
+	(--dry-run)    RUN="dry_run"; ;;
+	(--no-dry-run) RUN=""; ;;
+
+	(-n*)    VALUE="n"; PARAM="-${1:2}"; ;;
+	(--no-*) VALUE="n"; PARAM="--${1:5}"; ;;
+	(--*)    VALUE="y"; PARAM="--${1:2}"; ;;
+	(-*)     VALUE="y"; PARAM="-${1:1}"; ;;
+
+	(*)
+		if   [ -z "$VER"      ]; then VER="$1"
+		elif [ -z "$IMG_PATH" ]; then IMG_PATH="$1"
+		elif [ -z "$MAP_PATH" ]; then MAP_PATH="$1"
+		else error 1 "unknown option: '$1'"
+		fi
+		;;
+	esac
+
+
+	if [ -z "$PARAM" ]; then
+		shift
+		continue;
+	fi
+
+
+	case "$PARAM" in
+	(--compile) COMPILE_IMAGE=$VALUE; COMPILE_MODULES=$VALUE; ;;
+	(--install) INSTALL_IMAGE=$VALUE; INSTALL_MODULES=$VALUE; ;;
+	(-i|--compile-image)   COMPILE_IMAGE=$VALUE  ; ;;
+	(-I|--install-image)   INSTALL_IMAGE=$VALUE  ; ;;
+	(-m|--compile-modules) COMPILE_MODULES=$VALUE; ;;
+	(-M|--install-modules) INSTALL_MODULES=$VALUE; ;;
+	(-s|--symlinks)        UPDATE_SYMLINKS=$VALUE; ;;
+	(-l|--lilo)            RUN_LILO=$VALUE       ; ;;
+	(--all)
+		COMPILE_IMAGE=$VALUE;   COMPILE_MODULES=$VALUE
+		INSTALL_IMAGE=$VALUE;   INSTALL_MODULES=$VALUE
+		UPDATE_SYMLINKS=$VALUE; RUN_LILO=$VALUE
+		;;
+
+	(*) error 1 "unknown option: '$1'"; ;;
+	esac
+
+	shift
+done
+
+
+##
+## Set ARCH
+##
+if [ -z "$ARCH" ]; then
+	ARCH=`uname -m | sed -e 's/i.86/i386/' -e 's/sun4u/sparc64/' \
+	                     -e 's/arm.*/arm/' -e 's/sa110/arm/' \
+	                     -e 's/s390x/s390/' -e 's/parisc64/parisc/'`
+fi
+
+
+##
+## Compile image & modules and installing modules
+##
+if [ $COMPILE_IMAGE == y ]; then
+	header Compiling bzImage
+	$RUN make bzImage || exit $?
+fi
+
+if [ $COMPILE_MODULES == y ]; then
+	header Compiling modules
+	$RUN make modules || exit $?
+fi
+
+if [ $INSTALL_MODULES == y ]; then
+	header Installing modules
+	$RUN make modules_install || exit $?
+fi
+
+
+
+##
+## Copying image
+##
+if [ $INSTALL_IMAGE = y ]; then
+	header Installing kernel
+	if [ -z "$VER"      ]; then
+		$RUN make include/linux/version.h
+		VER=`sed -ne '/UTS_RELEASE/ s/^[^\"]*"\(.*\)"$/\1/ p' \
+		         <include/linux/version.h || exit $?`
+	fi
+	if [ -z "$IMG_PATH" ]; then IMG_PATH="arch/$ARCH/boot/bzImage"; fi
+	if [ -z "$MAP_PATH" ]; then MAP_PATH="System.map"; fi
+
+	echo '  CP      bzImage'
+	$RUN cp -- "$IMG_PATH" "/boot/bzImage-$VER"    || exit $?
+	echo '  CP      System.map'
+	$RUN cp -- "$MAP_PATH" "/boot/System.map-$VER" || exit $?
+	echo '  CP      .config'
+	$RUN cp -- .config "/boot/config-$VER"         || exit $?
+fi
+
+
+
+##
+## Updating symlinks
+##
+if [ $UPDATE_SYMLINKS == y ]; then
+	header Updating symlinks
+	$RUN cd /boot || exit 1
+	for FILE in bzImage System.map config; do
+		echo "  LNK     $FILE"
+		$RUN mv -f $FILE $FILE~
+		$RUN ln -fs $FILE-$VER $FILE
+	done
+	$RUN cd -
+fi
+
+
+
+##
+## Running LILO
+##
+if [ $RUN_LILO == y ]; then
+	header Running LILO
+	$RUN lilo
+fi
