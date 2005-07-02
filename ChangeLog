@@ -1,5 +1,12 @@
 2005-07-02  Michal Nazarewicz  <m86@o2.pl>
 
+	* infinite-logger.c: New file
+	* Makefile, README: infinite-logger added
+
+	* LICENSE.gpl: New file
+
+	* cpuload.sh, traf.sh: Now as Public Domain
+
 	* mpd-state.c, mpd-state-wrapper.sh: New file
 	* libmpdclient.h, libmpdclient.c: New file
 	* Makefile: New file

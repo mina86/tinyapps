@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.1 2005/07/02 15:30:00 mina86 Exp $
+## $Id: Makefile,v 1.2 2005/07/02 18:41:02 mina86 Exp $
 ##
 
 
@@ -17,8 +17,8 @@ X11_LIB_DIR  = /usr/X11R6/lib
 ##
 ## List of all applications
 ##
-all: FvwmTransFocus cdiff cutcom load malloc mpd-state quotes \
-     the-book-of-mozilla timer tuptime
+all: FvwmTransFocus cdiff cutcom infinite-logger load malloc mpd-state \
+     quotes the-book-of-mozilla timer tuptime
 
 
 ##
