@@ -1,9 +1,9 @@
 #!/bin/sh
 
 # Displays the CPU load
-# $Id: cpuload.sh,v 1.1 2005/07/02 00:30:43 mina86 Exp $
-# Copyright (C) 2005 by Michal Nazareicz (mn86/AT/o2.pl)
-# Licensed under the Academic Free License version 2.1.
+# $Id: cpuload.sh,v 1.2 2005/07/02 18:31:50 mina86 Exp $
+# By Michal Nazareicz (mn86/AT/o2.pl)
+# Released to Public Domain
 
 while true; do
 	read IGNORE A B C D IGNORE2 <<<"`cat /proc/stat`"
