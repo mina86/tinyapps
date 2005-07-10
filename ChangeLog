@@ -1,5 +1,8 @@
 2005-07-10  Michal Nazarewicz  <m86@o2.pl>
 
+	* null.c, null.sh: New file
+	* README: null added
+
 	* add, checkmail, get_mks_vir_bases, moz2elinks.pl, settitle,
 	xcolor2rgb: New file
 	* README: add, checkmail, get_mks_vir_bases, moz2elinks.pl, settitle,
