@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Displays the CPU load
-# $Id: cpuload.sh,v 1.3 2005/07/10 23:05:51 mina86 Exp $
+# $Id: cpuload.sh,v 1.4 2005/07/10 23:27:52 mina86 Exp $
 # By Michal Nazareicz (mn86/AT/o2.pl)
 # Released to Public Domain
 
@@ -16,10 +16,10 @@ done | while true; do
 	TOTAL=$(( $LOAD + $D ))
 
 	if [ -z "$OTOTAL" -o $TOTAL == "$OTOTAL" ]; then CPULOAD=0; else
-		CPULOAD=$((100 * ($LOAD-$OLOAD) / ($TOTAL-$OTOTAL)))
+		CPULOAD=$((10000 * ($LOAD-$OLOAD) / ($TOTAL-$OTOTAL)))
 	fi
 
-	printf " %3d%%\r" $CPULOAD
+	printf " %3d.%02d%%\r" $(($CPULOAD / 100)) $(($CPULOAD % 100))
 
 	OTOTAL=$TOTAL
 	OLOAD=$LOAD
