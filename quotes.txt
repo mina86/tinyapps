@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection
-## $Id: quotes.txt,v 1.1 2005/06/30 11:06:03 mina86 Exp $
+## $Id: quotes.txt,v 1.2 2005/07/10 16:41:01 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -724,6 +724,9 @@ conclution that your defencesystem SUCKS!
  No one can guarantee success in war, but only deserve it.
 	-- Sir Leonard Spencer Churchill (1874-1965)
 %
+ When you have to kill a man it costs nothing to be polite.
+	-- Sir Leonard Spencer Churchill (1874-1965)
+%
  The grim fact is that we prepare for war like precocious giants and for
 peace like retarded pygmies.
 	-- Lester Bowles Pearson (1897-1972)
@@ -1232,7 +1235,7 @@ been dead for two years.
 purpose is not to receive messages.
 	-- Umberto Eco (1932-)
 %
- Because I felt like killing a Monk"
+ Because I felt like killing a Monk.
 	-- Attributed to Umberto Eco (1932-)
 		(asked why he wrote The Name of the Rose)
 %
@@ -1418,3 +1421,5 @@ without either laughing or crying.
  Dobrze, czy ¼le - byle z nazwiskiem.
 %
  Lubiê banery flashowe; bo ich nie widzê.
+%
+ If you think before you speak the other guy gets his joke in first.
