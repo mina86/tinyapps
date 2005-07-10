@@ -1,11 +1,16 @@
 #!/bin/sh
 
 # Displays the CPU load
-# $Id: cpuload.sh,v 1.2 2005/07/02 18:31:50 mina86 Exp $
+# $Id: cpuload.sh,v 1.3 2005/07/10 23:05:51 mina86 Exp $
 # By Michal Nazareicz (mn86/AT/o2.pl)
 # Released to Public Domain
 
+
 while true; do
+	head -n 1 /proc/stat
+	sleep 1 || exit
+done | while true; do
+	read IGNORE A B C D IGNORE2
 	read IGNORE A B C D IGNORE2 <<<"`cat /proc/stat`"
 	LOAD=$(( $A + $B + $C ))
 	TOTAL=$(( $LOAD + $D ))

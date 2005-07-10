@@ -1,5 +1,9 @@
 2005-07-10  Michal Nazarewicz  <m86@o2.pl>
 
+	* cpuload.sh: Now more POSIX compatible (thx dozzie)
+
+	* traf.sh: Now makes better use of awk.
+
 	* null.c, null.sh: New file
 	* README: null added
 

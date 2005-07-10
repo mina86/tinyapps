@@ -1,15 +1,17 @@
 #!/bin/bash
 
 # Shows TX/RX for eth0 over 1sec
-# $Id: traf.sh,v 1.2 2005/07/02 18:31:50 mina86 Exp $
+# $Id: traf.sh,v 1.3 2005/07/10 23:05:51 mina86 Exp $
 # By Michal Nazareicz (mn86/AT/o2.pl)
 # Released to Public Domain
 
-TX1=`cat /proc/net/dev | grep "eth0" | cut -d: -f2 | awk '{print $9}'`
-RX1=`cat /proc/net/dev | grep "eth0" | cut -d: -f2 | awk '{print $1}'`
+eval "$(
+	awk '/eth0/{ sub(/^.*:/, ""); print "TX1=" $9 "\nRX1=" $1 }' /proc/net/dev
+)"
 while sleep 1; do
-	TX2=`cat /proc/net/dev | grep "eth0" | cut -d: -f2 | awk '{print $9}'`
-	RX2=`cat /proc/net/dev | grep "eth0" | cut -d: -f2 | awk '{print $1}'`
+	eval "$(
+		awk '/eth0/{ sub(/^.*:/, ""); print "TX2=" $9 "\nRX2=" $1 }' /proc/net/dev
+	)"
 
 	TX=$(( $TX2 - $TX1 ))
 	RX=$(( $RX2 - $RX1 ))
