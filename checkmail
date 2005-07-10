@@ -1,0 +1,51 @@
+#!/usr/bin/perl -lw
+##
+## Checks mboxes for unread mail
+## $Id: checkmail,v 1.1 2005/07/10 16:43:55 mina86 Exp $
+## Copyright (c) 2005 by Stanislaw Kelkot (dozzie/at/irc.pl)
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+
+# Script checks if specified mailboxes (mbox format) contain not yet read
+# mail. Not read mail is such that doesn't have "Status:" header or has "O"
+# there.
+#
+# Invokation: $0 mailbox ...
+
+MAILBOX: foreach $mailbox (@ARGV) {
+  open MAIL, $mailbox or do {
+    print STDERR "Can't open mailbox: $!";
+    next MAILBOX;
+  };
+
+  until (eof MAIL) {
+    $status = "";
+
+    do {
+      chomp($_ = <MAIL>);
+      $status  = $1 if /^status:\s*(.*)/i;
+    } while ($_ ne "");
+
+    if ($status eq "O" || $status eq "") {
+      $mailbox =~ s{^.*/}{};
+      print "You have mail in $mailbox";
+      next MAILBOX;
+    }
+
+    do { $_ = <MAIL> } until eof MAIL || /^From .* [A-Z][a-z][a-z] [A-Z][a-z][a-z] \d\d \d\d:\d\d:\d\d \d\d\d\d\s?$/;
+  }
+
+  close MAIL;
+}

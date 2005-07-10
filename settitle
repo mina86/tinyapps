@@ -1,0 +1,13 @@
+#!/bin/sh
+##
+## Sets the title of xterm-compatible terminals.
+## $Id: settitle,v 1.1 2005/07/10 16:43:55 mina86 Exp $
+## By Stanislaw Kelkot (dozzie/at/irc.pl)
+## Released to Public Domain
+##
+
+if [ $# = 0 ]; then
+  echo -ne "\e]2;rxvt\007"
+else
+  echo -ne "\e]2;$*\007"
+fi

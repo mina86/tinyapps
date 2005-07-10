@@ -1,3 +1,12 @@
+2005-07-10  Michal Nazarewicz  <m86@o2.pl>
+
+	* add, checkmail, get_mks_vir_bases, moz2elinks.pl, settitle,
+	xcolor2rgb: New file
+	* README: add, checkmail, get_mks_vir_bases, moz2elinks.pl, settitle,
+	and xcolor2rgb added
+
+	* quotes.txt: Some new quotes
+
 2005-07-02  Michal Nazarewicz  <m86@o2.pl>
 
 	* infinite-logger.c: New file

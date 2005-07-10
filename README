@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/07/02 18:41:02 $
+                     $Date: 2005/07/10 16:43:55 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -13,9 +13,11 @@ utility to the collection.
 
 At the moment the collection include:
 
- * ai-pitr.pl - it's a joke really.  It's an AI which might be
-   written by Pitr from UserFriendly - it is 6 lines of code and
-   answers questions just like Pitr's AI.  For more see:
+ * add - adds specified text to each line from stdin
+
+ * ai-pitr.pl - it's a joke really.  It's an AI which might be written
+   by Pitr from UserFriendly - it is 6 lines of code and answers
+   questions just like Pitr's AI.  For more see:
    http://ars.userfriendly.org/cartoons/?id=19990602
 
  * ai-sid.pl - it's a joke as well.  It's an AI which might by written
@@ -26,6 +28,9 @@ At the moment the collection include:
    making it a bit more readable.  Both versions reads input from
    stdin and sends output with added ANSI codes to stdout.
 
+ * checkmail - checks whether mboxes given as arguments contain any
+   urnead mail.
+
  * cpuload.sh - tiny script showing the cpuload.  May be useful for
    people interested in how it is calculated (see also traf.sh and load).
 
@@ -35,6 +40,10 @@ At the moment the collection include:
  * FvwmTransFocus - an FVWM module which changes windows' opacity
    depending on focus.  Whn window looses focus it becomes more
    transparent which looks "cool" ;) .
+
+ * get_mks_vir_bases - Downlaods MKS-Vir virus database.  Simplified
+   version of mksupdate shell script (from mks_vir antivirus).  It
+   does only download up-to-date virus bases and nothing more.
 
  * infinite-logger - loggs every logged message including the messages
    logget by itself :]
@@ -51,6 +60,9 @@ At the moment the collection include:
    Mayby,  but in  theory it  can  help freeing  memory and  therefore
    speeding up the PC.
 
+ * moz2elinks.pl - converts bookmarks from Mozilla's format to ELinks'
+   (http://elinks.or.cz) format.
+
  * mpd-state - a program based on Avuton Olrich's state-utils for
    saving and restoring MPD (Music Player Daemon) state.  It requires
    libmpdclient.h and libmpdclient.c files to compile.
@@ -59,6 +71,9 @@ At the moment the collection include:
    behaving like Avuton Olrich's state-utils.
 
  * quotes.txt - a collection of quotations, some are in Polish.
+
+ * settitle - Sets the title of xterm, rxvt, Eterm, aterm and other
+   xterm-compatible terminals.
 
  * the-book-of-mozilla - a collection of quotations from The Book of
    Mozilla.
@@ -72,6 +87,9 @@ At the moment the collection include:
 
  * tuptime  - my  personal favourite  :)  Displays total  (sum of  all
    uptimes) and biggest uptime.
+
+ * xcolor2rgb - Reads from argument list (or from STDIN, if no
+   arguments are given) and prints apropriate RGB value to STDOUT.
 
 More  documentation about  each  utility is  usually  provided in  the
 source  code  or  utility's   README  file  which  is  usually  called

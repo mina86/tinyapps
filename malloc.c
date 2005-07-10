@@ -1,6 +1,6 @@
 /*
  * Allocates specified amount of memory
- * $Id: malloc.c,v 1.2 2005/06/30 10:11:25 mina86 Exp $
+ * $Id: malloc.c,v 1.3 2005/07/10 16:43:55 mina86 Exp $
  * Copyright (C) 2005 by Michal Nazareicz (mn86/AT/o2.pl)
  * Licensed under the Academic Free License version 2.1.
  */
@@ -37,13 +37,12 @@ void print_size(int size) {
 
 /**** Main ****/
 int main(int argc, char **argv) {
-	char *ptr;
 	long to_allocate, allocated = 0;
 	int d = 0, dot;
 
 	/* Parse arguments */
-	to_allocate =  argc!=2 || !*argv[1] ? -1 : strtol(argv[1], &ptr, 0);
-	if (to_allocate<0 || *ptr) {
+	to_allocate =  argc!=2 || !*argv[1] ? -1 : strtol(argv[1], argv + 1, 0);
+	if (to_allocate<0 || argv[1]) {
 		puts("usage: malloc <number>");
 		puts("where <number> is number of KiBs to allocate");
 		return 1;
