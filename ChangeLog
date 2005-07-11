@@ -1,4 +1,4 @@
-2005-07-10  Michal Nazarewicz  <m86@o2.pl>
+2005-07-10  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* cpuload.sh: More accurate (shows 2 digits after decimal points)
 
@@ -15,7 +15,7 @@
 
 	* quotes.txt: Some new quotes
 
-2005-07-02  Michal Nazarewicz  <m86@o2.pl>
+2005-07-02  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* infinite-logger.c: New file
 	* Makefile, README: infinite-logger added
@@ -38,7 +38,7 @@
 	* cutcom.c: New file
 	* README, TODO: cutcom added
 
-2005-07-01  Michal Nazarewicz  <m86@o2.pl>
+2005-07-01  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* cpuload.sh, traf.sh: New file
 	* README: cpuload.sh and traf.sh added
@@ -50,7 +50,7 @@
 	* timer.c: New file
 	* README, TODO: cdiff and timer added
 
-2005-06-30  Michal Nazarewicz  <m86@o2.pl>
+2005-06-30  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* load.c: New file
 	* README, TODO: load added
@@ -65,6 +65,6 @@
 	* README, malloc.c: New file
 	* TODO: malloc added
 
-2005-06-29  Michal Nazarewicz  <m86@o2.pl>
+2005-06-29  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* LICENSE, LICENSE.AFL, TODO, tuptime.c: New file.

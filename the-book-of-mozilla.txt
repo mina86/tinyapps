@@ -1,6 +1,7 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
-## Quotations from The Book of Mozilla
-## $Id: the-book-of-mozilla.txt,v 1.1 2005/06/30 11:06:03 mina86 Exp $
+## Quotations from The Book of Mozilla.
+## $Id: the-book-of-mozilla.txt,v 1.2 2005/07/11 00:20:58 mina86 Exp $
+## By Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Released to Public Domain
 ##
 ## To create a fortune compatible file use:

@@ -1,7 +1,7 @@
 /*
- * FvwmTransFocus
- * $Id: FvwmTransFocus.c,v 1.1 2005/07/01 18:36:44 mina86 Exp $
- * Copyright 2005 by Michal Nazarewicz <mina86/at/tlen.pl>
+ * FVWM module changing opacity depending on focus.
+ * $Id: FvwmTransFocus.c,v 1.2 2005/07/11 00:20:57 mina86 Exp $
+ * Copyright 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  * Licensed under the Academic Free License version 2.1.
  * Based on transset by Matthew Hawn
  */

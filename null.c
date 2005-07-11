@@ -1,7 +1,7 @@
 /*
- * Discards standard input
- * $Id: null.c,v 1.1 2005/07/10 18:06:59 mina86 Exp $
- * By Michal Nazarewicz (mn86/AT/o2.pl)
+ * Discards standard input.
+ * $Id: null.c,v 1.2 2005/07/11 00:20:58 mina86 Exp $
+ * By Michal Nazarewicz (mina86/AT/tlen.pl)
  * Released to Public Domain
  */
 

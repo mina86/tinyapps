@@ -1,10 +1,10 @@
 #!/bin/sh
-
-# Displays the CPU load
-# $Id: cpuload.sh,v 1.4 2005/07/10 23:27:52 mina86 Exp $
-# By Michal Nazareicz (mn86/AT/o2.pl)
-# Released to Public Domain
-
+##
+## Displays the CPU load.
+## $Id: cpuload.sh,v 1.5 2005/07/11 00:20:58 mina86 Exp $
+## By Michal Nazareicz (mina86/AT/tlen.pl)
+## Released to Public Domain
+##
 
 while true; do
 	head -n 1 /proc/stat

@@ -1,7 +1,7 @@
 /*
  * Logs to syslog all messages logged to syslog :]
- * $Id: infinite-logger.c,v 1.1 2005/07/02 18:41:02 mina86 Exp $
- * Copyright (C) 2005 by Michal Nazareicz (mn86/AT/o2.pl)
+ * $Id: infinite-logger.c,v 1.2 2005/07/11 00:20:58 mina86 Exp $
+ * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
  * Licensed under the Academic Free License version 2.1.
  */
 

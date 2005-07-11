@@ -1,11 +1,10 @@
 #!/bin/bash
-
-#
-# Wrapper for mpd-state to make it behave like state-utils
-# $Id: mpd-state-wrapper.sh,v 1.1 2005/07/02 15:30:00 mina86 Exp $
-# Copyright (C) 2005 by Michal Nazareicz (mn86/AT/o2.pl)
-# Licensed under the Academic Free License version 2.1.
-#
+##
+## Wrapper for mpd-state to make it behave like state-utils.
+## $Id: mpd-state-wrapper.sh,v 1.2 2005/07/11 00:20:58 mina86 Exp $
+## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
+## Licensed under the Academic Free License version 2.1.
+##
 
 #
 # To install copy this file to (eg.) /usr/local/bin and make the

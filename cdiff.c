@@ -1,7 +1,7 @@
 /*
- * Colorize (adds ANSI codes) output of diff
- * $Id: cdiff.c,v 1.1 2005/07/01 17:36:50 mina86 Exp $
- * Copyright (C) 2005 by Michal Nazareicz (mn86/AT/o2.pl)
+ * Colorize (adds ANSI codes) output of diff.
+ * $Id: cdiff.c,v 1.2 2005/07/11 00:20:58 mina86 Exp $
+ * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
  * Licensed under the Academic Free License version 2.1.
  */
 

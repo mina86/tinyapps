@@ -1,9 +1,11 @@
 #!/bin/bash
-
-# Shows TX/RX for eth0 over 1sec
-# $Id: traf.sh,v 1.3 2005/07/10 23:05:51 mina86 Exp $
-# By Michal Nazareicz (mn86/AT/o2.pl)
-# Released to Public Domain
+##
+## Shows TX/RX for eth0 over 1sec
+## $Id: traf.sh,v 1.4 2005/07/11 00:20:58 mina86 Exp $
+## By Michal Nazareicz (mina86/AT/tlen.pl)
+##  & Stanislaw Klekot (dozzie/AT/irc.pl)
+## Released to Public Domain
+##
 
 eval "$(
 	awk '/eth0/{ sub(/^.*:/, ""); print "TX1=" $9 "\nRX1=" $1 }' /proc/net/dev

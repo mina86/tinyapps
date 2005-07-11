@@ -1,7 +1,8 @@
 /*
- *
- * (c) 2005 by Avuton Olrich <avuton@gmail.com>
- * (c) 2005 by Michal Nazarewicz (mn86/AT/o2.pl)
+ * Prints/restores MPD's state.
+ * $Id: mpd-state.c,v 1.2 2005/07/11 00:20:58 mina86 Exp $
+ * Copyright (c) 2005 by Avuton Olrich (avuton/AT/gmail.com)
+ * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -12,10 +13,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
- *
  */
 
 #include "libmpdclient.h"

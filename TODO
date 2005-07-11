@@ -22,6 +22,9 @@ Tiny Applications Collection TODO List
   - add --patch option
   - add --user option
 
+* load
+  - make more platform independent
+
 * malloc
   - change way it displays progress
 
@@ -36,7 +39,7 @@ Tiny Applications Collection TODO List
   - make user configrable scales
 
 * tuptime
-  - add support for BSD systems
+  - make more platform independent
   - add command line options for setting location of uptime files
   - add command line options for setting uptime nad idle
   - add configuration file with location of uptime files (far future)
