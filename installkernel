@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.3 2005/07/12 15:00:36 mina86 Exp $
+## $Id: installkernel,v 1.4 2005/07/12 15:17:11 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 ##
 if [ -z "$INSTALLKERNEL_INTERNAL_NOHEADER" ]; then
 	echo 'Install Kernel  v0.5  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.3 2005/07/12 15:00:36 mina86 Exp $'
+	echo '$Id: installkernel,v 1.4 2005/07/12 15:17:11 mina86 Exp $'
 	echo
 fi
 
@@ -49,6 +49,7 @@ usage: installkernel [<options> <switches>] [<version> [<image> [<systemmap>]]]
 
 <switches> are:
      --dry-run          Only display what would be done               [no]
+     --color            Use colors                                    [auto]
   -i --compile-image    Runs 'make bzImage' to compile image          [no]
   -I --install-image    Copies kernel to /boot directory              [yes]
   -m --compile-modules  Runs 'make modules'                           [no]
@@ -88,22 +89,30 @@ error () {
 
 header () {
 	TITLE="$*"
-	printf "\e[32m=== \e[1m%s\e[0;32m " "$TITLE"
+	if [ $USE_ANSI == y ]; then
+		printf "\e[32m=== \e[1m%s\e[0;32m " "$TITLE"
+	else
+		printf "=== %s " "$TITLE"
+	fi
 	LOOP=$(( ${COLUMNS-80} - ${#TITLE} - 29))
 	while [ $LOOP -gt 0 ]; do
 		echo -n '='
 		LOOP=$(($LOOP -1))
 	done
 	date +" [%y/%m/%d %H:%M:%S] ==="
-	echo -en '\e[0m'
+	[ $USE_ANSI == y ] && echo -en '\e[0m'
 }
 
 dry_run () {
-	echo -e '\e[33m  RUN     '"$@"'\e[0m'
+	if [ $USE_ANSI == y ]; then
+		echo -e '\e[33m  RUN     '"$@"'\e[0m'
+	else
+		echo -e '  RUN     '"$@"
+	fi
 }
 
 dry_run_as () {
-	echo -e '\e[33m  RUN     [as '"$RUNAS"'] '"$@"'\e[0m'
+	dry_run "[as $RUNAS]" "$@"
 }
 
 
@@ -135,6 +144,8 @@ if [ -z "$INSTALLKERNEL_INTERNAL_NOPARSEARGS" ]; then
 	RUNAS=""
 
 	DRY_RUN="n"
+	[ -t ] && USE_ANSI="y" || USE_ANSI="n"
+
 	COMPILE_IMAGE="n"
 	COMPILE_MODULES="n"
 	INSTALL_IMAGE="y"
@@ -144,7 +155,7 @@ if [ -z "$INSTALLKERNEL_INTERNAL_NOPARSEARGS" ]; then
 
 	unset ARCH
 	VARS_TO_EXPORT="VER IMG_PATH MAP_PATH SU RUNAS COMPILE_IMAGE DRY_RUN"
-	VARS_TO_EXPORT="$VARS_TO_EXPORT COMPILE_MODULES INSTALL_IMAGE"
+	VARS_TO_EXPORT="$VARS_TO_EXPORT COMPILE_MODULES INSTALL_IMAGE USE_ANSI"
 	VARS_TO_EXPORT="$VARS_TO_EXPORT INSTALL_MODULES UPDATE_SYMLINKS RUN_LILO"
 
 
@@ -190,6 +201,8 @@ if [ -z "$INSTALLKERNEL_INTERNAL_NOPARSEARGS" ]; then
 
 		case "$PARAM" in
 		(--dry-run) DRY_RUN=$VALUE; ;;
+		(--color) USE_ANSI=$VALUE; ;;
+
 		(--compile) COMPILE_IMAGE=$VALUE; COMPILE_MODULES=$VALUE; ;;
 		(--install) INSTALL_IMAGE=$VALUE; INSTALL_MODULES=$VALUE; ;;
 		(-i|--compile-image)   COMPILE_IMAGE=$VALUE  ; ;;
@@ -198,13 +211,14 @@ if [ -z "$INSTALLKERNEL_INTERNAL_NOPARSEARGS" ]; then
 		(-M|--install-modules) INSTALL_MODULES=$VALUE; ;;
 		(-s|--symlinks)        UPDATE_SYMLINKS=$VALUE; ;;
 		(-l|--lilo)            RUN_LILO=$VALUE       ; ;;
+
 		(--all)
 			COMPILE_IMAGE=$VALUE;   COMPILE_MODULES=$VALUE
 			INSTALL_IMAGE=$VALUE;   INSTALL_MODULES=$VALUE
 			UPDATE_SYMLINKS=$VALUE; RUN_LILO=$VALUE
 			;;
 
-			(*) error 1 "unknown option: '$1'"; ;;
+		(*) error 1 "unknown option: '$1'"; ;;
 		esac
 
 		shift

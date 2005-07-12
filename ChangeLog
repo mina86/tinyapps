@@ -1,5 +1,7 @@
 2005-07-12  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* isntallkernel: --color switch added
+
 	* installkernel: --su and --user options added
 	* TODO: installkernel entry modified
 
