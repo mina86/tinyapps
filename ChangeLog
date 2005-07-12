@@ -1,3 +1,8 @@
+2005-07-12  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel: --su and --user options added
+	* TODO: installkernel entry modified
+
 2005-07-10  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* cpuload.sh: More accurate (shows 2 digits after decimal points)

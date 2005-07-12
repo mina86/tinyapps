@@ -18,9 +18,7 @@ Tiny Applications Collection TODO List
   - Print errors when debug enabled
 
 * installkernel
-  - more fool proof version guessing
   - add --patch option
-  - add --user option
 
 * load
   - make more platform independent
