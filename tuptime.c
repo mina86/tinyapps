@@ -1,6 +1,6 @@
 /*
  * tuptime - Shows total and biggest uptime.
- * $Id: tuptime.c,v 1.3 2005/07/11 00:20:58 mina86 Exp $
+ * $Id: tuptime.c,v 1.4 2005/07/12 17:23:52 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -151,13 +151,14 @@ int main (int argc, char **argv) {
 	if (fp==NULL) {
 		ERRS("could not open " BUPTIME " for reading (skipping)");
 		tuptime = tidle = 0;
+	} else {
+		i = fscanf(fp, "%lf %lf %lf %lf", &tuptime, &tidle, &muptime, &midle);
+		if (i!=2 && i!=4) {
+			ERRS("error reading " BUPTIME " (skipping)");
+			tuptime = tidle = 0;
+		}
+		fclose(fp);
 	}
-	i = fscanf(fp, "%lf %lf %lf %lf", &tuptime, &tidle, &muptime, &midle);
-	if (i!=2 && i!=4) {
-		ERRS("error reading " BUPTIME " (skipping)");
-		tuptime = tidle = 0;
-	}
-	if (fp!=NULL) fclose(fp);
 
 
 	/* Calculate total uptime */

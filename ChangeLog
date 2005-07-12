@@ -1,5 +1,8 @@
 2005-07-12  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* tuptime.c: bug causeing segfault when /var/log/buptime was
+	missing fixed
+
 	* isntallkernel: --color switch added
 
 	* installkernel: --su and --user options added
