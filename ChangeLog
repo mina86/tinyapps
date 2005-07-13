@@ -1,5 +1,8 @@
 2005-07-13  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* rot13.c: New file
+	* README, TODO: rot13 added
+
 	* load.sh: removed redundant read
 
 2005-07-12  Michal Nazarewicz  (mina86/AT/tlen.pl)

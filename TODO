@@ -30,6 +30,10 @@ Tiny Applications Collection TODO List
   - allow getting information from different sources (eg. playlist
     from a server and other state from a file).
 
+* rot13
+  - add switch to changeing the value chars should be rotated by
+  - allow specifing files as arguments
+
 * timer
   - add synchronization (after some time timer may show invalid value)
 
