@@ -1,3 +1,7 @@
+2005-07-13  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* load.sh: removed redundant read
+
 2005-07-12  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* tuptime.c: bug causeing segfault when /var/log/buptime was
