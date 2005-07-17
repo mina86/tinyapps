@@ -1,3 +1,8 @@
+2005-07-17  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* check-connection.sh: New file
+	* README: check-connection.sh added
+
 2005-07-13  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* rot13.c: New file
