@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.7 2005/07/24 15:33:14 mina86 Exp $
+## $Id: installkernel,v 1.8 2005/07/24 23:37:35 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,9 +23,22 @@
 ## Version
 ##
 if [ ! $INSIDE_INSTALLKERNEL ]; then
-	echo 'Install Kernel  v0.8  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.7 2005/07/24 15:33:14 mina86 Exp $'
+	echo 'Install Kernel  v0.9  (c) 2004,2005 by Micha³ Nazarewicz'
+	echo '$Id: installkernel,v 1.8 2005/07/24 23:37:35 mina86 Exp $'
 	echo
+	if [ -f /tmp/installkernel-lockfile ]; then
+		echo "${0##*/}: lockfile exists"
+		declare -i $PID
+		PID=`cat /tmp/installkernel-lockfile`
+		if [ $PID -ne 0 ] && ps -p $PID >/dev/null 2>&1; then
+			echo "${0##*/}: make sure only one instance of installkernel is running"
+			echo "${0##*/}: or remove /tmp/installkernel-lockfile if that is the case"
+			exit 4
+		fi
+
+		echo "${0##*/}: looks like invalid termination; removing lockfile"
+		echo -n $$ >/tmp/installkernel-lockfile
+	fi
 fi
 
 
@@ -101,9 +114,9 @@ END
 
 
 ##
-## Print error and exit
+## Prints error and exit
 ##
-ARG0="`basename "$0"`"
+ARG0="${0##*/}"
 error () {
 	local ECODE="$1"
 	shift
@@ -113,7 +126,7 @@ error () {
 
 
 ##
-## Print header
+## Prints header
 ##
 header () {
 	local TITLE="$*"
@@ -133,47 +146,52 @@ header () {
 
 
 ##
-## Run command
+## Runs command
 ##
 run () {
 	local AS=
+	local SILENT=
 	local DUMMY=
 	local FORCE=
+	local INPUT=/dev/stdin
+	local OUTPUT=/dev/stdout
 
 	# Arguments
-	if [ "$1" == "-c" ]; then if [ ! "$2" ]; then return 0; fi; shift 2; fi
-	[ "$1" == "-h" ] && header "$2" && shift 2
 	[ "$1" == "-u" ] && AS=yes      && shift
+	[ "$1" == "-s" ] && SILENT=yes  && shift
 	[ "$1" == "-f" ] && FORCE=yes   && shift
 	[ "$1" == "-d" ] && DUMMY=yes   && shift
+	[ "$1" == "-i" ] && INPUT="$2"  && shift 2
+	[ "$1" == "-o" ] && OUTPUT="$2" && shift 2
 	[ "$AS" -a ! "$RUNAS" ] && AS=
 
 	# Dry run
-	if [ $DRY_RUN ]; then
-		if [ $USE_ANSI ]; then
-			echo -ne '\e[33m  RUN    '
-			[ $AS ] && echo -n " [as $RUNAS]"
-			printf " '%s'" "$@"
-			echo -e '\e[0m'
-		else
-			echo -n '  RUN    '
-			[ $AS ] && echo -n " [as $RUNAS]"
-			printf " '%s'" "$@"
-			echo
-		fi
+	if [ "$DRY_RUN" -a ! "$SILENT" ]; then
+		[ $USE_ANSI ] && echo -ne '\e[33m  RUN    ' || echo -n '  RUN    '
+		[ $AS ] && echo -n " [as $RUNAS]"
+		printf " '%s'" "$@"
+		[ "$INPUT"  != /dev/stdin  ] && echo -n " <$INPUT"
+		[ "$OUTPUT" != /dev/stdout ] && echo -n " >$OUTPUT"
+		[ $USE_ANSI ] && echo -e '\e[0m' || echo
 		[ $FORCE ] || return 0
 	fi
+	[ "$DRY_RUN" -a ! "$FORCE" ] && return 0
 
 	# Don't run really
 	[ $DUMMY ] && return 0
 	local EC=0
 
+	# cd cannot be run throught su or nice
+	if [ "$1" == cd ]; then
+		"$@" || EC=$?
+		return $?
+	fi
+
 	# Run not as
 	if [ ! $AS ]; then
-		if [ "$NICE" != "auto" ] && [ "$NICE" -ne 0 ]; then
-			nice -n "$NICE" "$@" || EC=$?
-		else
-			"$@" || EC=$?
+		if [ "$NICE" != "auto" ] && [ "$NICE" -ne 0 ]
+		then nice -n "$NICE" "$@" <"$INPUT" >"$OUTPUT" || EC=$?
+		else                 "$@" <"$INPUT" >"$OUTPUT" || EC=$?
 		fi
 		return $EC
 	fi
@@ -184,17 +202,16 @@ run () {
 		ARGS="$ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
 		shift
 	done
-	if [ $NICE -ne 0 ]; then
-		nice -n "$NICE" su "$RUNAS" -c "$ARGS" || EC=$?
-	else
-		su "$RUNAS" -c "$ARGS" || EC=$?
+	if [ $NICE -ne 0 ]
+	then nice -n "$NICE" su "$RUNAS" -c "$ARGS" <"$INPUT" >"$OUTPUT" || EC=$?
+	else                 su "$RUNAS" -c "$ARGS" <"$INPUT" >"$OUTPUT" || EC=$?
 	fi
 	return $EC
 }
 
 
 ##
-## Backup specified file(s)
+## Backups specified file(s)
 ##
 backup () {
 	local ARG=
@@ -210,26 +227,29 @@ backup () {
 
 
 ##
-## Function for patching the kernel
+## Signals etc
 ##
-patch_kernel () {
-	header Patch file: "$2"
-	error 2 Patching not yet implemented
+interrupted () {
+	if [ $USE_ANSI == y ]
+	then echo -e '\e[31;1m  SIG    Got SIG$1; terminating...\e[0m'
+	else echo '  SIG    Got SIG$1; terminating...'
+	fi
 
-#		case "$PATCH" in
-#			(*.bz2) bzip2 -cd "$PATCH" |patch -p1 || exit; ;;
-#			(*.gz) gzip -cd "$PATCH" |patch -p1 || exhit; ;;
-#			(*.Z) uncompress -c "$PATCH" |patch -p1 || exit; ;;
-#			(*) patch -p1 <$PATCH || exit
-#		esac
+	[ -f /tmp/installkernel-$$ ] && rm -f -- /tmp/installkernel-$$
+	[ -f /tmp/installkernel-lockfile ] && rm -f -- /tmp/installkernel-lockfile
+
+	exit 3
 }
+
+set -e
+for E in ERR INT KILL TERM STOP HUP; do
+	trap "interrupted $E" $E
+done
 
 
 ##
 ## Init default options
 ##
-set -e
-
 if [ ! $INSIDE_INSTALLKERNEL ]; then
 	VER=
 	IMG_PATH=
@@ -253,7 +273,8 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 	TIDY_IMAGE=
 	TIDY_MODULES=
 
-	ACTIONS=( )
+	declare -a ACTIONS
+	ACTION_COUNT=0
 
 	unset ARCH
 	INSIDE_INSTALLKERNEL=y
@@ -261,13 +282,13 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 	VARS_TO_EXPORT="$VARS_TO_EXPORT COMPILE_MODULES INSTALL_IMAGE USE_ANSI"
 	VARS_TO_EXPORT="$VARS_TO_EXPORT INSTALL_MODULES UPDATE_SYMLINKS RUN_LILO"
 	VARS_TO_EXPORT="$VARS_TO_EXPORT MAKE_DEP CLEAN TIDY_IMAGE TIDY_MODULES"
-	VARS_TO_EXPORT="$VARS_TO_EXPORT INSIDE_INSTALLKERNEL ACTIONS"
+	VARS_TO_EXPORT="$VARS_TO_EXPORT INSIDE_INSTALLKERNEL"
 
 
 ##
 ## Parse arguments
 ##
-	while [ ! -z "$1" ]; do
+	while [ "$1" ]; do
 		PARAM=
 		case "$1" in
 		(--help|-h) usage; exit 0; ;;
@@ -276,9 +297,26 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 		(--arch=*) ARCH="${1:7}"; ;;
 		(-a*) ARCH="${1:2}"; ;;
 
-		(--cd=*) run -f cd -- "${1:5}"; ;;
-		(--cd) run -f cd /usr/src/linux; ;;
-#		(--*patch=*|-p|-P|-r|-R) patch_kernel "$1"; ;;
+		(--cd=*)
+			ACTIONS[$ACTION_COUNT]=cd;
+			ACTION_COUNT=$(($ACTION_COUNT + 1))
+			ACTIONS[$ACTION_COUNT]="${1:5}";
+			ACTION_COUNT=$(($ACTION_COUNT + 1))
+			;;
+		(--cd)
+			ACTIONS[$ACTION_COUNT]=cd;
+			ACTION_COUNT=$(($ACTION_COUNT + 1))
+			ACTIONS[$ACTION_COUNT]=/usr/src/linux;
+			ACTION_COUNT=$(($ACTION_COUNT + 1))
+			;;
+
+
+		(--patch=*)
+			ACTIONS[$ACTION_COUNT]=patch;
+			ACTION_COUNT=$(($ACTION_COUNT + 1))
+			ACTIONS[$ACTION_COUNT]="${1:8}";
+			ACTION_COUNT=$(($ACTION_COUNT + 1))
+			;;
 
 		(--su) SU=y; ;;
 		(--user=*) RUNAS="${1:7}"; ;;
@@ -347,6 +385,8 @@ fi
 
 
 header Starting
+set -- "${ACTIONS[@]}"
+unset ACTIONS ACTION_COUNT
 
 
 ##
@@ -365,6 +405,7 @@ if [ -z "$ARCH" ]; then
 	ARCH=`uname -m | sed -e 's/i.86/i386/' -e 's/sun4u/sparc64/' \
 	                     -e 's/arm.*/arm/' -e 's/sa110/arm/' \
 	                     -e 's/s390x/s390/' -e 's/parisc64/parisc/'`
+	echo "  ARCH    $ARCH"
 fi
 
 
@@ -373,9 +414,9 @@ fi
 ##
 if [ "$SU" -a $EUID -ne 0 ]; then
 	if [ "$NICE" -ne 0 ]; then
-		header Becoming super user and setting nice
+		echo "  SU      Becoming super user and setting nice"
 	else
-		header Becoming super user
+		echo "  SU      Becoming super user"
 	fi
 
 	[ "$RUNAS" ] || RUNAS="$USER"
@@ -387,6 +428,12 @@ if [ "$SU" -a $EUID -ne 0 ]; then
 		echo Here you would be asked for root password.
 	else
 		export $VARS_TO_EXPORT
+
+		ARGS="'`echo "$0" | sed -e "s/'/'\\\\''/"`'"
+		while [ $# -ne 0 ]; do
+			ARGS="$ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
+			shift
+		done
 		if [ "$NICETMP" -ne 0 ]; then
 			nice -n "$NICETMP" su -c "$0"
 		else
@@ -398,9 +445,70 @@ fi
 
 
 ##
+## Patching and changing directories
+##
+while [ "$1" ]; do
+	if [ "$1" == cd ]; then
+		echo "  CD      $2"
+		run -f cd -- "$2"
+		shift 2
+		continue;
+	fi
+
+	if [ "$1" != patch ]; then error 3 Internal error; fi
+
+	PATCH="$2"
+	FORCE=;   [ "${PATCH:0:1}" == !  ] && FORCE=y   && PATCH="${PATCH:1}"
+	REVERSE=; [ "${PATCH:0:2}" == -R ] && REVERSE=R && PATCH="${PATCH:2}"
+
+	run -d expr "$PATCH" : '[0-9][0-9]*:'
+	CUT=`expr "$PATCH" : '[0-9][0-9]*:' || true`
+	if [ $CUT -ne 0 ]; then
+		LEVEL="${PATCH:0:$CUT}"; LEVEL="${LEVEL%:}"
+		PATCH="${PATCH:$CUT}"
+	else
+		LEVEL=1
+	fi
+
+	if [ "${PATCH:0:1}" == = ]
+	then PATCH="${PATCH:1}"
+	elif [ "${PATCH:0:2}" == - ]
+	then PATCH="${PATCH:2}"
+	fi
+
+	[ -f "$PATCH" ] || error 2 "$PATCH: no such file"
+	[ -r "$PATCH" ] || error 2 "$PATCH: unreadable"
+
+	echo "  DECOMP  $PATCH"
+	[ -h /tmp/installkernel-$$ ] && run rm -f /tmp/installkernel-$$
+	case "$PATCH" in
+	(*.bz2) run -u -i "$PATCH" -o /tmp/installkernel-$$  bzip2 -d   ; ;;
+	(*.gz)  run -u -i "$PATCH" -o /tmp/installkernel-$$  gzip  -d   ; ;;
+	(*.Z)   run -u -i "$PATCH" -o /tmp/installkernel-$$  compress -d; ;;
+	(*)     run -u ln -s "$PATCH" /tmp/installkernel-$$; ;;
+	esac
+
+	if [ ! "$FORCE" ]; then
+		echo "  TEST    $PATCH"
+		if [ $DRY_RUN ]
+		then run patch -sf{$REVERSE}p$LEVEL --dry-run \</tmp/installkernel-$$
+		else run patch -sf{$REVERSE}p$LEVEL --dry-run  </tmp/installkernel-$$
+		fi
+	fi
+
+	if [ $DRY_RUN ]
+	then run patch -sf{$REVERSE}p$LEVEL \</tmp/installkernel-$$
+	else run patch -sf{$REVERSE}p$LEVEL  </tmp/installkernel-$$
+	fi
+	run rm -f /tmp/installkernel-$$
+	shift 2
+done
+
+
+##
 ## Clean
 ##
-run -c "$CLEAN" -h 'Cleaning previous compilation' -u make clean
+[ $CLEAN ] && header 'Cleaning previous compilation' run -u make clean
 
 
 ##
@@ -413,6 +521,7 @@ if [ "$COMPILE_IMAGE" -a "$MAKE_DEP" == auto ]; then
 			error 3 include/linux/version.h: missing
 		VER=`sed -ne '/UTS_RELEASE/ s/^[^\"]*"\(.*\)"$/\1/ p' \
 		         <include/linux/version.h`
+		echo "  VER     $VER"
 	fi
 	[ "${VER:0:4}" == 2.4. ] && MAKE_DEP=y || MAKE_DEP=
 fi
@@ -421,10 +530,10 @@ fi
 ##
 ## make *
 ##
-run -c "$MAKE_DEP" -h 'Updating dependencies' -u make dep
-run -c "$COMPILE_IMAGE" -h 'Compiling bzImage' -u make bzImage
-run -c "$COMPILE_MODULES" -h 'Compiling modules' -u make modules
-run -c "$INSTALL_MODULES" -h 'Installing modules' make modules_install
+[ $MAKE_DEP        ] && header 'Updating dependencies' && run -u make dep
+[ $COMPILE_IMAGE   ] && header 'Compiling bzImage'     && run -u make bzImage
+[ $COMPILE_MODULES ] && header 'Compiling modules'     && run -u make modules
+[ $INSTALL_MODULES ] && header 'Installing modules'    && run    make modules_install
 
 
 ##
@@ -480,6 +589,7 @@ if [ $INSTALL_IMAGE ]; then
 			error 3 include/linux/version.h: missing
 		VER=`sed -ne '/UTS_RELEASE/ s/^[^\"]*"\(.*\)"$/\1/ p' \
 		         <include/linux/version.h`
+		echo "  VER     $VER"
 	fi
 	if [ ! "$IMG_PATH" ]; then IMG_PATH="arch/$ARCH/boot/bzImage"; fi
 	if [ ! "$MAP_PATH" ]; then MAP_PATH="System.map"; fi

@@ -1,5 +1,9 @@
 2005-07-24  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* installkernel: lockfile added
+	now caches signals
+	--patch option added
+
 	* installkernel: pretty much rewritten
 
 	* installkernel: --clean option added
