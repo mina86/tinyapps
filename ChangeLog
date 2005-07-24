@@ -1,3 +1,10 @@
+2005-07-24  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel: New options: --cd, --nice, --no-nice, --make-dep,
+	--image and --modules
+
+	* installkernel: make modules_install is now run as super user.
+
 2005-07-17  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* check-connection.sh: New file
