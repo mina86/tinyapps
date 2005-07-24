@@ -1,5 +1,7 @@
 2005-07-24  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* installkernel: pretty much rewritten
+
 	* installkernel: --clean option added
 
 	* installkernel: New options: --cd, --nice, --no-nice, --make-dep,
