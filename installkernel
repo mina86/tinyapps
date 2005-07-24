@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.5 2005/07/24 00:14:48 mina86 Exp $
+## $Id: installkernel,v 1.6 2005/07/24 00:19:47 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -23,8 +23,8 @@
 ## Version
 ##
 if [ -z "$INSTALLKERNEL_INTERNAL_NOHEADER" ]; then
-	echo 'Install Kernel  v0.6  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.5 2005/07/24 00:14:48 mina86 Exp $'
+	echo 'Install Kernel  v0.7  (c) 2004,2005 by Micha³ Nazarewicz'
+	echo '$Id: installkernel,v 1.6 2005/07/24 00:19:47 mina86 Exp $'
 	echo
 fi
 
@@ -53,7 +53,8 @@ usage: installkernel [<options> <switches>] [<version> [<image> [<systemmap>]]]
 <switches> are:
      --dry-run          Only display what would be done               [no]
      --color            Use colors                                    [auto]
-     --make-dep         Run 'make dep'                                [auto]
+     --clean            Runs 'make clean' before compilation          [no]
+     --make-dep         Runs 'make dep'                               [auto]
   -i --compile-image    Runs 'make bzImage' to compile image          [no]
   -I --install-image    Copies kernel to /boot directory              [yes]
   -m --compile-modules  Runs 'make modules'                           [no]
@@ -157,6 +158,7 @@ if [ -z "$INSTALLKERNEL_INTERNAL_NOPARSEARGS" ]; then
 	[ -t ] && USE_ANSI="y" || USE_ANSI="n"
 
 	MAKE_DEP="auto"
+	CLEAN=n
 	COMPILE_IMAGE="n"
 	COMPILE_MODULES="n"
 	INSTALL_IMAGE="y"
@@ -168,7 +170,7 @@ if [ -z "$INSTALLKERNEL_INTERNAL_NOPARSEARGS" ]; then
 	VARS_TO_EXPORT="VER IMG_PATH MAP_PATH SU RUNAS COMPILE_IMAGE DRY_RUN"
 	VARS_TO_EXPORT="$VARS_TO_EXPORT COMPILE_MODULES INSTALL_IMAGE USE_ANSI"
 	VARS_TO_EXPORT="$VARS_TO_EXPORT INSTALL_MODULES UPDATE_SYMLINKS RUN_LILO"
-	VARS_TO_EXPORT="$VARS_TO_EXPORT MAKE_DEP NICE"
+	VARS_TO_EXPORT="$VARS_TO_EXPORT MAKE_DEP NICE CLEAN"
 
 
 ##
@@ -218,6 +220,7 @@ if [ -z "$INSTALLKERNEL_INTERNAL_NOPARSEARGS" ]; then
 		(--dry-run) DRY_RUN=$VALUE; ;;
 		(--color) USE_ANSI=$VALUE; ;;
 
+		(--clean)   CLEAN=$VALUE; ;;
 		(--make-dep) MAKE_DEP=$VALUE; ;;
 		(--compile) COMPILE_IMAGE=$VALUE;   COMPILE_MODULES=$VALUE;   ;;
 		(--install) INSTALL_IMAGE=$VALUE;   INSTALL_MODULES=$VALUE;   ;;
@@ -321,10 +324,19 @@ fi
 
 
 ##
+## Clean
+##
+if [ $CLEAN == y ]; then
+	header Cleaning previous compilation
+	$URUN make clean || exit $?
+fi
+
+
+##
 ## Make dep?
 ##
 if [ $MAKE_DEP == auto -a $COMPILE_IMAGE == y ]; then
-	if [ -z "$VER"      ]; then
+	if [ -z "$VER" ]; then
 		$RUN make include/linux/version.h
 		[ -f include/linux/version.h ] || \
 			error 3 include/linux/version.h: missing
@@ -369,7 +381,7 @@ fi
 ##
 if [ $INSTALL_IMAGE = y ]; then
 	header Installing kernel
-	if [ -z "$VER"      ]; then
+	if [ -z "$VER" ]; then
 		$RUN make include/linux/version.h
 		[ -f include/linux/version.h ] || \
 			error 3 include/linux/version.h: missing
