@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.10 2005/07/24 23:54:29 mina86 Exp $
+## $Id: installkernel,v 1.11 2005/07/25 00:39:28 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 ##
 if [ ! $INSIDE_INSTALLKERNEL ]; then
 	echo 'Install Kernel  v0.9  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.10 2005/07/24 23:54:29 mina86 Exp $'
+	echo '$Id: installkernel,v 1.11 2005/07/25 00:39:28 mina86 Exp $'
 	echo
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
@@ -52,12 +52,15 @@ usage: installkernel [<options> <switches>] [<version> [<image> [<systemmap>]]]
   -h --help             Displays this screen and exits
   -V --version          Displays vesion and exits
   -a --arch=<arch>      Sets the ARCH variable                        [auto]
-     --cd=<dir>         Changes directory to <dir>
-     --cd               Synonym of --cd=/usr/src/linux
      --su               Tries to became root (implies --user=<current-user>)
   -u --user=<user>      Everything not requiring SU privilages run as <user>
      --nice=<nice>      Adjust priority by <nice>                     [auto]
      --no-nice          Synonym of  --nice=0
+
+     --cd=<dir>         Changes directory to <dir>
+     --cd               Synonym of --cd=/usr/src/linux
+     --patch=<patch>    Applies <patch> in the current directory
+
 
   If you use short option which requires an arumgnet (eg. '-a') the argument
   must be specified just after the option without whitespace or anything
@@ -67,6 +70,12 @@ usage: installkernel [<options> <switches>] [<version> [<image> [<systemmap>]]]
   absolute value of nice equal to 10 unless at the moment of running the
   absolute value of nice is greater then 10 in which case no nice
   adjustment will be used.
+
+  --cd and --patch options are executed in the given order.  <patch> is of
+  format: [ "!" ] [ "-r" ] [ <level> ":" ] [ ( "=" | "--" ) ] <path> where
+  ! means to apply patch even if there are some errors; -r means to treat
+  patch a reverse patch; <level> is a number passed to -p patch's argument
+  and <path> is path to the patch file.  Eg.:  --patch=!-r=reverse.diff
 
 <switches> are:
      --dry-run          Only display what would be done               [no]
@@ -105,10 +114,6 @@ usage: installkernel [<options> <switches>] [<version> [<image> [<systemmap>]]]
 <image>     path to kernel image (default: arch/\$ARCH/boot/bzImage)
 <systemmap> path to System.map file (default: System.map)
 END
-#  -p --patch=<patch-file>  Applies a patch (decompresses if needed)
-#  -P --force-patch=<patch-file>  like -p but ignores *.rej files
-#  -r --reverse-patch=<patch-file>  Applies a reverse patch
-#  -R --force-reverse-patch=<patch-file>  Like -r but ignores *.rej files
 }
 
 

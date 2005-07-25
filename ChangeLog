@@ -1,3 +1,7 @@
+2005-07-25  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel: --patch option docummented
+
 2005-07-24  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel: lockfile added
