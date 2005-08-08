@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.12 2005/07/25 02:12:31 mina86 Exp $
+## $Id: installkernel,v 1.13 2005/08/08 22:48:46 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 ##
 if [ ! $INSIDE_INSTALLKERNEL ]; then
 	echo 'Install Kernel  v0.10  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.12 2005/07/25 02:12:31 mina86 Exp $'
+	echo '$Id: installkernel,v 1.13 2005/08/08 22:48:46 mina86 Exp $'
 	echo
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
@@ -88,6 +88,12 @@ usage: installkernel [<options> <switches>] [<version> [<image> [<systemmap>]]]
   -c --clean            Runs 'make clean' before compilation          [no]
   -d --make-dep         Runs 'make dep'                               [auto]
 
+     --run-hooks        Runs all hooks                                [yes]
+     --run-pre-hooks    Runs all pre-* hooks                          [yes]
+     --run-post-hooks   Runs all post-* hooks                         [yes]
+     --run-<hook>       Runs <hook>'s scripts                         [yes]
+     --run-<event>      Synonym of  --run-pre-<event> --run-post-<hook>
+
   -A --all              Synonym of all of the below
 
   -i --compile-image    Runs 'make bzImage' to compile image          [no]
@@ -104,8 +110,10 @@ usage: installkernel [<options> <switches>] [<version> [<image> [<systemmap>]]]
      --compile          Synonym of  --compile-image --compile-modules
      --tidy             Synonym of  --tidy-image --tidy-modules
 
-  -s --symlinks         Updates symlinks in /boot directory           [yes]
-  -l --lilo             Runs 'lilo' to update MBR entry               [yes]
+  -s --update-symlinks  Updates symlinks in /boot directory           [yes]
+     --symlinks         Deprecated synonym of  --update-symlinks
+  -l --run-lilo         Runs 'lilo' to update MBR entry               [yes]
+     --lilo             Deprecated synonym of  --lilo
 
   You can add 'n' to short forms or 'no-' to long forms of switches to
   disaable the feature. (eg -ns will disable updating of symlinks and
@@ -120,6 +128,19 @@ eg. '-i -I' instead of '-iI'.
 <version>   kernel version (default: reads from include/linux/version.h)
 <image>     path to kernel image (default: arch/\$ARCH/boot/bzImage)
 <systemmap> path to System.map file (default: System.map)
+
+<hook>'s scripts are kept in directory /etc/installkernel.d/<hook>/ and are
+run when specified <hook> occurs.  Also, all executable files in
+/etc/installkernel.d/ are run if eny <hook> is trigered.  <hook>s are run with
+<hook>'s name as the first argument so when using <hook> script in
+/etc/installkernel.d/ you may check the first argument to see what <hook>
+really occured.  There are pre-<event> and post-<event> <hook>s, where <event>
+is one of: clean, make-dep, compile-image, compile-modules, install-modules,
+tidy-image, tidy-modules, install-image, update-symlinks and run-lilo.  There
+are also <hook>s pre and post which are run at the beginning and at the end of
+installkernel script.  Create an empty executable file in /etc/installkernel.d
+and then run installkernel with --dry-run option to see how it works.
+
 END
 }
 
@@ -142,10 +163,9 @@ error () {
 ##
 header () {
 	local TITLE="$*"
-	if [ $USE_ANSI == y ]; then
-		printf "\e[32m=== \e[1m%s\e[0;32m " "$TITLE"
-	else
-		printf "=== %s " "$TITLE"
+	if [ $USE_ANSI ]
+	then printf "\e[32m=== \e[1m%s\e[0;32m " "$TITLE"
+	else printf "=== %s " "$TITLE"
 	fi
 	local LOOP=$(( ${COLUMNS-80} - ${#TITLE} - 29))
 	while [ $LOOP -gt 0 ]; do
@@ -222,6 +242,47 @@ run () {
 
 
 ##
+## Runs /etc/installekrnel.d/$1/* scripts
+##
+run_scripts () {
+	local DIR=$1
+#	eval local RUN=\$RUN_`echo $DIR | tr a-z- A-Z_`
+#	[ $RUN ] || return 0
+	shift
+
+	for SCRIPT in /etc/installkernel.d/* /etc/installkernel.d/$DIR/*; do
+		if [ -f "$SCRIPT" -a -x "$SCRIPT" ]; then
+			run "$@" "$SCRIPT" $DIR
+		fi
+	done
+}
+
+
+##
+## Runs header, run_scripts and run
+##
+r () {
+	eval [ \$$1 ] || return 0
+	local NAME=`echo $1 | tr A-Z_ a-z-`
+	header "$2"
+	shift 2
+	run_scripts pre-$NAME
+	run "$@"
+	run_scripts post-$NAME
+}
+
+ur () {
+	eval [ \$$1 ] || return 0
+	local NAME=`echo $1 | tr A-Z_ a-z-`
+	header "$2"
+	shift 2
+	run_scripts pre-$NAME -u
+	run -u "$@"
+	run_scripts post-$NAME -u
+}
+
+
+##
 ## Backups specified file(s)
 ##
 backup () {
@@ -253,7 +314,7 @@ interrupted () {
 }
 
 set -e
-for E in ERR INT KILL TERM STOP HUP; do
+for E in HUP INT QUIT ABRT SEGV PIPE ALRM TERM USR1 USR2; do
 	trap "interrupted $E" $E
 done
 
@@ -262,40 +323,26 @@ done
 ## Init default options
 ##
 if [ ! $INSIDE_INSTALLKERNEL ]; then
-	VER=
-	IMG_PATH=
-	MAP_PATH=
+	export VER= IMG_PATH= MAP_PATH= SU= RUNAS= NICE=auto
 
-	SU=
-	RUNAS=
-	NICE=auto
+	export DRY_RUN= PRINT_COMMANDS= VERBOSE=
+	[ -t ] && export USE_ANSI=y || export USE_ANSI=
 
-	DRY_RUN=
-	PRINT_COMMANDS=
-	VERBOSE=
-	[ -t ] && USE_ANSI=y || USE_ANSI=
-
-	MAKE_DEP=auto
-	CLEAN=
-	COMPILE_IMAGE=
-	COMPILE_MODULES=
-	INSTALL_IMAGE=y
-	INSTALL_MODULES=
-	UPDATE_SYMLINKS=y
-	RUN_LILO=y
-	TIDY_IMAGE=
-	TIDY_MODULES=
+	export MAKE_DEP=auto CLEAN= COMPILE_IMAGE= COMPILE_MODULES=
+	export INSTALL_IMAGE=y INSTALL_MODULES= UPDATE_SYMLINKS=y RUN_LILO=y
+	export TIDY_IMAGE= TIDY_MODULES=
 
 	declare -a ACTIONS
 	ACTION_COUNT=0
 
+	for EVENT in CLEAN MAKE_DEP UPDATE_SYMLINKS RUN_LILO \
+		{COMPILE,INSTALL,TIDY}_{IMAGE,MODULES}; do
+		eval export RUN_PRE_$EVENT=y RUN_POST_$EVENT=y
+	done
+	export RUN_PRE=y RUN_POST=y
+
 	unset ARCH
-	INSIDE_INSTALLKERNEL=y
-	VARS_TO_EXPORT="VER IMG_PATH MAP_PATH SU RUNAS COMPILE_IMAGE DRY_RUN NICE"
-	VARS_TO_EXPORT="$VARS_TO_EXPORT COMPILE_MODULES INSTALL_IMAGE USE_ANSI"
-	VARS_TO_EXPORT="$VARS_TO_EXPORT INSTALL_MODULES UPDATE_SYMLINKS RUN_LILO"
-	VARS_TO_EXPORT="$VARS_TO_EXPORT MAKE_DEP CLEAN TIDY_IMAGE TIDY_MODULES"
-	VARS_TO_EXPORT="$VARS_TO_EXPORT INSIDE_INSTALLKERNEL PRINT_COMMANDS VERBOSE"
+	export INSIDE_INSTALLKERNEL=y
 
 
 ##
@@ -303,6 +350,8 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 ##
 	while [ "$1" ]; do
 		PARAM=
+
+		## Argument
 		case "$1" in
 		(--help|-h) usage; exit 0; ;;
 		(--version|-V) exit 0; ;;
@@ -353,11 +402,10 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 		;;
 		esac
 
-		if [ ! "$PARAM" ]; then
-			shift
-			continue;
-		fi
 
+		## Switches
+		[ ! "$PARAM" ] && shift && continue;
+		HOOK=
 		case "$PARAM" in
 		(--dry-run)        DRY_RUN=$VALUE ; ;;
 		(-v|--verbose)     VERBOSE=$VALUE ; PRINT_COMMANDS=$VALUE; ;;
@@ -383,8 +431,8 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 		(--install) INSTALL_IMAGE=$VALUE; INSTALL_MODULES=$VALUE; ;;
 		(--tidy)    TIDY_IMAGE=$VALUE   ; TIDY_MODULES=$VALUE   ; ;;
 
-		(-s|--symlinks)        UPDATE_SYMLINKS=$VALUE; ;;
-		(-l|--lilo)            RUN_LILO=$VALUE       ; ;;
+		(-s|--symlinks|--update-symlink) UPDATE_SYMLINKS=$VALUE; ;;
+		(-l|--lilo|--run-lilo)           RUN_LILO=$VALUE       ; ;;
 
 		(-A|--all)
 			COMPILE_IMAGE=$VALUE  ; COMPILE_MODULES=$VALUE
@@ -393,7 +441,45 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 			UPDATE_SYMLINKS=$VALUE; RUN_LILO=$VALUE
 			;;
 
+		(--run-*) HOOK="${PARAM:6}"; ;;
+
 		(*) error 1 unknown option: "$1"; ;;
+		esac
+
+
+		## Hooks
+		[ ! "$HOOK" ] && shift && continue;
+
+		if   [ "${HOOK:0:4}" == pre-  ]; then PRE='PRE_' ; HOOK="${HOOK:4}"
+		elif [ "${HOOK:0:5}" == post- ]; then PRE='POST_'; HOOK="${HOOK:5}"
+		else PRE=; fi
+
+		case "$HOOK" in
+		(hooks)
+			for EVENT in CLEAN MAKE_DEP UPDATE_SYMLINKS RUN_LILO \
+				{COMPILE,INSTALL,TIDY}_{IMAGE,MODULES}; do
+				if [ $PRE ]
+				then eval RUN_$PRE$EVENT=$VALUE
+				else eval RUN_PRE_$EVENT=$VALUE RUN_POST_$EVENT=$VALUE
+				fi
+			done
+			;;
+
+		(clean|make-dep|update-symlinks|run-lilo|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules)
+			EVET=`echo $HOOK | tr a-z- A-Z_`
+			if [ $PRE ]
+			then eval RUN_$PRE$EVENT=$VALUE
+			else eval RUN_PRE_$EVENT=$VALUE RUN_POST_$EVENT=$VALUE
+			fi
+			;;
+
+		(pre|post)
+			[ $PRE ] && error 1 event $HOOK cannot have pre-/post- prefix
+			EVET=`echo $HOOK | tr a-z- A-Z_`
+			eval RUN_$EVENT=$VALUE
+			;;
+
+		(*) error 1 unknown event: "$HOOK"; ;;
 		esac
 
 		shift
@@ -447,8 +533,6 @@ if [ "$SU" -a $EUID -ne 0 ]; then
 	if [ $DRY_RUN ]; then
 		echo Here you would be asked for root password.
 	else
-		export $VARS_TO_EXPORT
-
 		ARGS="'`echo "$0" | sed -e "s/'/'\\\\''/"`'"
 		while [ $# -ne 0 ]; do
 			ARGS="$ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
@@ -461,6 +545,9 @@ if [ "$SU" -a $EUID -ne 0 ]; then
 		exit $?
 	fi
 fi
+
+
+run_scripts pre
 
 
 ##
@@ -478,7 +565,7 @@ while [ "$1" ]; do
 
 	PATCH="$2"
 	FORCE=;   [ "${PATCH:0:1}" == !  ] && FORCE=y   && PATCH="${PATCH:1}"
-	REVERSE=; [ "${PATCH:0:2}" == -R ] && REVERSE=R && PATCH="${PATCH:2}"
+	REVERSE=; [ "${PATCH:0:2}" == -r ] && REVERSE=R && PATCH="${PATCH:2}"
 	[ $VERBOSE ] || REVERSE="s$REVERSE"
 
 	CUT=`expr "$PATCH" : '[0-9][0-9]*:' || true`
@@ -519,12 +606,6 @@ done
 
 
 ##
-## Clean
-##
-[ $CLEAN ] && header 'Cleaning previous compilation' run -u make clean
-
-
-##
 ## Make dep?
 ##
 if [ "$COMPILE_IMAGE" -a "$MAKE_DEP" == auto ]; then
@@ -543,10 +624,11 @@ fi
 ##
 ## make *
 ##
-[ $MAKE_DEP        ] && header 'Updating dependencies' && run -u make dep
-[ $COMPILE_IMAGE   ] && header 'Compiling bzImage'     && run -u make bzImage
-[ $COMPILE_MODULES ] && header 'Compiling modules'     && run -u make modules
-[ $INSTALL_MODULES ] && header 'Installing modules'    && run    make modules_install
+ur CLEAN           'Cleaning previous compilation' make clean
+ur MAKE_DEP        'Updating dependencies'         make dep
+ur COMPILE_IMAGE   'Compiling bzImage'             make bzImage
+ur COMPILE_MODULES 'Compiling modules'             make modules
+ r INSTALL_MODULES 'Installing modules'            make modules_install
 
 
 ##
@@ -554,6 +636,8 @@ fi
 ##
 if [ $TIDY_IMAGE ]; then
 	header Removing old image
+	run_scripts pre-tidy-image
+
 	for FILE in bzImage System.map config; do
 		echo "  READLNK $FILE~"
 		run -d readlink "/boot/$FILE~"
@@ -563,6 +647,8 @@ if [ $TIDY_IMAGE ]; then
 			run rm -f$V -- "/boot/$LNK"
 		fi
 	done
+
+	run_scripts post-tidy-image
 fi
 
 
@@ -571,6 +657,8 @@ fi
 ##
 if [ $TIDY_MODULES ]; then
 	header Removing old modules
+	run_scripts pre-tidy-modules
+
 	echo "  READLNK bzImage"
 	run -d readlink "/boot/$FILE"
 	TMP=`readlink "/boot/$FILE" || true`
@@ -588,6 +676,8 @@ if [ $TIDY_MODULES ]; then
 		echo "  RMDIR   /lib/modules/$OOVER"
 		run rm -rf$V -- "/lib/modules/$OOVER"
 	fi
+
+	run_scripts post-tidy-modules
 fi
 
 
@@ -596,6 +686,8 @@ fi
 ##
 if [ $INSTALL_IMAGE ]; then
 	header Installing kernel
+	run_scripts pre-install-image
+
 	if [ ! "$VER" ]; then
 		run -u -f make include/linux/version.h
 		[ -f include/linux/version.h ] || \
@@ -618,6 +710,8 @@ if [ $INSTALL_IMAGE ]; then
 	echo '  CP      .config'
 	backup "/boot/config-$VER"
 	run cp $VOPT -- .config "/boot/config-$VER"
+
+	run_scripts post-install-image
 fi
 
 
@@ -627,6 +721,8 @@ fi
 ##
 if [ $UPDATE_SYMLINKS ]; then
 	header Updating symlinks
+	run_scripts pre-update-symlinks
+
 	for FILE in bzImage System.map config; do
 		echo "  READLNK $FILE"
 		run -d readlink /boot/$FILE || true
@@ -641,6 +737,8 @@ if [ $UPDATE_SYMLINKS ]; then
 			run ln -fs$V -- $FILE-$VER /boot/$FILE
 		fi
 	done
+
+	run_scripts post-update-symlinks
 fi
 
 
@@ -648,7 +746,8 @@ fi
 ##
 ## Running LILO
 ##
-if [ $RUN_LILO == y ]; then
-	header Running LILO
-	run lilo $VOPT
-fi
+ r RUN_LILO        'Running LILO'                  lilo $VOPT
+
+
+
+run_scripts post

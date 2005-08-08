@@ -1,5 +1,7 @@
 2005-08-08  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* installkernel: Hooks added
+
 	* check-connection.sh: Removed file
 	* check.sh: New file
 	* README: check-connection.sh replaced with check.sh
