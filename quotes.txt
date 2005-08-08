@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.3 2005/07/11 00:20:58 mina86 Exp $
+## $Id: quotes.txt,v 1.4 2005/08/08 16:42:41 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -487,6 +487,12 @@ week.
 shoulders of giants.
 	-- Sir Isaac Newton (1642-1727)
 %
+ That quantity which, when multiplied by, divided by, added to, or
+subtracted from the answer you get, gives you the answer you should have
+gotten.
+	-- Skinner's Constant (a.k.a. Flannagan's Finagling Factor a.k.a.
+		Sta³e Janosika in Poland)
+%
  God is Real, unless declared Integer.
 	-- J. Allan Toogood
 %
@@ -588,6 +594,9 @@ Mêdrców nie wszystko wie.
  Ciemno¶æ, widzê ciemno¶æ, ciemno¶æ widzê.
 	-- Maks (Jerzy Sthur)
 	-- Juliusz Machulski (1955-), Seksmisja
+%
+ Nuclear war can ruin your whole compile.
+	-- Karl Lehenbauer
 %
  Wierze, ¿e Pan jednak mnie nie opu¶ci.
  Jakby mia³ wzrok tak± zdobycz wypu¶ciæ.
@@ -1423,3 +1432,16 @@ without either laughing or crying.
  Lubiê banery flashowe; bo ich nie widzê.
 %
  If you think before you speak the other guy gets his joke in first.
+%
+ This system will self-destruct in five minutes.
+%
+ Nobody shot me.
+	-- Frank Gusenberg, his last words, when asked by police who had
+		shot him 14 times with a machine gun in the Saint
+		Valentine's Day Massacre.
+
+ Only Capone kills like that.
+	-- George "Bugs" Moran, on the Saint Valentine's Day Massacre
+
+ The only man who kills like that is Bugs Moran.
+	-- Al Capone, on the Saint Valentine
