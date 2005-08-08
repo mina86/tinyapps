@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/07/17 13:46:35 $
+                     $Date: 2005/08/08 16:44:19 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -28,11 +28,12 @@ At the moment the collection include:
    making it a bit more readable.  Both versions reads input from
    stdin and sends output with added ANSI codes to stdout.
 
- * check-connection.sh - checks whether specified host responds to
-   PING and runs specified command if not.  May be used to automaticly
-   shut down PC when connection is lost, try to reconnect or monitor
-   some kind of server and send message to server's admin when
-   server's down.
+ * check.sh - performes a defined checking (whether www.googl.com
+   responds to pings by default) and runs specified command if
+   checking failed.  May be used to automaticly shut down PC when
+   connection is lost, try to reconnect or monitor some kind of
+   server, send message to server's admin when server's down or
+   restart an application if it's not running.
 
  * checkmail - checks whether mboxes given as arguments contain any
    urnead mail.

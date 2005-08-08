@@ -1,3 +1,11 @@
+2005-08-08  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* check-connection.sh: Removed file
+	* check.sh: New file
+	* README: check-connection.sh replaced with check.sh
+
+	* qutoes.txt: New quotes added
+
 2005-07-25  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel: New options: --verbose --print-commands, --no-user
