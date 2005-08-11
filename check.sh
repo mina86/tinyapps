@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Pings specified host and runs specified program if no responding
-## $Id: check.sh,v 1.1 2005/08/08 16:44:19 mina86 Exp $
+## $Id: check.sh,v 1.2 2005/08/11 21:35:18 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -18,7 +18,7 @@
 ##
 version () {
 	echo 'Check v0.1  (c) 2005 by Micha³ Nazarewicz'
-	echo '$Id: check.sh,v 1.1 2005/08/08 16:44:19 mina86 Exp $'
+	echo '$Id: check.sh,v 1.2 2005/08/11 21:35:18 mina86 Exp $'
 	echo
 }
 
@@ -26,8 +26,8 @@ version () {
 ##
 ## Usage
 ##
-usega () {
-	echo <<EOF
+usage () {
+	cat <<EOF
 usage: check.sh [ <options> ] [ [--] <action> [ <arg> ... ] ]
 <options> are:
   -h --help            Displays this screen and exits
