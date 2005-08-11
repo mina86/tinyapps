@@ -1,3 +1,14 @@
+2005-08-11  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel.8: New file
+	* installkernel: Some parts of usage screen removed (due to
+	creation of man page).
+	--run-lilo renamed to --update-loader.
+	update_ver and update_build functions added.
+	* Makefile: Rules for installkernel.8.gz added
+
+	* check.sh: usege renamed to usage
+
 2005-08-08  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel: Hooks added

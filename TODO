@@ -18,7 +18,8 @@ Tiny Applications Collection TODO List
   - Print errors when debug enabled
 
 * installkernel
-  - add --patch option
+  - let --print-commands take an argument - file to save the commands to
+  - --config option
 
 * load
   - make more platform independent
