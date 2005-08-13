@@ -1,5 +1,10 @@
 2005-08-13  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* Makefile: targets for install, uninstall added
+	target for creating package added
+	inteligent X11 include and lib directories finding
+	* slack-desc: New file
+
 	* mountiso: New file
 	* Makefile, README: mountiso added
 

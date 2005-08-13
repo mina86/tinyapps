@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.4 2005/08/08 16:42:41 mina86 Exp $
+## $Id: quotes.txt,v 1.5 2005/08/13 22:21:03 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -1434,6 +1434,9 @@ without either laughing or crying.
  If you think before you speak the other guy gets his joke in first.
 %
  This system will self-destruct in five minutes.
+%
+ jedni lubia Opera, inni Firefoxa, a jeszcze inni sciagac trojany ;)
+	-- Hihnt
 %
  Nobody shot me.
 	-- Frank Gusenberg, his last words, when asked by police who had

@@ -1,0 +1,19 @@
+# HOW TO EDIT THIS FILE:
+# The "handy ruler" below makes it easier to edit a package description.  Line
+# up the first '|' above the ':' following the base package name, and the '|' on
+# the right side marks the last column you can put a character in.  You must make
+# exactly 11 lines for the formatting to be correct.  It's also customary to
+# leave one space after the ':'.
+
+        |-----handy-ruler------------------------------------------------------|
+tinyapps: tinyapps (Collection of useful tiny applications)
+tinyapps:
+tinyapps: It includes add, ai-pitr.pl, ai-sid.pl, cdiff, check.sh, checkmail,
+tinyapps: cpuload.sh, cutcom, FvwmTransFocus, get_mks_vir_bases,
+tinyapps: infinite-logger (that's a joke accualy), installkernel, load,
+tinyapps: malloc, mountiso, moz2elinks.pl, mpd-state, null, quotes (set of
+tinyapps: fortunes), rot13, settitle, the-book-of-mozilla (set of fortunes),
+tinyapps: traf.sh, tuptime and xcolor2rgb.
+tinyapps:
+tinyapps: Michal Nazarewicz (mina86/AT/tlen.pl) is maintainer of the package.
+tinyapps: Package's homepage is located at: <http://tinyapps.sourceforge.net>.
