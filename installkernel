@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.14 2005/08/11 21:42:22 mina86 Exp $
+## $Id: installkernel,v 1.15 2005/08/13 13:22:26 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -24,7 +24,7 @@
 ##
 if [ ! $INSIDE_INSTALLKERNEL ]; then
 	echo 'installkernel  v0.11  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.14 2005/08/11 21:42:22 mina86 Exp $'
+	echo '$Id: installkernel,v 1.15 2005/08/13 13:22:26 mina86 Exp $'
 	echo
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
@@ -69,6 +69,7 @@ usage: installkernel [<options>] [<actions> [<switches>]
      --dry-run          Only displays what would be done              [no]
      --print-commands   Prints commands (like --dry-run)              [no]
   -v --verbose          Becomes a lot more verbose                    [no]
+  -vv                   Becomes even more verbose                     [no]
      --color            Uses colors                                   [auto]
 
      --run-hooks        Runs all hooks                                [yes]
@@ -288,7 +289,7 @@ done
 ##
 update_ver () {
 	[ $VER ] || return 0
-	run -u -f make include/linux/version.h
+	run -u -f make $MAKEV include/linux/version.h
 	[ -f include/linux/version.h ] || error 3 include/linux/version.h: missing
 	VER=`sed -ne '/UTS_RELEASE/ s/^[^\"]*"\(.*\)"$/\1/ p' \
 	         <include/linux/version.h`
@@ -313,7 +314,7 @@ update_build () {
 if [ ! $INSIDE_INSTALLKERNEL ]; then
 	export VER= BUILD= IMG_PATH= MAP_PATH= SU= RUNAS= NICE=auto ARCH=
 
-	export DRY_RUN= PRINT_COMMANDS= VERBOSE=
+	export DRY_RUN= PRINT_COMMANDS= VERBOSE= REALLY_VERBOSE=
 	[ -t ] && export USE_ANSI=y || export USE_ANSI=
 
 	export MAKE_DEP=auto CLEAN= COMPILE_IMAGE= COMPILE_MODULES=
@@ -393,7 +394,8 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 		HOOK=
 		case "$PARAM" in
 		(--dry-run)        DRY_RUN=$VALUE ; ;;
-		(-v|--verbose)     VERBOSE=$VALUE ; PRINT_COMMANDS=$VALUE; ;;
+		(-v|--verbose)     VERBOSE=$VALUE ; [ $VALUE ] && PRINT_COMMANDS=y; ;;
+		(-vv)              REALLY_VERBOSE=$VALUE; [ $VALUE ] && VERBOSE=y && PRINT_COMMANDS=y; ;;
 		(--print-commands) PRINT_COMMANDS=$VALUE; ;;
 		(--color)          USE_ANSI=$VALUE; ;;
 
@@ -477,6 +479,7 @@ export INSIDE_INSTALLKERNEL=y
 set -- "${ACTIONS[@]}"
 unset ACTIONS ACTION_COUNT
 [ $VERBOSE ] && V=v && VOPT=-v
+[ $REALLY_VERBOSE ] && MAKEV=v=1 || MAKEV=
 
 
 ##
@@ -603,11 +606,11 @@ fi
 ##
 ## make *
 ##
-ur CLEAN           'Cleaning previous compilation' make clean
-ur MAKE_DEP        'Updating dependencies'         make dep
-ur COMPILE_IMAGE   'Compiling bzImage'             make bzImage
-ur COMPILE_MODULES 'Compiling modules'             make modules
- r INSTALL_MODULES 'Installing modules'            make modules_install
+ur CLEAN           'Cleaning previous compilation' make $MAKEV clean
+ur MAKE_DEP        'Updating dependencies'         make $MAKEV dep
+ur COMPILE_IMAGE   'Compiling bzImage'             make $MAKEV bzImage
+ur COMPILE_MODULES 'Compiling modules'             make $MAKEV modules
+ r INSTALL_MODULES 'Installing modules'            make $MAKEV modules_install
 
 
 ##

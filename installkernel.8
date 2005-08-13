@@ -1,4 +1,11 @@
 .TH installkernel 8 "11 August, 2005" "version 0.11" "Linux System Administration"
+
+\"
+\" installkernel man page
+\" $Id: installkernel.8,v 1.2 2005/08/13 13:22:26 mina86 Exp $
+\" Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+\"
+
 .SH NAME
 
 \fBinstallkernel\fP \- compiles and installs the Linux kernel.
@@ -102,8 +109,16 @@ Before each command is executed it is first printed to the stdout.
 The default is \fBno\fP.
 
 .TP
-\fB\-\-v \-\-verbose\fP
-Becomes a lot more verbose.  The default is \fBno\fP.
+\fB\-v \-\-verbose\fP
+Becomes a lot more verbose.  When turning on implies
+\fB\-\-print\-commands\fP but when disabling does not disable
+\fB\-\-print\-commands\fP. The default is \fBno\fP.
+
+.TP
+\fB\-\-vv\fP
+Becomes a lot more verbose.  When turning on implies \fB\-\-verbose\fP
+but when disabling does not disable \fB\-\-verbose\fP.  The default is
+\fBno\fP.
 
 .TP
 \fB\-\-color\fP
@@ -148,7 +163,9 @@ dep\fP is unnecessary in Linux 2.6.x).
 .TP
 \fB\-A \-\-all\fP
 Synonym of \fB\-\-compile \-\-install \-\-tidy \-\-update\-symlinks
-\-\-run\-lilo\fP.
+\-\-run\-lilo\fP.  Passing a \fB\-\-no\-all\fP (sounds stupid, doesn't
+it?) argument will turn off everything (in fact \fB\-\-make\-dep\fP
+is still set to auto but it doesn't matter in most cases).
 
 .TP
 \fB\-i \-\-compile\-image\fP

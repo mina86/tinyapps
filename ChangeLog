@@ -1,3 +1,11 @@
+2005-08-13  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* mountiso: New file
+	* Makefile, README: mountiso added
+
+	* installkernel: -vv added
+	* installkernel.8: -vv added
+
 2005-08-11  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel.8: New file

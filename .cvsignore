@@ -3,8 +3,10 @@ FvwmTransFocus
 cdiff
 cutcom
 infinite-logger
+installkernel.8.gz
 load
 malloc
+mountiso
 mpd-state
 null
 quotes
@@ -12,3 +14,4 @@ rot13
 timer
 the-book-of-mozilla
 tuptime
+umountiso

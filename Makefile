@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.3 2005/08/11 21:42:22 mina86 Exp $
+## $Id: Makefile,v 1.4 2005/08/13 13:22:26 mina86 Exp $
 ##
 
 
@@ -18,7 +18,7 @@ X11_LIB_DIR  = /usr/X11R6/lib
 ## List of all applications
 ##
 all: FvwmTransFocus cdiff cutcom infinite-logger installkernel.8.gz load \
-     malloc mpd-state quotes the-book-of-mozilla timer tuptime
+     malloc mpd-state quotes the-book-of-mozilla timer tuptime umountiso
 
 
 ##
@@ -38,6 +38,14 @@ the-book-of-mozilla: the-book-of-mozilla.txt
 
 installkernel.8.gz: installkernel.8
 	gzip -9 <$< >$@
+
+mountiso: mountiso.c
+	${CC} ${CFLAGS} -o $@ $<
+	[ `echo $$EUID` -eq 0 ] && chmod u+s $@
+
+umountiso: mountiso
+	[ -f umountiso ] || ln -s mountiso umountiso
+
 
 
 ##

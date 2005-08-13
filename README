@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/08/08 16:44:19 $
+                     $Date: 2005/08/13 13:22:26 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -66,6 +66,12 @@ At the moment the collection include:
  * malloc -  a small program  which allocates memory.   Sounds stupid?
    Mayby,  but in  theory it  can  help freeing  memory and  therefore
    speeding up the PC.
+
+ * mountiso - a simple mount/umount wrapper for mounting/unmounting
+   ISO images or any other files using loop option.  You have to be
+   root to use '-o loop' so if you want to mount an ISO image you have
+   to login as root.  This utility should be SUIDed and then anyoune
+   can use it to mount ISO images.
 
  * moz2elinks.pl - converts bookmarks from Mozilla's format to ELinks'
    (http://elinks.or.cz) format.
