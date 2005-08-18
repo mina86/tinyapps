@@ -2,7 +2,7 @@
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.2 2005/08/13 13:22:26 mina86 Exp $
+\" $Id: installkernel.8,v 1.3 2005/08/18 01:45:41 mina86 Exp $
 \" Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 \"
 
@@ -155,6 +155,22 @@ Runs pre\-\fIevent\fP and post\-\fIevent\fP hooks.  The default is
 Runs \fBmake clean\fP at the beginning.  The default is \fBno\fP.
 
 .TP
+\fB\-C \-\-config\fP
+Runs \fBmake *config\fP at the beginning to configure the kernel.  The
+default is \fBno\fP.
+
+.TP
+\fB\-C \-\-config=\fItype\fR
+Specifies what type of config the script should run.  It implies
+\fB\-\-config\fP or if \fItype\fP is \fIno\fP \fB\-\-no\-config\fP.
+By default the script tries to guess what kind of config to run.  If
+\fBDISPLAY\fP environmental variable is set and \fBqtconfig\fP program
+is available it will assume \fBxconfig\fP.  If \fBDISPLAY\fP is set
+and \fBgtk-config\fP is available \fBgconfig\fP will be used.  If it
+can find a (n)curses library \fBmanuconfig\fP is the choice.  In all
+other cases \fBconfig\fP will be used.
+
+.TP
 \fB\-d \-\-make\-dep\fP
 Runs \fBmake dep\fP.  The default is to run it if
 \fB\-\-compile\-image\fP is on and compiling the Linux 2.4.x (\fBmake
@@ -283,15 +299,16 @@ them again after compilation is done.  There are many aspects in which
 hooks may be handy.
 
 .PP
-There are events and hooks.  Events are: \fBclean\fP, \fBmake\-dep\fP,
-\fBcompile\-image\fP, \fBcompile\-modules\fP, \fBinstall\-modules\fP,
-\fBtidy\-image\fP, \fBtidy\-modules\fP, \fBinstall\-image\fP,
-\fBupdate\-symlinks\fP and \fBupdate\-loader\fP.  As you can see each
-event corresponds to each step of the \fBinstallkernel\fP script.
-Each event has a \fBpre\-\fP and \fBpost\-\fP hook.  So for example
-there are \fBpre\-clean\fP and \fBpost\-clean\fP hooks.  There are
-also \fBpre\fP and \fBpost\fP hooks which are executed at the very
-begining and at the very end of the \fBinstallkernel\fP script.
+There are events and hooks.  Events are: \fBclean\fP, \fBconfig\fP,
+\fBmake\-dep\fP, \fBcompile\-image\fP, \fBcompile\-modules\fP,
+\fBinstall\-modules\fP, \fBtidy\-image\fP, \fBtidy\-modules\fP,
+\fBinstall\-image\fP, \fBupdate\-symlinks\fP and \fBupdate\-loader\fP.
+As you can see each event corresponds to each step of the
+\fBinstallkernel\fP script.  Each event has a \fBpre\-\fP and
+\fBpost\-\fP hook.  So for example there are \fBpre\-clean\fP and
+\fBpost\-clean\fP hooks.  There are also \fBpre\fP and \fBpost\fP
+hooks which are executed at the very begining and at the very end of
+the \fBinstallkernel\fP script.
 
 .PP
 When a hook is executed then all executable scripts from

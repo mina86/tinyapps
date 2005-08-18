@@ -1,5 +1,7 @@
 2005-08-18  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* installkernel, installkernel.8: --config option added
+
 	* malloc.c: Signal handler added
 
 2005-08-13  Michal Nazarewicz  (mina86/AT/tlen.pl)
