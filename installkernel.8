@@ -1,8 +1,8 @@
-.TH installkernel 8 "11 August, 2005" "version 0.11" "Linux System Administration"
+.TH installkernel 8 "11 August, 2005" "version 0.13" "Linux System Administration"
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.3 2005/08/18 01:45:41 mina86 Exp $
+\" $Id: installkernel.8,v 1.4 2005/08/19 18:49:24 mina86 Exp $
 \" Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 \"
 
@@ -13,7 +13,7 @@
 .SH SYNOPSIS
 
 \fBinstallkernel\fP [<options>] [<switches>] [<actions>]
-[\fIversion\fP [\fIimage\fP [\fIsystemmap\fP]]]
+[\fIversion\fP [\fIimage\fP [\fIsystemmap\fP [\fIprefix\fP]]]]
 
 .SH DESCRIPTION
 
@@ -85,12 +85,24 @@ want compilation to be noticeable.
 Synonym of \fB\-\-nice=0\fP.
 
 .TP
-\fIversion\fP \fIimage\fP \fIsystemmap\fP
+\fB\-L \-\-log=\fIfile\fR
+Writes all output to \fIfile\fP instead of standard output.  If
+\fIfile\fP exists output will be append to it.
+
+.TP
+\fB\-L \-\-log\fR
+Sort of synonym of \fB\-\-log=installkernel-log\fP.  The difference is
+that if \fBinstallkernel-log\fP exists then the output will be sent to
+\fBinstallkernel-log.1\fP.  If this file exists as well - to
+\fBinstallkernel-log.2\fP and so on.
+
+.TP
+\fIversion\fP \fIimage\fP \fIsystemmap\fP \fIprefix\fP
 Those are the version number, the path to the kernel image file and
-path to the kernel map file.  Those arguments rather unnecessary as the
-script detects all this by itself but they are provided for
-compatibility with \fBmake install\fP (however, the compatibility is
-not yet reached).
+path to the kernel map file.  Those arguments rather unnecessary as
+the script detects all this by itself but they are provided for
+compatibility with \fBmake install\fP.  At the moment, the value of
+\fIprefix\fP is ignored.
 
 .SS Switches
 
@@ -336,16 +348,16 @@ are required the script will use them however everything else
 also change the directory to \fB/usr/src/linux\fP for you.
 
 .TP
-\fB$ installkernel \-\-su \-\-no\-user \-\-cd \-\-all\fP
+\fBinstallkernel \-\-su \-\-no\-user \-\-cd \-\-all\fP
 Similar to the above but everything will be run as super user (even
 build process).
 
 .TP
-\fB$ installkernel \-\-su \-\-cd \-\-no\-all \-\-modules\fP
+\fBinstallkernel \-\-su \-\-cd \-\-no\-all \-\-modules\fP
 Will compile, install and tidy the kernel modules only.
 
 .TP
-\fB$ installkernell \-\-no\-all \-\-cd \-\-patch=!\-r=../patch\-foo\-1\-\-patch=!\-\-../patch\-foo\-2 \-\-compile\fP
+\fBinstallkernell \-\-no\-all \-\-cd \-\-patch=!\-r=../patch\-foo\-1\-\-patch=!\-\-../patch\-foo\-2 \-\-compile\fP
 Applies a \fBpatch\-foo\-1\fP patch in reverse mode then applies a
 \fBpatch\-foo\-2\fP patch and at the end compiles the kernel image and
 modules.  Useful if there is no incremental patch from \fBfoo-1\fP to
@@ -353,17 +365,26 @@ modules.  Useful if there is no incremental patch from \fBfoo-1\fP to
 even if there are some rejections the script will continue.
 
 .TP
-\fB$ installkernel \-\-all \-\-su \-\-cd \-\-no\-color >~/installkernel\-log 2>&1 && /sbin/reboot
+\fBinstallkernel \-\-all \-\-su \-\-cd --log && /sbin/reboot\fP
 Something for lazy sysadmins.  This will do everything to get a new
 kernel image work and if everything went OK system will reboot.  All
-messages will be logged to \fBinstallkernel-log\fP file for future
-analyze if something failed.  \fBBeware\fP, however, that it's not
-very wise to get system automatically reboot without sysadmin.  You
-should rather reboot the system when you get back the next day ;).
-You may however replace \fB/sbin/reboot\fP with \fB/sbin/halt\fP to
-run a nightly compilation.  Note that you have to have \fBreboot\fP
-and \fBhalt\fP properly configured for a non-root user to be able to
-run.
+messages will be logged to \fBinstallkernel-log\fP (or any of
+\fBinstallkernel-log.#\fI, see description of \-\-log option) file for
+future analyze.  \fBBeware\fP, however, that it's not very wise to get
+system automatically reboot without sysadmin.  You should rather
+reboot the system when you get back the next day ;).  You may however
+replace \fB&& /sbin/reboot\fP with \fB; /sbin/halt\fP to run a nightly
+compilation.  Note that you have to have \fBreboot\fP and \fBhalt\fP
+properly configured for a non-root user to be able to run.
+
+.TP
+\fBinstallkernel \-\-all \-\-su \-\-cd --log --patch=../patch-next-version.bz2 --config\fP
+Applies a patch \fBpatch-next-version.bz2\fI, runs config script and
+then compiles, installs and tydies everything.  Note that you have to
+interactivly update config.  If you remove \fB\-\-config\fP option you
+(most likely) will have to answer a few qeustions anyway unless given
+patch do not add any new options.
+
 
 .SH AUTHOR
 
