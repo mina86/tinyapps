@@ -1,5 +1,11 @@
 2005-08-26  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* genpass.sh: New file
+	* README, Makefile: genpass.sh added
+	* one-time-pass.sh: Now uses genpass.sh
+
+	* Makefile: RELEASE added
+
 	* quotes.txt: Several "the last words of"
 
 	* check.sh: License changed to GNU GPL

@@ -1,6 +1,8 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.5 2005/08/13 22:21:03 mina86 Exp $
+## $Id: Makefile,v 1.6 2005/08/26 17:29:34 mina86 Exp $
+## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
+## Licensed under the Academic Free License version 2.1.
 ##
 
 
@@ -21,7 +23,12 @@ X11_LIB_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
                        "$$DIR/lib/libX11.so" ] && echo "$$DIR/lib" &&	\
                        break; done}
 
-EUID        := ${shell echo $$EUID}
+ifndef      RELEASE
+RELEASE     := $(shell date +%Y%m%d)
+endif
+
+
+EUID        := ${id -u}
 ifeq (${EUID}, 0)
   RT        :=
   NR        := \#
@@ -62,6 +69,7 @@ help:
 	@echo 'Possible options:'
 	@echo '  V=0|1                0 - quiet build (default), 1 - verbose build'
 	@echo '  DEST_DIR=<dir>       install to/uninstall from <dir>'
+	@echo '  RELEASE=<YYYYMMDD>   release date of the package (when make package)'
 
 
 ##
@@ -74,22 +82,23 @@ all: FvwmTransFocus cdiff cutcom infinite-logger installkernel.8.gz		\
 
 install: install-FvwmTransFocus install-add install-ai install-cdiff	\
          install-cdiff.sed install-check.sh install-checkmail			\
-         install-cpuload.sh install-cutcom install-get_mks_vir_bases	\
-         install-installkernel install-load install-malloc				\
-         install-moz2elinks.pl install-mountiso install-mpd-state		\
-         install-null install-fortune install-rot13 install-settitle	\
-         install-timer install-traf.sh install-xcolor2rgb
+         install-cpuload.sh install-cutcom install-genpass.sh			\
+         install-get_mks_vir_bases install-installkernel install-load	\
+         install-malloc install-moz2elinks.pl install-mountiso			\
+         install-mpd-state install-null install-fortune install-rot13	\
+         install-settitle install-timer install-traf.sh					\
+         install-xcolor2rgb
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-cdiff uninstall-cdiff.sed uninstall-check.sh		\
            uninstall-checkmail uninstall-cpuload.sh uninstall-cutcom	\
-           uninstall-get_mks_vir_bases uninstall-installkernel			\
-           uninstall-load uninstall-malloc uninstall-mountiso			\
-           uninstall-moz2elinks.pl uninstall-mountiso					\
-           uninstall-mpd-state uninstall-null uninstall-fortune			\
-           uninstall-rot13 uninstall-settitle uninstall-timer			\
-           uninstall-traf.sh uninstall-xcolor2rgb
+           uninstall-genpass.sh uninstall-get_mks_vir_bases				\
+           uninstall-installkernel uninstall-load uninstall-malloc		\
+           uninstall-mountiso uninstall-moz2elinks.pl					\
+           uninstall-mountiso uninstall-mpd-state uninstall-null		\
+           uninstall-fortune uninstall-rot13 uninstall-settitle			\
+           uninstall-timer uninstall-traf.sh uninstall-xcolor2rgb
 
 
 
@@ -119,11 +128,11 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
 
 FvwmTransFocus: FvwmTransFocus.o
 	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} -L${X11_LIB_DIR} -lX11 -o $@ $<
+	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
 
 mpd-state: mpd-state.o libmpdclient.o
 	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} $< libmpdclient.o -o $@
+	${Q}${CC} ${LDFLAGS} $^ -o $@
 
 quotes: quotes.txt
 	@echo '  GEN    $@'
@@ -280,34 +289,39 @@ distclean: clean
 ##
 tinyapps.tgz: package
 
-package: DEST_DIR = ${PWD}/package
+package: DEST_DIR = ${PWD}/package-${RELEASE}
 package: install
 ifneq (${EUID}, 0)
 	@${warning It is best to create package as root.}
 endif
 
 	@echo '  RM     state-save state-restore state-sync state-amend'
-	${Q}rm -f -- ${DEST_DIR}/usr/local/bin/state-save		\
-	             ${DEST_DIR}/usr/local/bin/state-restore	\
-	             ${DEST_DIR}/usr/local/bin/state-sync		\
-	             ${DEST_DIR}/usr/local/bin/state-amend
+	${Q}rm -f -- '${DEST_DIR}/usr/local/bin/state-save'		\
+	             '${DEST_DIR}/usr/local/bin/state-restore'	\
+	             '${DEST_DIR}/usr/local/bin/state-sync'		\
+	             '${DEST_DIR}/usr/local/bin/state-amend'
 	@echo '  RM     umountiso'
-	${Q}rm -f -- ${PWD}/package/bin/umountiso
+	${Q}rm -f -- '${DEST_DIR}/bin/umountiso'
+
+	@echo '  GEN    usr/doc/tinyapps-${RELEASE}'
+	${Q}mkdir -p -- '${DEST_DIR}/usr/doc/tinyapps-${RELEASE}'
+	${Q}cp -- LICENSE LICENSE.AFL README TODO ChangeLog '${DEST_DIR}/usr/doc/tinyapps-${RELEASE}/'
+	${Q}cp -- LICENSE.gpl '${DEST_DIR}/usr/doc/tinyapps-${RELEASE}/LICENSE.GPL'
 
 	@echo '  GEN    install/doinst.sh'
-	${Q}mkdir -p -- ${DEST_DIR}/install
-	${Q}echo 'cd usr/local/bin; for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $FILE; done' >${DEST_DIR}/install/doinst.sh
-	${Q}echo 'cd ../../../bin; ln -s mountiso umountiso; chown root:root mountiso; chmod u+s mountiso; cd ..' >>${DEST_DIR}/install/doinst.sh
-	${Q}chmod 755 -- ${DEST_DIR}/install/doinst.sh
+	${Q}mkdir -p -- '${DEST_DIR}/install'
+	${Q}echo 'cd usr/local/bin; for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $FILE; done' >'${DEST_DIR}/install/doinst.sh'
+	${Q}echo 'cd ../../../bin; ln -s mountiso umountiso; chown root:root mountiso; chmod u+s mountiso; cd ..' >>'${DEST_DIR}/install/doinst.sh'
+	${Q}chmod 755 -- '${DEST_DIR}/install/doinst.sh'
 	@echo '  CP     slack-desc'
-	${Q}cp -- slack-desc ${DEST_DIR}/install
+	${Q}cp -- slack-desc '${DEST_DIR}/install'
 
-	@echo '  TAR    tinyapps.tar'
-	${Q}${RT}tar c -C ${DEST_DIR} --format=v7 install bin usr >tinyapps.tar
-	${Q}${NR}tar c -C ${DEST_DIR} --owner=root --group=root --format=v7 install bin usr >tinyapps.tar
-	@echo '  GZIP   tinyapps.tgz'
-	${Q}gzip -9 <tinyapps.tar >tinyapps.tgz
-	${Q}rm -f -- tinyapps.tar
+	@echo '  TAR    tinyapps-${RELEASE}.tar'
+	${Q}${RT}tar c -C '${DEST_DIR}' --format=v7 install bin usr >'tinyapps-${RELEASE}.tar'
+	${Q}${NR}tar c -C '${DEST_DIR}' --owner=root --group=root --format=v7 install bin usr >'tinyapps-${RELEASE}.tar'
+	@echo '  GZIP   tinyapps-{$RELEASE}.tgz'
+	${Q}gzip -9 'tinyapps-${RELEASE}.tar'
+	${Q}mv -f -- 'tinyapps-${RELEASE}.tar.gz' 'tinyapps-${RELEASE}.tgz'
 
-	@echo '  RM     package'
-	${Q}rm -rf -- ${DEST_DIR}
+	@echo '  RM     package-${RELEASE}'
+	${Q}rm -rf -- '${DEST_DIR}'

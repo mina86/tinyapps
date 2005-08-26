@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/08/26 16:13:57 $
+                     $Date: 2005/08/26 17:29:34 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -48,6 +48,8 @@ At the moment the collection include:
    depending on focus.  Whn window looses focus it becomes more
    transparent which looks "cool" ;) .
 
+ * genpass.sh - generates a random 64-character long password.
+
  * get_mks_vir_bases - Downlaods MKS-Vir virus database.  Simplified
    version of mksupdate shell script (from mks_vir antivirus).  It
    does only download up-to-date virus bases and nothing more.
@@ -87,7 +89,7 @@ At the moment the collection include:
    distard standard input.  It is ment for people who thnik that
    '>/dev/null' is too long to type every time :)
 
- * one-time-pass.sh - another joke.  It works just like passwd with this 
+ * one-time-pass.sh - another joke.  It works just like passwd with this
    difference that it automaticly generates a random password which is not
    revelad to the user, therefore he don't his own password :)
 
