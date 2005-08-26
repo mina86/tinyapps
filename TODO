@@ -1,5 +1,8 @@
 Tiny Applications Collection TODO List
 
+* add
+  - allow specifing files to read from
+
 * cdiff
   - add support for more modes
   - allow running as a wrapper

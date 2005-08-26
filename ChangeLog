@@ -1,5 +1,9 @@
 2005-08-26  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* cpuload.sh: --nice argument added
+
+	* add: bug fixed
+
 	* installkernel: A lot more standard compilant
 	* installkernel.8: lilo.conf description added plus some minor
 	* README: Note on installkernel being more standard compatible
