@@ -4,6 +4,7 @@ cdiff
 cutcom
 infinite-logger
 installkernel.8.gz
+installkernel-log*
 load
 malloc
 mountiso
@@ -12,6 +13,9 @@ null
 quotes
 rot13
 timer
+tinyapps*.tar
+tinyapps*.tar.gz
+tinyapps*.tgz
 the-book-of-mozilla
 tuptime
 umountiso

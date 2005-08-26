@@ -1,5 +1,9 @@
 2005-08-26  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* installkernel: A lot more standard compilant
+	* installkernel.8: lilo.conf description added plus some minor
+	* README: Note on installkernel being more standard compatible
+
 	* genpass.sh: New file
 	* README, Makefile: genpass.sh added
 	* one-time-pass.sh: Now uses genpass.sh

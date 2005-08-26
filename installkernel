@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.17 2005/08/19 18:49:23 mina86 Exp $
+## $Id: installkernel,v 1.18 2005/08/26 17:40:06 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -19,17 +19,25 @@
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ##
 
+
+##
+## Some nice functions
+##
+toInt  () {
+	expr 0$(expr "X$1" : 'X[[:space:]]*\([0-9]*\)' || true) + 0
+}
+
+
 ##
 ## Version
 ##
-if [ ! $INSIDE_INSTALLKERNEL ]; then
-	echo 'installkernel  v0.13  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.17 2005/08/19 18:49:23 mina86 Exp $'
+if [ -z "$INSIDE_INSTALLKERNEL" ]; then
+	echo 'installkernel  v0.13.1  (c) 2004,2005 by Micha³ Nazarewicz'
+	echo '$Id: installkernel,v 1.18 2005/08/26 17:40:06 mina86 Exp $'
 	echo
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
-		declare -i $PID
-		PID=`cat /tmp/installkernel-lockfile`
+		PID="$(toInt "`cat /tmp/installkernel-lockfile`")"
 		if [ $PID -ne 0 ] && ps -p $PID >/dev/null 2>&1; then
 			echo "${0##*/}: make sure only one instance of installkernel is running"
 			echo "${0##*/}: or remove /tmp/installkernel-lockfile if that is the case"
@@ -39,7 +47,7 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 		echo "${0##*/}: looks like invalid termination; removing lockfile"
 	fi
 
-	echo -n $$ >/tmp/installkernel-lockfile
+	printf "%d" $$ >|/tmp/installkernel-lockfile
 fi
 
 
@@ -119,34 +127,49 @@ END
 }
 
 
-
 ##
-## Prints error and exit
+## Printing helpers
 ##
 error () {
-	ECODE="$1"
+	__ECODE="$1"
 	shift
-	printf "%s: %s\n" "${0##*/}" "$*"
-	exit $ECODE
+	echo "${0##*/}: $*" >&2
+	exit $__ECODE
+}
+
+msg () {
+	if [ -n "$USE_ANSI" ] && [ -n "$1" ]
+	then printf '  \33[%sm%-7s %s\33[0m\n' "$1" "$2" "$3"
+	else printf '  %-7s %s\n' "$2" "$3"
+	fi
 }
 
 
 ##
 ## Prints header
 ##
-header () {
-	local TITLE="$*"
-	if [ $USE_ANSI ]
-	then printf "\e[32m=== \e[1m%s\e[0;32m " "$TITLE"
-	else printf "=== %s " "$TITLE"
+if [ -z "$COLUMNS" ]; then
+	COLS=`toInt "$(stty -a | sed -ne 's/^.*columns[[:space:]][[:space:]]*\([0-9][0-9]*\).*$/\1/p')"`
+	if [ $COLS -gt 30 ]; then
+		COLUMNS=$COLS
 	fi
-	local LOOP=$(( ${COLUMNS-80} - ${#TITLE} - 29))
-	while [ $LOOP -gt 0 ]; do
-		echo -n '='
-		LOOP=$(($LOOP -1))
+fi
+
+header () {
+	__TITLE="$*"
+	if [ -n "$USE_ANSI" ]
+	then printf "\33[32m=== \33[1m%s\33[0;32m " "$__TITLE"
+	else printf "=== %s " "$__TITLE"
+	fi
+
+	__LOOP=$(( ${COLUMNS-80} - ${#__TITLE} - 29))
+	while [ $__LOOP -gt 0 ]; do
+		printf '='
+		__LOOP=$(( $__LOOP - 1 ))
 	done
+
 	date +" [%y/%m/%d %H:%M:%S] ==="
-	[ $USE_ANSI ] && echo -en '\e[0m'
+	if [ -n "$USE_ANSI" ]; then printf '\33[0m'; fi
 	return 0
 }
 
@@ -155,71 +178,69 @@ header () {
 ## Runs command
 ##
 run () {
-	local AS=
-	local SILENT=
-	local DUMMY=
-	local FORCE=
-	local INPUT=/dev/stdin
-	local OUTPUT=/dev/stdout
+	__AS=
+	__SILENT=
+	__DUMMY=
+	__FORCE=
+	__INPUT=/dev/stdin
+	__OUTPUT=/dev/stdout
 
 	# Arguments
-	while [ "${1:0:1}" == '-' ]; do
-		local ARG="${1:1}"; shift
-		while [ "${ARG:0}" ]; do
-			case "${ARG:0:1}" in
-				(u) AS=yes      ; ;;
-				(s) SILENT=yes  ; ;;
-				(f) FORCE=yes   ; ;;
-				(d) DUMMY=yes   ; ;;
-				(i) INPUT="$1"  ; shift; ;;
-				(o) OUTPUT="$1" ; shift; ;;
+	while expr "X$1" : X- >/dev/null 2>&1; do
+		__ARG="${1-}"; shift;
+		while [ -n "$__ARG" ]; do
+			case "$__ARG" in
+				(u*) __AS="$RUNAS"; ;;
+				(s*) __SILENT=yes ; ;;
+				(f*) __FORCE=yes  ; ;;
+				(d*) __DUMMY=yes  ; ;;
+				(i*) __INPUT="$1" ; shift; ;;
+				(o*) __OUTPUT="$1"; shift; ;;
 			esac
-			ARG="${ARG:1}"
+			__ARG="${__ARG#?}"
 		done
-		[ "$AS" -a ! "$RUNAS" ] && AS=
 	done
 
 	# Dry run
-	if [ "$DRY_RUN$PRINT_COMMANDS" -a ! "$SILENT" ]; then
-		[ $USE_ANSI ] && echo -ne '\e[33m  RUN    ' || echo -n '  RUN    '
-		[ $AS ] && echo -n " [as $RUNAS]"
-		printf " '%s'" "$@"
-		[ "$INPUT"  != /dev/stdin  ] && echo -n " <$INPUT"
-		[ "$OUTPUT" != /dev/stdout ] && echo -n " >$OUTPUT"
-		[ $USE_ANSI ] && echo -e '\e[0m' || echo
+	if [ -n "$DRY_RUN$PRINT_COMMANDS" ] && [ -z "$__SILENT" ]; then
+		if [ $__AS ]; then __MSG=" [as $__AS]"; else __MSG=""; fi
+		__END=""
+		if [ "$__INPUT"  != /dev/stdin  ]; then __END="<$__INPUT "; fi
+		if [ "$__OUTPUT" != /dev/stdout ]; then __END="$__END>$__OUTPUT"; fi
+		msg '36' RUN "$_MSG`printf "'%s' " "$@"`$__END"
 	fi
-	[ "$DRY_RUN" -a ! "$FORCE" ] && return 0
 
 	# Don't run really
-	[ $DUMMY ] && return 0
-	local EC=0
+	if [ -n "$DRY_RUN" ] && [ -z "$__FORCE" ]; then return 0; fi
+	if [ -n "$__DUMMY" ]; then return 0; fi
+	__EC=0
 
 	# cd cannot be run throught su or nice
-	if [ "$1" == cd ]; then
-		"$@" || EC=$?
-		return $?
+	if [ "X$1" = Xcd ]; then
+		"$@" || __EC=$?
+		return $__EC
 	fi
 
 	# Run not as
-	if [ ! $AS ]; then
-		if [ "$NICE" -ne 0 ]
-		then nice -n "$NICE" "$@" <"$INPUT" >"$OUTPUT" || EC=$?
-		else                 "$@" <"$INPUT" >"$OUTPUT" || EC=$?
+	if [ -z "$__AS" ]; then
+		if [ $NICE -ne 0 ]
+		then nice -n "$NICE" "$@" <"$__INPUT" >"$__OUTPUT" || __EC=$?
+		else                 "$@" <"$__INPUT" >"$__OUTPUT" || __EC=$?
 		fi
-		return $EC
+		return $__EC
 	fi
 
 	# Run as
-	local ARGS=
+	__ARGS=
 	while [ $# -ne 0 ]; do
-		ARGS="$ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
+		__ARGS="$ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
 		shift
 	done
 	if [ $NICE -ne 0 ]
-	then nice -n "$NICE" su "$RUNAS" -c "$ARGS" <"$INPUT" >"$OUTPUT" || EC=$?
-	else                 su "$RUNAS" -c "$ARGS" <"$INPUT" >"$OUTPUT" || EC=$?
+	then nice -n $NICE su "$__AS" -c "$ARGS" <"$__INPUT" >"$__OUTPUT" || __EC=$?
+	else               su "$__AS" -c "$ARGS" <"$__INPUT" >"$__OUTPUT" || __EC=$?
 	fi
-	return $EC
+	return $__EC
 }
 
 
@@ -227,13 +248,12 @@ run () {
 ## Runs /etc/installekrnel.d/$1/* scripts
 ##
 run_scripts () {
-	local DIR=$1
-	eval [ \$RUN_`echo $DIR | tr a-z- A-Z_` ] || return 0
-	shift
+	__DIR=$1; shift
+	if eval [ -z \"\$RUN_`echo $__DIR | tr a-z- A-Z_`\" ]; then return 0; fi
 
-	for SCRIPT in /etc/installkernel.d/* /etc/installkernel.d/$DIR/*; do
-		if [ -f "$SCRIPT" -a -x "$SCRIPT" ]; then
-			run "$@" "$SCRIPT" $DIR
+	for __SCRIPT in /etc/installkernel.d/* /etc/installkernel.d/$__DIR/*; do
+		if [ -f "$__SCRIPT" ] && [ -x "$__SCRIPT" ]; then
+			run "$@" "$__SCRIPT" $__DIR
 		fi
 	done
 }
@@ -243,23 +263,23 @@ run_scripts () {
 ## Runs header, run_scripts and run
 ##
 r () {
-	eval [ \$$1 ] || return 0
-	local NAME=`echo $1 | tr A-Z_ a-z-`
+	if eval [ -z \"\$$1\" ]; then return 0; fi
+	__NAME=`echo $1 | tr A-Z_ a-z-`
 	header "$2"
 	shift 2
-	run_scripts pre-$NAME
+	run_scripts pre-$__NAME
 	run "$@"
-	run_scripts post-$NAME
+	run_scripts post-$__NAME
 }
 
 ur () {
-	eval [ \$$1 ] || return 0
-	local NAME=`echo $1 | tr A-Z_ a-z-`
+	if eval [ -z \"\$$1\" ]; then return 0; fi
+	__NAME=`echo "$1" | tr A-Z_ a-z-`
 	header "$2"
 	shift 2
-	run_scripts pre-$NAME -u
+	run_scripts pre-$__NAME -u
 	run -u "$@"
-	run_scripts post-$NAME -u
+	run_scripts post-$__NAME -u
 }
 
 
@@ -267,49 +287,45 @@ ur () {
 ## Backups specified file(s)
 ##
 backup () {
-	local ARG=
-	[ "$1" == -u ] && ARG="-u" && shift
 	while [ "$1" ]; do
 		if [ -f "$1" ]; then
-			[ -f "$1~" ] && backup $ARG "$1~"
-			run $ARG mv -f$V -- "$1" "$1~"
+			if [ -f "$1~" ]; then
+				set -- "$1~" "$@"
+				continue
+			fi
+			run mv -f$V -- "$1" "$1~"
 		fi
 		shift
 	done
+	return 0
 }
 
 
 ##
 ## Signals etc
 ##
-interrupted () {
-	local EC=$?
-	if [ $1 == ERR ]; then
-		if [ $USE_ANSI ]
-		then echo -e '\e[31;1m  ERR    Command'\''s exit code: '$EC
-		else echo '  ERR    Comand'\''s exit code:'$EC
-		fi
-	else
-		if [ $USE_ANSI ]
-		then echo -e '\e[31;1m  SIG    Got SIG'$1'; terminating...\e[0m'
-		else echo '  SIG    Got SIG$1; terminating...'
-		fi
-	fi
-
-	exit 3
+sig_handler () {
+	msg 31 SIG "Got SIG$1; terminating..."
+	error 5 "Got SIG$1; terminating..."
 }
 
-set -e
 for E in HUP INT QUIT ILL ABRT FPE SEGV PIPE ALRM TERM TSTP; do
-	trap "interrupted $E" $E
+	trap "sig_handler $E" $E
 done
-
-trap true USR1 USR2
+trap "" USR1 USR2
+set -e
 
 exit_function () {
+	__EC=$?
 	rm -f /tmp/installkernel-$$ /tmp/installkernel-lockfile
-	[ "$LOG_AUTO" == started ] && \
+	if [ "X$LOG_AUTO" = Xstarted ]; then
 		date +'---- END ---- installkernel log file --- %y/%m/%d %H:%M:%S ---'
+	fi
+	if [ $__EC -ne 0 ]; then
+		msg 31 ERR "Comand's exit code: $__EC"
+		error $__EC "Comand's exit code: $__EC"
+	fi
+	return 0
 }
 
 trap exit_function 0
@@ -319,115 +335,114 @@ trap exit_function 0
 ## Reads various things
 ##
 update_ver () {
-	[ $VER ] || return 0
+	if [ -n "$VER" ]; then return 0; fi
 	run -uf make $MAKEV include/linux/version.h
-	[ -f include/linux/version.h ] || error 3 include/linux/version.h: missing
+	[ -f include/linux/version.h ] || error 2 include/linux/version.h: missing
+	[ -r include/linux/version.h ] || error 2 include/linux/version.h: unreadable
 	VER=`sed -ne '/UTS_RELEASE/ s/^[^\"]*"\(.*\)"$/\1/ p' \
 	         <include/linux/version.h`
-	echo "  VER     $VER"
+	msg '37;1' VER "$VER"
 }
 
 update_build () {
-	[ $BUILD ] || return 0
+	update_ver
+	if [ -n "$BUILD" ]; then return 0; fi
 	if [ ! -s .version ]; then BUILD=1; else
 		run -ud cat .version
 		BUILD=`run -usf cat .version`
 	fi
-	echo "  BUILD   $BUILD"
+	msg '37;1' BUILD "$BUILD"
 	FVER="$VER-#$BUILD"
 }
 
 
+##
+## Set hooks
+##
+set_run_hooks () {
+	for EVENT in CLEAN CONFIG MAKE_DEP UPDATE_SYMLINKS UPDATE_LOADER \
+		COMPILE_IMAGE INSTALL_IMAGE TIDY_IMAGE \
+		COMPILE_MODULES INSTALL_MODULES TIDY_MODULES; do
+		if [ -n "$2" ]
+		then eval export RUN_$2$EVENT=$1
+		else eval export RUN_PRE_$EVENT=$1 RUN_POST_$EVENT=$1
+		fi
+	done
+	if [ -n "$2" ]
+	then eval export RUN_${2%_}=$1
+	else eval export RUN_PRE=$1 RUN_POST=$1
+	fi
+}
 
-##
-## Init default options
-##
-if [ ! $INSIDE_INSTALLKERNEL ]; then
-	export VER= BUILD= IMG_PATH= MAP_PATH= SU= RUNAS= NICE=auto ARCH=
-	ADD_ARGS=0
+
+if [ -z "$INSIDE_INSTALLKERNEL" ]; then
+	##
+	## Init default options
+	##
+	export VER= BUILD= IMG_PATH= MAP_PATH= RUNAS= NICE=auto ARCH=
+	SU=
 
 	export DRY_RUN= PRINT_COMMANDS= VERBOSE= REALLY_VERBOSE=
-	[ -t ] && export USE_ANSI=y || export USE_ANSI=
+	if [ -t 1 ]; then export USE_ANSI=y; else export USE_ANSI=; fi
 
 	export MAKE_DEP=auto CLEAN= COMPILE_IMAGE= COMPILE_MODULES=
 	export INSTALL_IMAGE=y INSTALL_MODULES= UPDATE_SYMLINKS=y
 	export UPDATE_LOADER=y TIDY_IMAGE= TIDY_MODULES= CONFIG=
 	export CONFIG_TYPE=auto
 
-	declare -a ACTIONS
-	ACTION_COUNT=0
-
-	for EVENT in CLEAN CONFIG MAKE_DEP UPDATE_SYMLINKS UPDATE_LOADER \
-		{COMPILE,INSTALL,TIDY}_{IMAGE,MODULES}; do
-		eval export RUN_PRE_$EVENT=y RUN_POST_$EVENT=y
-	done
-	export RUN_PRE=y RUN_POST=y
+	set_run_hooks y
 
 
-##
-## Parse arguments
-##
-	while [ "$1" ]; do
+	##
+	## Parse arguments
+	##
+	FIRST=y
+	ADD_ARGS=0
+	for ARG; do
+		if [ -n "$FIRST" ]; then FIRST=; set --; fi
 		PARAM=
 
-		## Argument
-		case "$1" in
+		## Options
+		case "$ARG" in
 		(--help|-h) usage; exit 0; ;;
 		(--version|-V) exit 0; ;;
 
-		(--arch=*) ARCH="${1:7}"; ;;
-		(-a*) ARCH="${1:2}"; ;;
+		(--arch=*) ARCH="${ARG#--arch-}"; ;;
+		(-a*)      ARCH="${ARG#-a}";      ;;
 
-		(--log=*) LOG_AUTO=; LOG_FILE="${1:6}"; USE_ANSI=; ;;
-		(-L*)     LOG_AUTO=; LOG_FILE="${1:2}"; USE_ANSI=; ;;
+		(--log=*) LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#--log=}"; ;;
+		(-L*)     LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#-L}";     ;;
 		(--log)   LOG_AUTO=y; USE_ANSI=; ;;
 		(-L)      LOG_AUTO=y; USE_ANSI=; ;;
 		(-nL|--no-log) LOG_AUTO=; LOG_FILE=; ;;
 
-		(--cd=*)
-			ACTIONS[$ACTION_COUNT]=cd;
-			ACTION_COUNT=$(($ACTION_COUNT + 1))
-			ACTIONS[$ACTION_COUNT]="${1:5}"
-			ACTION_COUNT=$(($ACTION_COUNT + 1))
-			;;
-		(--cd)
-			ACTIONS[$ACTION_COUNT]=cd;
-			ACTION_COUNT=$(($ACTION_COUNT + 1))
-			ACTIONS[$ACTION_COUNT]=/usr/src/linux
-			ACTION_COUNT=$(($ACTION_COUNT + 1))
-			;;
-
-
-		(-p*|--patch=*)
-			ACTIONS[$ACTION_COUNT]=patch;
-			ACTION_COUNT=$(($ACTION_COUNT + 1))
-			[ ${1:1:1} == p ] && ACTIONS[$ACTION_COUNT]="${1:2}" || \
-				ACTIONS[$ACTION_COUNT]="${1:8}"
-			ACTION_COUNT=$(($ACTION_COUNT + 1))
-			;;
+		(--cd=*)    set -- "$@" cd    "${ARG#--cd=}";    ;;
+		(--cd)      set -- "$@" cd    /usr/src/linux;    ;;
+		(-p*)       set -- "$@" patch "${ARG#-p}";       ;;
+		(--patch=*) set -- "$@" patch "${ARG#--patch=}"; ;;
 
 		(--config=no)      CONFIG=; ;;
 		(--config=auto)    CONFIG=y; CONFIG_TYPE=auto; ;;
-		(--config=*config) CONFIG=y; CONFIG_TYPE="${1:9}"; ;;
-		(--config=*)       error 1 invalid config type: "${1:9}"; ;;
+		(--config=*config) CONFIG=y; CONFIG_TYPE="${ARG#--config=}"; ;;
+		(--config=*)       error 1 invalid config type: "${ARG#--config=}"; ;;
 
-		(--su) SU=y; ;;
-		(--user=*) RUNAS="${1:7}"; ;;
+		(--su)          SU=y; RUNAS="$USER"; ;;
+		(--user=*)      RUNAS="${ARG#--user=}"; ;;
+		(-u*)           RUNAS="${ARG#-u}"; ;;
 		(-nu|--no-user) RUNAS=; ;;
-		(-u*) RUNAS="${1:2}"; ;;
-		(--nice=*) NICE="${1:7}"; ;;
-		(--no-nice) NICE=0; ;;
+		(--nice=*)      NICE="${ARG#--nice=}"; ;;
+		(--no-nice)     NICE=0; ;;
 
-		(-n*)    VALUE= : PARAM="-${1:2}"; ;;
-		(--no-*) VALUE= ; PARAM="--${1:5}"; ;;
-		(--*)    VALUE=y; PARAM="--${1:2}"; ;;
-		(-*)     VALUE=y; PARAM="-${1:1}"; ;;
+		(-n?)    VALUE= : PARAM="-${ARG#-n}"; ;;
+		(--no-*) VALUE= ; PARAM="--${ARG#--no-}"; ;;
+		(--*)    VALUE=y; PARAM="--${ARG#--}"; ;;
+		(-?)     VALUE=y; PARAM="$ARG"; ;;
 
 		(*)
-			if   [ $ADD_ARGS == 0    ]; then VER="$1"
-			elif [ $ADD_ARGS == 00   ]; then IMG_PATH="$1"
-			elif [ $ADD_ARGS == 000  ]; then MAP_PATH="$1"
-			elif [ $ADD_ARGS != 0000 ]; then error 1 unknown option: "$1"
+			if   [ $ADD_ARGS  = 0    ]; then VER="$ARG"
+			elif [ $ADD_ARGS  = 00   ]; then IMG_PATH="$ARG"
+			elif [ $ADD_ARGS  = 000  ]; then MAP_PATH="$ARG"
+			elif [ $ADD_ARGS != 0000 ]; then error 1 unknown option: "$ARG"
 			fi
 			ADD_ARGS="0$ADD_ARGS"
 		;;
@@ -435,12 +450,14 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 
 
 		## Switches
-		[ ! "$PARAM" ] && shift && continue;
+		if [ -z "$PARAM" ]; then continue; fi
 		HOOK=
 		case "$PARAM" in
 		(--dry-run)        DRY_RUN=$VALUE ; ;;
-		(-v|--verbose)     VERBOSE=$VALUE ; [ $VALUE ] && PRINT_COMMANDS=y; ;;
-		(-vv)              REALLY_VERBOSE=$VALUE; [ $VALUE ] && VERBOSE=y && PRINT_COMMANDS=y; ;;
+		(-v|--verbose)     VERBOSE=$VALUE ;
+		                   if [ -n "$VALUE" ]; then PRINT_COMMANDS=y; fi; ;;
+		(-vv)              REALLY_VERBOSE=$VALUE;
+                    if [ -n "$VALUE" ]; then VERBOSE=y; PRINT_COMMANDS=y; fi; ;;
 		(--print-commands) PRINT_COMMANDS=$VALUE; ;;
 		(--color)          USE_ANSI=$VALUE; ;;
 
@@ -474,56 +491,52 @@ if [ ! $INSIDE_INSTALLKERNEL ]; then
 			UPDATE_SYMLINKS=$VALUE; UPDATE_LOADER=$VALUE
 			;;
 
-		(--run-*) HOOK="${PARAM:6}"; ;;
+		(--run-*) HOOK="${PARAM#--run-}"; ;;
 
-		(*) error 1 unknown option: "$1"; ;;
+		(*) error 1 unknown option: "$ARG"; ;;
 		esac
 
 
 		## Hooks
-		[ ! "$HOOK" ] && shift && continue;
+		if [ -z "$HOOK" ]; then continue; fi
 
-		if   [ "${HOOK:0:4}" == pre-  ]; then PRE='PRE_' ; HOOK="${HOOK:4}"
-		elif [ "${HOOK:0:5}" == post- ]; then PRE='POST_'; HOOK="${HOOK:5}"
+		if   expr "X$HOOK" : Xpre-  >/dev/null 2>&1
+		then PRE='PRE_' ; HOOK="${HOOK#pre-}"
+		elif expr "X$HOOK" : Xpost- >/dev/null 2>&1
+		then PRE='POST_'; HOOK="${HOOK#post-}"
 		else PRE=; fi
 
 		case "$HOOK" in
-		(hooks)
-			for EVENT in CLEAN CONFIG MAKE_DEP UPDATE_SYMLINKS UPDATE_LOADER \
-				{COMPILE,INSTALL,TIDY}_{IMAGE,MODULES}; do
-				if [ $PRE ]
-				then eval RUN_$PRE$EVENT=$VALUE
-				else eval RUN_PRE_$EVENT=$VALUE RUN_POST_$EVENT=$VALUE
-				fi
-			done
-			;;
+		(hooks) set_run_hooks "$VALUE" "$PRE"; ;;
 
-		(clean|clean|make-dep|update-symlinks|update-loader|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules)
+		(clean|config|make-dep|update-symlinks|update-loader|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules)
 			EVENT=`echo $HOOK | tr a-z- A-Z_`
-			if [ $PRE ]
+			if [ -n "$PRE" ]
 			then eval RUN_$PRE$EVENT=$VALUE
 			else eval RUN_PRE_$EVENT=$VALUE RUN_POST_$EVENT=$VALUE
 			fi
 			;;
 
 		(pre|post)
-			[ $PRE ] && error 1 event $HOOK cannot have pre-/post- prefix
-			EVET=`echo $HOOK | tr a-z- A-Z_`
+			if [ -n "$PRE" ]; then
+				error 1 event $HOOK cannot have pre-/post- prefix
+			fi
+			EVENT=`echo $HOOK | tr a-z- A-Z_`
 			eval RUN_$EVENT=$VALUE
 			;;
 
 		(*) error 1 unknown event: "$HOOK"; ;;
 		esac
-
-		shift
 	done
-fi
 
 
-if [ ! "$INSIDE_INSTALLKERNEL" ]; then
-	if [ "$LOG_FILE" -o "$LOG_AUTO" ]; then
-		[ "$LOG_AUTO" ] && LOG_FILE=installkernel-log
-		if [ "$LOG_AUTO" -a -f "$LOG_FILE" ]; then
+
+	##
+	## Print header and start logging
+	##
+	if [ -n "$LOG_FILE" ] || [ -n "$LOG_AUTO" ]; then
+		if [ -n "$LOG_AUTO" ]; then LOG_FILE=installkernel-log; fi
+		if [ -n "$LOG_AUTO" ] && [ -f "$LOG_FILE" ]; then
 			I=1
 			while [ -f "$LOG_FILE.$I" ]; do I=$(( $I + 1 )); done
 			LOG_FILE="$LOG_FILE.$I"
@@ -531,128 +544,116 @@ if [ ! "$INSIDE_INSTALLKERNEL" ]; then
 		echo "${0##*/}: logging output to '$LOG_FILE'"
 		exec >>"$LOG_FILE"
 		exec 2>&1
-		date +'--- START --- installkernel log file --- %y/%m/%d %H:%M:%S ---'
+		FMT='+--- START --- installkernel log file --- %y/%m/%d %H:%M:%S ---'
+		if [ -n "$DRY_RUN" ]; then FMT="$FMT [dry run]"; fi
+		date "$FMT"
 		LOG_AUTO=started
 	fi
 
 	header Starting
-echo asd
-fi
 
-export INSIDE_INSTALLKERNEL=y
-set -- "${ACTIONS[@]}"
-unset ACTIONS ACTION_COUNT
-[ $VERBOSE ] && V=v && VOPT=-v
-[ $REALLY_VERBOSE ] && MAKEV=v=1 || MAKEV=
+	export INSIDE_INSTALLKERNEL=y
+	if [ -n "$VERBOSE" ]; then V=v; VOPT=-v; fi
+	if [ -n "$REALLY_VERBOSE" ]; then MAKEV='v=1'; MAKEV=; fi
 
-
-##
-## Calculate nice
-##
-if [ "$NICE" == auto ]; then
-	NICE=$((10 - `nice`))
-	[ $NICE -lt 0 ] && NICE=0
-fi
-declare -i NICE
-NICE=$NICE
+	##
+	## Calculate nice
+	##
+	if [ "X$NICE" = Xauto ]; then
+		NICE=$((10 - `nice`))
+		if [ $NICE -lt 0 ]; then NICE=0; fi
+	fi
+	NICE=`toInt "$NICE"`
+	if [ $NICE -ne 0 ]; then msg '37;1' NICE "$NICE"; fi
 
 
-##
-## Set ARCH
-##
-if [ -z "$ARCH" ]; then
-	ARCH=`uname -m | sed -e 's/i.86/i386/' -e 's/sun4u/sparc64/' \
-	                     -e 's/arm.*/arm/' -e 's/sa110/arm/' \
-	                     -e 's/s390x/s390/' -e 's/parisc64/parisc/'`
-	echo "  ARCH    $ARCH"
-fi
-
-
-##
-## Become root ?
-##
-if [ "$SU" -a $EUID -ne 0 ]; then
-	if [ "$NICE" -ne 0 ]; then
-		echo "  SU      Becoming super user and setting nice"
-	else
-		echo "  SU      Becoming super user"
+	##
+	## Set ARCH
+	##
+	if [ -z "$ARCH" ]; then
+		ARCH=`uname -m | sed -e 's/i.86/i386/' -e 's/sun4u/sparc64/' \
+	                         -e 's/arm.*/arm/' -e 's/sa110/arm/' \
+	                         -e 's/s390x/s390/' -e 's/parisc64/parisc/'`
+		msg '37;1' ARCH "$ARCH"
 	fi
 
-	[ "$RUNAS" ] || RUNAS="$USER"
-	SU=
-	NICETMP="$NICE";
-	NICE=0
 
-	if [ $DRY_RUN ]; then
-		echo Here you would be asked for root password.
-	else
-		ARGS="'`echo "$0" | sed -e "s/'/'\\\\''/"`'"
-		while [ $# -ne 0 ]; do
-			ARGS="$ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
-			shift
-		done
-		if [ "$NICETMP" -ne 0 ]
-		then nice -n "$NICETMP" su -c "$ARGS"
-		else                    su -c "$ARGS"
+	##
+	## Become root ?
+	##
+	if [ -n "$SU" ] && [ "`id -u`" -ne 0 ]; then
+		msg '37;1' SU "Becoming super user"
+		unset SU
+		NICETMP="$NICE";
+		NICE=0
+
+		if [ -n "$DRY_RUN" ]; then
+			echo Here you would be asked for root password.
+		else
+			ARGS="'`echo "$0" | sed -e "s/'/'\\\\''/"`'"
+			while [ $# -ne 0 ]; do
+				ARGS="$ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
+				shift
+			done
+			if [ "$NICETMP" -ne 0 ]
+			then nice -n "$NICETMP" su -c "$ARGS"
+			else                    su -c "$ARGS"
+			fi
+			exit $?
 		fi
-		exit $?
 	fi
+else
+	if [ -n "$VERBOSE" ]; then V=v; VOPT=-v; fi
+	if [ -n "$REALLY_VERBOSE" ]; then MAKEV='v=1'; MAKEV=; fi
 fi
-
-
-run_scripts pre
 
 
 ##
 ## Patching and changing directories
 ##
-while [ "$1" ]; do
-	if [ "$1" == cd ]; then
-		echo "  CD      $2"
+while [ -n "$1" ]; do
+	if [ "X$1" = Xcd ]; then
+		msg '37;1' CD "$2"
 		run -f cd -- "$2"
 		shift 2
-		continue;
+		continue
 	fi
 
-	if [ "$1" != patch ]; then error 3 Internal error; fi
+	if [ "X$1" != Xpatch ]; then error 3 Internal error; fi
 
-	PATCH="$2"
-	FORCE=;   [ "${PATCH:0:1}" == !  ] && FORCE=y   && PATCH="${PATCH:1}"
-	REVERSE=; [ "${PATCH:0:2}" == -r ] && REVERSE=R && PATCH="${PATCH:2}"
-	[ $VERBOSE ] || REVERSE="s$REVERSE"
+	ARG="$2"
+	if expr "X$ARG" : "X!" >/dev/null 2>&1
+	then FORCE=y  ; ARG="${ARG#!}"; else FORCE=  ; fi
+	if expr "X$ARG" : "X@" >/dev/null 2>&1
+	then REVERSE=R; ARG="${ARG#@}"; else REVERSE=; fi
+	if [ -n "$VERBOSE" ]; then REVERSE="s$REVERSE"; fi
 
-	CUT=`expr "$PATCH" : '[0-9][0-9]*:' || true`
-	if [ $CUT -ne 0 ]; then
-		LEVEL="${PATCH:0:$CUT}"; LEVEL="${LEVEL%:}"
-		PATCH="${PATCH:$CUT}"
-	else
-		LEVEL=1
+	LEVEL=`expr "X$ARG" : 'X\([0-9][0-9]*\):' || true`
+	if [ "X$LEVEL" != X ]; then ARG="${ARG#$LEVEL:}"; else LEVEL=1; fi
+
+	if   expr "X$ARG" : X=  >dev/null 2>&1; then ARG="${ARG#=}"
+	elif expr "X$ARG" : X-- >dev/null 2>&1; then ARG="${ARG#--}"
 	fi
 
-	if [ "${PATCH:0:1}" == = ]
-	then PATCH="${PATCH:1}"
-	elif [ "${PATCH:0:2}" == - ]
-	then PATCH="${PATCH:2}"
-	fi
+	[ -f "$ARG" ] || error 2 "$ARG: missing"
+	[ -r "$ARG" ] || error 2 "$ARG: unreadable"
 
-	[ -f "$PATCH" ] || error 2 "$PATCH: no such file"
-	[ -r "$PATCH" ] || error 2 "$PATCH: unreadable"
-
-	echo "  DECOMP  $PATCH"
-	[ -h /tmp/installkernel-$$ ] && run rm -f /tmp/installkernel-$$
+	msg '37;1' DECOMP "$ARG"
+	run rm -f /tmp/installkernel-$$
 	case "$PATCH" in
-	(*.bz2) run -u -i "$PATCH" -o /tmp/installkernel-$$  bzip2    -d$V; ;;
-	(*.gz)  run -u -i "$PATCH" -o /tmp/installkernel-$$  gzip     -d$V; ;;
-	(*.Z)   run -u -i "$PATCH" -o /tmp/installkernel-$$  compress -d$V; ;;
-	(*)     run -u ln -s$V "$PATCH" /tmp/installkernel-$$; ;;
+	(*.bz2) run -uio "$ARG" /tmp/installkernel-$$  bzip2    -d$V; ;;
+	(*.gz)  run -uio "$ARG" /tmp/installkernel-$$  gzip     -d$V; ;;
+	(*.Z)   run -uio "$ARG" /tmp/installkernel-$$  compress -d$V; ;;
+	(*)     run -u ln -s$V "$ARG" /tmp/installkernel-$$; ;;
 	esac
 
-	if [ ! "$FORCE" ]; then
-		echo "  TEST    $PATCH"
-		run -i /tmp/installkernel-$$ patch -f{$REVERSE}p$LEVEL --dry-run
+	if [ -z "$FORCE" ]; then
+		msg '37;1' TEST "$ARG"
+		run -i /tmp/installkernel-$$ patch -${REVERSE}p$LEVEL --dry-run
 	fi
 
-	run -i /tmp/installkernel-$$ patch -f{$REVERSE}p$LEVEL
+	msg '37;1' APPLY "$ARG"
+	run -i /tmp/installkernel-$$ patch -f${REVERSE}p$LEVEL
 	run rm -f$V /tmp/installkernel-$$
 	shift 2
 done
@@ -661,31 +662,36 @@ done
 ##
 ## Make dep?
 ##
-if [ "$COMPILE_IMAGE" -a "$MAKE_DEP" == auto ]; then
+if [ -n "$COMPILE_IMAGE" ] && [ "X$MAKE_DEP" = Xauto ]; then
 	update_ver
-	[ "${VER:0:4}" == 2.4. ] && MAKE_DEP=y || MAKE_DEP=
+	if expr "X$VER" : 'X2\.4\.'; then MAKE_DEP=y; else MAKE_DEP=; fi
+elif [ "X$MAKE_DEP" = Xauto ]; then
+	MAKE_DEP=
 fi
 
 
 ##
 ## Check config type
 ##
-if [ "$CONFIG" -a "$CONFIG_TYPE" == auto ]; then
-	if [ "$DISPLAU" ]; then
+if [ -n "$CONFIG" ] && [ "X$CONFIG_TYPE" = Xauto ]; then
+	if [ -n "$DISPLAY" ]; then
 		if   which qtconfig   >/dev/null 2>&1; then CONFIG_TYPE=xconfig
 		elif which gtk-config >/dev/null 2>&1; then CONFIG_TYPE=gconfig
 		fi
 	fi
 
-	if [ "$CONFIG_TYPE" == auto ]; then
+	if [ "X$CONFIG_TYPE" = Xauto ]; then
 		for DIR in /usr/lib /usr/local/lib /lib; do
 			for LIB in curses.a curses.so ncurses.a ncurses.so; do
-				[ -f "$DIR/lib$LIB" ] && CONFIG_TYPE=menuconfig && break
+				if [ -f "$DIR/lib$LIB" ]; then
+					CONFIG_TYPE=menuconfig
+					break 2
+				fi
 			done
 		done
 	fi
 
-	[ "$CONFIG_TYPE" == auto ] && CONFIG_TYPE=config
+	if [ "X$CONFIG_TYPE" = Xauto ]; then CONFIG_TYPE=config; fi
 fi
 
 
@@ -703,16 +709,16 @@ ur COMPILE_MODULES 'Compiling modules'             make $MAKEV modules
 ##
 ## Removing old images
 ##
-if [ $TIDY_IMAGE ]; then
+if [ -n "$TIDY_IMAGE" ]; then
 	header Removing old image
 	run_scripts pre-tidy-image
 
 	for FILE in bzImage System.map config; do
-		echo "  READLNK $FILE~"
+		msg '37;1' READLNK "$FILE~"
 		run -d readlink "/boot/$FILE~"
 		LNK=`readlink "/boot/$FILE~" || true`
 		if [ -f "/boot/$LNK" ]; then
-			echo "  RM      $LNK"
+			msg '37;1' RM "$LNK"
 			run rm -f$V -- "/boot/$LNK"
 		fi
 	done
@@ -724,27 +730,29 @@ fi
 ##
 ## Removing old modules
 ##
-if [ $TIDY_MODULES ]; then
+if [ -n "$TIDY_MODULES" ]; then
 	header Removing old modules
 	run_scripts pre-tidy-modules
 
 	update_ver
 
-	echo "  READLNK bzImage"
-	run -d readlink "/boot/$FILE"
-	TMP=`readlink "/boot/$FILE" || true`
-	TMP="${TMP:8}"; OVER=
-	while [ "$TMP" != "$OVER" ]; do OVER="$TMP"; TMP=${OVER%~}; done
+	msg '37;1' READLNK bzImage
+	run -d readlink /boot/bzImage
+	if OVER"`readlink /boot/bzImage` 2>/dev/null"; then
+		OVER=${OVER#bzImage-}
+		OVER=`printf "%s" "$OVER" | sed -e 's/\(-#[0-9][0-9]*\)\?~*$//'`
+	fi
 
-	echo "  READLNK bzImage~"
-	run -d readlink "/boot/$FILE~"
-	TMP=`readlink "/boot/$FILE~" || true`
-	TMP="${TMP:8}"; OOVER=
-	while [ "$TMP" != "$OOVER" ]; do OOVER="$TMP"; TMP=${OOVER%~}; done
+	msg '37;1' READLNK bzImage~
+	run -d readlink /boot/bzImage~
+	if OOVER"`readlink /boot/bzImage` 2>/dev/null"; then
+		OOVER=${OVER#bzImage-}
+		OOVER=`printf "%s" "$OOVER" | sed -e 's/\(-#[0-9][0-9]*\)\?~*$//'`
+	fi
 
-	if [ "$OOVER" -a "$OOVER" != "$VER" -a "$OOVER" != "$OVER" -a \
-		-d "/lib/modules/$OOVER" ]; then
-		echo "  RMDIR   /lib/modules/$OOVER"
+	if [ -n "$OOVER" ] && [ "X$OOVER" != "X$VER" ] && \
+	   [ "X$OOVER" != "X$OVER" ] && [ -d "/lib/modules/$OOVER" ]; then
+		msg '37;1' RMDIR "/lib/modules/$OOVER"
 		run rm -rf$V -- "/lib/modules/$OOVER"
 	fi
 
@@ -755,24 +763,26 @@ fi
 ##
 ## Copying image
 ##
-if [ $INSTALL_IMAGE ]; then
+if [ -n "$INSTALL_IMAGE" ]; then
 	header Installing kernel
 	run_scripts pre-install-image
 
 	update_ver
 	update_build
-	if [ ! "$IMG_PATH" ]; then IMG_PATH="arch/$ARCH/boot/bzImage"; fi
-	if [ ! "$MAP_PATH" ]; then MAP_PATH="System.map"; fi
+	if [ -z "$IMG_PATH" ]; then IMG_PATH="arch/$ARCH/boot/bzImage"; fi
+	if [ -z "$MAP_PATH" ]; then MAP_PATH="System.map"; fi
 
-	echo '  CP      bzImage'
+	mkdir -m u=rwx,g=rx,o=rx /boot
+
+	msg '37;1' CP bzImage
 	backup "/boot/bzImage-$FVER"
 	run cp $VOPT -- "$IMG_PATH" "/boot/bzImage-$FVER"
 
-	echo '  CP      System.map'
+	msg '37;1' CP System.map
 	backup "/boot/System.map-$FVER"
 	run cp $VOPT -- "$MAP_PATH" "/boot/System.map-$FVER"
 
-	echo '  CP      .config'
+	msg '37;1' CP .config
 	backup "/boot/config-$FVER"
 	run cp $VOPT -- .config "/boot/config-$FVER"
 
@@ -784,7 +794,7 @@ fi
 ##
 ## Updating symlinks
 ##
-if [ $UPDATE_SYMLINKS ]; then
+if [ -n "$UPDATE_SYMLINKS" ]; then
 	header Updating symlinks
 	run_scripts pre-update-symlinks
 
@@ -792,15 +802,15 @@ if [ $UPDATE_SYMLINKS ]; then
 	update_build
 
 	for FILE in bzImage System.map config; do
-		echo "  READLNK $FILE"
+		msg '37;1' READLNK "$FILE"
 		run -d readlink /boot/$FILE || true
-		LNK=`readlink "/boot/$FILE" || true`
-		if [ "$LNK" == "$FILE-$FVER" ]; then
-			echo "  LNK     $FILE~"
+		LNK="`readlink "/boot/$FILE" || true`"
+		if [ "X$LNK" = "X$FILE-$FVER" ]; then
+			msg '37;1' LNK "$FILE~"
 			run rm -f$V -- /boot/$FILE~
 			run ln -s$V -- $FILE-$FVER~ /boot/$FILE~
 		else
-			echo "  LNK     $FILE"
+			msg '37;1' LNK "$FILE"
 			run mv -f$V -- /boot/$FILE /boot/$FILE~ || true
 			run ln -fs$V -- $FILE-$FVER /boot/$FILE
 		fi
@@ -814,7 +824,7 @@ fi
 ##
 ## Running LILO
 ##
- r UPDATE_LOADER   'Running LILO'                  lilo $VOPT
+ r UPDATE_LOADER   'Updating bootloader'           lilo $VOPT
 
 
 

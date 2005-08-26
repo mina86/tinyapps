@@ -1,8 +1,8 @@
-.TH installkernel 8 "11 August, 2005" "version 0.13" "Linux System Administration"
+.TH installkernel 8 "11 August, 2005" "version 0.13.1" "Linux System Administration"
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.4 2005/08/19 18:49:24 mina86 Exp $
+\" $Id: installkernel.8,v 1.5 2005/08/26 17:40:06 mina86 Exp $
 \" Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 \"
 
@@ -25,9 +25,16 @@ additional scripts are added it can also automatically install modules
 which are not part of Linux or perform some other tasks specific for
 local machine.
 
+.PP
+The version 0.13.1 is written in standard compilant way.  It was
+tested on \fBash\fP as well as \fBbash\fP and is believed to run on
+any POSIX compatible shell, therefore, it can be used also on embeded
+systems, which are unlikely to contain "heavy" bash but rather a lite
+shell.
+
 .SH ARGUMENTS
 
-The scripts takes 4 kinds of arguments.  Options, switches and
+The scripts takes 3 kinds of arguments.  Options, switches and
 actions.  Switches are options which may be toggled on and off.
 Actions can be specified several times and instruct
 \fBinstallkernel\fP script to perform various steps.  Those steps are
@@ -286,7 +293,7 @@ Applies specified \fIpatch\fP in the current working directory.
 Patches are automatically decompressed if required.  The first character
 of \fIpatch\fP may be an exclamation mark ("!") which means that the
 patch should be applied even if some errors arise during patching.
-Also "\-r" may be used which means to apply it as a reverse patch.
+Also "@" may be used which means to apply it as a reverse patch.
 Next a number fallowed by a colon may indicate an argument which should
 be given to \fB\-p\fP option of \fBptch\fP (the default is \fB1\fP).
 Then a quotation mark ("=") or double dashes ("\-\-") may exist.  The
@@ -298,6 +305,46 @@ given order so \fB\-\-cd \-\-patch=foo.diff\fP is something different
 then \fB\-\-patch=foo.dif \-\-cd\fP.  This makes sens if you want to
 apply several patches in different points of the Linux kernel source
 tree.
+
+.SH EXIT CODE
+
+\fBinstallkernel\fP defines the fallowing exit code values:
+
+.TP
+\fB0\fP
+Everything went OK.
+
+.TP
+\fB1\fP
+Invalid arguments where given.
+
+.TP
+\fB2\fP
+Some other errors detected by the script.  At the moment, this
+includes the situation when the patch file or include/linux/version.h
+file was missing or unreadable.
+
+.TP
+\fB3\fP
+A condition which should never happen happened.  This is an internal
+error and if it occures should be considered as a bug.
+
+.TP
+\fB4\fP
+A lockfile exists and another instance of \fBinstallkernel\fP is
+running.
+
+.TP
+\fB5\fP
+The script recieved on of the signals: \fBSIGHUP\fP, \fBSIGINT\fP,
+\fBSIGQUIT\fP, \fBSIGILL\fP, \fBSIGABRT\fP, \fBSIGFPE\fP,
+\fBSIGSEGV\fP, \fBSIGPIPE\fP, \fBSIGALRM\fP, \fBSIGTERM\fP or
+\fBSIGTSTP\fP.
+
+.PP
+Moreover, if during execution any command fileds, \fBinstallkernel\fP
+will exit with it's exit code, therefore all the above exit codes can
+have two meanings.
 
 .SH HOOKS
 
@@ -336,6 +383,31 @@ understand it better create some scripts in \fB/etc/installkernel.d\fP
 and it's subdirectories and run \fBinstallkernel\fP with
 \fB\-\-dry\-run\fP option.
 
+.SH LILO CONFIG
+
+After the kernel image is installed (when \fB\-\-install\-image is
+true, the default) and symlinks updated (when \fB\-\-update\-symlinks
+is true, the default) the new kernel image can be accessed by a
+\fB/boot/bzImage\fP and the old one by \fB/boot/bzImage~\fP symlinks.
+The same is with \fBSystem.map\fP and \fBconfig\fP.  This way you
+don't have to alter your LILO configuration each time new kernel is
+installed, therefore, usually the \fBlilo.conf\fP
+(\fB/etc/lilo.conf\fP by default) should contain the fallowing code:
+
+.nf
+image = /boot/bzImage
+    root = /dev/\fIwhatever\fP
+    label = Linux
+    read-only
+
+image = /boot/bzImage
+    root = /dev/\fIwhatever\fP
+    label = Old image
+    read-only
+.PP
+
+For more details you should consult lilo.conf(5) man page.
+
 .SH EXAMPLES
 
 .TP
@@ -357,7 +429,7 @@ build process).
 Will compile, install and tidy the kernel modules only.
 
 .TP
-\fBinstallkernell \-\-no\-all \-\-cd \-\-patch=!\-r=../patch\-foo\-1\-\-patch=!\-\-../patch\-foo\-2 \-\-compile\fP
+\fBinstallkernell \-\-no\-all \-\-cd \-\-patch=!@=../patch\-foo\-1 \-\-patch=!\-\-../patch\-foo\-2 \-\-compile\fP
 Applies a \fBpatch\-foo\-1\fP patch in reverse mode then applies a
 \fBpatch\-foo\-2\fP patch and at the end compiles the kernel image and
 modules.  Useful if there is no incremental patch from \fBfoo-1\fP to
@@ -365,17 +437,17 @@ modules.  Useful if there is no incremental patch from \fBfoo-1\fP to
 even if there are some rejections the script will continue.
 
 .TP
-\fBinstallkernel \-\-all \-\-su \-\-cd --log && /sbin/reboot\fP
+\fBinstallkernel \-\-all \-\-su \-\-cd \-\-log && /sbin/reboot\fP
 Something for lazy sysadmins.  This will do everything to get a new
 kernel image work and if everything went OK system will reboot.  All
 messages will be logged to \fBinstallkernel-log\fP (or any of
-\fBinstallkernel-log.#\fI, see description of \-\-log option) file for
+\fBinstallkernel-log.#\fP, see description of \-\-log option) file for
 future analyze.  \fBBeware\fP, however, that it's not very wise to get
 system automatically reboot without sysadmin.  You should rather
 reboot the system when you get back the next day ;).  You may however
 replace \fB&& /sbin/reboot\fP with \fB; /sbin/halt\fP to run a nightly
 compilation.  Note that you have to have \fBreboot\fP and \fBhalt\fP
-properly configured for a non-root user to be able to run.
+properly configured for a non\-root user to be able to run.
 
 .TP
 \fBinstallkernel \-\-all \-\-su \-\-cd --log --patch=../patch-next-version.bz2 --config\fP
