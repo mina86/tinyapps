@@ -1,5 +1,7 @@
 2005-08-26  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* Makefile: release target and .release file support added
+
 	* cpuload.sh: --nice argument added
 
 	* add: bug fixed

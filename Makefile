@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.6 2005/08/26 17:29:34 mina86 Exp $
+## $Id: Makefile,v 1.7 2005/08/26 19:03:19 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -24,7 +24,9 @@ X11_LIB_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
                        break; done}
 
 ifndef      RELEASE
-RELEASE     := $(shell date +%Y%m%d)
+RELEASE     := $(shell if [ -f .release ]; \
+                       then printf %s $$(cat .release); \
+                       else date +%Y%m%d; fi)
 endif
 
 
@@ -59,7 +61,7 @@ help:
 	@echo '  distclean            at the moment synonym of clean'
 	@echo '  install              installs all utilities'
 	@echo '  package              creates tinyapps.tgz binary package'
-	@echo '  tinyapps.tgz         synonym of package'
+	@echo '  release              prepares a release to publish'
 	@echo '  uninstall            uninstalls all utilities'
 	@echo
 	@echo '  <utility>            builds <utility>'
@@ -69,7 +71,7 @@ help:
 	@echo 'Possible options:'
 	@echo '  V=0|1                0 - quiet build (default), 1 - verbose build'
 	@echo '  DEST_DIR=<dir>       install to/uninstall from <dir>'
-	@echo '  RELEASE=<YYYYMMDD>   release date of the package (when make package)'
+	@echo '  RELEASE=<YYYYMMDD>   release date of the package'
 
 
 ##
@@ -273,12 +275,11 @@ uninstall-the-book-of-mozilla:
 ##
 clean:
 	@echo '  CLEAN  compiled files'
-	${Q}xargs rm <.cvsignore 2>/dev/null || true
+	${Q}rm -f -- ${shell cat .cvsignore}
 	@echo '  CLEAN  temporary files'
-	${Q}rm *.o *~ 2>/dev/null || true
-	@echo '  CLEAN  package'
-	${Q}[ -d package ] && rm -rf package || true
-	${Q}[ -f tinyapps.tgz ] && rm -f tinyapps.tgz || true
+	${Q}rm -f -- *.o *~ 2>/dev/null
+	@echo '  CLEAN  package release'
+	${Q}rm -rf -- package tinyapps*/
 
 distclean: clean
 
@@ -289,7 +290,7 @@ distclean: clean
 ##
 tinyapps.tgz: package
 
-package: DEST_DIR = ${PWD}/package-${RELEASE}
+package: DEST_DIR = ${PWD}/package
 package: install
 ifneq (${EUID}, 0)
 	@${warning It is best to create package as root.}
@@ -316,12 +317,31 @@ endif
 	@echo '  CP     slack-desc'
 	${Q}cp -- slack-desc '${DEST_DIR}/install'
 
-	@echo '  TAR    tinyapps-${RELEASE}.tar'
-	${Q}${RT}tar c -C '${DEST_DIR}' --format=v7 install bin usr >'tinyapps-${RELEASE}.tar'
-	${Q}${NR}tar c -C '${DEST_DIR}' --owner=root --group=root --format=v7 install bin usr >'tinyapps-${RELEASE}.tar'
+	@echo '  TAR    tinyapps.tar'
+	${Q}${RT}tar c -C '${DEST_DIR}' --format=v7 install bin usr >tinyapps.tar
+	${Q}${NR}tar c -C '${DEST_DIR}' --owner=root --group=root --format=v7 install bin usr >tinyapps.tar
 	@echo '  GZIP   tinyapps-{$RELEASE}.tgz'
-	${Q}gzip -9 'tinyapps-${RELEASE}.tar'
-	${Q}mv -f -- 'tinyapps-${RELEASE}.tar.gz' 'tinyapps-${RELEASE}.tgz'
+	${Q}gzip -9 <'tinyapps.tar' >'tinyapps-${RELEASE}.tgz'
+	${Q}mv -f -- tinyapps.tar
 
-	@echo '  RM     package-${RELEASE}'
+	@echo '  RM     package'
 	${Q}rm -rf -- '${DEST_DIR}'
+
+
+
+##
+## Make release
+##
+release: distclean
+	@echo '  CP     *'
+	${Q}mkdir -p -- 'tinyapps-${RELEASE}'
+	${Q}for FILE in *; do [ "X$$FILE" != XCVS ] && \
+		[ "X$$FILE" != 'Xtinyapps-${RELEASE}' ] && \
+		cp -Rf -- "$$FILE" 'tinyapps-${RELEASE}'; done
+	${Q}echo '${RELEASE}' >'tinyapps-${RELEASE}/.release'
+
+	@echo '  TARBZ  tinyapps-${RELEASE}.tar.bz2'
+	${Q}tar c 'tinyapps-${RELEASE}' | bzip2 -9 >'tinyapps-${RELEASE}.tar.bz2'
+
+	@echo '  RM     tinyapps-${RELEASE}'
+	${Q}rm -rf -- 'tinyapps-${RELEASE}'

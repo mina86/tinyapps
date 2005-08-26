@@ -15,6 +15,7 @@ rot13
 timer
 tinyapps*.tar
 tinyapps*.tar.gz
+tinyapps*.tar.bz2
 tinyapps*.tgz
 the-book-of-mozilla
 tuptime
