@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.5 2005/08/13 22:21:03 mina86 Exp $
+## $Id: quotes.txt,v 1.6 2005/08/26 16:28:42 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -10,6 +10,9 @@
 %
  I have always found that mercy bears richer fruits than strict justice.
 	-- Abraham Lincoln (1809-1865)
+%
+ When the music's over, turn off the lights.
+	-- The last words of Adolf Hitler (1889-1945)
 %
  So far as the laws of mathematics refer to reality, they are not certain.
  And so far as they are certain, they do not refer to reality.
@@ -66,6 +69,19 @@ France will say I am a German and Germany will say I am a Jew.
  We can't solve problems by using the same kind of thinking we used when we
 created them.
 	-- Albert Einstein (1879-1955)
+%
+ To the strongest!
+	-- Alexander the Great (356BC-323BC)
+%
+ I would not fear a pack of lions led by a sheep, but I would always fear a
+flock of sheep led by a lion.
+	-- Alexander the Great (356BC-323BC)
+%
+  Wait a minute...
+	-- The last words of Pope Alexander VI (1431-1503)
+%
+ Well, this is certainly a pleasant surprise.
+	-- The last words of Andrew Mutton
 %
  Real Programmers always confuse Christmas and Halloween because Oct31
 == Dec25 !
@@ -230,6 +246,9 @@ kocha³a jego.  Co¶ takiego musia³o skoñczyæ siê nieszczê¶ciem.
 they make it easier to do don't need to be done.
 	-- Andy A. Rooney (1919-)
 %
+ Damn! A bullet!
+	-- The last words of Antonio Jose de Sucre (1795-1830)
+%
  A bullet to his head won't bring back the dead, but it'll lift the spirit
 of my people!
 	-- Asian Dub Foundation, Assassin
@@ -237,6 +256,9 @@ of my people!
  Most men who are not married by the age of thirty-five are either
 homosexual or really smart.
 	-- Becky Rodenbeck
+%
+ Shoot me in the chest!
+	-- The last words of Benito Amilcare Andrea Mussolini (1883-1945)
 %
  Democracy is two wolves and a lamb voting on what to have for lunch.
 	-- Benjamin Franklin (1706-1790)
@@ -258,9 +280,18 @@ ones in movies.
 	-- Russa
 	-- BioWare, Baldur's Gate
 %
+ I'll be in Hell before you start breakfast!"
+	-- The last words of "Black Jack" Ketchum
+%
+ Good morning, Robert.
+	-- The last words of John Calvin Coolidge, Jr. (1872-1933)
+%
  No man is wise enough, nor good enough to be trusted with unlimited
 power.
 	-- Charles Colton
+%
+ Why not? After all, it belongs to Him!
+	-- The last words of Sir Charles Spencer Chaplin (1889-1977)
 %
 Trust no one.
 	-- Fox Mulder (David Duchowny)
@@ -379,6 +410,9 @@ whether submarines can swim.
 show their absence.
 	-- Edsger Wybe Dijkstra (1930-2002)
 %
+ Such is life.
+	-- The last words of Edward "Ned" Kelly (1854[?]-1880)
+%
  Masochizm wynika z niewiedzy.
 	-- Edward Stachowski
 %
@@ -395,32 +429,42 @@ kryminalistów.
  The reason that there are so few good conversationalists is that most
 people are thinking about what they are going to say and not about what the
 others are saying.
-	-- Attribtued to François de La Rochefoucauld (1613-1680)
+	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
 %
  Those who spend too much time on the little things usually become
 incapable of great ones.
-	-- Attribtued to François de La Rochefoucauld (1613-1680)
+	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
 %
  How can we expect others to keep our secrets if we cannot keep them
 ourselves?
-	-- Attribtued to François de La Rochefoucauld (1613-1680)
+	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
 %
  Only great men have great faults.
-	-- Attribtued to François de La Rochefoucauld (1613-1680)
+	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
 %
  It is never more difficult to speak well than when one is ashamed to be
 silent.
-	-- Attribtued to François de La Rochefoucauld (1613-1680)
+	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
 %
  Spory nie trwa³yby tak d³ugo, gdyby brak s³uszno¶ci by³ tylko po jednej
 stronie.
-	-- Attribtued to François de La Rochefoucauld (1613-1680)
+	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
+%
+ I have a terrible headache.
+	-- The last words of Franklin Delano Roosevelt (1882-1945)
+%
+ The Earth is suffocating... Swear to make them cut me open, so that I
+won't be buried alive.
+	-- The last words of Frederic Chopin (1810-1849)
 %
  A jednak siê krêci!
 	-- Gallieo Gallei (1564-1642)
 %
  Wolno¶æ oznacza odpowiedzialno¶æ.  Dlatego wiêkszo¶æ ludzi siê jej boi.
 	-- George Bernard Shaw (1856-1950)
+%
+ Now I shall go to sleep. Goodnight.
+	-- The last words of Lorde George Gordon Byron (1788-1824)
 %
  Don't try to do it.  Do it or don't do it.
 	-- Yoda
@@ -440,6 +484,9 @@ sk³ada siê z trzech osób, z których jedna jest chora, a druga nieobecna.
  Aby czuæ siê wolnym istnieje prosty sposób: nie szarpaæ i nie napinaæ
 smyczy.
 	-- Hans Krailsheimer
+%
+ That was a great game of golf, fellers.
+	-- The last words of Harry Lillis "Bing" Crosby (1903-1977)
 %
  Take my wife.  Please.
 	-- Henny Youngman (1906-1998)
@@ -480,6 +527,9 @@ out of jail for killing my wife." "So you're single."
 week.
 	-- Henny Youngman (1906-1998)
 %
+ Die, my dear doctor, that's the last thing I shall do!
+	-- Henry John Temple (1784-1865)
+%
  Kiedy p³onie dom s±siadów, stawk± jest twój w³asny dom.
 	-- Horacy (65BC-8BC)
 %
@@ -514,8 +564,15 @@ gotten.
 and the pessimist fears this is true.
 	-- James Branch Cabell (1879-1958)
 %
+ I can't sleep.
+	-- The last words of Sir James Matthew Barrie (1860-1937)
+%
  They have computers, and they may have other weapons of mass destruction.
 	-- Janet Reno (1938-)
+%
+ Since the day of my birth, my death began its walk. It is walking towards
+me, without hurrying.
+	-- The last words of Jean Maurice Eugene Clement Cocteau (1889-1963)
 %
  Dziwne jest to ¿ycie...  Jeste¶my ma³ymi dzieæmi, a nazajutrz mamy 50 lat,
 a ca³e dzieciñstwo mo¿emy zamkn±æ w ma³ym zardzewia³ym pude³eczku.
@@ -538,6 +595,9 @@ odbêdzie.
  There are two major products that come out of Berkeley: LSD and UNIX.  We
 don't believe this to be a coincidence.
 	-- Jeremy S. Anderson
+%
+ Dammit... Don't you dare ask God to help me.
+	-- The last words of Joan Crawford (1904-1977)
 %
  Normal people scare me...
 	-- Luna Lovegood
@@ -591,12 +651,25 @@ Mêdrców nie wszystko wie.
  Chcieli¶my dobrze, a wysz³o jak zawsze...
 	 -- Attributed to Joseph Stalin (1879-1953)
 %
+ Veni, vidi, vici.
+	-- Julius Caesar (100BC-44BC)
+%
+ Alea iacta est.
+ /The die is cast./
+	-- Julius Caesar (100BC-44BC)
+%
+ Et tu, Brute?
+	-- The last words of Julius Caesar (100BC-44BC)
+%
  Ciemno¶æ, widzê ciemno¶æ, ciemno¶æ widzê.
 	-- Maks (Jerzy Sthur)
 	-- Juliusz Machulski (1955-), Seksmisja
 %
  Nuclear war can ruin your whole compile.
 	-- Karl Lehenbauer
+%
+ Go on, get out! Last words are for fools who haven't said enough!
+	-- The last words of Karl Heinrich Marx (1818-1883)
 %
  Wierze, ¿e Pan jednak mnie nie opu¶ci.
  Jakby mia³ wzrok tak± zdobycz wypu¶ciæ.
@@ -714,6 +787,10 @@ after all.
 some Perl 4 code, and said, "What is that, swearing?"
 	-- Larry Wall (1954-)
 %
+ Don't let it end like this. Tell them I said something.
+	-- The last words of Jose Doroteo Arango Arambula (1878-1923)
+		(a.k.a. Francisco Villa a.k.a. Pancho Villa)
+%
  Shall we play a game?
 	-- Joshua (the computer)
 	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
@@ -735,6 +812,9 @@ conclution that your defencesystem SUCKS!
 %
  When you have to kill a man it costs nothing to be polite.
 	-- Sir Leonard Spencer Churchill (1874-1965)
+%
+ I'm bored with it all.
+	-- The last words of Sir Leonard Spencer Churchill (1874-1965)
 %
  The grim fact is that we prepare for war like precocious giants and for
 peace like retarded pygmies.
@@ -813,6 +893,9 @@ different places, just write a Unix operating system.
  How should I know if it works? That's what beta testers are for.  I only
 coded it.
 	-- Attributed to Linus Benedict Torvalds (1969-)
+%
+ Applaud, my friends, the comedy is finished.
+	-- The last words of Ludwig van Beethoven (1770-1827)
 %
  Ala ma kota.
 	-- Marian Falski (1881-1974)
@@ -923,8 +1006,73 @@ the 'Net, but are delighted if those same hours are spent reading books?
  If the code and the comments disagree, then both are probably wrong.
 	-- Norm Schryer
 %
+ Get these fucking nuns away from me.
+	-- The last words of George Norman Douglas (1868-1952)
+%
  They don't make bugs like Bunny anymore.
 	-- Olav Mjelde
+%
+ Give me coffee, I'm going to write.
+	-- The last words of Olavo Braz Martins dos Guimaraes Bilac (1865-1918)
+%
+ Experience is the name everyone gives to their mistakes.
+	-- Oscar Wide (1854-1900)
+%
+ To get back my youth I would do anything in the world, except take
+exercise, get up early, or be respectable.
+	-- Oscar Wide (1854-1900)
+%
+ The Only way to behave to a woman is to make love to her, if she is
+pretty, and to someone else, if she is plain.
+	-- Oscar Wide (1854-1900), The Importance of Being Earnest
+%
+ I always pass on good advice. It is the only thing to do with it. It is
+never of any use to oneself.
+	-- Oscar Wide (1854-1900), An Ideal Husband
+^
+ Sooner or later we have all to pay for what we do.
+	-- Oscar Wide (1854-1900), An Ideal Husband
+%
+ I love talking about nothing, father. It is the only thing I know anything
+about.
+	-- Oscar Wide (1854-1900), An Ideal Husband
+%
+ Women have a wonderful instinct about things. They can discover everything
+except the obvious.
+	-- Oscar Wide (1854-1900), An Ideal Husband
+%
+ My wallpaper and I are fighting a duel to the death. One or the other of
+us has to go.
+	-- The last words of Oscar Wide (1854-1900)
+%
+ A true friend stabs you in the front
+	-- Attributed to Oscar Wide (1854-1900)
+%
+ Always forgive your enemies; nothing annoys them so much.
+	-- Attributed to Oscar Wide (1854-1900)
+%
+ I have nothing to declare except my Genius.
+	-- Attributed to Oscar Wide (1854-1900)
+%
+ My own business bores me to death. I prefer other people's.
+	-- Attributed to Oscar Wide (1854-1900)
+%
+ No man is rich enough to buy back his own past.
+	-- Attributed to Oscar Wide (1854-1900)
+%
+ The one duty we owe to history is to rewrite it.
+	-- Attributed to Oscar Wide (1854-1900)
+%
+ The only thing to do with good advice is pass it on. It is never any use
+to oneself.
+	-- Attributed to Oscar Wide (1854-1900)
+%
+ What a pity that in life we only get our lessons when they are of no use
+to us.
+	-- Attributed to Oscar Wide (1854-1900)
+%
+ Life is too important to be taken seriously.
+	-- Attributed to Oscar Wide (1854-1900)
 %
  Besides, I think Slackware sounds better than 'Microsoft,' don't you?
 	-- Patrick J. Volkerding
@@ -940,6 +1088,9 @@ with the prime numbers.
  UNIX is an operating system, OS/2 is half an operating system, Windows is
 a shell, and DOS is a boot partition virus.
 	-- Peter H. Coffin
+%
+ How were the receipts today at Madison Square garden?
+	-- The last words of Phineas Taylor Barnum (1810-1891)
 %
   Well, I mean, there is no--there is no difference between a private life
 and a public life.  My--my life is my life, is The Truman Show.  The Truman
@@ -987,6 +1138,9 @@ And you will know my name is the Lord when I lay my vengeance upon you.
  What better time than now?
  All hell can't stop us now!
 	-- Rage Against the Machine, Guerilla Radio
+%
+ I think I'm going to make it!
+	-- The last words of Richard Loeb
 %
  Love your country, but never trust its government.
 	-- Robert Anson Heinlein (1907-1988)
@@ -1061,6 +1215,9 @@ their C programs.
 %
  Jedyna ró¿nica miêdzy mn± a wariatem to fakt, ¿e nie jestem wariatem.
 	-- Salvador Domenec Felip Jacint Dalí Domenech (1904-1989)
+%
+ Crito, I owe a cock to Asclepius. Will you remember to pay the debt?
+	-- The last words of Socrates (470BC-399BC)
 %
  I'm going to live forever, or die trying!
 	-- Attributed to Spider Robinson (1948-)
@@ -1237,6 +1394,9 @@ It is a sobering thought, for example, that when Mozart was my age, he had
 been dead for two years.
 	-- Thomas Andrew Lehrer (1928-)
 %
+ Why not?
+	-- The last words of Timothy Leary
+%
  Po¿yteczna praca jest zawsze cicha i niezauwa¿alna.
 	-- To³stoj
 %
@@ -1303,6 +1463,11 @@ think.
 teenage girls are undercover FBI Agents!
 	-- DALNet IRC Welcome Message
 %
+ It is inappropriate to require that a time represented as seconds since
+the Epoch precisely represent the number of seconds between the referenced
+time and the Epoch.
+	-- IEEE Std 1003.1b-1993 (POSIX) Section B.2.2.2
+%
  recursion n.: See Recursion
 	-- The Jargon File
 %
@@ -1321,6 +1486,7 @@ matched up the letters.
 	-- Overheard at the NASA Control Room
 %
  Columbia, please repeat, sounded like you said 'OOPS'.
+	-- Overheard at the NASA Control Room
 %
  Endless Loop: n., see Loop, Endless.
  Loop, Endless: n., see Endless Loop.
