@@ -1,5 +1,7 @@
 2005-08-26  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* check.sh: License changed to GNU GPL
+
 	* one-time-pass.sh: New file
 	* README: one-time-pass.sh added
 
