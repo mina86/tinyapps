@@ -1,3 +1,8 @@
+2005-08-26  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* one-time-pass.sh: New file
+	* README: one-time-pass.sh added
+
 2005-08-19  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel, installkernel.8: --log and prefix options added
