@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.19 2005/08/26 18:25:40 mina86 Exp $
+## $Id: installkernel,v 1.20 2005/08/27 03:33:14 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -32,8 +32,8 @@ toInt  () {
 ## Version
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
-	echo 'installkernel  v0.13.1  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.19 2005/08/26 18:25:40 mina86 Exp $'
+	echo 'installkernel  v0.13.2  (c) 2004,2005 by Micha³ Nazarewicz'
+	echo '$Id: installkernel,v 1.20 2005/08/27 03:33:14 mina86 Exp $'
 	echo
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
@@ -98,7 +98,7 @@ usage: installkernel [<options>] [<actions> [<switches>]
   -A --all              Synonym of all of the below
 
   -i --compile-image    Runs 'make bzImage' to compile image          [no]
-  -I --install-image    Copies kernel to /boot directory              [yes]
+  -I --install-image    Copies kernel to /boot directory              [*]
      --tidy-image       Removes old images                            [no]
      --image            Synonym of the three above
 
@@ -111,9 +111,9 @@ usage: installkernel [<options>] [<actions> [<switches>]
      --install          Synonym of  --install-image --install-modules
      --tidy             Synonym of  --tidy-image --tidy-modules
 
-  -s --update-symlinks  Updates symlinks in /boot directory           [yes]
+  -s --update-symlinks  Updates symlinks in /boot directory           [*]
      --symlinks         Deprecated synonym of  --update-symlinks
-  -l --update-loader    Runs 'lilo' to update MBR entry               [yes]
+  -l --update-loader    Runs 'lilo' to update MBR entry               [*[
      --lilo             Deprecated synonym of  --lilo
 
 <version>   kernel version (default: reads from include/linux/version.h)
@@ -385,10 +385,10 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	export DRY_RUN= PRINT_COMMANDS= VERBOSE= REALLY_VERBOSE=
 	if [ -t 1 ]; then export USE_ANSI=y; else export USE_ANSI=; fi
 
-	export MAKE_DEP=auto CLEAN= COMPILE_IMAGE= COMPILE_MODULES=
-	export INSTALL_IMAGE=y INSTALL_MODULES= UPDATE_SYMLINKS=y
-	export UPDATE_LOADER=y TIDY_IMAGE= TIDY_MODULES= CONFIG=
-	export CONFIG_TYPE=auto
+	export CLEAN= COMPILE_IMAGE= COMPILE_MODULES= INSTALL_IMAGE=
+	export INSTALL_MODULES= UPDATE_SYMLINKS= UPDATE_LOADER= TIDY_IMAGE=
+	export TIDY_MODULES= CONFIG=
+	export CONFIG_TYPE=auto MAKE_DEP=auto
 
 	set_run_hooks y
 
@@ -398,6 +398,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	##
 	FIRST=y
 	ADD_ARGS=0
+	NUMARGS=$#
 	for ARG; do
 		if [ -n "$FIRST" ]; then FIRST=; set --; fi
 		PARAM=
@@ -439,12 +440,12 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		(-?)     VALUE=y; PARAM="$ARG"; ;;
 
 		(*)
-			if   [ $ADD_ARGS  = 0    ]; then VER="$ARG"
-			elif [ $ADD_ARGS  = 00   ]; then IMG_PATH="$ARG"
-			elif [ $ADD_ARGS  = 000  ]; then MAP_PATH="$ARG"
-			elif [ $ADD_ARGS != 0000 ]; then error 1 unknown option: "$ARG"
+			if   [ $ADD_ARGS -eq 0 ]; then VER="$ARG"
+			elif [ $ADD_ARGS -eq 1 ]; then IMG_PATH="$ARG"
+			elif [ $ADD_ARGS -eq 2 ]; then MAP_PATH="$ARG"
+			elif [ $ADD_ARGS -ne 3 ]; then error 1 unknown option: "$ARG"
 			fi
-			ADD_ARGS="0$ADD_ARGS"
+			ADD_ARGS=$(( $ADD_ARGS + 1 ))
 		;;
 		esac
 
@@ -529,6 +530,11 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		esac
 	done
 
+	if [ $NUMARGS -eq 4 ] && [ $ADD_ARGS -eq 4 ]; then
+		INSTALL_IMAGE=y
+		UPDATE_SYMLINKS=y
+		UPDATE_LOADER=y
+	fi
 
 
 	##

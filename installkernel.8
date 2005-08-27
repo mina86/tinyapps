@@ -2,7 +2,7 @@
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.5 2005/08/26 17:40:06 mina86 Exp $
+\" $Id: installkernel.8,v 1.6 2005/08/27 03:33:14 mina86 Exp $
 \" Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 \"
 
@@ -34,9 +34,9 @@ shell.
 
 .SH ARGUMENTS
 
-The scripts takes 3 kinds of arguments.  Options, switches and
-actions.  Switches are options which may be toggled on and off.
-Actions can be specified several times and instruct
+The scripts takes 4 kinds of arguments.  Options, switches, actions
+and something strange. ;) Switches are options which may be toggled on
+and off.  Actions can be specified several times and instruct
 \fBinstallkernel\fP script to perform various steps.  Those steps are
 taken in the order actions are given in the command line.
 
@@ -210,7 +210,9 @@ Runs \fBmake bzImage\fP to compile the kernel image.  The default is
 .TP
 \fB\-I \-\-install\-image\fP
 Installs the kernel image by copying appropriate files to \fB/boot\fP
-directory. The default is \fByes\fP.
+directory. By default it is \fByes\fP if exactly 4 arguments are
+given, and thye are: \fIversion\fP \fIimage\fP \fIsystemmap\fP
+\fIprefix\fP, otherwise it is \fBno\fP.
 
 .TP
 \fB\-\-tidy\-image\fP
@@ -256,7 +258,9 @@ Synonym of \fB\-\-tidy\-image \-\-tidy\-modules\fP.
 .TP
 \fB\-s \-\-update\-symlinks\fP
 Updates symlinks in \fB/boot\fP directory.  This should not be on
-without \fB\-\-install\-image\fP.  The default is \fByes\fP.
+without \fB\-\-install\-image\fP.  By default it is \fByes\fP if
+exactly 4 arguments are given, and thye are: \fIversion\fP \fIimage\fP
+\fIsystemmap\fP \fIprefix\fP, otherwise it is \fBno\fP.
 
 .TP
 \fB\-\-symlinks\fP
@@ -265,7 +269,9 @@ Deprecated synonym of \fB\-\-update\-symlinks\fP.
 .TP
 \fB\-l \-\-update\-loader\fP
 Updates the loader program.  At the moment this is done by running
-\fBlilo\fP.  The default is \fByes\fP.
+\fBlilo\fP.  By default it is \fByes\fP if exactly 4 arguments are
+given, and thye are: \fIversion\fP \fIimage\fP \fIsystemmap\fP
+\fIprefix\fP, otherwise it is \fBno\fP.
 
 .TP
 \fB\-\-lilo\fP

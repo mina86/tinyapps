@@ -1,3 +1,8 @@
+2005-08-27  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel, installkernel.8: changed the default value of
+	--install-image, --update-symlinks and --update-loader
+
 2005-08-26  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* Makefile: release target and .release file support added
