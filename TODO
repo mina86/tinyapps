@@ -22,6 +22,8 @@ Tiny Applications Collection TODO List
 
 * installkernel
   - support other bootloaders
+  - support directories as patch file (apply each file)
+  - --reverse-patches (reverses all patches if some failed)
 
 * load
   - make more platform independent

@@ -1,3 +1,8 @@
+2005-08-29  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel: --patch fixed
+	* TODO: installkernel entry modified
+
 2005-08-27  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel, installkernel.8: changed the default value of
