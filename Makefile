@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.7 2005/08/26 19:03:19 mina86 Exp $
+## $Id: Makefile,v 1.8 2005/08/30 22:27:20 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -131,6 +131,10 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
 FvwmTransFocus: FvwmTransFocus.o
 	@echo '  LD     $@'
 	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
+
+mpd-show: mpd-show.o libmpdclient.o
+	@echo '  LD     $@'
+	${Q}${CC} ${LDFLAGS} $^ -o $@
 
 mpd-state: mpd-state.o libmpdclient.o
 	@echo '  LD     $@'

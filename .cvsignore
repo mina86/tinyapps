@@ -1,6 +1,7 @@
 a.out
 FvwmTransFocus
 cdiff
+core
 cutcom
 infinite-logger
 installkernel.8.gz
@@ -8,6 +9,7 @@ installkernel-log*
 load
 malloc
 mountiso
+mpd-show
 mpd-state
 null
 quotes

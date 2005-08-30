@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/08/26 17:40:06 $
+                     $Date: 2005/08/30 22:27:20 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -79,6 +79,10 @@ At the moment the collection include:
 
  * moz2elinks.pl - converts bookmarks from Mozilla's format to ELinks'
    (http://elinks.or.cz) format.
+
+ * mpd-show - tool ment to display song currently played in MPD.  It
+   displays it in a terminal in one line with background indicating
+   the progress.
 
  * mpd-state - a program based on Avuton Olrich's state-utils for
    saving and restoring MPD (Music Player Daemon) state.  It requires

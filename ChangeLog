@@ -1,3 +1,8 @@
+2005-08-30  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* mpd-show.c: New file
+	* Makefile, README: mpd-show added
+
 2005-08-29  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel: --patch fixed
