@@ -1,6 +1,6 @@
 /*
  * Allocates specified amount of memory.
- * $Id: malloc.c,v 1.5 2005/08/18 01:09:14 mina86 Exp $
+ * $Id: malloc.c,v 1.6 2005/08/31 14:31:22 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
  * Licensed under the Academic Free License version 2.1.
  */
@@ -49,7 +49,20 @@ int signum = 0;
 void signal_handler(int sig) {
 	signum = sig;
 }
+#else
+#define signum 0
 #endif
+
+
+/**** Allocates memory ****/
+char *alloc(int num) {
+	char *ptr = malloc(num <<= 10);
+	if (ptr==NULL) return NULL;
+	do {
+		*ptr++ = --num;
+	} while (!signum && num);
+	return signum ? NULL : ptr;
+}
 
 
 /**** Main ****/
@@ -74,11 +87,7 @@ int main(int argc, char **argv) {
 	dot = to_allocate>2048 ? to_allocate>>11 : 1;
 	setvbuf(stdout, NULL, _IONBF, 0);
 
-#ifdef HAVE_SIGNAL_H
-	while (!signum && allocated<to_allocate && calloc(dot, 1024)!=NULL) {
-#else
-	while (allocated<to_allocate && calloc(dot, 1024)!=NULL) {
-#endif
+	while (!signum && allocated<to_allocate && alloc(dot)!=NULL) {
 		putchar('.');
 		allocated += dot;
 		if ((d = (d+1) & 63)==0) {
@@ -94,9 +103,5 @@ int main(int argc, char **argv) {
 	if (d) {
 		print_size(allocated);
 	}
-#ifdef HAVE_SIGNAL_H
 	return signum ? -signum : (allocated < to_allocate ? 1 : 0);
-#else
-	return allocated < to_allocate ? 1 : 0;
-#endif
 }
