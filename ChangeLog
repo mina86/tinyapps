@@ -1,3 +1,7 @@
+2005-09-03  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* null.c, null.sh: + 'Exec feature' added (command as arguments)
+
 2005-08-30  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* malloc.c: alloc() function added
