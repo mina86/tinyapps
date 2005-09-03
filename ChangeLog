@@ -1,5 +1,7 @@
 2005-09-03  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* installkernel: + now uses `exec` when becoming super user
+
 	* null.c, null.sh: + 'Exec feature' added (command as arguments)
 
 2005-08-30  Michal Nazarewicz  (mina86/AT/tlen.pl)
