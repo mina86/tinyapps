@@ -1,3 +1,7 @@
+2005-09-04  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* README: + a bit rewriten
+
 2005-09-03  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel: + now uses `exec` when becoming super user

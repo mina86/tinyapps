@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/08/30 22:27:20 $
+                     $Date: 2005/09/04 01:02:49 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which may be  usefull in everyday life  ;) There are
@@ -15,14 +15,13 @@ At the moment the collection include:
 
  * add - adds specified text to each line from stdin
 
- * ai-pitr.pl - it's a joke really.  It's an AI which might be written
-   by Pitr from UserFriendly - it is 6 lines of code and answers
-   questions just like Pitr's AI.  For more see:
+ * ai-pitr.pl - it's a joke really.  A 6 lines of code AI which might
+   be written by Pitr from UserFriendly.  For more see:
    http://ars.userfriendly.org/cartoons/?id=19990602
 
- * ai-sid.pl - it's a joke as well.  It's an AI which might by written
-   by Sid - it behaves like Sid's AI and is 8 lines of code.  Fore
-   more see: http://ars.userfriendly.org/cartoons/?id=20001014
+ * ai-sid.pl - it's a joke as well.  An 8 lines of code AI which might
+   by written by Sid from UserFriendly.  Fore more see:
+   http://ars.userfriendly.org/cartoons/?id=20001014
 
  * cdiff (C and sed versions) - adds ANSI codes to the output of diff
    making it a bit more readable.  Both versions reads input from
@@ -46,7 +45,7 @@ At the moment the collection include:
 
  * FvwmTransFocus - an FVWM module which changes windows' opacity
    depending on focus.  Whn window looses focus it becomes more
-   transparent which looks "cool" ;) .
+   transparent which looks "neet" ;) .
 
  * genpass.sh - generates a random 64-character long password.
 
@@ -65,7 +64,7 @@ At the moment the collection include:
 
  * load - shows CPU load, memory and net traffic statistics.  It's
    mostly ment for people who are curious how to callculate such
-   statistics or use some code from the file in their programs.
+   statistics and use some code from the file in their programs.
 
  * malloc -  a small program  which allocates memory.   Sounds stupid?
    Mayby,  but in  theory it  can  help freeing  memory and  therefore
@@ -92,14 +91,16 @@ At the moment the collection include:
    behaving like Avuton Olrich's state-utils.
 
  * null - a C program (null.c) and a shell script (null.sh) which
-   distard standard input.  It is ment for people who thnik that
-   '>/dev/null' is too long to type every time :)
+   discard standard input.  It is ment for people who thnik that
+   '>/dev/null' is too long to type every time :) It may also be run
+   with arguments and the given program will be run and both stdout
+   and stderr will be redirected to /dev/null.
 
- * one-time-pass.sh - another joke.  It works just like passwd with this
-   difference that it automaticly generates a random password which is not
-   revelad to the user, therefore he don't his own password :)
+ * one-time-pass.sh - another joke.  It works like passwd with this
+   difference that it automaticly generates a random password which is
+   not revelad to the user, therefore he doesn't know his own password.
 
- * quotes.txt - a collection of quotations, some are in Polish.
+ * quotes.txt - a collection of quotations (some are in Polish).
 
  * rot13 - Performs an ROT13 'encryption' on stdin.
 
@@ -107,9 +108,9 @@ At the moment the collection include:
    xterm-compatible terminals.
 
  * the-book-of-mozilla - a collection of quotations from The Book of
-   Mozilla.
+   Mozilla (most are unofficial).
 
- * timer - a timer.
+ * timer - a text-mdoe timer counting with accuracy to 0.01 s.
 
  * traf.sh - tiny script showing traffic statistics.  Many things are
    hardcoded in the source but it may be useful for future
