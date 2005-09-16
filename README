@@ -1,126 +1,130 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/09/04 01:02:49 $
+                     $Date: 2005/09/16 16:30:37 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
-and other  things which may be  usefull in everyday life  ;) There are
-only a  few tools at  the moment but  I hope to  add more in  the near
-future.
+and other  things which  may be usefull  in everyday life.   There are
+only a few tools  at the moment but more are hoped  to be added in the
+near future.
 
-If you have written utility which may be usefull for other and want to
-share it  please email  me at mina86/AT/tlen.pl,  I'll be glad  to add
+If you have  written utility which may be usefull  for others and want
+to share it please email me  at mina86/AT/tlen.pl, I'll be glad to add
 your utility to the collection.
 
-At the moment the collection include:
+At the moment the collection includes:
 
- * add - adds specified text to each line from stdin
+ * add - adds specified text to each line from stdin;
 
- * ai-pitr.pl - it's a joke really.  A 6 lines of code AI which might
-   be written by Pitr from UserFriendly.  For more see:
-   http://ars.userfriendly.org/cartoons/?id=19990602
+ * ai-pitr.pl - it's  a joke really.  A 6 line long  AI which might be
+   written    by   Pitr    from   UserFriendly.     For    more   see:
+   http://ars.userfriendly.org/cartoons/?id=19990602 ;
 
- * ai-sid.pl - it's a joke as well.  An 8 lines of code AI which might
-   by written by Sid from UserFriendly.  Fore more see:
-   http://ars.userfriendly.org/cartoons/?id=20001014
+ * ai-sid.pl - it's a joke as well.   An 8 line long AI which might by
+   written    by   Sid    from   UserFriendly.     Fore    more   see:
+   http://ars.userfriendly.org/cartoons/?id=20001014 ;
 
- * cdiff (C and sed versions) - adds ANSI codes to the output of diff
-   making it a bit more readable.  Both versions reads input from
-   stdin and sends output with added ANSI codes to stdout.
+ * cdiff (C and sed versions) -  adds ANSI codes to the output of diff
+   making it a bit more readable.  Both versions read input from stdin
+   and send colorized output to stdout;
 
- * check.sh - performes a defined checking (whether www.googl.com
-   responds to pings by default) and runs specified command if
-   checking failed.  May be used to automaticly shut down PC when
-   connection is lost, try to reconnect or monitor some kind of
-   server, send message to server's admin when server's down or
-   restart an application if it's not running.
+ * check.sh  -  performes a  defined  checking (whether  www.googl.com
+   responds to pings by default) and runs specified command if failed.
+   May be  used to automaticly shut  down PC when  connection is lost,
+   try to reconnect, monitor a server machine and send message to it's
+   admin if it's down or keep given application running;
 
- * checkmail - checks whether mboxes given as arguments contain any
-   urnead mail.
+ * checkmail -  checks whether mboxes  given as arguments  contain any
+   urnead mail;
 
- * cpuload.sh - tiny script showing the cpuload.  May be useful for
-   people interested in how it is calculated (see also traf.sh and load).
+ * cpuload.sh -  tiny script showing  the cpuload.  May be  useful for
+   people  interested in  how  it  is calculated  (see  also load  and
+   traf.sh);
 
- * cutcom - removes C++ comments from stdin and outputs the result to
-   stdout.
+ * cutcom - removes C++ comments  from stdin and outputs the result to
+   stdout;
 
- * FvwmTransFocus - an FVWM module which changes windows' opacity
-   depending on focus.  Whn window looses focus it becomes more
-   transparent which looks "neet" ;) .
+ * FvwmTransFocus  - an  FVWM  module which  changes windows'  opacity
+   depending  on  focus.  Whn  window  looses  focus  it becomes  more
+   transparent which looks "neet";
 
- * genpass.sh - generates a random 64-character long password.
+ * genpass.sh - generates a random 64-character long password;
 
- * get_mks_vir_bases - Downlaods MKS-Vir virus database.  Simplified
-   version of mksupdate shell script (from mks_vir antivirus).  It
-   does only download up-to-date virus bases and nothing more.
+ * get_mks_vir_bases -  downlaods MKS-Vir virus  database.  Simplified
+   version  of mksupdate  shell script  (from mks_vir  antivirus).  It
+   does only download up-to-date virus bases and nothing more;
 
  * infinite-logger - loggs every logged message including the messages
    logget by itself :]
 
- * installkernel - pretty complex script for installing the Linux
-   kernel.  It makes a lot of aspects of upgrading the kernel
+ * installkernel  - pretty  complex  script for  installing the  Linux
+   kernel.   It  makes  a  lot  of aspects  of  upgrading  the  kernel
    automatic.  The first versions required bash to run but the now, it
-   is believed to run on any POSIX compatible platform so it can be
-   run even on small embeded systems.
+   is believed  to run on any  POSIX compatible platform so  it can be
+   run even on small embeded systems;
 
- * load - shows CPU load, memory and net traffic statistics.  It's
-   mostly ment for people who are curious how to callculate such
-   statistics and use some code from the file in their programs.
+ * load -  shows CPU  load, memory and  net traffic  statistics.  It's
+   mostly  ment for  people who  are  curious how  to callculate  such
+   statistics and use  some code from the file  in their programs (see
+   also cpuload.sh and traf.sh);
 
  * malloc -  a small program  which allocates memory.   Sounds stupid?
-   Mayby,  but in  theory it  can  help freeing  memory and  therefore
-   speeding up the PC.
+   Mayby, but in theory it can help freeing RAM and therefore speeding
+   up the PC;
 
- * mountiso - a simple mount/umount wrapper for mounting/unmounting
-   ISO images or any other files using loop option.  You have to be
+ * mountiso  - a simple  mount/umount wrapper  for mounting/unmounting
+   ISO images  or any other files  using loop option.  You  have to be
    root to use '-o loop' so if you want to mount an ISO image you have
-   to login as root.  This utility should be SUIDed and then anyoune
-   can use it to mount ISO images.
+   to login as  root.  This utility should be  SUIDed and then anyoune
+   can use it to mount ISO images;
 
- * moz2elinks.pl - converts bookmarks from Mozilla's format to ELinks'
-   (http://elinks.or.cz) format.
+ * moz2elinks.pl  -  converts  bookmarks  from  Mozilla's  to  ELinks'
+   (http://elinks.or.cz) format;
 
- * mpd-show - tool ment to display song currently played in MPD.  It
-   displays it in a terminal in one line with background indicating
-   the progress.
+ * mpd-show - tool  ment to display song currently  played in MPD.  It
+   displays it  in a terminal  in one line with  background indicating
+   the progress.  It  requires libmpdclient.h and libmpdclient.c files
+   to compile;
 
- * mpd-state - a program based on Avuton Olrich's state-utils for
-   saving and restoring MPD (Music Player Daemon) state.  It requires
-   libmpdclient.h and libmpdclient.c files to compile.
+ * mpd-state  - a  program based  on Avuton  Olrich's  state-utils for
+   saving and restoring MPD  (Music Player Daemon) state.  It requires
+   libmpdclient.h and libmpdclient.c files to compile;
 
- * mpd-state-wrapper.sh - a small shell script making mpd-state
+ * mpd-state-wrapper.sh  -  a  small  shell  script  making  mpd-state
    behaving like Avuton Olrich's state-utils.
 
- * null - a C program (null.c) and a shell script (null.sh) which
-   discard standard input.  It is ment for people who thnik that
-   '>/dev/null' is too long to type every time :) It may also be run
-   with arguments and the given program will be run and both stdout
-   and stderr will be redirected to /dev/null.
+ * null  - a C  program (null.c)  and a  shell script  (null.sh) which
+   discard  standard input.   It is  ment  for people  who thnik  that
+   '>/dev/null' is too  long to type every time :) It  may also be run
+   with arguments  and the given program  will be run  and both stdout
+   and stderr will be redirected to /dev/null;
 
- * one-time-pass.sh - another joke.  It works like passwd with this
+ * one-time-pass.sh -  another joke.  It  works like passwd  with this
    difference that it automaticly generates a random password which is
-   not revelad to the user, therefore he doesn't know his own password.
+   not  revelad  to  the  user,  therefore he  doesn't  know  his  own
+   password;
 
- * quotes.txt - a collection of quotations (some are in Polish).
+ * quotes.txt - a collection of quotations (some are in Polish);
 
- * rot13 - Performs an ROT13 'encryption' on stdin.
+ * rot13 - performs an ROT13 'encryption' on stdin;
 
- * settitle - Sets the title of xterm, rxvt, Eterm, aterm and other
-   xterm-compatible terminals.
+ * settitle -  Sets the title of  xterm, rxvt, Eterm,  aterm and other
+   xterm-compatible terminals;
 
- * the-book-of-mozilla - a collection of quotations from The Book of
-   Mozilla (most are unofficial).
+ * the-book-of-mozilla -  a collection of quotations from  The Book of
+   Mozilla (most are unofficial);
 
- * timer - a text-mdoe timer counting with accuracy to 0.01 s.
+ * timer - a text-mdoe timer counting with accuracy to 0.01 s;
 
- * traf.sh - tiny script showing traffic statistics.  Many things are
-   hardcoded in the source but it may be useful for future
-   modifications or to lear how traffic is calculated (see also
-   cpuload.sh and load).
+ * traf.sh - tiny script  showing traffic statistics.  Many things are
+   hardcoded  in  the   source  but  it  may  be   useful  for  future
+   modifications  or to  learn  how traffic  is  calculated (see  also
+   cpuload.sh and load);
 
  * tuptime  - my  personal favourite  :)  Displays total  (sum of  all
-   uptimes) and biggest uptime.
+   uptimes)  and biggest  uptime.   Might be  used  as replacement  to
+   standard uptime utility;
 
- * xcolor2rgb - Reads from argument list (or from STDIN, if no
+ * xcolor2rgb  -  Reads from  argument  list  (or  from STDIN,  if  no
    arguments are given) and prints apropriate RGB value to STDOUT.
 
 More  documentation about  each  utility is  usually  provided in  the
