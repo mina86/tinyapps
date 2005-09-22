@@ -1,3 +1,9 @@
+2005-09-22  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* extractlinks.pl, getlyrics.pl, pingrange.pl: New file
+	* README, TODO:
+	+ extractlinks.pl, getlyrics.pl, pingrange.pl added
+
 2005-09-16  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* README: + rewriten a bit (again)

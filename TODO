@@ -13,12 +13,19 @@ Tiny Applications Collection TODO List
   - add support for file names passed as arguments
   - add support for inplace modifications
 
+* extractlinks.pl
+  - allow specifing several tags using --tag option (eg. --tag=a,img)
+  - assume file:// if url is not absolute
+
 * FvwmTransFocus
   - Nicer config (using *FvwmTransFocus: *)
   - Set initial opacity for all windows after the module is started
   - Different config for transient, sticky, etc windows
   - Refresh windows when background changed doesn't seem to work ;/
   - Print errors when debug enabled
+
+* getlyrics.pl
+  - add an empty line (or maybe two) after the artist name
 
 * installkernel
   - support other bootloaders
@@ -34,6 +41,9 @@ Tiny Applications Collection TODO List
 * mpd-state
   - allow getting information from different sources (eg. playlist
     from a server and other state from a file).
+
+* pingrange.pl
+  - allow specifing several ranges of IP adresses
 
 * rot13
   - add switch to changeing the value chars should be rotated by
