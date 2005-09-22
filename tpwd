@@ -1,0 +1,74 @@
+#!/bin/sh
+##
+## Truncates pwd to specified number of characters
+## $Id: tpwd,v 1.1 2005/09/22 17:13:28 mina86 Exp $
+## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+
+if [ "X$1" = "X--help" ] || [ "X$1" = "X--h" ]; then
+	cat <<EOF
+usage: tpwd [ -L | -P ] [ -n ] [<len> [<trunc> [<tlen>]]]
+ -L       uses  'pwd -L'  instead of  \$PWD
+ -P       uses  'pwd -P'  instead of  \$PWD
+ -n       doesn't print new line character at the end
+ <len>    maximum length of printed string                       [30]
+ <trunc>  string to print at the beginning if pwd was trunced   [...]
+ <tlen>   length of <trunc> (useful if using ANSI codes)
+
+It might be used in PS1 varaible to truncate very long PWD's which
+normaly would took a whole line (or more), eg:
+    PS1='[\\u@\\h \$(tpwd -n 30 {)]\\$ '     # works in bash
+
+EOF
+	exit
+fi
+
+  if [ "X$1" = X-P ]; then P="$(pwd -P)"; shift
+elif [ "X$1" = X-L ]; then P="$(pwd -L)"; shift
+else                       P="$PWD"
+fi
+
+if [ "X$1" = X-n ]; then E="printf %s"; shift; else E=echo; fi
+
+if [ -n "$HOME" ]; then
+	H="$HOME"
+else
+	H="$(eval echo ~$(logname))"
+fi
+
+if                [ "X$P" != "X${P#//}" ]; then P="${P#/}"  ; fi
+if [ -n "$H" ] && [ "X$P" != "X${P#$H}" ]; then P="~${P#$H}"; fi
+
+LEN=${1-30}
+if [ ${#P} -le $LEN ]; then
+	$E "$P"
+	exit 0
+fi
+
+TRUNC=${2-...}
+LEN=$(( $LEN - ${3-${#TRUNC}} ))
+if [ $LEN -le 0 ]; then
+	$E "$TRUNC"
+	exit 0
+fi
+
+if [ -n "$BASH_VERSION" ]; then
+	$E "$TRUNC${P:$(( ${#P} - $LEN ))}"
+else
+	while [ ${#P} -gt $LEN ]; do P=${P%?}; done
+	$E "$TRUNC$P"
+fi

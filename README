@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/09/22 16:41:28 $
+                     $Date: 2005/09/22 17:13:28 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which  may be usefull  in everyday life.   There are
@@ -44,7 +44,7 @@ At the moment the collection includes:
    stdout;
 
  * extractlinks.pl  - extracts links  from a  HTML page.   Useful, for
-   example, when downloading an Internet gallery.
+   example, when downloading an Internet gallery;
 
  * FvwmTransFocus  - an  FVWM  module which  changes windows'  opacity
    depending  on  focus.  Whn  window  looses  focus  it becomes  more
@@ -57,7 +57,7 @@ At the moment the collection includes:
    does only download up-to-date virus bases and nothing more;
 
  * getlyrics.pl - downloads  lyrics of a given song  from the Internet
-   (http://www.lyrc.com.ar/ accauly).
+   (http://www.lyrc.com.ar/ accauly);
 
  * infinite-logger - loggs every logged message including the messages
    logget by itself :]
@@ -109,7 +109,7 @@ At the moment the collection includes:
    not  revelad  to  the  user,  therefore he  doesn't  know  his  own
    password;
 
- * pingrange.pl - pings a range of adresses.
+ * pingrange.pl - pings a range of adresses;
 
  * quotes.txt - a collection of quotations (some are in Polish);
 
@@ -122,6 +122,10 @@ At the moment the collection includes:
    Mozilla (most are unofficial);
 
  * timer - a text-mdoe timer counting with accuracy to 0.01 s;
+
+ * tpwd -  truncates PWD  to specified number  of characters.   May be
+   used in PS1  to display only the  end of the PWD instead  of a full
+   60-character long PWD which doesn't really look nice;
 
  * traf.sh - tiny script  showing traffic statistics.  Many things are
    hardcoded  in  the   source  but  it  may  be   useful  for  future

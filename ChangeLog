@@ -1,9 +1,12 @@
 2005-09-22  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* tpwd: New file
+	* Makefile, README: + tpwd added
+
 	* LICENSE: + a bit rewritten
 
 	* extractlinks.pl, getlyrics.pl, pingrange.pl: New file
-	* README, TODO:
+	* Makefile, README, TODO:
 	+ extractlinks.pl, getlyrics.pl, pingrange.pl added
 
 2005-09-16  Michal Nazarewicz  (mina86/AT/tlen.pl)
