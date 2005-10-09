@@ -1,3 +1,9 @@
+2005-10-09  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel: + now uses $(id -un) instead of $USER
+	+ bug fixed: when exited with EC and raproted it as command's EC
+	+ bug fixed: --update-symlink -> --update-symlinks
+
 2005-09-22  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* tpwd: New file
