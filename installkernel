@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.24 2005/10/11 07:56:54 mina86 Exp $
+## $Id: installkernel,v 1.25 2005/10/11 09:51:37 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -21,6 +21,12 @@
 
 
 ##
+## Only copy the image
+##
+
+
+
+##
 ## Some nice functions
 ##
 toInt  () {
@@ -33,8 +39,9 @@ toInt  () {
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	echo 'installkernel  v0.13.2  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.24 2005/10/11 07:56:54 mina86 Exp $'
+	echo '$Id: installkernel,v 1.25 2005/10/11 09:51:37 mina86 Exp $'
 	echo
+
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
 		PID="$(toInt "`cat /tmp/installkernel-lockfile`")"
@@ -50,7 +57,8 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 
 	printf "%d" $$ >|/tmp/installkernel-lockfile
 fi
-KBUILD_OUTPUT
+
+
 
 ##
 ## Help
@@ -157,7 +165,7 @@ msg () {
 if [ -z "$COLUMNS" ]; then
 	COLS=`toInt "$(stty -a | sed -ne 's/^.*columns[[:space:]][[:space:]]*\([0-9][0-9]*\).*$/\1/p')"`
 	if [ $COLS -gt 30 ]; then
-		COLUMNS=$COLS
+		export COLUMNS=$COLS
 	fi
 fi
 
@@ -194,7 +202,7 @@ run () {
 
 	# Arguments
 	while expr "X$1" : X- >/dev/null 2>&1; do
-		__ARG="${1-}"; shift;
+		__ARG="${1#-}"; shift;
 		while [ -n "$__ARG" ]; do
 			case "$__ARG" in
 				(u*) __AS="$RUNAS"; ;;
@@ -267,26 +275,23 @@ run_scripts () {
 
 
 ##
-## Runs header, run_scripts and run
+## Prints header, run_scripts and run
 ##
 r () {
+	if [ "X$1" = "X-u" ]; then
+		__USR="-u"
+		shift
+	else
+		__USR=""
+	fi
+
 	if eval [ -z \"\$$1\" ]; then return 0; fi
 	__NAME=`echo $1 | tr A-Z_ a-z-`
 	header "$2"
 	shift 2
-	run_scripts pre-$__NAME
-	run "$@"
-	run_scripts post-$__NAME
-}
-
-ur () {
-	if eval [ -z \"\$$1\" ]; then return 0; fi
-	__NAME=`echo "$1" | tr A-Z_ a-z-`
-	header "$2"
-	shift 2
-	run_scripts pre-$__NAME -u
-	run -u "$@"
-	run_scripts post-$__NAME -u
+	run_scripts pre-$__NAME $__USR
+	run $__USR "$@"
+	run_scripts post-$__NAME $__USR
 }
 
 
@@ -716,12 +721,12 @@ fi
 ##
 ## make *
 ##
-ur CLEAN           'Cleaning previous compilation' make $MAKEV clean
-ur CONFIG          'Configuring the kernel'        make $MAKEV "$CONFIG_TYPE"
-ur MAKE_DEP        'Updating dependencies'         make $MAKEV dep
-ur COMPILE_IMAGE   'Compiling bzImage'             make $MAKEV bzImage
-ur COMPILE_MODULES 'Compiling modules'             make $MAKEV modules
- r INSTALL_MODULES 'Installing modules'            make $MAKEV modules_install
+r -u CLEAN           'Cleaning'               make $MAKEV clean
+r -u CONFIG          'Configuring the kernel' make $MAKEV "$CONFIG_TYPE"
+r -u MAKE_DEP        'Updating dependencies'  make $MAKEV dep
+r -u COMPILE_IMAGE   'Compiling bzImage'      make $MAKEV bzImage
+r -u COMPILE_MODULES 'Compiling modules'      make $MAKEV modules
+r    INSTALL_MODULES 'Installing modules'     make $MAKEV modules_install
 
 
 ##
@@ -779,34 +784,9 @@ fi
 
 
 ##
-## Copying image
+## Install image
 ##
-if [ -n "$INSTALL_IMAGE" ]; then
-	header Installing kernel
-	run_scripts pre-install-image
-
-	update_ver
-	update_build
-	if [ -z "$IMG_PATH" ]; then IMG_PATH="arch/$ARCH/boot/bzImage"; fi
-	if [ -z "$MAP_PATH" ]; then MAP_PATH="System.map"; fi
-
-	mkdir -p -m u=rwx,g=rx,o=rx /boot
-
-	msg '37;1' CP bzImage
-	backup "/boot/bzImage-$FVER"
-	run cp $VOPT -- "$IMG_PATH" "/boot/bzImage-$FVER"
-
-	msg '37;1' CP System.map
-	backup "/boot/System.map-$FVER"
-	run cp $VOPT -- "$MAP_PATH" "/boot/System.map-$FVER"
-
-	msg '37;1' CP .config
-	backup "/boot/config-$FVER"
-	run cp $VOPT -- .config "/boot/config-$FVER"
-
-	run_scripts post-install-image
-fi
-
+r    INSTALL_IMAGE   'Installing image'       make $MAKEV install
 
 
 ##

@@ -1,5 +1,7 @@
 2005-10-11  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* installkernel: + small bug fixed
+
 	* installkernel, installkernel.8: + --output argument added
 
 2005-10-09  Michal Nazarewicz  (mina86/AT/tlen.pl)
