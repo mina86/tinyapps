@@ -1,3 +1,7 @@
+2005-10-11  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel, installkernel.8: + --output argument added
+
 2005-10-09  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel: + now uses $(id -un) instead of $USER
@@ -47,6 +51,8 @@
 
 	* installkernel, installkernel.8: changed the default value of
 	--install-image, --update-symlinks and --update-loader
+
+------- New Release ----------------------------------------------------------
 
 2005-08-26  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
@@ -107,6 +113,8 @@
 
 	* check.sh: usege renamed to usage
 
+------- New Release ----------------------------------------------------------
+
 2005-08-08  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel: Hooks added
@@ -150,6 +158,8 @@
 
 	* load.sh: removed redundant read
 
+------- New Release ----------------------------------------------------------
+
 2005-07-12  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* tuptime.c: bug causeing segfault when /var/log/buptime was
@@ -176,6 +186,8 @@
 	and xcolor2rgb added
 
 	* quotes.txt: Some new quotes
+
+------- New Release ----------------------------------------------------------
 
 2005-07-02  Michal Nazarewicz  (mina86/AT/tlen.pl)
 

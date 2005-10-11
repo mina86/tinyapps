@@ -2,7 +2,7 @@
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.6 2005/08/27 03:33:14 mina86 Exp $
+\" $Id: installkernel.8,v 1.7 2005/10/11 07:56:54 mina86 Exp $
 \" Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 \"
 
@@ -49,18 +49,31 @@ joining several short options in one argument, eg.: \fB \-iImM\fB.
 .SS Options
 .TP
 \fB\-h \-\-help\fP
-displays a help screen and exits
+Displays a help screen and exits
 
 .TP
 \fB\-V \-\-version\fP
-displays the version number and exits
+Displays the version number and exits
 
 .TP
 \fB\-a \-\-arch=\fIarch\fP
-sets the \fBARCH\fP environmental variable to \fIarch\fP.  By default,
+Sets the \fBARCH\fP environmental variable to \fIarch\fP.  By default,
 it is generated from the output of \fBuname \-m\fP command.  In all
 cases, if \fBARCH\fP environmental variable is set before
 \fBinstallkernel\fP have been run it will be overwritten.
+
+.TP
+\fB\-O \-\-output=\fIdir\fP
+Sets the \fBKBUILD_OUTPUT\fP environmental variable to \fIdir\fP which
+causes the kernel to be build in that directory.  This way the kernel
+source tree is not modified.  You may use it to give only the super
+user the privilege of modifying kernel source files.  \fB--output=\fP
+will unset the \fBKBUILD_OUTPUT\fP environmental variable.
+
+.TP
+\fB\-O \-\-output
+Synonym of \fB--output=Build\fP which causes the kernel to be build in
+Build subdirectory of kernel source tree root directory.
 
 .TP
 \fB\-\-su\fP

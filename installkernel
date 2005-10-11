@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.23 2005/10/09 15:23:29 mina86 Exp $
+## $Id: installkernel,v 1.24 2005/10/11 07:56:54 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -33,7 +33,7 @@ toInt  () {
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	echo 'installkernel  v0.13.2  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.23 2005/10/09 15:23:29 mina86 Exp $'
+	echo '$Id: installkernel,v 1.24 2005/10/11 07:56:54 mina86 Exp $'
 	echo
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
@@ -50,7 +50,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 
 	printf "%d" $$ >|/tmp/installkernel-lockfile
 fi
-
+KBUILD_OUTPUT
 
 ##
 ## Help
@@ -64,11 +64,15 @@ usage: installkernel [<options>] [<actions> [<switches>]
   -V --version          Displays vesion and exits
 
   -a --arch=<arch>      Sets the ARCH variable                        [auto]
+  -O --output=<dir>     Sets the output directory (2.6.x required)
+  -O --output           Synonym of --output=Build
+
      --su               Tries to became root (implies --user=<current-user>)
   -u --user=<user>      Runs everything not requiring SU privilages as <user>
   -nu --no-user         Synonym of  --user=
      --nice=<nice>      Adjust priority by <nice>                     [auto]
      --no-nice          Synonym of  --nice=0
+
   -L --log=<file>       Logs everything to <file> not to stdout
   -L --log              Logs to automaticly choosen file
   -nL --no-log          Cancels previous --log options
@@ -413,6 +417,10 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 
 		(--arch=*) ARCH="${ARG#--arch-}"; ;;
 		(-a*)      ARCH="${ARG#-a}";      ;;
+		(-O|--output) export KBUILD_OUTPUT=Build; ;;
+		(-O*)         export KBUILD_OUTPUT="${ARG#-O}"; ;;
+		(--output=)   unset KBUILD_OUTPUT; ;;
+		(--output=*)  export KBUILD_OUTPUT="${ARG#--output=}"; ;;
 
 		(--log=*) LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#--log=}"; ;;
 		(-L*)     LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#-L}";     ;;
