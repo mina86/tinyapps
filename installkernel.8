@@ -1,8 +1,8 @@
-.TH installkernel 8 "11 August, 2005" "version 0.13.1" "Linux System Administration"
+.TH installkernel 8 "11 August, 2005" "version 0.14" "Linux System Administration"
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.7 2005/10/11 07:56:54 mina86 Exp $
+\" $Id: installkernel.8,v 1.8 2005/11/16 20:41:57 mina86 Exp $
 \" Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 \"
 
@@ -12,25 +12,23 @@
 
 .SH SYNOPSIS
 
-\fBinstallkernel\fP [<options>] [<switches>] [<actions>]
+\fBinstallkernel\fP [<options>] [<switches>]
 [\fIversion\fP [\fIimage\fP [\fIsystemmap\fP [\fIprefix\fP]]]]
 
 .SH DESCRIPTION
 
 \fBinstallkernel\fP is a shell script ment to automate process of
 compiling and installing the Linux kernel and it's modules.  It can
-automatically patch the kernel source tree, compile and install kernel
-image and modules run lilo and remove old images and modules.  When
-additional scripts are added it can also automatically install modules
-which are not part of Linux or perform some other tasks specific for
-local machine.
+automatically compile and install kernel image and modules run lilo
+and remove old images and modules.  When additional scripts are added
+it can also automatically install modules which are not part of Linux
+or perform some other tasks specific for local machine.
 
 .PP
-The version 0.13.1 is written in standard compilant way.  It was
-tested on \fBash\fP as well as \fBbash\fP and is believed to run on
-any POSIX compatible shell, therefore, it can be used also on embeded
-systems, which are unlikely to contain "heavy" bash but rather a lite
-shell.
+It is written in standard compilant way.  It was tested on \fBash\fP
+as well as \fBbash\fP and is believed to run on any POSIX compatible
+shell, therefore, it can be used also on embeded systems, which are
+unlikely to contain "heavy" bash but rather a lite shell.
 
 .SH ARGUMENTS
 
@@ -44,7 +42,7 @@ taken in the order actions are given in the command line.
 If you use short option which requires an argument (eg. \fB\-a\fP) the
 argument must be specified just after the option without whitespace
 or anything (eg. \fB\-ai386\fP).  The script also doesn't support
-joining several short options in one argument, eg.: \fB \-iImM\fB.
+joining several short options in one argument, eg.: \fB\-iImM\fB.
 
 .SS Options
 .TP
@@ -63,17 +61,20 @@ cases, if \fBARCH\fP environmental variable is set before
 \fBinstallkernel\fP have been run it will be overwritten.
 
 .TP
-\fB\-O \-\-output=\fIdir\fP
-Sets the \fBKBUILD_OUTPUT\fP environmental variable to \fIdir\fP which
-causes the kernel to be build in that directory.  This way the kernel
-source tree is not modified.  You may use it to give only the super
-user the privilege of modifying kernel source files.  \fB--output=\fP
-will unset the \fBKBUILD_OUTPUT\fP environmental variable.
+\fB\-\-bootdir=\fIdir\fP
+Specifies the directory where the kernel image will be installed.
+For more info see \fB<prefix>\fP.
 
 .TP
-\fB\-O \-\-output
-Synonym of \fB--output=Build\fP which causes the kernel to be build in
-Build subdirectory of kernel source tree root directory.
+\fB\-\-cd=\fIdir\fP
+The script will attempt to change directory yo \fIdir\fP before doing
+anything.
+
+.TP
+\fB\-\-cd\fP
+Synonym of \fB--cd=/usr/src/linux\fP.  Useful for people who keep
+their kernel source coude in \fI/usr/src/linux\fP.  Can save you from
+typing those extra characters. :)
 
 .TP
 \fB\-\-su\fP
@@ -85,8 +86,8 @@ password at the beginning of the script.  The option also implies
 .TP
 \fB\-u \-\-user=\fIuser\fP
 Runs all commands which do not require super user privileges (this
-include patching, cleaning sources, updating dependencies (in 2.4.x)
-and compiling image and modules) as \fIuser\fP.
+include cleaning sources, updating dependencies (in 2.4.x) and
+compiling image and modules) as \fIuser\fP.
 
 .TP
 \fB\-nu \-\-no\-user\fP
@@ -97,8 +98,8 @@ everything as root and use \fB\-\-su\fP option.
 \fB\-\-nice=\fInice\fP
 Increments a nice value by \fInice\fP.  By default the script sets the
 nice value to 10 (NOT increments by 10) unless it is already greater
-then 10.  Setting this to a big value (eg. 20) is useful if you don't
-want compilation to be noticeable.
+then 10.  Setting this to a big value (eg. 20) is useful on slow
+machines if you don't want compilation to be noticeable.
 
 .TP
 \fB\-\-no\-nice\fP
@@ -117,12 +118,20 @@ that if \fBinstallkernel-log\fP exists then the output will be sent to
 \fBinstallkernel-log.2\fP and so on.
 
 .TP
-\fIversion\fP \fIimage\fP \fIsystemmap\fP \fIprefix\fP
+\fIversion\fP \fIimage\fP \fIsystemmap\fP
 Those are the version number, the path to the kernel image file and
-path to the kernel map file.  Those arguments rather unnecessary as
+path to the kernel map file.  They are unnecessary as
 the script detects all this by itself but they are provided for
-compatibility with \fBmake install\fP.  At the moment, the value of
-\fIprefix\fP is ignored.
+compatibility with \fBmake install\fP.
+
+.TP
+\fIprefix\fP
+Specifies the place where the kernel image should be installed to.  By
+default it is \fB/boot\fP unless a INSTALL_PATH enviromental variable
+is set in which case it's value is taken.  This argument overwrites
+and can be overwritten (depending on the order in which arguments are
+given) the \fB\-\-bootdir\fP option.
+
 
 .SS Switches
 
@@ -210,10 +219,7 @@ dep\fP is unnecessary in Linux 2.6.x).
 
 .TP
 \fB\-A \-\-all\fP
-Synonym of \fB\-\-compile \-\-install \-\-tidy \-\-update\-symlinks
-\-\-run\-lilo\fP.  Passing a \fB\-\-no\-all\fP (sounds stupid, doesn't
-it?) argument will turn off everything (in fact \fB\-\-make\-dep\fP
-is still set to auto but it doesn't matter in most cases).
+Synonym of \fB\-\-compile \-\-install \-\-tidy \-\-run\-lilo\fP.
 
 .TP
 \fB\-i \-\-compile\-image\fP
@@ -223,7 +229,9 @@ Runs \fBmake bzImage\fP to compile the kernel image.  The default is
 .TP
 \fB\-I \-\-install\-image\fP
 Installs the kernel image by copying appropriate files to \fB/boot\fP
-directory. By default it is \fByes\fP if exactly 4 arguments are
+directory (or other directory specified by \fIprefix\fP or
+INSTALL_PATH enviromental varialbe).  It will also update symlinks in
+that directory.  By default it is \fByes\fP if exactly 4 arguments are
 given, and thye are: \fIversion\fP \fIimage\fP \fIsystemmap\fP
 \fIprefix\fP, otherwise it is \fBno\fP.
 
@@ -269,17 +277,6 @@ Synonym of \fB\-\-install\-image \-\-install\-modules\fP.
 Synonym of \fB\-\-tidy\-image \-\-tidy\-modules\fP.
 
 .TP
-\fB\-s \-\-update\-symlinks\fP
-Updates symlinks in \fB/boot\fP directory.  This should not be on
-without \fB\-\-install\-image\fP.  By default it is \fByes\fP if
-exactly 4 arguments are given, and thye are: \fIversion\fP \fIimage\fP
-\fIsystemmap\fP \fIprefix\fP, otherwise it is \fBno\fP.
-
-.TP
-\fB\-\-symlinks\fP
-Deprecated synonym of \fB\-\-update\-symlinks\fP.
-
-.TP
 \fB\-l \-\-update\-loader\fP
 Updates the loader program.  At the moment this is done by running
 \fBlilo\fP.  By default it is \fByes\fP if exactly 4 arguments are
@@ -296,35 +293,6 @@ unless it is prefixed with \fBno\-\fP (if long form is used) or
 \fBn\fP (if short form is used).  If a switch is synonym of several
 other switches then all those switches will be turned on or off.
 
-.SS Actions
-
-.TP
-\fB\-\-cd=\fIdir\fP
-Changes the directory to \fIdir\fP.
-
-.TP
-\fB\-\-cd\fP
-Synonym of \fB\-\-cd/usr/src/linux
-
-.TP
-\fB\-p \-\-patch=\fIpatch\fP
-Applies specified \fIpatch\fP in the current working directory.
-Patches are automatically decompressed if required.  The first character
-of \fIpatch\fP may be an exclamation mark ("!") which means that the
-patch should be applied even if some errors arise during patching.
-Also "@" may be used which means to apply it as a reverse patch.
-Next a number fallowed by a colon may indicate an argument which should
-be given to \fB\-p\fP option of \fBptch\fP (the default is \fB1\fP).
-Then a quotation mark ("=") or double dashes ("\-\-") may exist.  The
-rest is treated as a path to the patch file.
-
-.PP
-Each action may be specified several times.  They are executed in the
-given order so \fB\-\-cd \-\-patch=foo.diff\fP is something different
-then \fB\-\-patch=foo.dif \-\-cd\fP.  This makes sens if you want to
-apply several patches in different points of the Linux kernel source
-tree.
-
 .SH EXIT CODE
 
 \fBinstallkernel\fP defines the fallowing exit code values:
@@ -340,8 +308,8 @@ Invalid arguments where given.
 .TP
 \fB2\fP
 Some other errors detected by the script.  At the moment, this
-includes the situation when the patch file or include/linux/version.h
-file was missing or unreadable.
+includes the situation when include/linux/version.h file was missing
+or unreadable.
 
 .TP
 \fB3\fP
@@ -380,13 +348,12 @@ hooks may be handy.
 There are events and hooks.  Events are: \fBclean\fP, \fBconfig\fP,
 \fBmake\-dep\fP, \fBcompile\-image\fP, \fBcompile\-modules\fP,
 \fBinstall\-modules\fP, \fBtidy\-image\fP, \fBtidy\-modules\fP,
-\fBinstall\-image\fP, \fBupdate\-symlinks\fP and \fBupdate\-loader\fP.
-As you can see each event corresponds to each step of the
-\fBinstallkernel\fP script.  Each event has a \fBpre\-\fP and
-\fBpost\-\fP hook.  So for example there are \fBpre\-clean\fP and
-\fBpost\-clean\fP hooks.  There are also \fBpre\fP and \fBpost\fP
-hooks which are executed at the very begining and at the very end of
-the \fBinstallkernel\fP script.
+\fBinstall\-image\fP and \fBupdate\-loader\fP.  As you can see each
+event corresponds to each step of the \fBinstallkernel\fP script.
+Each event has a \fBpre\-\fP and \fBpost\-\fP hook.  So for example
+there are \fBpre\-clean\fP and \fBpost\-clean\fP hooks.  There are
+also \fBpre\fP and \fBpost\fP hooks which are executed at the very
+begining and at the very end of the \fBinstallkernel\fP script.
 
 .PP
 When a hook is executed then all executable scripts from
@@ -405,13 +372,12 @@ and it's subdirectories and run \fBinstallkernel\fP with
 .SH LILO CONFIG
 
 After the kernel image is installed (when \fB\-\-install\-image is
-true, the default) and symlinks updated (when \fB\-\-update\-symlinks
-is true, the default) the new kernel image can be accessed by a
-\fB/boot/bzImage\fP and the old one by \fB/boot/bzImage~\fP symlinks.
-The same is with \fBSystem.map\fP and \fBconfig\fP.  This way you
-don't have to alter your LILO configuration each time new kernel is
-installed, therefore, usually the \fBlilo.conf\fP
-(\fB/etc/lilo.conf\fP by default) should contain the fallowing code:
+true) the new kernel image can be accessed by a \fB/boot/bzImage\fP
+and the old one by \fB/boot/bzImage~\fP symlinks.  The same is with
+\fBSystem.map\fP and \fBconfig\fP.  This way you don't have to alter
+your LILO configuration each time new kernel is installed, therefore,
+usually the \fBlilo.conf\fP (\fB/etc/lilo.conf\fP by default) should
+contain code similar to the fallowing:
 
 .nf
 image = /boot/bzImage
@@ -432,11 +398,11 @@ For more details you should consult lilo.conf(5) man page.
 .TP
 \fB$ installkernel \-\-su \-\-cd \-\-all \-\-nice=20\fP
 Does everything (compiles the kernel image and modules then installs
-them and removes old ones and update symlinks and loader at the end).
-At the beginning asks for root password so when super user privileges
-are required the script will use them however everything else
-(compiling) will be run as a user who run the script.  The script will
-also change the directory to \fB/usr/src/linux\fP for you.
+them, removes old ones and finally updates loader).  At the beginning
+asks for root password so when super user privileges are required the
+script will use them however everything else will be run as a user who
+run the script.  The script will also change the directory to
+\fB/usr/src/linux\fP for you.
 
 .TP
 \fBinstallkernel \-\-su \-\-no\-user \-\-cd \-\-all\fP
@@ -444,16 +410,8 @@ Similar to the above but everything will be run as super user (even
 build process).
 
 .TP
-\fBinstallkernel \-\-su \-\-cd \-\-no\-all \-\-modules\fP
+\fBinstallkernel \-\-su \-\-cd \-\-modules\fP
 Will compile, install and tidy the kernel modules only.
-
-.TP
-\fBinstallkernell \-\-no\-all \-\-cd \-\-patch=!@=../patch\-foo\-1 \-\-patch=!\-\-../patch\-foo\-2 \-\-compile\fP
-Applies a \fBpatch\-foo\-1\fP patch in reverse mode then applies a
-\fBpatch\-foo\-2\fP patch and at the end compiles the kernel image and
-modules.  Useful if there is no incremental patch from \fBfoo-1\fP to
-\fBfoo-2\fP.  Note that patches are forced (by exclamation mark) so
-even if there are some rejections the script will continue.
 
 .TP
 \fBinstallkernel \-\-all \-\-su \-\-cd \-\-log && /sbin/reboot\fP
@@ -467,15 +425,6 @@ reboot the system when you get back the next day ;).  You may however
 replace \fB&& /sbin/reboot\fP with \fB; /sbin/halt\fP to run a nightly
 compilation.  Note that you have to have \fBreboot\fP and \fBhalt\fP
 properly configured for a non\-root user to be able to run.
-
-.TP
-\fBinstallkernel \-\-all \-\-su \-\-cd --log --patch=../patch-next-version.bz2 --config\fP
-Applies a patch \fBpatch-next-version.bz2\fI, runs config script and
-then compiles, installs and tydies everything.  Note that you have to
-interactivly update config.  If you remove \fB\-\-config\fP option you
-(most likely) will have to answer a few qeustions anyway unless given
-patch do not add any new options.
-
 
 .SH AUTHOR
 

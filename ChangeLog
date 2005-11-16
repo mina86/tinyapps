@@ -1,3 +1,24 @@
+2005-11-16  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* installkernel: + patching no longer supported
+	+ --output option removed (need some more testing)
+	+ unsets $KBUILD_OUTPUT to prevent (possible) errors
+	+ --bootdir and prefix argument support added
+	+ $INSTALL_PATH support added
+	+ --update-symlinks removed (now included in --install-kernel)
+	+ signal handler moved up to the beginning of file
+	+ backup() function removed (was used only in 1 place)
+	+ update_build() function removed (was used only in 1 place)
+	+ script calls itself with full path and 'sh' to prevent u
+	+ added cheking for libraries in lib64 directories
+	+ few small bugs fixed
+	* installkernel.8: + patching description removed
+	+ --output, --update-symlink and --symlinks options removed
+	+ --bootdir option added
+	+ prefix description added
+	+ update-symlinks hook removed
+	+ examples including patching removed
+
 2005-10-11  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* installkernel: + small bug fixed
