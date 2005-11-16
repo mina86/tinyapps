@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.10 2005/11/16 20:50:05 mina86 Exp $
+## $Id: Makefile,v 1.11 2005/11/16 20:54:12 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -88,9 +88,9 @@ install: install-FvwmTransFocus install-add install-ai install-cdiff	\
          install-fortune install-genpass.sh install-get_mks_vir_bases	\
          install-getlyrics.pl install-installkernel install-load		\
          install-malloc install-moz2elinks.pl install-mountiso			\
-         install-mpd-state install-null install-pingrange.pl			\
-         install-rot13 install-settitle install-timer install-tpwd		\
-         install-traf.sh install-xcolor2rgb
+         install-mp3rip install-mpd-state install-null					\
+         install-pingrange.pl install-rot13 install-settitle			\
+         install-timer install-tpwd install-traf.sh install-xcolor2rgb
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
@@ -100,10 +100,10 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-genpass.sh uninstall-get_mks_vir_bases				\
            uninstall-getlyrics.pl uninstall-installkernel				\
            uninstall-load uninstall-malloc uninstall-moz2elinks.pl		\
-           uninstall-mountiso uninstall-mpd-state uninstall-null		\
-           uninstall-pingrange.pl uninstall-rot13 uninstall-settitle	\
-           uninstall-timer uninstall-tpwd uninstall-traf.sh				\
-           uninstall-xcolor2rgb
+           uninstall-mountiso uninstall-mp3rip uninstall-mpd-state		\
+           uninstall-null uninstall-pingrange.pl uninstall-rot13		\
+           uninstall-settitle uninstall-timer uninstall-tpwd			\
+           uninstall-traf.sh uninstall-xcolor2rgb
 
 
 ##

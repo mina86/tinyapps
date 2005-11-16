@@ -1,0 +1,458 @@
+#!/bin/sh
+##
+## Rips audio tracks and encodes them to mp3
+## $Id: mp3rip,v 1.1 2005/11/16 20:54:12 mina86 Exp $
+## Copyright (c) 2003-2005 by Tomekk (tomekk/AT/oswiecim.eu.org)
+## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+
+set -e
+echo 'mp3rip  v0.5  (c) Tomekk & mina86'
+echo '$Id: mp3rip,v 1.1 2005/11/16 20:54:12 mina86 Exp $'
+echo
+
+
+
+##
+## Usage
+##
+usage () {
+	cat <<EOF
+usage: ${0##*/} [<options>] [ [--] <tracks> | -a | --ask | --list ]
+       ${0##*/} --setup
+
+<options>:
+ -h --help              Prints this help screan and exits
+ -V --version           Prints version number and exits
+ -H --method-help       Prints help about methods and exits
+ -s --setup             Runs setup
+
+ -v<verbosity>          Verbosity level (0 to 5)                  [2]
+ -v                     Synonym of -v3
+ -vv                    Synonym of -v4
+
+ -d --device=<device>   Uses <device> as cdrom                    [/dev/cdrom]
+                        'search' makes cdparanoia search for a drive
+ -m --method=<method>   Method to use when encoding               [vbr]
+ -b --bitrate=<br>      Bitrate used in CBR/ABR method            [128]
+ -b --min-bitrate=<br>  Mimimum bitrate used in VBR/ABR method    [32]
+ -B --max-bitrate=<br>  Maximum bitarte used in VBR/ABR method    [320]
+ -O --options=<opt>     Passes <opt> to lame when in user method
+ -q --quality=<q>       Quality to encode with (0-best; 9-worse)  [5]
+
+ -k --keep-wav          Doesn't remove wav files after encoding
+    --cd=<dir>          Changes directory to <dir> (creates if missing)
+
+ -l --lame=<lame>       Path to lame                              [auto]
+ -L --lame-opts=<opt>   Aditional lame options                    [none]
+ -c --cdparanoia=<cdp>  Path to cdparanoia                        [auto]
+ -C --cdparanoia-opts=<opt>  Aditional cdparanoia options         [none]
+
+ -a --ask               Prompts user to enter track numbers to rip
+ -t --list              List all audio tracks
+ <tracks>               Track numbers to rip                      [all]
+EOF
+}
+
+
+
+##
+## Description of methods
+##
+method_help () {
+cat <<EOF
+There are fallowing methods available:
+* cbr (constant bitrate)
+  Encodes MP3 with a constant bitrate specified using -b option.
+
+* vbr (variable bitrate)
+  The bitrate of each fragments of MP3 is adjusted automaticaly so
+  that higher bitrates are used only when needed (ie. a few seconds of
+  silence are encoded using minimal bitrate to save some space).
+
+* vbr-old (variable bitrate, old routine)
+  Works jsut like vbr but uses older, slower and most tested VBR algorithm.
+
+* abr (average bitrate)
+  Similar to VBR but makes the average bitrate of MP3 file to be
+  exactly the bitrate specified by --bitrate option.
+  Note: Do not use -b option with abr method since it is ambigious.
+        Use --bitrate and --min-bitrate instead.
+
+* user
+  You have to specify options used to encode the WAV file by yourself.
+
+* rip-only
+  When this method is selected WAV files won't be encoded to MP3s.
+EOF
+}
+
+
+
+##
+## Messages
+##
+error () {
+	__EC=$1
+	shift
+	echo "${0##*/}: $*"
+	exit $__EC
+}
+
+
+
+##
+## Init variables and read config
+##
+VERBOSITY=2
+RUN_SETUP=
+TRACKS=all
+DEV=/dev/cdrom
+METHOD=vbr
+LAME=auto
+CDPARANOIA=auto
+LAME_OPTS=
+CDPARANOIA_OPTS=
+BR=128
+MIN_BR=32
+MAX_BR=320
+QUALITY=5
+OPTIONS=
+KEEP_WAV=
+CD=
+
+if [ -e ~/.mp3-opt ]; then
+	. ~/.mp3-opt
+	KEEP_WAV=$(printf "%s" "$KEEP_WAV" | tr A-Z a-z)
+	if [ "X$KEEP_WAV" != "Xy" ] && [ "X$KEEP_WAV" != "Xyes" ]
+	then KEEP_WAV=; else KEEP_WAV=y; fi
+fi
+
+
+
+##
+## Parse arguments
+##
+while [ $# -ne 0 ] && [ "X$1" != X-- ]; do
+	case "$1" in
+	(-h|--help)           usage                 ; exit 0; ;;
+	(-V|--version)                                exit 0; ;;
+	(-H|--method-help)    method_help           ; exit 0; ;;
+	(-s|--setup)          RUN_SETUP=y                   ; ;;
+
+	(-v[0-5])             VERBOSITY="${1#-v}"           ; ;;
+	(-v)                  VERBOSITY=3                   ; ;;
+	(-vv)                 VERBOSITY=4                   ; ;;
+
+	(-d)                  DEVICE="$2"           ; shift ; ;;
+	(-d*)                 DEVICE="${1#-d}"              ; ;;
+	(--device=*)          DEVICE="${1#*=}"              ; ;;
+	(-m)                  METHOD="$2"           ; shift ; ;;
+	(-m*)                 METHOD="${1#-m}"              ; ;;
+	(--method=*)          METHOD="${1#*=}"              ; ;;
+
+	(-b)                  BR="$2"; MIN_BR="$2"  ; shift ; ;;
+	(-b*)                 BR="${1#-b}"; MIN_BR="${1#-b}"; ;;
+	(--bitrate=*)         BR="${1#*=}"                  ; ;;
+	(--min-bitrate=*)     MIN_BR="${1#*=}"              ; ;;
+	(--max-bitrate=*)     MAX_BR="${1#*=}"              ; ;;
+
+	(-o)                  OPTIONS="$2"          ; shift ; ;;
+	(-o*)                 OPTIONS="${1#-o}"             ; ;;
+	(--options=*)         OPTIONS="${1#*=}"             ; ;;
+	(-q)                  QUALITY="$2"          ; shift ; ;;
+	(-q*)                 QUALITY="${1#-q}"             ; ;;
+	(--quality=*)         QUALITY="${1#*=}"             ; ;;
+
+	(-k|--keep-wav)       KEEP_WAV=y                    ; ;;
+	(--cd=*)              CD="${1#*=}"                  ; ;;
+
+	(-l)                  LAME="$2"             ; shift ; ;;
+	(-l*)                 LAME="${1#-l}"                ; ;;
+	(--lame=*)            LAME="${1#*=}"                ; ;;
+	(-L)                  LAME_OPTS="$2"        ; shift ; ;;
+	(-L*)                 LAME_OPTS="${1#-L}"           ; ;;
+	(--lame-opts=*)       LAME_OPTS="${1#*=}"           ; ;;
+
+	(-c)                  CDPARANOIA="$2"       ; shift ; ;;
+	(-c*)                 CDPARANOIA="${1#-c}"          ; ;;
+	(--cdparanoia=*)      CDPARANOIA="${1#*=}"          ; ;;
+	(-c)                  CDPARANOIA_OPTS="$2"  ; shift ; ;;
+	(-c*)                 CDPARANOIA_OPTS="${1#-C}"     ; ;;
+	(--cdparanoia-opts=*) CDPARANOIA_OPTS="${1#*=}"     ; ;;
+
+	(-a|--ask)            TRACKS=ask                    ; ;;
+	(-t|--list)           TRACKS=list                   ; ;;
+
+	(-*) error 1 "Invalid argument: '$1'"; ;;
+	([0-9][0-9])  break; ;;
+	([0-9])       break; ;;
+	esac
+	shift
+done
+
+if [ "X$1" = X-- ]; then
+	shift;
+fi
+if [ "X$TRACKS" = Xall ] && [ $# -ne 0 ]; then
+	TRACKS=args
+fi
+
+
+
+##
+## Run setup
+##
+if [ "$RUN_SETUP" ]; then
+	echo '=== Entering setup'
+
+	## Function for asking question
+	ask () {
+		__NAME="$1"; shift
+		__VALUE=$(eval echo \"\$$__NAME\")
+
+		if [ "X$2" == Xbool ]; then
+			if [ -z "$__VALUE" ]; then __VALUE=no; else __VALUE=yes; fi
+		fi
+
+		if [ "X$2" != Xnodefault ]; then
+			printf "%s [%s]: " "$1" "$__VALUE"
+			if read __ANS && [ -n "$__ANS" ]; then __VALUE="$__ANS"; fi
+		else
+			printf "%s (%s): " "$1" "$__VALUE"
+			if read __ANS; then __VALUE="$__ANS"; fi
+		fi
+
+		printf "\n# %s\n%s='%s'\n" "$1" "$__NAME" \
+			$(printf "%s" "$__VALUE" | sed -e "s/'/'\\\\''/") >>"$TMP_FILE"
+
+		if [ "X$2" == Xbool ]; then
+			__VALUE=$(printf "%s" "$__VALUE" | tr A-Z a-z)
+			if [ "X$__VALUE" != "Xy" ] && [ "X$__VALUE" != "Xyes" ]
+			then __VALUE=; else __VALUE=y; fi
+		fi
+
+		eval $__NAME=\"\$__VALUE\"
+	}
+
+	## Temp file
+	TMP_FILE="${0##*/}-tmp-$RANDOM"
+	if [ -n "$TEMPDIR" ] && [ -d "$TEMPDIR" ] && [ -w "$TEMPDIR" ]; then
+		TMP_FILE="$TEMPDIR/$TMP_FILE"
+	elif [ -d /tmp ] && [ -w /tmp ]; then
+		TMP_FILE="/tmp/$TMP_FILE";
+	fi
+
+	## Config header
+	cat <<EOF >$TMP_FILE
+##
+## mp3rip Configuration File
+##
+## This file has been generated automaticly.
+## To enter setup run  mp3rip --setup
+##
+EOF
+
+	## Questions
+	ask VERBOSITY       'Default verbosity level (0 to 5)'
+	ask DEV             'CD-Rom Device'
+	ask METHOD          'Method (see --method-help for more info)'
+	ask BR              'Bitrate (used in cbr and abr methods)'
+	ask MIN_BR          'Mimimum bitrate (used in vbr and abr methods)'
+	ask MAX_BR          'Mimimum bitrate (used in vbr and abr methods)'
+	ask QUALITY         'Encoding quality (0 - best, 9 - worse)'
+	ask OPTIONS         'Options to use in user method'
+	ask LAME            'Lame executable to use'
+	ask LAME_OPTS       'Aditional arguments to lame' nodefault
+	ask CDPARANOIA      'Cdparanoia executable to use'
+	ask CDPARANOIA_OPTS 'Aditional arguments to cdparanoia' nodefault
+	ask KEEP_WAV        'Do you want to keep wav files' bool
+
+	## Save?
+	DONE=
+	while [ -z "$DONE" ]; do
+		printf 'Do you want to save the options (show to show config file) [yes]: '
+		if ! read __ANS || [ -z "$__ANS" ]; then __ANS=yes; fi
+		__ANS=$(echo "$__ANS" | tr A-Z a-z)
+		DONE=y
+		if [ "X$__ANS" = Xshow ]; then
+			printf '\n%s\n' '---<cut here>---'
+			cat <"$TMP_FILE"
+			printf '%s\n\n' '---<cut here>---'
+			DONE=
+		elif [ "X$__ANS" = Xy ] || [ "X$__ANS" = Xyes ]; then
+			echo 'Saving options'
+			cat <"$TMP_FILE" >~/.mp3riprc
+		fi
+	done
+	rm -f "$TMP_FILE"
+
+	## Continue
+	printf 'Do you want to rip CD nows [no]: '
+	read __ANS
+	__ANS=$(echo "$__ANS" | tr A-Z a-z)
+	if [ "X$__ANS" != Xy ] && [ "X$__ANS" != Xyes ]; then
+		exit 0;
+	fi
+
+	if [ "X$TRACKS" = Xall ]; then
+		TRACKS=ask
+	fi
+fi
+
+
+
+##
+## Things concerning verbosity
+##
+if [ $VERBOSITY -gt 2 ]; then V=-v; else V=; fi
+
+msg () {
+	if [ $VERBOSITY -ge $1 ]; then
+		shift
+		echo "$*"
+	fi
+}
+
+
+
+##
+## Change directory
+##
+if [ -n "$CD" ]; then
+	echo "=== Entering directory $CD"
+	mkdir -p $V -- "$CD"
+	cd "$CD"
+fi
+
+
+
+##
+## Prepare cdparanoia
+##
+if [ "X$CDPARANOIA" = Xauto ]; then CDPARANOIA=cdparanoia; fi
+if ! CDPARANOIA=$(which "$CDPARANOIA" 2>/dev/null); then
+	error 2 Could not fine cdparanoia executable
+fi
+msg 4 Cdparanoia executable: $CDPARANOIA
+CDP="$CDPARANOIA $CDPARANOIA_OPTS"
+
+if [ "X$DEV" = Xsearch ]; then
+	CDP="$CDP -s"
+else
+	CDP="$CDP -d $DEV"
+fi
+
+  if [ $VERBOSITY -eq 0 ]; then CDP="$CDP -q"
+elif [ $VERBOSITY -ge 4 ]; then CDP="$CDP --verbose"
+fi
+msg 3 Cdparanoia command: $CDP
+
+
+
+##
+## List tracks (if --list given)
+##
+if [ "X$TRACKS" = Xlist ]; then
+	echo === Listing tracks
+	msg 5 Running: $CDP -Q
+	$CDP -Q
+fi
+
+
+
+##
+## Get list of tracks to rip
+##
+if [ "X$TRACKS" = Xask ]; then
+	set --
+	printf 'Enter track numbers to rip (^D or q ends): '
+	while read NUM; do
+		set -- "$@" $NUM
+		if printf " %s " $NUM | grep -iF ' q ' >/dev/null 2>&1; then
+			break
+		fi
+	done
+elif [ "X$TRACKS" = Xall ]; then
+	set -- $($CDP -Q 2>&1 | sed -ne \
+		's/^  *\([1-9][0-9]*\)\. *[1-9][0-9]*.*$/\1/ p')
+	msg 2 === $# tracks found
+fi
+
+
+
+##
+## Prepare lame
+##
+if [ "X$LAME" = Xauto ]; then LAME=lame; fi
+if ! LAME=$(which "$LAME" 2>/dev/null); then
+	error 2 Could not fine lame executable
+fi
+msg 4 Lame executable: $LAME
+LM="$LAME $LAME_OPTS"
+
+case "$METHOD" in
+	(cbr)      LM="$LM --cbr     -q $QUALITY -b $BR"               ; ;;
+	(vbr)      LM="$LM --vbr-new -V $QUALITY -b $MIN_BR -B $MAX_BR"; ;;
+	(vbr-old)  LM="$LM --vbr-old -V $QUALITY -b $MIN_BR -B $MAX_BR"; ;;
+	(abr)      LM="$LM --abr $BR             -b $MIN_BR -B $MAX_BR"; ;;
+	(user)     LM="$LM $OPTIONS"                                   ; ;;
+	(rip-only) LM=; KEEP_WAV=y                                     ; ;;
+esac
+
+  if [ $VERBOSITY -eq 0 ]; then LM="$LM --silent"
+elif [ $VERBOSITY -eq 1 ]; then LM="$LM --nohist"
+elif [ $VERBOSITY -eq 5 ]; then LM="$LM --verbose"
+fi
+msg 3 Lame command: $LM
+
+
+
+##
+## Do the job
+##
+ALL=$#
+DONE=0
+while [ -n "$1" ] && [ "X$1" != Xq ] && [ "X$1" != XQ ]; do
+	## Check arg
+	MATCH=$(expr "$1" : '[0-9]*')
+	if [ $MATCH -ne ${#1} ]; then
+		echo "${0##*/}: '$1' is not a number, ignoring" >&2
+		shift
+		conitnue;
+	fi
+
+	## Rip
+	NUM=$(printf %02d "$1")
+	echo "=== Ripping track $1 ($DONE/$ALL)"
+	$CDP "$1" "track$NUM.wav"
+
+	## Encode
+	if [ -n "$LM" ]; then
+		echo "=== Encoding track $1 ($DONE/$ALL)"
+		$LM "track$NUM.wav" "track$NUM.mp3"
+	fi
+
+	## Remove wav
+	echo $KEEP_WAV
+	if [ -z "$KEEP_WAV" ]; then
+		rm -f $V "track$NUM.wav"
+	fi
+
+	DONE=$((DONE + 1 ))
+	shift
+done

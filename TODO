@@ -38,6 +38,9 @@ Tiny Applications Collection TODO List
 * malloc
   - change way it displays progress
 
+* mp3rip
+  - id3 tag support (option to read ID3 tag from a file)
+
 * mpd-state
   - allow getting information from different sources (eg. playlist
     from a server and other state from a file).

@@ -1,5 +1,8 @@
 2005-11-16  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* mp3rip: New file
+	* Makefile, README, TODO: + mp3rip added
+
 	* Makefile: + now searches also in lib64 for X libraries
 
 	* installkernel: + patching no longer supported
