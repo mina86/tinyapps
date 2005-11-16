@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.9 2005/09/22 17:13:28 mina86 Exp $
+## $Id: Makefile,v 1.10 2005/11/16 20:50:05 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -19,9 +19,9 @@ X11_INC_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
                        "$$DIR/include/X11/X.h" ] && echo				\
                        "$$DIR/include" && break; done}
 X11_LIB_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
-                       /opt/X11R6 /usr /usr/local/include; do [ -f		\
-                       "$$DIR/lib/libX11.so" ] && echo "$$DIR/lib" &&	\
-                       break; done}
+                       /opt/X11R6 /usr /usr/local/include; do  for LIB	\
+                       in lib64 lib; do [ -f "$$DIR/$$LIB/libX11.so" ]	\
+                       && echo "$$DIR/lib" && break; done; done}
 
 ifndef      RELEASE
 RELEASE     := $(shell if [ -f .release ]; \

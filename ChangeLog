@@ -1,5 +1,7 @@
 2005-11-16  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* Makefile: + now searches also in lib64 for X libraries
+
 	* installkernel: + patching no longer supported
 	+ --output option removed (need some more testing)
 	+ unsets $KBUILD_OUTPUT to prevent (possible) errors
