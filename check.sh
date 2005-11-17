@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## Pings specified host and runs specified program if no responding
-## $Id: check.sh,v 1.3 2005/08/26 16:17:52 mina86 Exp $
+## $Id: check.sh,v 1.4 2005/11/17 07:26:35 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 ##
 version () {
 	echo 'Check v0.1  (c) 2005 by Micha³ Nazarewicz'
-	echo '$Id: check.sh,v 1.3 2005/08/26 16:17:52 mina86 Exp $'
+	echo '$Id: check.sh,v 1.4 2005/11/17 07:26:35 mina86 Exp $'
 	echo
 }
 
@@ -69,7 +69,7 @@ CHECK_EXIT_CODE (exit code of <check>) and CHECK_TMP (path to a temporary
 file) which both <check> and <action> should take into account.
 
 By default the script caches all signals and exits with zero error code if
-signal is caught so you can run './chec.sh || /sbin/halt' to automaticly shut
+signal is caught so you can run './check.sh || /sbin/halt' to automaticly shut
 down the machine when connection is lost and then hit Ctrl-C to abort.
 
 EOF

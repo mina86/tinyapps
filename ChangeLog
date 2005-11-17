@@ -1,3 +1,7 @@
+2005-11-17  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* check.sh: + chec.sh -> check.sh in --help screen
+
 2005-11-16  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* mp3rip: New file
