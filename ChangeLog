@@ -1,5 +1,10 @@
 2005-11-20  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* malloc.c: + nice progress bar
+	+ accepts unit in argument (eg. 10M)
+	+ code cleaned up
+	* TODO: + malloc entry removed
+
 	* xgetclass.c: New file
 	* Makefile, README: + xgetclass added
 

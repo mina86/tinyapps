@@ -29,14 +29,9 @@ Tiny Applications Collection TODO List
 
 * installkernel
   - support other bootloaders
-  - support directories as patch file (apply each file)
-  - --reverse-patches (reverses all patches if some failed)
 
 * load
   - make more platform independent
-
-* malloc
-  - change way it displays progress
 
 * mp3rip
   - id3 tag support (option to read ID3 tag from a file)
