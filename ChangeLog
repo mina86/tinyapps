@@ -1,5 +1,8 @@
 2005-11-20  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* gz2bz: New file
+	* Makefile, README: + gz2bz added
+
 	* malloc.c: + nice progress bar
 	+ accepts unit in argument (eg. 10M)
 	+ code cleaned up

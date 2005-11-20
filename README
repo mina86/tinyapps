@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2005/11/20 20:18:13 $
+                     $Date: 2005/11/20 20:25:23 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which  may be usefull  in everyday life.   There are
@@ -58,6 +58,9 @@ At the moment the collection includes:
 
  * getlyrics.pl - downloads  lyrics of a given song  from the Internet
    (http://www.lyrc.com.ar/ accauly);
+
+ * gz2bz - a shell script using gzip and bzip2 to convert gzip
+   compressed files to bzip2 compressed files.
 
  * infinite-logger - loggs every logged message including the messages
    logget by itself :]

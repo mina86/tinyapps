@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.12 2005/11/20 20:18:13 mina86 Exp $
+## $Id: Makefile,v 1.13 2005/11/20 20:25:23 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -86,12 +86,12 @@ install: install-FvwmTransFocus install-add install-ai install-cdiff	\
          install-cdiff.sed install-check.sh install-checkmail			\
          install-cpuload.sh install-cutcom install-extractlinks.pl		\
          install-fortune install-genpass.sh install-get_mks_vir_bases	\
-         install-getlyrics.pl install-installkernel install-load		\
-         install-malloc install-moz2elinks.pl install-mountiso			\
-         install-mp3rip install-mpd-state install-null					\
-         install-pingrange.pl install-rot13 install-settitle			\
-         install-timer install-tpwd install-traf.sh install-xcolor2rgb	\
-         install-xgetclass
+         install-getlyrics.pl install-gz2bz install-installkernel		\
+         install-load install-malloc install-moz2elinks.pl				\
+         install-mountiso install-mp3rip install-mpd-state				\
+         install-null install-pingrange.pl install-rot13				\
+         install-settitle install-timer install-tpwd install-traf.sh	\
+         install-xcolor2rgb install-xgetclass
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
@@ -99,12 +99,13 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-checkmail uninstall-cpuload.sh uninstall-cutcom	\
            uninstall-extractlinks.pl uninstall-fortune					\
            uninstall-genpass.sh uninstall-get_mks_vir_bases				\
-           uninstall-getlyrics.pl uninstall-installkernel				\
-           uninstall-load uninstall-malloc uninstall-moz2elinks.pl		\
-           uninstall-mountiso uninstall-mp3rip uninstall-mpd-state		\
-           uninstall-null uninstall-pingrange.pl uninstall-rot13		\
-           uninstall-settitle uninstall-timer uninstall-tpwd			\
-           uninstall-traf.sh uninstall-xcolor2rgb uninstall-xgetclass
+           uninstall-getlyrics.pl uninstall-gz2bz						\
+           uninstall-installkernel uninstall-load uninstall-malloc		\
+           uninstall-moz2elinks.pl uninstall-mountiso uninstall-mp3rip	\
+           uninstall-mpd-state uninstall-null uninstall-pingrange.pl	\
+           uninstall-rot13 uninstall-settitle uninstall-timer			\
+           uninstall-tpwd uninstall-traf.sh uninstall-xcolor2rgb		\
+           uninstall-xgetclass
 
 
 ##

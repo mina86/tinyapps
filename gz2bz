@@ -1,0 +1,172 @@
+#!/bin/sh
+##
+## gzip to bzip2 converter
+## $Id: gz2bz,v 1.1 2005/11/20 20:25:23 mina86 Exp $
+## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+
+
+set -e
+
+
+##
+## Version
+##
+version () {
+	echo 'gz2bz  ver. 0.1   (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)'
+	echo '$Id: gz2bz,v 1.1 2005/11/20 20:25:23 mina86 Exp $'
+	echo
+}
+
+
+##
+## Usage
+##
+usage () {
+	cat <<EOF
+usage: gz2bz <options> [ [--] file ...]
+<options> are:
+ -h --help              Prints this help screen and exits
+ -V --verson            Prints version information and exits
+
+ -v --verbose           Becomse more verbose
+ -vv                    Becomes even more verbose
+ -q --quiet             Supresses all noncritical messages
+
+ -1 .. -9               Set compression method             [bzip2's defult]
+    --fast              Alias of -1
+    --best              Alias of -9
+
+ -G --gzip=<gzip>       Uses <gzip> as gzip executable               [auto]
+ -g --gzip-opts=<opts>  Adds aditional arguments to gzip             [none]
+ -B --bzip2=<bzip2>     Uses <bzip2> as bzip2 executable             [auto]
+ -b --bzip2-opts=<opts> Adds aditional arguments to bzip2            [auto]
+
+ -k --keep              Keeps uncompressed file
+    --keep-gz           Keeps .gz file
+ -K --keep-both         Alias of --keep --keep-gz
+EOF
+}
+
+
+##
+## Variables
+##
+GZIP=auto
+BZIP2=auto
+GZ_OPTS=
+BZ2_OPTS=
+KEEP_UNCOMPRESSED=
+KEEP_GZIP=
+VERBOSE=
+
+
+##
+## Parse args
+##
+while [ $# -ne 0 ] && [ "X$1" != X-- ]; do
+	case "$1" in
+	(-h|--help)    usage  ; exit; ;;
+	(-V|--version) version; exit; ;;
+
+	(-v|--verbose)   VERBOSE=Y
+	                 GZ_OPTS="$GZ_OPTS -v" ; BZ2_OPTS="$BZ2_OPTS -v" ; ;;
+	(-vv)            VERBOSE=Y
+	                 GZ_OPTS="$GZ_OPTS -vv"; BZ2_OPTS="$BZ2_OPTS -vv"; ;;
+	(-q|--quiet)     VERBOSE=
+	                 GZ_OPTS="$GZ_OPTS -q" ; BZ2_OPTS="$BZ2_OPTS -q" ; ;;
+
+	(-[0-9])         BZ2_OPTS="$BZ2_OPTS $1"; ;;
+	(--fast)         BZ2_OPTS="$BZ2_OPTS -1"; ;;
+	(--best)         BZ2_OPTS="$BZ2_OPTS -9"; ;;
+
+	(-G)             GZIP="$2"                       ; shift; ;;
+	(-G*)            GZIP="${1#-?}"                         ; ;;
+	(--gzip=*)       GZIP="${1#*=}"                         ; ;;
+	(-g)             GZIP_OPTS="$GZIP_OPTS $2"       ; shift; ;;
+	(-g*)            GZIP_OPTS="$GZIP_OPTS ${1#-?}"         ; ;;
+	(--gzip-opts=*)  GZIP_OPTS="$GZIP_OPTS ${1#*=}"         ; ;;
+	(-B)             BZIP2="$2"                      ; shift; ;;
+	(-B*)            BZIP2="${1#-?}"                        ; ;;
+	(--bzip2=*)      BZIP2="${1#*=}"                        ; ;;
+	(-b)             BZIP2_OPTS="$BZIP2_OPTS $2"     ; shift; ;;
+	(-b*)            BZIP2_OPTS="$BZIP2_OPTS ${1#-?}"       ; ;;
+	(--bzip2-opts=*) BZIP2_OPTS="$BZIP2_OPTS ${1#*=}"       ; ;;
+
+	(-k|--keep)      KEEP_UNCOMPRESSED=y             ; ;;
+	(--keep-gz)                           KEEP_GZIP=y; ;;
+	(-K|--keep-both) KEEP_UNCOMPRESSED=y; KEEP_GZIP=y; ;;
+
+	(-*) echo "${0##*/}: Invalid argument: $1" >&2; exit 1; ;;
+	(*) break; ;;
+	esac
+	shift
+done
+if [ "X$1" = X-- ]; then shift; fi
+
+
+##
+## Find executables, etc
+##
+find_exec () {
+	if [ "X$2" = Xauto ]; then __SEARCH="$1"; else __SEARCH="$2"; fi
+	if ! __FOUND=$(which "$__SEARCH" 2>/dev/null); then
+		echo "${0##*/}: Could not find gzip executable:" >&2
+		which "$__SEARCH" >&2
+		exit 2
+	fi
+	printf "%s" "$__FOUND"
+}
+
+GZ="$(find_exec gzip "$GZIP") $GZIP_OPTS"
+BZ2="$(find_exec bzip2 "$BZIP2") $BZIP2_OPTS"
+
+
+##
+## Do the job
+##
+if [ $# -eq 0 ]; then set -- -; fi
+while [ $# -ne 0 ]; do
+	## stdin
+	if [ "X$1" = X- ]; then
+		if [ -n "$VERBOSE" ]; then echo Converting stdin to stdout; fi
+		GZ | BZ2 || true
+		shift
+		continue
+	fi
+
+	## Get output file name
+	  if [ "X${1%.tgz}" != "X$1" ]; then OUTPUT="${1%.tgz}.tar"
+	elif [ "X${1%.gz}"  != "X$1" ]; then OUTPUT="${1%.gz}"
+	else echo "${0##*/}: $1: invalid extension, skipping"; shift; continue
+	  fi
+
+	## Header
+	if [ -n "$VERBOSE" ]; then echo Converting "$1" to "$OUTPUT.bz2"; fi
+
+	OK=y
+	## Convert
+	if [ -n "$KEEP_UNCOMPRESSED" ]
+	then $GZ <"$1" >"$OUTPUT" && $BZ <"$OUTPUT" >"$OUTPUT.bz2" || OK=
+	else $GZ <"$1" | $BZ >"$OUTPUT.bz2" || OK=
+	fi
+
+	## Finish
+	if [ -n "$OK" ] && [ -z "$KKEP_GZ" ]; then rm -f -- "$1" || true; fi
+	if [ -z "$OK" ]; then echo "${0##*/}: $1: failed"; fi
+	shift
+done
