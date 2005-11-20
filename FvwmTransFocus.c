@@ -1,9 +1,22 @@
 /*
  * FVWM module changing opacity depending on focus.
- * $Id: FvwmTransFocus.c,v 1.2 2005/07/11 00:20:57 mina86 Exp $
+ * $Id: FvwmTransFocus.c,v 1.3 2005/11/20 20:31:45 mina86 Exp $
  * Copyright 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
- * Licensed under the Academic Free License version 2.1.
- * Based on transset by Matthew Hawn
+ * Some code from transset by Matthew Hawn
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /*
@@ -28,15 +41,24 @@
  *     <new>      - opacity of newly created windows (default:  <inactive>)
  */
 
+/*
+ * If you want some windows to be excluded from setting translucency
+ * hack the ignoreWindow() function.  It has a simple test making it
+ * sking tvtime and xawtv windows - add your own as you please.  In
+ * the future, it will be configurable through a FVWM config file.
+ */
+
 
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
+#include <X11/Xutil.h>
 
 
-/*** Debug ***/
+
+/********** Debug **********/
 #ifdef DEBUG
 #define debug(format, ...) fprintf(stderr, "%s: " format "\n", MyName, ##__VA_ARGS__)
 #else
@@ -46,7 +68,8 @@
 #define MIN(x, y)  ((x),(y)?(x):(y))
 
 
-/*** Defines ***/
+
+/********** Defines **********/
 #define DONT_USE_MX_PROPERTY_CHANGE  // PROPERTY_CHANGE doesn't seem to work :(
 
 #define OPACITY "_NET_WM_WINDOW_OPACITY"
@@ -62,28 +85,33 @@
 #define START_FLAG 0xffffffff
 
 
-/*** Typedefs ***/
+
+/********** Typedefs **********/
 typedef struct {
 	unsigned long start_pattern;
 	unsigned long body[1];
 } FvwmPacket;
 
 
-/*** Global variables ***/
+
+/********** Global variables **********/
 static Display *display;
 static int fvin, fvout;
 static char *MyName;
 
 
-/*** Functions ***/
+
+/********** Functions **********/
 static void send(const char *message);
 static unsigned long readLong();
 static void readLongs(char *buffer, int count);
-static void transSet(unsigned long int id, double value);
-static int ErrorHandler(Display *display, XErrorEvent *event);
+static void transSet(unsigned long int window, double value);
+static int ignoreWindow(unsigned long int window);
+static int ErrorHandler(Display *display, XErrorEvent *error);
 
 
-/*** Main ***/
+
+/********** Main **********/
 int main (int argc, char **argv) {
 	/* Get executable name */
 	MyName = strrchr(argv[0], '/');
@@ -174,6 +202,8 @@ int main (int argc, char **argv) {
 }
 
 
+
+/******** Sends message to FVWM *********/
 void send(const char *message) {
 	unsigned long l = 0;
 	write(fvout, &l, sizeof(l));
@@ -185,6 +215,7 @@ void send(const char *message) {
 }
 
 
+/********** Reads a single unsigned long from FVWM **********/
 unsigned long readLong() {
 	static unsigned long buf;
 	readLongs((char*)&buf, 1);
@@ -192,6 +223,7 @@ unsigned long readLong() {
 }
 
 
+/********** Reads specified number of unsigned longs from FVWM **********/
 void readLongs(char *buf, int count) {
 	int n;
 	for (count *= sizeof(unsigned long); count>0; count -= n) {
@@ -206,8 +238,9 @@ void readLongs(char *buf, int count) {
 
 
 
-void transSet(unsigned long window, double value) {
-	if (!window) {
+/********** Sets translucency **********/
+void transSet(unsigned long int window, double value) {
+	if (ignoreWindow(window)) {
 		return;
 	}
 	debug("Changing 0x%08lx's opacity to %lf", window, value);
@@ -223,6 +256,51 @@ void transSet(unsigned long window, double value) {
 }
 
 
-int ErrorHandler(Display *display, XErrorEvent *event) {
-	/* Ignore all errors */
+
+/* Checks whether the window should be ignored */
+static int ignoreWindow(unsigned long int window) {
+	/* Root window or no window */
+	if (!window) {
+		return 1;
+	}
+
+	/* Get class */
+	/* FVWM gives us a ID of a parent window which does not have a
+	 * ClassHint so we need to find the child with ClassHint.  At least
+	 * that's what it looks like :) */
+	XClassHint class = {0, 0};
+	unsigned long int ignore, *children = NULL;
+	unsigned int num;
+	while (!XGetClassHint(display, window, &class)) {
+		if (!XQueryTree(display, window, &ignore, &ignore, &children, &num)) {
+			return 0;
+		} else if (num!=1) {
+			XFree((char*)children);
+			return 0;
+		} else {
+			window = children[0];
+			XFree((char*)children);
+		}
+	}
+
+	/* Ignore apps for watching TV */
+	num = !strncasecmp(class.res_class, "xawtv", 5)
+		|| !strncasecmp(class.res_class, "tvtime", 5);
+
+	/* Return */
+	debug("ClassHint: '%s'; '%s'"%s, class.res_name, class.res_class,
+		  num ? " (skipping)" : "");
+	XFree(class.res_name);
+	XFree(class.res_class);
+	return num;
+}
+
+
+
+/********** Error handler ********/
+int ErrorHandler(Display *display, XErrorEvent *error) {
+	fprintf(stderr, "%s: X Error: #%d; Request: %d, %d; Id: 0x%lx\n", MyName,
+			error->error_code, error->request_code, error->minor_code,
+			error->resourceid);  /* error->resourceid may be uninitialised */
+	return 0;
 }

@@ -1,5 +1,9 @@
 2005-11-20  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* FvwmTransFocus: + prints short error messages
+	+ performs simple WM_CLASS tests
+	+ license changed to GNU GPL
+
 	* gz2bz: New file
 	* Makefile, README: + gz2bz added
 
