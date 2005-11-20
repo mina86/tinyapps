@@ -1,6 +1,8 @@
 2005-11-20  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
-	* FvwmTransFocus: + prints short error messages
+	* xgetclass.c: + license changed to AFL
+
+	* FvwmTransFocus.c: + prints short error messages
 	+ performs simple WM_CLASS tests
 	+ license changed to GNU GPL
 
