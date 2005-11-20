@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.11 2005/11/16 20:54:12 mina86 Exp $
+## $Id: Makefile,v 1.12 2005/11/20 20:18:13 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -79,7 +79,7 @@ help:
 ##
 all: FvwmTransFocus cdiff cutcom infinite-logger installkernel.8.gz		\
      load malloc mpd-state null quotes the-book-of-mozilla rot13 timer	\
-     tuptime umountiso
+     tuptime umountiso xgetclass
 
 
 install: install-FvwmTransFocus install-add install-ai install-cdiff	\
@@ -90,7 +90,8 @@ install: install-FvwmTransFocus install-add install-ai install-cdiff	\
          install-malloc install-moz2elinks.pl install-mountiso			\
          install-mp3rip install-mpd-state install-null					\
          install-pingrange.pl install-rot13 install-settitle			\
-         install-timer install-tpwd install-traf.sh install-xcolor2rgb
+         install-timer install-tpwd install-traf.sh install-xcolor2rgb	\
+         install-xgetclass
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
@@ -103,7 +104,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-mountiso uninstall-mp3rip uninstall-mpd-state		\
            uninstall-null uninstall-pingrange.pl uninstall-rot13		\
            uninstall-settitle uninstall-timer uninstall-tpwd			\
-           uninstall-traf.sh uninstall-xcolor2rgb
+           uninstall-traf.sh uninstall-xcolor2rgb uninstall-xgetclass
 
 
 ##
@@ -131,6 +132,10 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
 %: %.sh
 
 FvwmTransFocus: FvwmTransFocus.o
+	@echo '  LD     $@'
+	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
+
+xgetclass: xgetclass.o
 	@echo '  LD     $@'
 	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
 
@@ -225,6 +230,9 @@ install-quotes: quotes
 install-the-book-of-mozilla: the-book-of-mozilla
 	${call install,root,root,0644,/usr/share/games/fortunes,$<}
 
+install-xgetclass: xgetclass
+	${call install,root,root,0755,/usr/X11/bin,$<}
+
 
 
 ##
@@ -273,6 +281,9 @@ uninstall-quotes:
 
 uninstall-the-book-of-mozilla:
 	${call uninstall,/usr/share/games/fortunes/the-book-of-mozilla}
+
+uninstall-xgetclass: xgetclass
+	${call install,root,root,0755,/usr/X11/bin,$<}
 
 
 
