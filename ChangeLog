@@ -1,5 +1,9 @@
 2005-11-20  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* gz2bz: + bug fixed
+
+2005-11-22  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
 	* xgetclass.c: + license changed to AFL
 
 	* FvwmTransFocus.c: + prints short error messages
