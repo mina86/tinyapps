@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.13 2005/11/20 20:25:23 mina86 Exp $
+## $Id: Makefile,v 1.14 2005/11/27 16:57:38 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -77,27 +77,27 @@ help:
 ##
 ## List of all applications
 ##
-all: FvwmTransFocus cdiff cutcom infinite-logger installkernel.8.gz		\
-     load malloc mpd-state null quotes the-book-of-mozilla rot13 timer	\
-     tuptime umountiso xgetclass
+all: FvwmTransFocus cdiff cutcom drun infinite-logger				\
+     installkernel.8.gz load malloc mpd-state null quotes			\
+     the-book-of-mozilla rot13 timer tuptime umountiso xgetclass
 
 
 install: install-FvwmTransFocus install-add install-ai install-cdiff	\
          install-cdiff.sed install-check.sh install-checkmail			\
-         install-cpuload.sh install-cutcom install-extractlinks.pl		\
-         install-fortune install-genpass.sh install-get_mks_vir_bases	\
-         install-getlyrics.pl install-gz2bz install-installkernel		\
-         install-load install-malloc install-moz2elinks.pl				\
-         install-mountiso install-mp3rip install-mpd-state				\
-         install-null install-pingrange.pl install-rot13				\
-         install-settitle install-timer install-tpwd install-traf.sh	\
-         install-xcolor2rgb install-xgetclass
+         install-cpuload.sh install-cutcom install-drun					\
+         install-extractlinks.pl install-fortune install-genpass.sh		\
+         install-get_mks_vir_bases install-getlyrics.pl install-gz2bz	\
+         install-installkernel install-load install-malloc				\
+         install-moz2elinks.pl install-mountiso install-mp3rip			\
+         install-mpd-state install-null install-pingrange.pl			\
+         install-rot13 install-settitle install-timer install-tpwd		\
+         install-traf.sh install-xcolor2rgb install-xgetclass
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-cdiff uninstall-cdiff.sed uninstall-check.sh		\
            uninstall-checkmail uninstall-cpuload.sh uninstall-cutcom	\
-           uninstall-extractlinks.pl uninstall-fortune					\
+           uninstall-drun uninstall-extractlinks.pl uninstall-fortune	\
            uninstall-genpass.sh uninstall-get_mks_vir_bases				\
            uninstall-getlyrics.pl uninstall-gz2bz						\
            uninstall-installkernel uninstall-load uninstall-malloc		\
@@ -136,9 +136,9 @@ FvwmTransFocus: FvwmTransFocus.o
 	@echo '  LD     $@'
 	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
 
-xgetclass: xgetclass.o
-	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
+drun: null
+	@echo '  LN     $@'
+	${Q}ln -s null drun
 
 mpd-show: mpd-show.o libmpdclient.o
 	@echo '  LD     $@'
@@ -163,6 +163,10 @@ installkernel.8.gz: installkernel.8
 umountiso: mountiso
 	@echo '  LNK    $@'
 	${Q}[ -f umountiso ] || ln -s mountiso umountiso
+
+xgetclass: xgetclass.o
+	@echo '  LD     $@'
+	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
 
 
 

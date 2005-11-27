@@ -1,3 +1,8 @@
+2005-11-27  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* Makefile, README, null.c: + null's daemonize feature
+	+ drun added
+
 2005-11-20  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* gz2bz: + bug fixed
