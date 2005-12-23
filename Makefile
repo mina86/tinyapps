@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.14 2005/11/27 16:57:38 mina86 Exp $
+## $Id: Makefile,v 1.15 2005/12/23 14:42:32 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -138,7 +138,8 @@ FvwmTransFocus: FvwmTransFocus.o
 
 drun: null
 	@echo '  LN     $@'
-	${Q}ln -s null drun
+	${Q}rm -f -- drun
+	${Q}ln -s -- null drun
 
 mpd-show: mpd-show.o libmpdclient.o
 	@echo '  LD     $@'
