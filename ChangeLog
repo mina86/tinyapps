@@ -1,5 +1,9 @@
 2005-12-23  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* Makefile: + drun symlink creating fixed
+	* null.c: + license changed
+	* null.sh: + works like null.c
+
 	* check.sh: + ported to other shells
 	+ --long-help added with examples
 	+ suports options as separate arguments to short options (eg. -i 10)
