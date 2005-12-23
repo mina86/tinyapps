@@ -1,3 +1,11 @@
+2005-12-23  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* check.sh: + ported to other shells
+	+ --long-help added with examples
+	+ suports options as separate arguments to short options (eg. -i 10)
+	+ check_proc_load()  and  check_proc()  added
+	+ hech* aliases added
+
 2005-11-27  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* Makefile, README, null.c: + null's daemonize feature

@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 ##
 ## Pings specified host and runs specified program if no responding
-## $Id: check.sh,v 1.4 2005/11/17 07:26:35 mina86 Exp $
+## $Id: check.sh,v 1.5 2005/12/23 14:23:24 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -30,8 +30,8 @@
 ## Version
 ##
 version () {
-	echo 'Check v0.1  (c) 2005 by Micha³ Nazarewicz'
-	echo '$Id: check.sh,v 1.4 2005/11/17 07:26:35 mina86 Exp $'
+	echo 'Check v0.2  (c) 2005 by Micha³ Nazarewicz'
+	echo '$Id: check.sh,v 1.5 2005/12/23 14:23:24 mina86 Exp $'
 	echo
 }
 
@@ -43,7 +43,8 @@ usage () {
 	cat <<EOF
 usage: check.sh [ <options> ] [ [--] <action> [ <arg> ... ] ]
 <options> are:
-  -h --help            Displays this screen and exits
+  -h --help            Displays help screen and exits
+  -H --long-help       Displays long help screen and exits
   -V --version         Displays vesion and exits
   -q --quiet           Displays less messages
   -r --retry=<count>   Runs <action> after <count> failed checkings       [10]
@@ -53,24 +54,43 @@ usage: check.sh [ <options> ] [ [--] <action> [ <arg> ... ] ]
   -t --trap=<trpap>    Executes <trap> when signal is trapped         [exit 0]
   -T --ignore-sig      Ignores signals                                    [no]
 
-  If you use short option which requires an arumgnet (eg. '-c') the argument
-  must be specified just after the option without whitespace or anything
-  (eg. '-c10')
+  Single letter options may not be given as one argument (eg. -kTq).
 
-<action>  Program to be run when there is no connection                 [exit]
-<arg>     Arguments to the <action>                                        [1]
+<action>  Program to be run when check faileds                          [exit]
+<arg> ... Arguments to the <action>                                        [1]
 
-<check> should exit with zero exit code if check succeeded or non-zero if not.
-Use --check='check_ping <host>' to ping <host> instead of www.google.com.
+EOF
+	if [ "X$1" != "Xlong" ]; then return 0; fi
+cat <<EOF
+
+<check> must exit with 0 exit code if check succeeded or non-zero otherwise.
+Script contains the fallowing built-in check functions:
+ check_ping <host>             -- checks if <host> answers to ping
+ check_proc_load <proc> <load> -- checks if <proc>'s CPU load is below <load>
+                                  (<load> must be an integer betwen 1 and 100)
+ check_proc <proc>             -- checks if <proc> is running
+Each built-in function has also an alias with the first c letter removed.
 
 The script exports variables CHECK_QUIET (empty if false, y if true),
 CHECK_INGORESIG (empty if false, y if true), (in case of <action>)
 CHECK_EXIT_CODE (exit code of <check>) and CHECK_TMP (path to a temporary
 file) which both <check> and <action> should take into account.
 
-By default the script caches all signals and exits with zero error code if
-signal is caught so you can run './check.sh || /sbin/halt' to automaticly shut
-down the machine when connection is lost and then hit Ctrl-C to abort.
+Examples:
+
+  ./check.sh '-check_proc_load X 95' -k -- killall X -q &
+    Kills X each time it uses more then 95% of CPU for 5 minutes.  Usefull
+    when executed from system start scripts since it keeps running silently in
+    the background.
+
+  ./check.sh || /sbin/halt
+    Halts computer if www.google.com stops responding to pings (most likely
+    connection was lsot).  May be canceled with Ctrl+C.
+
+  ./check.sh '-check_proc foo -k -q -r100 -i1 -- /path/to/foo' &
+    Checks whether foo is runing and if not executes it.  Useful when executed
+    from system start scripts since it keeps running silently in the
+    background.
 
 EOF
 }
@@ -79,12 +99,18 @@ EOF
 ##
 ## Init variables
 ##
-declare -i SLEEP=10 RETRY=10
+if [ -n "$BASH_VERSION" ]
+then declare -i SLEEP=10 RETRY=10 COUNT=0
+else SLEEP=10; RETRY=10; COUNT=0
+fi
+
 KEEPGOING=
-export CHECK_QUIET=
+export CHECK_QUIET= CHECK_IGNORESIG=
 TRAPCMD="exit 0"
-export CHECK_IGNORESIG=
 CMD="check_ping www.google.com"
+
+export CHECK_TMP=check-connection-$$-$RANDOM
+if [ -d /tmp ] && [ -w /tmp ]; then CHECK_TMP=/tmp/$CHECK_TMP; fi
 
 
 ##
@@ -92,17 +118,23 @@ CMD="check_ping www.google.com"
 ##
 while [ $# -ne 0 ]; do
 	case "$1" in
-	(-h|--help)    version; usage; exit 0; ;;
-	(-V|--version) version;        exit 0; ;;
+	(-h|--help)      version; usage     ; exit 0; ;;
+	(-H|--long-help) version; usage long; exit 0; ;;
+	(-V|--version)   version;             exit 0; ;;
 
 	(-q|--quiet)      CHECK_QUIET=yes  ; ;;
 	(-k|--keep-going) KEEPGOING=yes    ; ;;
 	(-T|--ignore-sig) CHECK_IGNORESIG=y; ;;
 
-	(-r*) RETRY="${1:2}"; ;; (--retry=*)    RETRY="${1:8}" ; ;;
-	(-i*) SLEEP="${1:2}"; ;; (--interval=*) SLEEP="${1:11}"; ;;
-	(-c*) CMD="${1:2}"  ; ;; (--check=*)    CMD="${1:8}"   ; ;;
-	(-t*) TRAP="${1:2}" ; ;; (--trap=*)     TRAP="${1:7}"  ; ;;
+	(-r|--retry)    RETRY="$2"; shift; ;;
+	(-i|--interval) SLEEP="$2"; shift; ;;
+	(-c|--count)    CMD="$2"  ; shift; ;;
+	(-t|--trap)     TRAP="$2" ; shift; ;;
+
+	(-r*) RETRY="${1#-?}"; ;; (--retry=*)    RETRY="${1#-*=}"; ;;
+	(-i*) SLEEP="${1#-?}"; ;; (--interval=*) SLEEP="${1#-*=}"; ;;
+	(-c*) CMD="${1#-?}"  ; ;; (--check=*)    CMD="${1#-*=}"  ; ;;
+	(-t*) TRAP="${1#-?}" ; ;; (--trap=*)     TRAP="${1#-*=}" ; ;;
 
 	(--) shift; break; ;;
 	(-*) echo Unknown option: "$1"; exit 1; ;;
@@ -130,14 +162,6 @@ fi
 
 
 ##
-## Init some more variables
-##
-export CHECK_TMP=check-connection-$$-$RANDOM
-[ -d /tmp -a -w /tmp ] && CHECK_TMP=/tmp/$CHECK_TMP
-declare -i COUNT=0
-
-
-##
 ## Checking function
 ##
 check_ping () {
@@ -145,13 +169,38 @@ check_ping () {
 	[ $CHECK_QUIET ] || head -n 2 "$CHECK_TMP" |tail -n 1
 	return 0
 }
+heck_ping () { check_ping "$@"; }
+
+check_proc_load () {
+	LOAD="$(ps -o %cpu -C "$1" |tail -n+2)"
+	if [ ! "$LOAD" ]; then
+		[ $CHECK_QUIET ] || printf '%s: not running\n' "$1"
+		return 0
+	fi
+	[ $CHECK_QUIET ] || printf '%s: CPU Load %5s%%\n' "$1" $LOAD
+
+	[ $(echo "$LOAD" |cut -d. -f1) -lt "$2" ]
+}
+heck_proc_load () { check_proc_load "$@"; }
+
+check_proc () {
+	if ! ps -C "$1" >/dev/null 2>/dev/null; then return 1; fi
+	case "$__CHECK_PROC_GLOBAL_VAR" in
+	(1) printf '%s: running  (/)\r'  "$1"; __CHECK_PROC_GLOBAL_VAR=2; ;;
+	(2) printf '%s: running  (-)\r'  "$1"; __CHECK_PROC_GLOBAL_VAR=3; ;;
+	(3) printf '%s: running  (\\)\r' "$1"; __CHECK_PROC_GLOBAL_VAR=0; ;;
+	(*) printf '%s: running  (|)\r'  "$1"; __CHECK_PROC_GLOBAL_VAR=1; ;;
+	esac
+}
+heck_proc () { check_proc "$@"; }
 
 
 ##
 ## Signals
 ##
 catch_sig () {
-	if [ "$CHECK_IGNORESIG" -o $1 == USR1 -o $1 == USR2 -o $1 == ALRM ]; then
+	if [ -n "$CHECK_IGNORESIG" ] || [ "X$1" = XUSR1 ] ||
+		[ "X$1" = XUSR2 ] || [ "X$1" = XALRM ]; then
 		[ $CHECK_QUIET ] || echo "Got SIG$1; ignoring..."
 		return 0
 	fi
@@ -180,11 +229,11 @@ while true; do
 	## Not OK
 	export CHECK_EXIT_CODE=$?
 	COUNT=$(( $COUNT + 1 ))
-	[ $QUIET ] || printf " !!! %3d / %3d\r" "$COUNT" "$RETRY"
+	[ $CHECK_QUIET ] || printf " !!! %3d / %3d\r" "$COUNT" "$RETRY"
 
 	## Limit reached
 	if [ $COUNT -ge $RETRY ]; then
-		[ $QUIET ] || echo ' !!! Checking failed.'
+		[ $CHECK_QUIET ] || echo ' !!! Checking failed.'
 		[ -f "$CHECK_TMP" ] && rm -f -- "$CHECK_TMP"
 		"$@"
 		[ $KEEPGOING ] || exit 0;
