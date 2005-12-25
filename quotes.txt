@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.6 2005/08/26 16:28:42 mina86 Exp $
+## $Id: quotes.txt,v 1.7 2005/12/25 17:51:54 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -90,12 +90,12 @@ flock of sheep led by a lion.
  Wszystko ju¿ kiedy¶ by³o, wszystko ju¿ siê kiedy¶ wydarzy³o.  I wszystko
 ju¿ zosta³o kiedy¶ opisane.
 	-- Vysogota z Corvo
-	-- Andrzej Sapkowski, Pani Jeziora
+	-- Andrzej Sapkowski (1948-), Pani Jeziora
 %
  Potwór przest±pi³ z nogi na nogê, podrapa³ siê w ucho.
  -S³uchaj no, ty -rzek³. -Czy ty siê mnie naprawdê nie boisz?
  -A powinienem?
-	-- Andrzej Sapkowski, Ziarno Prawdy
+	-- Andrzej Sapkowski (1948-), Ziarno Prawdy
 %
  Tam za moment zacznie siê rze¼.  A za moment plus moment zjawi± siê
 pierwsi ranni.  Wszyscy wiedz±, co maj± robiæ, ka¿dy zna swoje obowi±zki i
@@ -110,7 +110,7 @@ Pomagaæ potrzebuj±cym.  Pomo¿emy wiêc banalnie tylu, ilu zdo³amy pomóc.
 Nie damy rady zrobiæ du¿o wiêcej, ni¿ bêdziemy w stanie.  Ale postarajmy
 siê wszyscy, ¿eby to nie by³o mniej.
 	-- Rusty
-	-- Andrzej Sapkowski, Pani Jeziora
+	-- Andrzej Sapkowski (1948-), Pani Jeziora
 %
  Jedne z p³omyczków wysokie by³y i mocne, ¶wieci³y jasno i ¿ywo, inne za¶
 by³y malutkie, chwiejne i drgaj±ce, a ¶wiat³o ich ziemnia³o i zamiera³o.
@@ -280,7 +280,7 @@ ones in movies.
 	-- Russa
 	-- BioWare, Baldur's Gate
 %
- I'll be in Hell before you start breakfast!"
+ I'll be in Hell before you start breakfast!
 	-- The last words of "Black Jack" Ketchum
 %
  Good morning, Robert.
@@ -1003,6 +1003,10 @@ maj±.
 the 'Net, but are delighted if those same hours are spent reading books?
 	-- Nicholas Negroponte (1943-)
 %
+ Prawdziwy chomik musi w ¿yciu zrobiæ trzy rzeczy: naje¶æ siê, wyspaæ siê i
+zdechn±æ.
+	-- NiTa
+%
  If the code and the comments disagree, then both are probably wrong.
 	-- Norm Schryer
 %
@@ -1073,6 +1077,14 @@ to us.
 %
  Life is too important to be taken seriously.
 	-- Attributed to Oscar Wide (1854-1900)
+%
+ +       /*
+ +        * The meaning of life, the universe, and everything. Plus
+ +        * this makes the year come out right.
+ +        */
+ +       year -= 42;
+		-- From the patch for 1.3.2: (kernel/time.c),
+			submitted by Marcus Meissner
 %
  Besides, I think Slackware sounds better than 'Microsoft,' don't you?
 	-- Patrick J. Volkerding
