@@ -1,3 +1,7 @@
+2005-12-25  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* mp3rip: + --pipe added
+
 2005-12-23  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* Makefile: + drun symlink creating fixed

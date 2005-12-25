@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Rips audio tracks and encodes them to mp3
-## $Id: mp3rip,v 1.1 2005/11/16 20:54:12 mina86 Exp $
+## $Id: mp3rip,v 1.2 2005/12/25 17:33:17 mina86 Exp $
 ## Copyright (c) 2003-2005 by Tomekk (tomekk/AT/oswiecim.eu.org)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
@@ -22,7 +22,7 @@
 
 set -e
 echo 'mp3rip  v0.5  (c) Tomekk & mina86'
-echo '$Id: mp3rip,v 1.1 2005/11/16 20:54:12 mina86 Exp $'
+echo '$Id: mp3rip,v 1.2 2005/12/25 17:33:17 mina86 Exp $'
 echo
 
 
@@ -54,6 +54,7 @@ usage: ${0##*/} [<options>] [ [--] <tracks> | -a | --ask | --list ]
  -O --options=<opt>     Passes <opt> to lame when in user method
  -q --quality=<q>       Quality to encode with (0-best; 9-worse)  [5]
 
+ -p --pipe              Use pipes -- may be a bit faster (implies -v1)
  -k --keep-wav          Doesn't remove wav files after encoding
     --cd=<dir>          Changes directory to <dir> (creates if missing)
 
@@ -85,7 +86,7 @@ There are fallowing methods available:
   silence are encoded using minimal bitrate to save some space).
 
 * vbr-old (variable bitrate, old routine)
-  Works jsut like vbr but uses older, slower and most tested VBR algorithm.
+  Works just like vbr but uses older, slower and most tested VBR algorithm.
 
 * abr (average bitrate)
   Similar to VBR but makes the average bitrate of MP3 file to be
@@ -132,14 +133,20 @@ MIN_BR=32
 MAX_BR=320
 QUALITY=5
 OPTIONS=
+PIPE=
 KEEP_WAV=
 CD=
 
 if [ -e ~/.mp3-opt ]; then
 	. ~/.mp3-opt
+
 	KEEP_WAV=$(printf "%s" "$KEEP_WAV" | tr A-Z a-z)
 	if [ "X$KEEP_WAV" != "Xy" ] && [ "X$KEEP_WAV" != "Xyes" ]
 	then KEEP_WAV=; else KEEP_WAV=y; fi
+
+	PIPE=$(printf "%s" "$PIPE" | tr A-Z a-z)
+	if [ "X$PIPE" != "Xy" ] && [ "X$PIPE" != "Xyes" ]
+	then PIPE=; else PIPE=y; fi
 fi
 
 
@@ -178,6 +185,7 @@ while [ $# -ne 0 ] && [ "X$1" != X-- ]; do
 	(-q*)                 QUALITY="${1#-q}"             ; ;;
 	(--quality=*)         QUALITY="${1#*=}"             ; ;;
 
+	(-p|--pipe)           PIPE=y                        ; ;;
 	(-k|--keep-wav)       KEEP_WAV=y                    ; ;;
 	(--cd=*)              CD="${1#*=}"                  ; ;;
 
@@ -280,6 +288,7 @@ EOF
 	ask LAME_OPTS       'Aditional arguments to lame' nodefault
 	ask CDPARANOIA      'Cdparanoia executable to use'
 	ask CDPARANOIA_OPTS 'Aditional arguments to cdparanoia' nodefault
+	ask PIPE            'Do you want to use pipes' bool
 	ask KEEP_WAV        'Do you want to keep wav files' bool
 
 	## Save?
@@ -302,7 +311,7 @@ EOF
 	rm -f "$TMP_FILE"
 
 	## Continue
-	printf 'Do you want to rip CD nows [no]: '
+	printf 'Do you want to rip CD now [no]: '
 	read __ANS
 	__ANS=$(echo "$__ANS" | tr A-Z a-z)
 	if [ "X$__ANS" != Xy ] && [ "X$__ANS" != Xyes ]; then
@@ -319,6 +328,8 @@ fi
 ##
 ## Things concerning verbosity
 ##
+if [ -n "$PIPE" ] && [ $VERBOSITY -gt 1 ]; then VERBOSITY=1; fi
+
 if [ $VERBOSITY -gt 2 ]; then V=-v; else V=; fi
 
 msg () {
@@ -371,6 +382,7 @@ if [ "X$TRACKS" = Xlist ]; then
 	echo === Listing tracks
 	msg 5 Running: $CDP -Q
 	$CDP -Q
+	exit $?
 fi
 
 
@@ -411,7 +423,7 @@ case "$METHOD" in
 	(vbr-old)  LM="$LM --vbr-old -V $QUALITY -b $MIN_BR -B $MAX_BR"; ;;
 	(abr)      LM="$LM --abr $BR             -b $MIN_BR -B $MAX_BR"; ;;
 	(user)     LM="$LM $OPTIONS"                                   ; ;;
-	(rip-only) LM=; KEEP_WAV=y                                     ; ;;
+	(rip-only) LM=; KEEP_WAV=y; PIPE=                              ; ;;
 esac
 
   if [ $VERBOSITY -eq 0 ]; then LM="$LM --silent"
@@ -426,7 +438,8 @@ msg 3 Lame command: $LM
 ## Do the job
 ##
 ALL=$#
-DONE=0
+DONE=1
+KEEP_WAV="$KEEP_WAV$PIPE"
 while [ -n "$1" ] && [ "X$1" != Xq ] && [ "X$1" != XQ ]; do
 	## Check arg
 	MATCH=$(expr "$1" : '[0-9]*')
@@ -438,17 +451,18 @@ while [ -n "$1" ] && [ "X$1" != Xq ] && [ "X$1" != XQ ]; do
 
 	## Rip
 	NUM=$(printf %02d "$1")
-	echo "=== Ripping track $1 ($DONE/$ALL)"
-	$CDP "$1" "track$NUM.wav"
-
-	## Encode
-	if [ -n "$LM" ]; then
-		echo "=== Encoding track $1 ($DONE/$ALL)"
-		$LM "track$NUM.wav" "track$NUM.mp3"
+	printf "=== Ripping track %2d  (%2d/%2d)\n" $1 $DONE $ALL
+	if [ -n "$PIPE" ]; then
+		$CDP "$1" - | $LM - "track$NUM.mp3"
+	else
+		$CDP "$1" "track$NUM.wav"
+		if [ -n "$LM" ]; then
+			echo "=== Encoding track %2d  (%2d/%2d)" $1 $DONE $ALL
+			$LM "track$NUM.wav" "track$NUM.mp3"
+		fi
 	fi
 
 	## Remove wav
-	echo $KEEP_WAV
 	if [ -z "$KEEP_WAV" ]; then
 		rm -f $V "track$NUM.wav"
 	fi
