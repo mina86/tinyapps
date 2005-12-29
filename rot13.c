@@ -1,6 +1,6 @@
 /*
- * Shows CPU load and some other information.
- * $Id: rot13.c,v 1.1 2005/07/13 11:02:15 mina86 Exp $
+ * Encrypts message using ROT13
+ * $Id: rot13.c,v 1.3 2005/12/29 18:50:28 mina86 Exp $
  * Released to Public Domain
  */
 

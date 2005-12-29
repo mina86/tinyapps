@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.2 2005/12/29 18:11:49 mina86 Exp $
+## $Id: getlyrics.pl,v 1.3 2005/12/29 18:47:15 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
+## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
