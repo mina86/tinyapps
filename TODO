@@ -24,9 +24,6 @@ Tiny Applications Collection TODO List
   - Refresh windows when background changed doesn't seem to work ;/
   - Print errors when debug enabled
 
-* getlyrics.pl
-  - add an empty line (or maybe two) after the artist name
-
 * installkernel
   - support other bootloaders
 

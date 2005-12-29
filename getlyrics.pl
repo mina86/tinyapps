@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.1 2005/09/22 16:41:28 mina86 Exp $
+## $Id: getlyrics.pl,v 1.2 2005/12/29 18:11:49 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,6 +40,15 @@ pod2usage() unless GetOptions(
     'artist=s' => \$artist,
     'song=s' => \$songname,
     'help|?' => sub { pod2usage(-verbose => 1); });
+
+if (!$artist && !$songname && @ARGV) {
+  my @foo = split(/\s-\s/, "@ARGV");
+  if (@foo == 2) {
+    $artist   = $foo[0];
+    $songname = $foo[1];
+  }
+}
+
 pod2usage() if (!$artist || !$songname);
 
 my $lyrics = getlyricspage($artist, $songname);
@@ -80,13 +89,13 @@ sub html2txt {
   $html =~ s/<p[^>]*>/\n\n/gi;        # Replace paragraph tags with new line mark
   # Replace some formating html tags witConverth new line marks
   $html =~ s/<br.*?>|<\/*h[1-6][^>]*>|<li[^>]*>|<dt[^>]*>|<dd[^>]*>|<\/tr[^>]*>/\n/gi;
-  $html =~ s/(<[^>]*>)*//g;
+  $html =~ s/(<[^>]*>)+//g;
   $html =~ s/\n\s*\n\s*/\n\n/g;
-  $html =~ s/\n */\n/g;
-  $html =~ s/ *\n/\n/g;
+  $html =~ s/\n *| *\n/\n/g;
   $html =~ s/^\n\n//mg;
 
-  return $html;
+  $html =~ s/^([^\n]+\n[^\n]+\n)/$1\n\n/g;
+  return "$html";
 }
 
 __END__
@@ -105,6 +114,8 @@ to search for lyrics.
 
 getlyrics --artist="Artist" --song="Song Name"
 
+getlyrics Artist - Song Name
+
 =head1 OPTIONS
 
 =over 8
@@ -116,6 +127,11 @@ Specifies artist for the searched lyrics.
 =item B<--song="Song Name">
 
 Specifies song name for the searched lyrics.
+
+=item B<Artist - Song Name>
+
+Specifies both, artist and song name for the searched lyrics.  May be
+given as any number of arguments.
 
 =item B<--help>
 

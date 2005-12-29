@@ -1,3 +1,9 @@
+2005-12-29  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* getlyrics.pl: + an alternate arguments supported
+	+ 2 empty lines added after header
+	* TODO: + getlyrics.pl entry removed
+
 2005-12-25  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* mp3rip: + --pipe added
