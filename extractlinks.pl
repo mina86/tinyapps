@@ -1,8 +1,9 @@
 #!/usr/bin/perl -w
 ##
 ## Extracts links from a HTML page
-## $Id: extractlinks.pl,v 1.1 2005/09/22 16:41:28 mina86 Exp $
+## $Id: extractlinks.pl,v 1.2 2005/12/29 18:47:30 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
+## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -33,12 +34,13 @@ use Pod::Usage;
 use URI::URL;
 use LWP::UserAgent;
 use HTML::LinkExtor;
+use File::Spec;
 
 #program version
 my $VERSION='0.2';
 
 #For CVS , use following line
-#my $VERSION=sprintf("%d.%02d", q$Revision: 1.1 $ =~ /(\d+)\.(\d+)/);
+#my $VERSION=sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
 
 my $url = '';
 my $linktag = 'all';
@@ -47,26 +49,39 @@ my @links = ();
 pod2usage() unless GetOptions(
     'tag=s' => \$linktag,
     'help|?' => sub { pod2usage(-verbose => 1); });
-pod2usage() if ($#ARGV != 0);
+pod2usage() if (@ARGV == 0);
 
-$url = shift(@ARGV);
+my $error = 0;
 
-my $ua = LWP::UserAgent->new;
-my $parser = HTML::LinkExtor->new(\&linkcallback);
-my $res = $ua->request(HTTP::Request->new(GET => $url),
-                       sub { $parser->parse($_[0]) });
+while (@ARGV) {
+  $url = shift(@ARGV);
+  if ($url !~ /^[a-z]+:\/\//) {
+    if (File::Spec->file_name_is_absolute($url)) {
+      $url = "file://$url";
+    } else {
+      $url = 'file://' . File::Spec->rel2abs($url);
+    }
+  }
 
-if (!$res->is_success) {
-  print('Parse failed: ');
-  print($res->status_line);
-  print("\n");
-  exit(1);
+  my $ua = LWP::UserAgent->new;
+  my $parser = HTML::LinkExtor->new(\&linkcallback);
+  my $res = $ua->request(HTTP::Request->new(GET => $url),
+                         sub { $parser->parse($_[0]) });
+
+  if (!$res->is_success) {
+    print('Parse failed: ');
+    print($res->status_line);
+    print("\n");
+    $error = 1;
+  } else {
+    my $base = $res->base;
+    @links = map { $_ = url($_, $base)->abs; } @links;
+
+    print(join("\n", @links), "\n");
+  }
 }
 
-my $base = $res->base;
-@links = map { $_ = url($_, $base)->abs; } @links;
-
-print(join("\n", @links), "\n");
+exit($error);
 
 sub linkcallback {
   my ($tag, %attr) = @_;
@@ -94,7 +109,7 @@ specified as absolute URL.
 
 =head1 SYNOPSIS
 
-extractlinks [--tag=all|img|a|link|...] url
+extractlinks [--tag=all|img|a|link|...] url [ ... ]
 
 =head1 OPTIONS
 

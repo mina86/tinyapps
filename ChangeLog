@@ -1,5 +1,9 @@
 2005-12-29  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* extractlinks.pl: + may specify several urls now
+	+ assumes file:// and converts rel2abs if needed
+	* TODO: + extractlinks.pl entry altered
+
 	* getlyrics.pl: + an alternate arguments supported
 	+ 2 empty lines added after header
 	* TODO: + getlyrics.pl entry removed
