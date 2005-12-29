@@ -15,7 +15,7 @@ Tiny Applications Collection TODO List
 
 * extractlinks.pl
   - allow specifing several tags using --tag option (eg. --tag=a,img)
-  - assume file:// if url is not absolute
+  - an argument which makes it print relative urls where possible
 
 * FvwmTransFocus
   - Nicer config (using *FvwmTransFocus: *)
