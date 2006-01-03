@@ -1,6 +1,6 @@
 /*
  * Prints/restores MPD's state.
- * $Id: mpd-state.c,v 1.3 2006/01/03 13:55:21 mina86 Exp $
+ * $Id: mpd-state.c,v 1.4 2006/01/03 14:05:07 mina86 Exp $
  * Copyright (c) 2005 by Avuton Olrich (avuton/AT/gmail.com)
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
@@ -132,6 +132,7 @@ void parse_args(int argc, char **argv) {
 			exit(1);
 
 		default:
+			ERR("invalid option: %c", optopt);
 			exit(1);
 		}
 	}
