@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.2 2006/01/03 14:00:02 mina86 Exp $
+ * $Id: mpd-show.c,v 1.3 2006/01/03 14:08:59 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -146,7 +146,6 @@ int main(int argc, char **argv) {
 			return -1;
 		}
 	}
-#endif
 
 	/* The Loop */
 	for(num = 0; !signum; num ^= 1) {
@@ -180,15 +179,16 @@ int main(int argc, char **argv) {
 void usage() {
 	printf("mpd-state  0.12.1  (c) 2005 by Avuton Olrich & Michal Nazarewicz\n"
 		   "usage: %s [ <options> ] [ [<pass>@]<host> [ <port> ]]\n"
-		   " <options> are:\n"
-		   "   -b    run in background mode (does not fork into bockground)\n"
-		   "   -B    run in background mode and fork into background\n"
+		   "<options> are:\n"
+		   " -b      run in background mode (does not fork into bockground)\n"
+		   " -B      run in background mode and fork into background\n"
+		   " -c<col> assume terminal is <col>-character wide            [80]\n"
 		   "\n"
-		   " <pass>  password used to connect; if no set no password is used\n"
-		   " <host>  hostname MPD is running; if not set MPD_HOST is used;\n"
-		   "         if that is also missing '" DEFAULT_HOST "' is assumed\n"
-		   " <port>  port MPD is listining; if not set MPD_PORT is used;\n"
-		   "         if that is also missing " DEFAULT_PORT " is assumed\n",
+		   "<pass>  password used to connect; if no set no password is used\n"
+		   "<host>  hostname MPD is running; if not set MPD_HOST is used;\n"
+		   "        if that is also missing '" DEFAULT_HOST "' is assumed\n"
+		   "<port>  port MPD is listining; if not set MPD_PORT is used;\n"
+		   "        if that is also missing " DEFAULT_PORT " is assumed\n",
 		   program_name);
 }
 
@@ -205,11 +205,21 @@ void parse_args(int argc, char **argv) {
 	}
 
 	int opt;
-	while ((opt = getopt(argc, argv, "-hbB"))!=-1) {
+	char *end;
+	opterr = 0;
+	while ((opt = getopt(argc, argv, "-hbBc:"))!=-1) {
 		switch (opt) {
 		case 'h': usage(); exit(0);
 		case 'b': background = 1; break;
 		case 'B': background = 2; break;
+
+		case 'c':
+			columns = strtol(optarg, &end, 0);
+			if (columns<10 || *end) {
+				ERR("invalid terminal width: %s", optarg);
+				exit(1);
+			}
+			break;
 
 		case 1:
 			if (hostarg==NULL) { hostarg = optarg; break; }
@@ -218,6 +228,7 @@ void parse_args(int argc, char **argv) {
 			exit(1);
 
 		default:
+			ERR("invalid option: %c", optopt);
 			exit(1);
 		}
 	}

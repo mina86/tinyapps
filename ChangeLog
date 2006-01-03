@@ -1,5 +1,7 @@
 2005-12-03  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* mpd-show.c: + -c option added
+
 	* mpd-show.c: + -b and -B options added
 	+ iconv added
 	+ signals added
