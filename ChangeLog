@@ -1,5 +1,8 @@
 2005-12-03  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* splitlines.sh: New file
+	* Makefile, README: + splitlines.sh added
+
 	* mpd-show.c: + -c option added
 
 	* mpd-show.c: + -b and -B options added
