@@ -1,7 +1,7 @@
-#!/bin/bash
+#!/bin/sh
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.26 2005/11/16 20:46:39 mina86 Exp $
+## $Id: installkernel,v 1.27 2006/01/03 13:53:00 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -40,7 +40,7 @@ toInt  () {
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	echo 'installkernel  v0.14  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.26 2005/11/16 20:46:39 mina86 Exp $'
+	echo '$Id: installkernel,v 1.27 2006/01/03 13:53:00 mina86 Exp $'
 	echo
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
