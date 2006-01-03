@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.3 2006/01/03 14:08:59 mina86 Exp $
+ * $Id: mpd-show.c,v 1.4 2006/01/03 14:12:18 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -425,7 +425,7 @@ void print_song(song_t *song) {
 	if (background) {
 		write(0, "\0337\33[1;1f", 8);
 	}
-	write(0, "\33[0m\33[K\33[37;1;44m", 17);
+	write(0, "\r\33[0m\33[K\33[37;1;44m", 18);
 	write(0, buf, col);
 	write(0, "\33[0;37m", 7);
 	write(0, buf + col, columns - col);
