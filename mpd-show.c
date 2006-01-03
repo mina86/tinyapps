@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.1 2005/08/30 22:27:20 mina86 Exp $
+ * $Id: mpd-show.c,v 1.2 2006/01/03 14:00:02 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,12 +18,23 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+
+#define HAVE_SIGNAL_H
+#define HAVE_ICONV_H
+
+
 #include "libmpdclient.h"
 
 #include <unistd.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#ifdef HAVE_SIGNAL_H
+#include <signal.h>
+#endif
+#ifdef HAVE_ICONV_H
+#include <iconv.h>
+#endif
 
 
 static const char *program_name = NULL;
@@ -33,17 +44,27 @@ static const char *program_name = NULL;
 /********** Config **********/
 #define DEFAULT_HOST    "localhost"
 #define DEFAULT_PORT    "6600"
-#define DEFAULT_COLUMNS 70
+#define DEFAULT_COLUMNS 80
+#define CHARSET_FROM    "UTF8"
+#define DEFAULT_CHARSET "ISO-8859-1"
 
 
 /********** Macros **********/
+#ifdef HAVE_ICONV_H
+#define STRDUP(str) ((str) ? iconvdup(str) : NULL)
+#else
 #define STRDUP(str) ((str) ? strdup(str) : NULL)
+#endif
 #define STREQ(s1, s2) ((s1)==(s2) || ((s1!=NULL) && (s2!=NULL) \
 									  && !strcmp(s1, s2)))
 
 
 /********** Some global variables and stuff **********/
 static char *hostarg = NULL, *portarg = NULL;
+static int columns = DEFAULT_COLUMNS, background = 0;
+#ifdef HAVE_ICONV_H
+static iconv_t conv = (iconv_t)-1;
+#endif
 
 
 /********** Structure with song information **********/
@@ -65,6 +86,18 @@ void get_song(mpd_Connection *conn, song_t *song);
 int  diff_songs(song_t *song1, song_t *song2);
 void print_song(song_t *song);
 
+#ifdef HAVE_SIGNAL_H
+static int signum = 0;
+void signal_handler(int sig);
+void signal_resize (int sig);
+#else
+#define signum 0
+#endif
+
+#ifdef HAVE_ICONV_H
+char *iconvdup(char *s);
+#endif
+
 
 
 /********** Main **********/
@@ -73,6 +106,17 @@ int main(int argc, char **argv) {
 	int num;
 	mpd_Connection *conn;
 
+	/* Catch signals */
+#ifdef HAVE_SIGNAL_H
+	for (num = 32; --num; signal(num, &signal_handler)==SIG_IGN);
+	signal(SIGWINCH, &signal_resize);
+	signal(SIGCHLD , SIG_IGN); signal(SIGURG  , SIG_IGN);
+	signal(SIGCONT , SIG_DFL);
+	signal(SIGSTOP , SIG_DFL); signal(SIGTSTP , SIG_DFL);
+	signal(SIGTTIN , SIG_DFL); signal(SIGTTOU , SIG_DFL);
+#endif
+
+	/* Zero songs */
 	songs[0].artist = songs[0].album = songs[0].title = NULL;
 	songs[0].len = songs[0].pos = songs[0].songid = songs[0].song =
 		songs[0].state = -1;
@@ -80,17 +124,52 @@ int main(int argc, char **argv) {
 	songs[1].len = songs[1].pos = songs[1].songid = songs[1].song =
 		songs[1].state = -1;
 
+	/* Parse args and connect */
 	parse_args(argc, argv);
 	conn = connect_to_mpd();
-	for(num = 0; ; num ^= 1) {
+
+	/* Open ICONV */
+#ifdef HAVE_ICONV_H
+	conv = iconv_open(DEFAULT_CHARSET, CHARSET_FROM);
+#endif
+
+	/* Daemonize */
+	if (background==2) {
+		pid_t pid;
+		switch (pid = fork()) {
+		case -1: perror("fork"); return -1;
+		case  0: break;
+		default: printf("[%d]\n", pid); return 0;
+		}
+		if (setsid()==-1) {
+			perror("setsid");
+			return -1;
+		}
+	}
+#endif
+
+	/* The Loop */
+	for(num = 0; !signum; num ^= 1) {
 		free_song(songs + num);
 		get_song(conn, songs + num);
-		if (diff_songs(songs, songs + 1)) {
+		if (background || diff_songs(songs, songs + 1)) {
 			print_song(songs + num);
 		}
 		sleep(1);
 	}
 
+
+	/* Close ICONV */
+#ifdef HAVE_ICONV_H
+	if (conv!=(iconv_t)-1) {
+		iconv_close(conv);
+	}
+#endif
+
+	/* Clear line, disconnect and exit */
+	if (!background) {
+		fputs("\33[2K\r", stdout);
+	}
 	mpd_closeConnection(conn);
 	return 0;
 }
@@ -100,7 +179,11 @@ int main(int argc, char **argv) {
 /********** Usage information **********/
 void usage() {
 	printf("mpd-state  0.12.1  (c) 2005 by Avuton Olrich & Michal Nazarewicz\n"
-		   "usage: %s [ [<pass>@]<host> [ <port> ]]\n"
+		   "usage: %s [ <options> ] [ [<pass>@]<host> [ <port> ]]\n"
+		   " <options> are:\n"
+		   "   -b    run in background mode (does not fork into bockground)\n"
+		   "   -B    run in background mode and fork into background\n"
+		   "\n"
 		   " <pass>  password used to connect; if no set no password is used\n"
 		   " <host>  hostname MPD is running; if not set MPD_HOST is used;\n"
 		   "         if that is also missing '" DEFAULT_HOST "' is assumed\n"
@@ -116,14 +199,28 @@ void parse_args(int argc, char **argv) {
 	program_name = strrchr(argv[0], '/');
 	program_name = program_name==NULL ? *argv : (program_name + 1);
 
-	if ((argc>1 && (!strcmp(argv[1], "--help") || !strcmp(argv[1], "-h")))
-		|| argc>3) {
+	if (argc>1 && !strcmp(argv[1], "--help")) {
 		usage();
-		exit(argc>3 ? 1 : 0);
+		exit(0);
 	}
 
-	hostarg = argc>=2 ? argv[1] : NULL;
-	portarg = argc>=3 ? argv[2] : NULL;
+	int opt;
+	while ((opt = getopt(argc, argv, "-hbB"))!=-1) {
+		switch (opt) {
+		case 'h': usage(); exit(0);
+		case 'b': background = 1; break;
+		case 'B': background = 2; break;
+
+		case 1:
+			if (hostarg==NULL) { hostarg = optarg; break; }
+			if (portarg==NULL) { portarg = optarg; break; }
+			ERR("invalid argument: %s", optarg);
+			exit(1);
+
+		default:
+			exit(1);
+		}
+	}
 }
 
 
@@ -245,11 +342,11 @@ void get_song(mpd_Connection *conn, song_t *song) {
 
 /********** Returns true if two songs differ **********/
 int  diff_songs(song_t *song1, song_t *song2) {
-	return song1->len    != song2->len
-		|| song1->pos    != song2->pos
-		|| song1->songid != song2->songid
+	return song1->songid != song2->songid
 		|| song1->song   != song2->song
 		|| song1->state  != song2->state
+		|| (int)((0.0 + columns) * song1->pos / song1->len)
+		!= (int)((0.0 + columns) * song2->pos / song2->len)
 		|| !STREQ(song1->artist, song2->artist)
 		|| !STREQ(song1->album,  song2->album)
 		|| !STREQ(song1->title,  song2->title);
@@ -258,14 +355,14 @@ int  diff_songs(song_t *song1, song_t *song2) {
 
 /********** Formats and prints song to stdout **********/
 void print_song(song_t *song) {
-	char buf[DEFAULT_COLUMNS];
+	char buf[columns];
 	int artist_len, album_len, title_len, col, sum;
 
 	artist_len = song->artist ? strlen(song->artist) : 0;
 	album_len  = song->album  ? strlen(song->album ) : 0;
 	title_len  = song->title  ? strlen(song->title ) : 13;
 
-	col = DEFAULT_COLUMNS - 4;
+	col = columns - 4;
 	sum = artist_len + album_len + title_len;
 
 	if (sum>col && artist_len>col>>2) {
@@ -283,7 +380,7 @@ void print_song(song_t *song) {
 		sum = artist_len + album_len + title_len;
 	}
 
-	memset(buf, ' ', 80);
+	memset(buf, ' ', columns);
 
 	switch (song->state) {
 	case MPD_STATUS_STATE_STOP : buf[0] = '['; buf[1] = ']'; break;
@@ -305,13 +402,56 @@ void print_song(song_t *song) {
 		col += album_len;
 		buf[col++] = '>';
 		buf[col++] = ' ';
+	} else if (artist_len) {
+		buf[col++] = ' ';
+		buf[col++] = '-';
+		buf[col++] = ' ';
 	}
 
 	memcpy(buf + col, song->title ? song->title : "Unknown title", title_len);
 
-	col = (0.0 + DEFAULT_COLUMNS) * song->pos / song->len;
-	write(0, "\r\33[0m\33[K\33[37;1;44m", 18);
+	col = (0.0 + columns) * song->pos / song->len;
+	if (background) {
+		write(0, "\0337\33[1;1f", 8);
+	}
+	write(0, "\33[0m\33[K\33[37;1;44m", 17);
 	write(0, buf, col);
 	write(0, "\33[0;37m", 7);
-	write(0, buf + col, DEFAULT_COLUMNS - col);
+	write(0, buf + col, columns - col);
+	if (background) {
+		write(0, "\0338", 2);
+	}
 }
+
+
+#ifdef HAVE_SIGNAL_H
+/********** Signal handler **********/
+void signal_handler(int sig) {
+	signum = sig;
+}
+
+
+/********** Terminal have been resized **********/
+void signal_resize (int sig) {
+}
+#endif
+
+
+#ifdef HAVE_ICONV_H
+/********** Duplicates a string and performs conversion **********/
+char *iconvdup(char *s) {
+	if (conv==(iconv_t)-1) {
+		return strdup(s);
+	}
+
+	char *out = malloc((columns>>1)+1);
+	if (out==NULL) {
+		return NULL;
+	}
+
+	char *o = out;
+	size_t sleft = columns<<1, oleft = columns>>1;
+	iconv(conv, &s, &sleft, &o, &oleft);
+	return out;
+}
+#endif
