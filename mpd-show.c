@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.4 2006/01/03 14:12:18 mina86 Exp $
+ * $Id: mpd-show.c,v 1.5 2006/01/03 15:17:23 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -341,7 +341,11 @@ void get_song(mpd_Connection *conn, song_t *song) {
 		if (entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
 			song->artist = STRDUP(entity->info.song->artist);
 			song->album  = STRDUP(entity->info.song->album);
-			song->title  = STRDUP(entity->info.song->title);
+			if (entity->info.song->title) {
+				song->title  = STRDUP(entity->info.song->title);
+			} else {
+				song->title  = strdup(entity->info.song->file);
+			}
 		}
 		mpd_freeInfoEntity(entity);
 	}
@@ -461,7 +465,7 @@ char *iconvdup(char *s) {
 	}
 
 	char *o = out;
-	size_t sleft = columns<<1, oleft = columns>>1;
+	size_t sleft = , oleft = columns>>1;
 	iconv(conv, &s, &sleft, &o, &oleft);
 	return out;
 }
