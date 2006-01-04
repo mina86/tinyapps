@@ -1,3 +1,10 @@
+2005-12-04  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* mpd-show.c: + write() no longer used
+	+ print_error_and_exit() removed
+	+ an outer loop added trying to connect
+	+ no longer terminates when disconnected
+
 2005-12-03  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* splitlines.sh: New file

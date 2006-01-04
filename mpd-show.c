@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.5 2006/01/03 15:17:23 mina86 Exp $
+ * $Id: mpd-show.c,v 1.6 2006/01/04 15:34:46 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,30 +38,27 @@
 
 
 static const char *program_name = NULL;
-#define ERR(msg, ...) fprintf(stderr, "%s: " msg "\n", program_name, ##__VA_ARGS__)
+#define ERR(msg, ...) fprintf(stderr, "%s: " msg "\n", program_name, __VA_ARGS__)
 
 
 /********** Config **********/
 #define DEFAULT_HOST    "localhost"
-#define DEFAULT_PORT    "6600"
+#define DEFAULT_PORT    6600
 #define DEFAULT_COLUMNS 80
 #define CHARSET_FROM    "UTF8"
 #define DEFAULT_CHARSET "ISO-8859-1"
 
 
 /********** Macros **********/
-#ifdef HAVE_ICONV_H
 #define STRDUP(str) ((str) ? iconvdup(str) : NULL)
-#else
-#define STRDUP(str) ((str) ? strdup(str) : NULL)
-#endif
 #define STREQ(s1, s2) ((s1)==(s2) || ((s1!=NULL) && (s2!=NULL) \
 									  && !strcmp(s1, s2)))
 
 
-/********** Some global variables and stuff **********/
-static char *hostarg = NULL, *portarg = NULL;
-static int columns = DEFAULT_COLUMNS, background = 0;
+/********** Some global variables **********/
+static char *host = NULL, *password = NULL, background = 0;
+static int columns = DEFAULT_COLUMNS;
+static long int port = 0;
 #ifdef HAVE_ICONV_H
 static iconv_t conv = (iconv_t)-1;
 #endif
@@ -79,10 +76,9 @@ void usage();
 void parse_args(int argc, char **argv);
 
 mpd_Connection *connect_to_mpd();
-void print_error_and_exit(mpd_Connection *conn, int exit_code);
 
 void free_song(song_t *song);
-void get_song(mpd_Connection *conn, song_t *song);
+int  get_song(mpd_Connection *conn, song_t *song);
 int  diff_songs(song_t *song1, song_t *song2);
 void print_song(song_t *song);
 
@@ -96,6 +92,8 @@ void signal_resize (int sig);
 
 #ifdef HAVE_ICONV_H
 char *iconvdup(char *s);
+#else
+#define iconvdup(str) strdup(str)
 #endif
 
 
@@ -116,19 +114,9 @@ int main(int argc, char **argv) {
 	signal(SIGTTIN , SIG_DFL); signal(SIGTTOU , SIG_DFL);
 #endif
 
-	/* Zero songs */
-	songs[0].artist = songs[0].album = songs[0].title = NULL;
-	songs[0].len = songs[0].pos = songs[0].songid = songs[0].song =
-		songs[0].state = -1;
-	songs[1].artist = songs[1].album = songs[1].title = NULL;
-	songs[1].len = songs[1].pos = songs[1].songid = songs[1].song =
-		songs[1].state = -1;
-
-	/* Parse args and connect */
+	/* Init */
 	parse_args(argc, argv);
-	conn = connect_to_mpd();
-
-	/* Open ICONV */
+	memset((void*)songs, 0, sizeof(song_t) * 2);
 #ifdef HAVE_ICONV_H
 	conv = iconv_open(DEFAULT_CHARSET, CHARSET_FROM);
 #endif
@@ -147,29 +135,47 @@ int main(int argc, char **argv) {
 		}
 	}
 
+
 	/* The Loop */
-	for(num = 0; !signum; num ^= 1) {
-		free_song(songs + num);
-		get_song(conn, songs + num);
-		if (background || diff_songs(songs, songs + 1)) {
-			print_song(songs + num);
+	do {
+		/* Connect */
+		for (conn = connect_to_mpd(); !signum && conn->error; ) {
+			mpd_closeConnection(conn);
+			printf("%s\r\33[0;37m\33[2K--- Not connected to MPD. %s",
+				   background ? "\0337\33[1;1f" : "",
+				   background ? "\0338" : "");
+			fflush(stdout);
+			sleep(5);
+			conn = connect_to_mpd();
 		}
-		sleep(1);
-	}
+
+		/* Print song */
+		for (num = 0; !signum && get_song(conn, songs + num); num ^= 1) {
+			if (background || diff_songs(songs, songs + 1)) {
+				print_song(songs + num);
+			}
+			sleep(1);
+		}
+
+		/* Clear state */
+		mpd_closeConnection(conn);
+		conn = NULL;
+	} while (!signum);
 
 
-	/* Close ICONV */
+	/* Close everything and exit */
 #ifdef HAVE_ICONV_H
 	if (conv!=(iconv_t)-1) {
 		iconv_close(conv);
 	}
 #endif
-
-	/* Clear line, disconnect and exit */
 	if (!background) {
 		fputs("\33[2K\r", stdout);
 	}
-	mpd_closeConnection(conn);
+	free_song(songs);
+	free_song(songs+1);
+	free(host);
+	if (password!=NULL) free(password);
 	return 0;
 }
 
@@ -188,22 +194,27 @@ void usage() {
 		   "<host>  hostname MPD is running; if not set MPD_HOST is used;\n"
 		   "        if that is also missing '" DEFAULT_HOST "' is assumed\n"
 		   "<port>  port MPD is listining; if not set MPD_PORT is used;\n"
-		   "        if that is also missing " DEFAULT_PORT " is assumed\n",
-		   program_name);
+		   "        if that is also missing %d is assumed\n",
+		   program_name, DEFAULT_PORT);
 }
 
 
 
 /********** Parse arguments **********/
 void parse_args(int argc, char **argv) {
+	char *hostarg = NULL, *portarg = NULL, *test;
+
+	/* Program name */
 	program_name = strrchr(argv[0], '/');
 	program_name = program_name==NULL ? *argv : (program_name + 1);
 
+	/* Help */
 	if (argc>1 && !strcmp(argv[1], "--help")) {
 		usage();
 		exit(0);
 	}
 
+	/* Get opts */
 	int opt;
 	char *end;
 	opterr = 0;
@@ -213,6 +224,7 @@ void parse_args(int argc, char **argv) {
 		case 'b': background = 1; break;
 		case 'B': background = 2; break;
 
+			/* Columns */
 		case 'c':
 			columns = strtol(optarg, &end, 0);
 			if (columns<10 || *end) {
@@ -221,26 +233,20 @@ void parse_args(int argc, char **argv) {
 			}
 			break;
 
+			/* An argument */
 		case 1:
 			if (hostarg==NULL) { hostarg = optarg; break; }
 			if (portarg==NULL) { portarg = optarg; break; }
 			ERR("invalid argument: %s", optarg);
 			exit(1);
 
+			/* An error */
 		default:
 			ERR("invalid option: %c", optopt);
 			exit(1);
 		}
 	}
-}
 
-
-
-/********** Connects to MPD **********/
-mpd_Connection *connect_to_mpd() {
-	long port;
-	char *host, *password = NULL, *test;
-	mpd_Connection *conn;
 
 	/* Host and password */
 	if (hostarg==NULL && (hostarg = getenv("MPD_HOST"))==NULL) {
@@ -253,53 +259,40 @@ mpd_Connection *connect_to_mpd() {
 		host = hostarg;
 	} else {
 		*host = 0;
-		++host;
-		password = hostarg;
+		host = strdup(host+1);
+		password = strdup(hostarg);
+		free(hostarg);
 	}
 
 	/* Port */
 	if (portarg==NULL && (portarg = getenv("MPD_PORT"))==NULL) {
-		portarg = DEFAULT_PORT;
-	}
-
-	port = strtol(portarg, &test,10);
-	if (port<0 || *test!='\0') {
-		ERR("invalid port: %s", portarg);
-		exit(1);
-	}
-
-	/* Connect */
-	conn = mpd_newConnection(host, port, 10);
-	if (conn->error) {
-		ERR("could not connect to MPD (%s:%ld)", host, port);
-		free(hostarg);
-		print_error_and_exit(conn, 2);
-	}
-	free(hostarg);
-
-
-	/* Send password */
-	if (password) {
-		mpd_sendPasswordCommand(conn, password);
-		if (conn->error) {
-			ERR("%s", "could not connect to MPD, invalid password");
-			print_error_and_exit(conn, 2);
+		port = DEFAULT_PORT;
+	} else {
+		port = strtol(portarg, &test, 10);
+		if (port<0 || *test!='\0') {
+			ERR("invalid port: %s", portarg);
+			exit(1);
 		}
-		mpd_finishCommand(conn);
-		print_error_and_exit(conn, 2);
 	}
-
-	return conn;
 }
 
 
 
-/********** Prints error end exits if there is any **********/
-void print_error_and_exit(mpd_Connection *conn, int error_code) {
-	if (conn->error) {
-		ERR("error: %s", conn->errorStr);
-		exit(error_code);
+/********** Connects to MPD **********/
+mpd_Connection *connect_to_mpd() {
+	/* Connect */
+	mpd_Connection *conn = mpd_newConnection(host, port, 10);
+	if (conn->error) return conn;
+
+	/* Send password */
+	if (password) {
+		mpd_sendPasswordCommand(conn, password);
+		if (conn->error) return conn;
+		mpd_finishCommand(conn);
 	}
+
+	/* Return */
+	return conn;
 }
 
 
@@ -314,19 +307,17 @@ void free_song(song_t *song) {
 
 
 /********** Queries the song information **********/
-void get_song(mpd_Connection *conn, song_t *song) {
+int  get_song(mpd_Connection *conn, song_t *song) {
 	mpd_Status *status;
 	mpd_InfoEntity *entity;
 
 	/* get status */
-	mpd_sendStatusCommand(conn);
-	print_error_and_exit(conn, 3);
-	status = mpd_getStatus(conn);
-	print_error_and_exit(conn, 3);
-	mpd_nextListOkCommand(conn);
-	print_error_and_exit(conn, 3);
+	mpd_sendStatusCommand(conn);       if (conn->error) return 0;
+	status = mpd_getStatus(conn);      if (conn->error) return 0;
+	mpd_nextListOkCommand(conn);       if (conn->error) return 0;
 
 	/* Copy status */
+	free_song(song);
 	song->state = status->state;
 	song->song = status->song;
 	song->songid = status->songid;
@@ -335,8 +326,7 @@ void get_song(mpd_Connection *conn, song_t *song) {
 	mpd_freeStatus(status);
 
 	/* get song info */
-	mpd_sendCurrentSongCommand(conn);
-	print_error_and_exit(conn, 3);
+	mpd_sendCurrentSongCommand(conn);  if (conn->error) return 0;
 	while ((entity = mpd_getNextInfoEntity(conn))) {
 		if (entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
 			song->artist = STRDUP(entity->info.song->artist);
@@ -350,7 +340,8 @@ void get_song(mpd_Connection *conn, song_t *song) {
 		mpd_freeInfoEntity(entity);
 	}
 	mpd_nextListOkCommand(conn);
-	print_error_and_exit(conn, 3);
+
+	return conn->error ? 0 : 1;
 }
 
 
@@ -370,14 +361,14 @@ int  diff_songs(song_t *song1, song_t *song2) {
 
 /********** Formats and prints song to stdout **********/
 void print_song(song_t *song) {
-	char buf[columns];
+	char buf[columns+1];
 	int artist_len, album_len, title_len, col, sum;
 
 	artist_len = song->artist ? strlen(song->artist) : 0;
 	album_len  = song->album  ? strlen(song->album ) : 0;
 	title_len  = song->title  ? strlen(song->title ) : 13;
 
-	col = columns - 4;
+	col = columns - 3;
 	sum = artist_len + album_len + title_len;
 
 	if (sum>col && artist_len>col>>2) {
@@ -398,13 +389,13 @@ void print_song(song_t *song) {
 	memset(buf, ' ', columns);
 
 	switch (song->state) {
-	case MPD_STATUS_STATE_STOP : buf[0] = '['; buf[1] = ']'; break;
-	case MPD_STATUS_STATE_PLAY : buf[0] = ' '; buf[1] = '>'; break;
-	case MPD_STATUS_STATE_PAUSE: buf[0] = '|'; buf[1] = '|'; break;
-	default                    : buf[0] = '?'; buf[1] = '?'; break;
+	case MPD_STATUS_STATE_STOP : buf[0] = '#'; break;
+	case MPD_STATUS_STATE_PLAY : buf[0] = '>'; break;
+	case MPD_STATUS_STATE_PAUSE: buf[0] = ' '; break;
+	default                    : buf[0] = '?'; break;
 	}
 
-	col = 3;
+	col = 2;
 	if (artist_len) {
 		memcpy(buf + col, song->artist, artist_len);
 		col += artist_len;
@@ -426,16 +417,12 @@ void print_song(song_t *song) {
 	memcpy(buf + col, song->title ? song->title : "Unknown title", title_len);
 
 	col = (0.0 + columns) * song->pos / song->len;
-	if (background) {
-		write(0, "\0337\33[1;1f", 8);
-	}
-	write(0, "\r\33[0m\33[K\33[37;1;44m", 18);
-	write(0, buf, col);
-	write(0, "\33[0;37m", 7);
-	write(0, buf + col, columns - col);
-	if (background) {
-		write(0, "\0338", 2);
-	}
+	sum = buf[col]; buf[col] = buf[columns] = 0;
+	printf("%s\r\33[0m\33[K\33[37;1;44m%s\33[0;37m",
+		   background ? "\0337\33[1;1f" : "", buf);
+	buf[col] = sum;
+	printf("%s%s", buf + col, background ? "\338" : "");
+	fflush(stdout);
 }
 
 
@@ -465,7 +452,7 @@ char *iconvdup(char *s) {
 	}
 
 	char *o = out;
-	size_t sleft = , oleft = columns>>1;
+	size_t sleft = columns<<2, oleft = columns>>1;
 	iconv(conv, &s, &sleft, &o, &oleft);
 	return out;
 }
