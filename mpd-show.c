@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.6 2006/01/04 15:34:46 mina86 Exp $
+ * $Id: mpd-show.c,v 1.7 2006/01/05 17:42:06 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -56,19 +56,18 @@ static const char *program_name = NULL;
 
 
 /********** Some global variables **********/
-static char *host = NULL, *password = NULL, background = 0;
-static int columns = DEFAULT_COLUMNS;
+static char *host = NULL, *password = NULL;
 static long int port = 0;
+
+static int columns = DEFAULT_COLUMNS, background = 0;
+
+static long int songid = -2;
+static int len = 1, pos = 0, state = 0, opos = 0, ostate = 0;
+static char *buf = NULL;
+
 #ifdef HAVE_ICONV_H
 static iconv_t conv = (iconv_t)-1;
 #endif
-
-
-/********** Structure with song information **********/
-typedef struct {
-	char *artist, *album, *title;
-	unsigned int len, pos, songid, song, state;
-} song_t;
 
 
 /********** Functions declaration **********/
@@ -76,11 +75,8 @@ void usage();
 void parse_args(int argc, char **argv);
 
 mpd_Connection *connect_to_mpd();
-
-void free_song(song_t *song);
-int  get_song(mpd_Connection *conn, song_t *song);
-int  diff_songs(song_t *song1, song_t *song2);
-void print_song(song_t *song);
+int  get_song(mpd_Connection *conn);
+void print_song();
 
 #ifdef HAVE_SIGNAL_H
 static int signum = 0;
@@ -100,12 +96,11 @@ char *iconvdup(char *s);
 
 /********** Main **********/
 int main(int argc, char **argv) {
-	song_t songs[2];
-	int num;
 	mpd_Connection *conn;
 
 	/* Catch signals */
 #ifdef HAVE_SIGNAL_H
+	int num;
 	for (num = 32; --num; signal(num, &signal_handler)==SIG_IGN);
 	signal(SIGWINCH, &signal_resize);
 	signal(SIGCHLD , SIG_IGN); signal(SIGURG  , SIG_IGN);
@@ -114,12 +109,16 @@ int main(int argc, char **argv) {
 	signal(SIGTTIN , SIG_DFL); signal(SIGTTOU , SIG_DFL);
 #endif
 
+
 	/* Init */
 	parse_args(argc, argv);
-	memset((void*)songs, 0, sizeof(song_t) * 2);
+	if ((buf = malloc(columns+1))==NULL) {
+		perror("malloc");
+	}
 #ifdef HAVE_ICONV_H
 	conv = iconv_open(DEFAULT_CHARSET, CHARSET_FROM);
 #endif
+
 
 	/* Daemonize */
 	if (background==2) {
@@ -136,30 +135,32 @@ int main(int argc, char **argv) {
 	}
 
 
+
 	/* The Loop */
 	do {
 		/* Connect */
 		for (conn = connect_to_mpd(); !signum && conn->error; ) {
 			mpd_closeConnection(conn);
-			printf("%s\r\33[0;37m\33[2K--- Not connected to MPD. %s",
-				   background ? "\0337\33[1;1f" : "",
-				   background ? "\0338" : "");
-			fflush(stdout);
+			memset(buf, ' ', columns); memset(buf, '-', 3);
+			state = -1; songid = -2; pos = 0; len = 1;
+			print_song();
 			sleep(5);
 			conn = connect_to_mpd();
 		}
 
+
 		/* Print song */
-		for (num = 0; !signum && get_song(conn, songs + num); num ^= 1) {
-			if (background || diff_songs(songs, songs + 1)) {
-				print_song(songs + num);
+		for (; !signum && get_song(conn); sleep(1)){
+			if (background || state!=ostate
+				|| (int)((0.0 + columns) *  pos / len)
+				!= (int)((0.0 + columns) * opos / len)) {
+				print_song();
 			}
-			sleep(1);
 		}
+
 
 		/* Clear state */
 		mpd_closeConnection(conn);
-		conn = NULL;
 	} while (!signum);
 
 
@@ -172,8 +173,7 @@ int main(int argc, char **argv) {
 	if (!background) {
 		fputs("\33[2K\r", stdout);
 	}
-	free_song(songs);
-	free_song(songs+1);
+	free(buf);
 	free(host);
 	if (password!=NULL) free(password);
 	return 0;
@@ -297,79 +297,70 @@ mpd_Connection *connect_to_mpd() {
 
 
 
-/********** Frees strings used by song **********/
-void free_song(song_t *song) {
-	if (song->artist) { free(song->artist); song->artist = NULL; }
-	if (song->album ) { free(song->album ); song->album  = NULL; }
-	if (song->title ) { free(song->title ); song->title  = NULL; }
-	song->len = song->pos = song->songid = song->song = song->state = -1;
-}
-
-
 /********** Queries the song information **********/
-int  get_song(mpd_Connection *conn, song_t *song) {
-	mpd_Status *status;
-	mpd_InfoEntity *entity;
-
+int  get_song(mpd_Connection *conn) {
 	/* get status */
+	mpd_Status *status = NULL;
 	mpd_sendStatusCommand(conn);       if (conn->error) return 0;
 	status = mpd_getStatus(conn);      if (conn->error) return 0;
-	mpd_nextListOkCommand(conn);       if (conn->error) return 0;
+	mpd_nextListOkCommand(conn);
+	if (conn->error) {
+		mpd_freeStatus(status);
+		return 0;
+	}
+
+	/* Error */
+	if (status->error) {
+		if (songid!=-1) {
+			len = strlen(status->error);
+			memcpy(buf, status->error, len>columns ? columns : len);
+			opos = pos = 0;
+			len = 1;
+			ostate = -1;
+			state = MPD_STATUS_STATE_PAUSE;
+		} else {
+			ostate = MPD_STATUS_STATE_PAUSE;
+		}
+	}
 
 	/* Copy status */
-	free_song(song);
-	song->state = status->state;
-	song->song = status->song;
-	song->songid = status->songid;
-	song->pos = status->elapsedTime;
-	song->len = status->totalTime;
+	opos = pos;
+	pos = status->elapsedTime;
+	ostate = state;
+	state = status->state;
+	len = status->totalTime;
+	if (status->songid==songid) {
+		mpd_freeStatus(status);
+		return 1;
+	}
+
+	ostate = state^1;
+	songid = status->songid;
 	mpd_freeStatus(status);
 
 	/* get song info */
-	mpd_sendCurrentSongCommand(conn);  if (conn->error) return 0;
-	while ((entity = mpd_getNextInfoEntity(conn))) {
-		if (entity->type==MPD_INFO_ENTITY_TYPE_SONG) {
-			song->artist = STRDUP(entity->info.song->artist);
-			song->album  = STRDUP(entity->info.song->album);
-			if (entity->info.song->title) {
-				song->title  = STRDUP(entity->info.song->title);
-			} else {
-				song->title  = strdup(entity->info.song->file);
-			}
-		}
+	mpd_InfoEntity *entity;
+	mpd_sendCurrentSongCommand(conn);      if (conn->error) return 0;
+	entity = mpd_getNextInfoEntity(conn);  if (!entity) return 0;
+	if (entity->type!=MPD_INFO_ENTITY_TYPE_SONG) {
 		mpd_freeInfoEntity(entity);
+		return 0;
 	}
-	mpd_nextListOkCommand(conn);
 
-	return conn->error ? 0 : 1;
-}
+	/* init strings and lengths */
+#define artist entity->info.song->artist
+#define album  entity->info.song->album
+	const char *title = entity->info.song->title;
+	if (!title) {
+		title = !artist && !album ? entity->info.song->file : "Unknown title";
+	}
 
-
-
-/********** Returns true if two songs differ **********/
-int  diff_songs(song_t *song1, song_t *song2) {
-	return song1->songid != song2->songid
-		|| song1->song   != song2->song
-		|| song1->state  != song2->state
-		|| (int)((0.0 + columns) * song1->pos / song1->len)
-		!= (int)((0.0 + columns) * song2->pos / song2->len)
-		|| !STREQ(song1->artist, song2->artist)
-		|| !STREQ(song1->album,  song2->album)
-		|| !STREQ(song1->title,  song2->title);
-}
-
-
-/********** Formats and prints song to stdout **********/
-void print_song(song_t *song) {
-	char buf[columns+1];
-	int artist_len, album_len, title_len, col, sum;
-
-	artist_len = song->artist ? strlen(song->artist) : 0;
-	album_len  = song->album  ? strlen(song->album ) : 0;
-	title_len  = song->title  ? strlen(song->title ) : 13;
-
-	col = columns - 3;
+	int artist_len, album_len, title_len, sum, col;
+	artist_len = artist ? strlen(artist) : 0;
+	album_len  = album  ? strlen(album ) : 0;
+	title_len  = title  ? strlen(title ) : 0;
 	sum = artist_len + album_len + title_len;
+	col = columns - 3;
 
 	if (sum>col && artist_len>col>>2) {
 		artist_len = artist_len-sum+col<col>>2 ? col>>2 : artist_len-sum+col;
@@ -386,41 +377,53 @@ void print_song(song_t *song) {
 		sum = artist_len + album_len + title_len;
 	}
 
+	/* fill buffer */
 	memset(buf, ' ', columns);
-
-	switch (song->state) {
-	case MPD_STATUS_STATE_STOP : buf[0] = '#'; break;
-	case MPD_STATUS_STATE_PLAY : buf[0] = '>'; break;
-	case MPD_STATUS_STATE_PAUSE: buf[0] = ' '; break;
-	default                    : buf[0] = '?'; break;
-	}
+	buf[columns] = 0;
 
 	col = 2;
 	if (artist_len) {
-		memcpy(buf + col, song->artist, artist_len);
+		memcpy(buf + col, artist, artist_len);
 		col += artist_len;
 	}
 
 	if (album_len) {
-		if (artist_len) buf[col++] = ' ';
+		if (artist_len) ++col;
 		buf[col++] = '<';
-		memcpy(buf + col, song->album, album_len);
+		memcpy(buf + col, album, album_len);
 		col += album_len;
 		buf[col++] = '>';
-		buf[col++] = ' ';
+		++col;
 	} else if (artist_len) {
-		buf[col++] = ' ';
+		++col;
 		buf[col++] = '-';
-		buf[col++] = ' ';
+		++col;
 	}
 
-	memcpy(buf + col, song->title ? song->title : "Unknown title", title_len);
+	memcpy(buf + col, title, title_len);
 
-	col = (0.0 + columns) * song->pos / song->len;
-	sum = buf[col]; buf[col] = buf[columns] = 0;
+	/* return */
+	mpd_freeInfoEntity(entity);
+	return 1;
+}
+
+
+
+/********** Formats and prints song to stdout **********/
+void print_song() {
+	switch (state) {
+	case MPD_STATUS_STATE_STOP : buf[0] = '#'; break;
+	case MPD_STATUS_STATE_PLAY : buf[0] = '>'; break;
+	case MPD_STATUS_STATE_PAUSE: buf[0] = ' '; break;
+	case -1                    :               break;
+	default                    : buf[0] = '?'; break;
+	}
+
+	int col = (0.0 + columns) * pos / len, old = buf[col];
+	buf[col] = buf[columns] = 0;
 	printf("%s\r\33[0m\33[K\33[37;1;44m%s\33[0;37m",
 		   background ? "\0337\33[1;1f" : "", buf);
-	buf[col] = sum;
+	buf[col] = old;
 	printf("%s%s", buf + col, background ? "\338" : "");
 	fflush(stdout);
 }

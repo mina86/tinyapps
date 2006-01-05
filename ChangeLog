@@ -1,3 +1,11 @@
+2005-12-05  Michal Nazarewicz  (mina86/AT/tlen.pl)
+
+	* mpd-show.c: + song_t structure removed
+	+ buffer is recreated only on song change
+	+ free_song() and diff_song() removed (no longer needed)
+	+ get_song() now recretes buf when needed as well
+	+ print_song() uses global buf now
+
 2005-12-04  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
 	* mpd-show.c: + write() no longer used
