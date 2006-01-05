@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.7 2006/01/05 17:42:06 mina86 Exp $
+ * $Id: mpd-show.c,v 1.8 2006/01/05 22:09:44 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -316,8 +316,8 @@ int  get_song(mpd_Connection *conn) {
 			memcpy(buf, status->error, len>columns ? columns : len);
 			opos = pos = 0;
 			len = 1;
-			ostate = -1;
-			state = MPD_STATUS_STATE_PAUSE;
+			ostate = songid = -2;
+			state = -1;
 		} else {
 			ostate = MPD_STATUS_STATE_PAUSE;
 		}
