@@ -1,5 +1,8 @@
 2005-12-05  Michal Nazarewicz  (mina86/AT/tlen.pl)
 
+	* mpd-show.c: + tiny bug fixed
+	* mpd-show-wrapper.sh: + may be called with argument instead of $0
+
 	* mpd-show.c: + song_t structure removed
 	+ buffer is recreated only on song change
 	+ free_song() and diff_song() removed (no longer needed)

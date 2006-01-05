@@ -1,7 +1,7 @@
 #!/bin/bash
 ##
 ## Wrapper for mpd-state to make it behave like state-utils.
-## $Id: mpd-state-wrapper.sh,v 1.2 2005/07/11 00:20:58 mina86 Exp $
+## $Id: mpd-state-wrapper.sh,v 1.3 2006/01/05 22:10:55 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -27,27 +27,33 @@ EOF
 fi
 
 
-case "`basename "$0"`" in
-	(state-save)
+ARG0=${0##*/}
+SHIFTED=
+while true; do case "$ARG0" in
+	(state-save|save)
 	mkdir -p ~/.mpd_states && mpd-state >~/.mpd_states/${1-default}
+	exit $?
 	;;
 
-	(state-restore)
+	(state-restore|restore)
 	if [ -f "~/.mpd_states/${1-default}" ]; then
 		mpd-state -r <"~/.mpd_sates/${1-default}"
+		exit $?
 	else
 		echo File "~/.mpd_states/${1-default}" does not exist >&2
 		exit 1
 	fi
 	;;
 
-	(state-sync)
+	(state-sync|sync)
 	mpd-state | mpd-state -r "${1-localhost}" "${2-6600}"
+	exit $?
 	;;
 
-	(state-amend)
+	(state-amend|amend)
 	if [ -f "~/.mpd_states/${1-default}" ]; then
 		mpd-state -raP <"~/.mpd_sates/${1-default}"
+		exit $?
 	else
 		echo File "~/.mpd_states/${1-default}" does not exist >&2
 		exit 1
@@ -55,8 +61,15 @@ case "`basename "$0"`" in
 	;;
 
 	(*)
-	echo This script should be run as one of:
-	echo state-save, state-restore, state-sync or state-amend
-	exit 1
+	if [ -z "$SHIFTED" ] && [ $# -ne 0 ]; then
+		SHIFTED=y
+		ARG0="$1"
+		shift
+	else
+		echo 'This script should be run as one of:'
+		echo '  state-save, state-restore, state-sync or state-amend'
+		echo 'or with one of those strings as firt argument optionaly w/o state- prefix'
+		exit 1
+	fi
 	;;
-esac
+esac; done
