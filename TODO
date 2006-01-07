@@ -1,8 +1,5 @@
 Tiny Applications Collection TODO List
 
-* add
-  - allow specifing files to read from
-
 * cdiff
   - add support for more modes
   - allow running as a wrapper
@@ -32,10 +29,6 @@ Tiny Applications Collection TODO List
 
 * mp3rip
   - id3 tag support (option to read ID3 tag from a file)
-
-* mpd-state
-  - allow getting information from different sources (eg. playlist
-    from a server and other state from a file).
 
 * pingrange.pl
   - allow specifing several ranges of IP adresses
