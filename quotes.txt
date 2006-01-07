@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.7 2005/12/25 17:51:54 mina86 Exp $
+## $Id: quotes.txt,v 1.8 2006/01/07 17:47:09 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -649,7 +649,7 @@ Mêdrców nie wszystko wie.
 	-- John Ronald Reuel Tolkien (1892-1973), W³adca Pier¶cieni
 %
  Chcieli¶my dobrze, a wysz³o jak zawsze...
-	 -- Attributed to Joseph Stalin (1879-1953)
+	-- Attributed to Joseph Stalin (1879-1953)
 %
  Veni, vidi, vici.
 	-- Julius Caesar (100BC-44BC)
@@ -1116,6 +1116,9 @@ Show is...  a lifestyle.
  Nie zapowiadaj tego, co zamierzasz uczyniæ, bo je¶li ci siê nie uda,
 wy¶miej± ciê.
 	-- Pittakos
+%
+Only the dead have seen the end of word.
+	-- Plato (427 BC-347 BC)
 %
  Cz³owiekiem jestem i nic co ludzkie nie jest mi obce.
 	-- Publius Terentius Afer (II BC)
