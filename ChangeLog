@@ -1,5 +1,9 @@
 2006-02-04  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* mpd-show.c: + exit(1) on second signal in signal handler.
+	+ caches fewer number of signals (SIGHUP, SIGINT, SIGQUIT
+	  and SIGWINCH which is ignored) instead of all signals.
+
 	* mp3rip: + --config option added as synonym of --setup
 
 2005-12-07  Michal Nazarewicz  (mina86/AT/tlen.pl)

@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.8 2006/01/05 22:09:44 mina86 Exp $
+ * $Id: mpd-show.c,v 1.9 2006/02/04 21:45:18 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -100,13 +100,10 @@ int main(int argc, char **argv) {
 
 	/* Catch signals */
 #ifdef HAVE_SIGNAL_H
-	int num;
-	for (num = 32; --num; signal(num, &signal_handler)==SIG_IGN);
-	signal(SIGWINCH, &signal_resize);
-	signal(SIGCHLD , SIG_IGN); signal(SIGURG  , SIG_IGN);
-	signal(SIGCONT , SIG_DFL);
-	signal(SIGSTOP , SIG_DFL); signal(SIGTSTP , SIG_DFL);
-	signal(SIGTTIN , SIG_DFL); signal(SIGTTOU , SIG_DFL);
+	signal(SIGWINCH, &signal_resize );
+	signal(SIGHUP  , &signal_handler);
+	signal(SIGINT  , &signal_handler);
+	signal(SIGQUIT , &signal_handler);
 #endif
 
 
@@ -432,6 +429,9 @@ void print_song() {
 #ifdef HAVE_SIGNAL_H
 /********** Signal handler **********/
 void signal_handler(int sig) {
+	if (signum) {
+		exit(1);
+	}
 	signum = sig;
 }
 
