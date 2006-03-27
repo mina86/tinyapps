@@ -1,5 +1,7 @@
 2006-03-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* installkernel, mp3rip: + ranges in tr replaced with listed values
+
 	* quotes.txt: + The Godfather quotes added
 	+ Randy Keith Milholland quotes added
 
