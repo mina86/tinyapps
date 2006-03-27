@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.8 2006/01/07 17:47:09 mina86 Exp $
+## $Id: quotes.txt,v 1.9 2006/03/27 18:24:12 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -477,6 +477,50 @@ wszystkie pope³niæ.
  Counting in binary is just like counting in decimal if you are all thumbs.
 	-- Glaser and Way
 %
+ Do you spend time with your family? Good. Because a man who doesn't spend
+time with his family can never be a real man.
+	-- Marlon Brando (1924-2004) as Don Vito Corleone
+	-- The Godfather
+%
+ Do you spend time with your family? Good. Because a man who doesn't spend
+time with his family can never be a real man.
+	-- Marlon Brando (1924-2004) as Don Vito Corleone
+	-- The Godfather
+%
+ I'm gonna make him an offer he can't refuse.
+	-- Marlon Brando (1924-2004) as Don Vito Corleone
+	-- The Godfather
+%
+ I spent my whole life trying not to be careless. Women and children can be
+careless. But not men.
+	-- Marlon Brando (1924-2004) as Don Vito Corleone
+	-- The Godfather
+%
+Never let anyone outside the family know what you're thinking.
+	-- Marlon Brando (1924-2004) as Don Vito Corleone
+	-- The Godfather
+%
+ Never get angry. Never make a threat. Reason with people.
+	-- Marlon Brando (1924-2004) as Don Vito Corleone
+	-- The Godfather
+%
+ Never hate your enemies. It clouds your judgement.
+	-- Al Pacino (1940-) as Michael Corleone
+	-- The Godfather
+%
+ I'll make him an offer he can't refuse.
+	-- Al Pacino (1940-) as Michael Corleone
+	-- The Godfather
+%
+ Don't ask me about my business, Kay.
+	-- Al Pacino (1940-) as Michael Corleone
+	-- The Godfather
+%
+ We don't discuss business at the table.
+	-- James Caan (1939-) as Santino "Sonny" Corleone
+	-- The Godfather
+%
+
  Komisja to zespó³, który tylko wtedy jest w stanie co¶ zdzia³aæ, gdy
 sk³ada siê z trzech osób, z których jedna jest chora, a druga nieobecna.
 	-- H. van Loon
@@ -1153,6 +1197,16 @@ And you will know my name is the Lord when I lay my vengeance upon you.
  What better time than now?
  All hell can't stop us now!
 	-- Rage Against the Machine, Guerilla Radio
+%
+ Typos are very important to all written form. It gives the reader
+something to look for so they aren't distracted by the total lack of
+content in your writing.
+	-- Randy Keith Milholland
+%
+ Sometimes people do things that hurt and it's not because they mean
+to. They just do. It doesn't necessarily have anything to do with you, but
+you end up hurt because of it.
+	-- Randy Keith Milholland
 %
  I think I'm going to make it!
 	-- The last words of Richard Loeb

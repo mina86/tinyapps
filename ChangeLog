@@ -1,3 +1,8 @@
+2006-03-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
+
+	* quotes.txt: + The Godfather quotes added
+	+ Randy Keith Milholland quotes added
+
 2006-02-04  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
 	* mpd-show.c: + exit(1) on second signal in signal handler.
