@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.28 2006/03/27 18:25:37 mina86 Exp $
+## $Id: installkernel,v 1.29 2006/03/28 13:40:19 mina86 Exp $
 ## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -25,8 +25,8 @@
 ##
 set -e
 USER="$(id -un)"
-LOWER_CHARS=abcdefghijklmnopqrstuvwxyz
-UPPER_CHARS=ABCDEFGHIJKLMNOPQRSTUVWXYZ
+LOWER_CHARS=abcdefghijklmnopqrstuvwxyz-
+UPPER_CHARS=ABCDEFGHIJKLMNOPQRSTUVWXYZ_
 
 
 ##
@@ -42,7 +42,7 @@ toInt  () {
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	echo 'installkernel  v0.14  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.28 2006/03/27 18:25:37 mina86 Exp $'
+	echo '$Id: installkernel,v 1.29 2006/03/28 13:40:19 mina86 Exp $'
 	echo
 	if [ -f /tmp/installkernel-lockfile ]; then
 		echo "${0##*/}: lockfile exists"
@@ -290,7 +290,7 @@ run () {
 ##
 run_scripts () {
 	__DIR=$1; shift
-	if eval [ -z \"\$RUN_`echo $__DIR | tr -$LOWER_CHARS _$UPPER_CHARS`\" ]
+	if eval [ -z \"\$RUN_`echo $__DIR | tr $LOWER_CHARS $UPPER_CHARS`\" ]
 	then return 0; fi
 
 	for __SCRIPT in /etc/installkernel.d/* /etc/installkernel.d/$__DIR/*; do
@@ -307,7 +307,7 @@ run_scripts () {
 r () {
 	if [ "X$1" = X-u ]; then __USR=-u; shift; else __USR=; fi
 	if eval [ -z \"\$$1\" ]; then return 0; fi
-	__NAME=`echo $1 | tr _$UPPER_CHARS -$LOWER_CHARS`
+	__NAME=`echo $1 | tr $UPPER_CHARS $LOWER_CHARS`
 	header "$2"
 	shift 2
 	run_scripts pre-$__NAME $__USR
@@ -482,7 +482,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		(hooks) set_run_hooks "$VALUE" "$PRE"; ;;
 
 		(clean|config|make-dep|update-loader|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules)
-			EVENT=`echo $HOOK | tr -$LOWER_CHARS _$UPDATE_LOADER`
+			EVENT=`echo $HOOK | tr $LOWER_CHARS $UPPER_CHARS`
 			if [ -n "$PRE" ]
 			then eval RUN_$PRE$EVENT=$VALUE
 			else eval RUN_PRE_$EVENT=$VALUE RUN_POST_$EVENT=$VALUE
@@ -493,7 +493,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 			if [ -n "$PRE" ]; then
 				error 1 event $HOOK cannot have pre-/post- prefix
 			fi
-			EVENT=`echo $HOOK | tr -$LOWER_CHARS _$UPPER_CHARS`
+			EVENT=`echo $HOOK | tr $LOWER_CHARS $UPPER_CHARS`
 			eval RUN_$EVENT=$VALUE
 			;;
 
