@@ -1,5 +1,10 @@
 2006-04-19  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* installkernel.8: + few typos corrected
+	+ '--arch=-' and '--nice=!<value>' options documented
+	+ Note when '--tidy' is not recommedned added
+	+ global hook scripts now in /etc/installkernel.d/global
+
 	* installkernel: + `ps -p` replaced with `kill -0`
 	+ checking for another instance with `ps -C` added
 	+ '--arch=-' option added

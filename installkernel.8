@@ -1,9 +1,9 @@
-.TH installkernel 8 "11 August, 2005" "version 0.14" "Linux System Administration"
+.TH installkernel 8 "19 April, 2006" "version 0.14.1" "Linux System Administration"
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.8 2005/11/16 20:41:57 mina86 Exp $
-\" Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+\" $Id: installkernel.8,v 1.9 2006/04/19 09:19:41 mina86 Exp $
+\" Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
 \"
 
 .SH NAME
@@ -19,7 +19,7 @@
 
 \fBinstallkernel\fP is a shell script ment to automate process of
 compiling and installing the Linux kernel and it's modules.  It can
-automatically compile and install kernel image and modules run lilo
+automatically compile and install kernel image and modules, run lilo
 and remove old images and modules.  When additional scripts are added
 it can also automatically install modules which are not part of Linux
 or perform some other tasks specific for local machine.
@@ -34,15 +34,15 @@ unlikely to contain "heavy" bash but rather a lite shell.
 
 The scripts takes 4 kinds of arguments.  Options, switches, actions
 and something strange. ;) Switches are options which may be toggled on
-and off.  Actions can be specified several times and instruct
+or off.  Actions can be specified several times and instruct
 \fBinstallkernel\fP script to perform various steps.  Those steps are
 taken in the order actions are given in the command line.
 
 .PP
 If you use short option which requires an argument (eg. \fB\-a\fP) the
 argument must be specified just after the option without whitespace
-or anything (eg. \fB\-ai386\fP).  The script also doesn't support
-joining several short options in one argument, eg.: \fB\-iImM\fB.
+(eg. \fB\-ai386\fP).  The script also doesn't support joining several
+short options in one argument, eg.: \fB\-iImM\fB.
 
 .SS Options
 .TP
@@ -55,10 +55,10 @@ Displays the version number and exits
 
 .TP
 \fB\-a \-\-arch=\fIarch\fP
-Sets the \fBARCH\fP environmental variable to \fIarch\fP.  By default,
-it is generated from the output of \fBuname \-m\fP command.  In all
-cases, if \fBARCH\fP environmental variable is set before
-\fBinstallkernel\fP have been run it will be overwritten.
+Sets the \fBARCH\fP environmental variable to \fIarch\fP unless it is
+\fB-\fP in which case the environmental variable is left without any
+changes.  By default, it is generated from the output of \fBuname
+\-m\fP command.
 
 .TP
 \fB\-\-bootdir=\fIdir\fP
@@ -67,13 +67,13 @@ For more info see \fB<prefix>\fP.
 
 .TP
 \fB\-\-cd=\fIdir\fP
-The script will attempt to change directory yo \fIdir\fP before doing
+The script will attempt to change directory to \fIdir\fP before doing
 anything.
 
 .TP
 \fB\-\-cd\fP
-Synonym of \fB--cd=/usr/src/linux\fP.  Useful for people who keep
-their kernel source coude in \fI/usr/src/linux\fP.  Can save you from
+Synonym of \fB\-\-cd=/usr/src/linux\fP.  Useful for people who keep
+their kernel source code in \fI/usr/src/linux\fP.  Can save you from
 typing those extra characters. :)
 
 .TP
@@ -81,7 +81,8 @@ typing those extra characters. :)
 If the script was not run as super user it will try to become super
 user at the beginning.  Most likely, you will be asked to enter a root
 password at the beginning of the script.  The option also implies
-.B \-\-user=\fIcurrent\-user\fP.
+\fB\-\-user=\fIcurrent\-user\fP where \fIcurent-user\fP is a username
+of user executing the script.
 
 .TP
 \fB\-u \-\-user=\fIuser\fP
@@ -92,14 +93,16 @@ compiling image and modules) as \fIuser\fP.
 .TP
 \fB\-nu \-\-no\-user\fP
 This is synonym of \fB\-\-user=\fP.  Useful if you want to do
-everything as root and use \fB\-\-su\fP option.
+everything as root and use \fB\-\-su\fP option (not recommended since
+you can build image as non-root user without any problems).
 
 .TP
 \fB\-\-nice=\fInice\fP
-Increments a nice value by \fInice\fP.  By default the script sets the
-nice value to 10 (NOT increments by 10) unless it is already greater
-then 10.  Setting this to a big value (eg. 20) is useful on slow
-machines if you don't want compilation to be noticeable.
+If \fInice\fP is a number adds it to a nice value; if it is a number
+prefixed by an exclamation mark ("!") sets the nice value to given
+number.  The default is "!10".  Setting this to a big value (eg. 20)
+is useful on slow machines if you don't want compilation to be
+noticeable.  Script will never lower the nice value.
 
 .TP
 \fB\-\-no\-nice\fP
@@ -127,10 +130,10 @@ compatibility with \fBmake install\fP.
 .TP
 \fIprefix\fP
 Specifies the place where the kernel image should be installed to.  By
-default it is \fB/boot\fP unless a INSTALL_PATH enviromental variable
-is set in which case it's value is taken.  This argument overwrites
-and can be overwritten (depending on the order in which arguments are
-given) the \fB\-\-bootdir\fP option.
+default it is \fB/boot\fP unless a \fBINSTALL_PATH\fP enviromental
+variable is set in which case it's value is taken.  This argument
+overwrites and can be overwritten (depending on the order in which
+arguments are given) the \fB\-\-bootdir\fP option.
 
 
 .SS Switches
@@ -156,7 +159,7 @@ Becomes a lot more verbose.  When turning on implies
 \fB\-\-print\-commands\fP. The default is \fBno\fP.
 
 .TP
-\fB\-\-vv\fP
+\fB\-vv\fP
 Becomes a lot more verbose.  When turning on implies \fB\-\-verbose\fP
 but when disabling does not disable \fB\-\-verbose\fP.  The default is
 \fBno\fP.
@@ -219,7 +222,7 @@ dep\fP is unnecessary in Linux 2.6.x).
 
 .TP
 \fB\-A \-\-all\fP
-Synonym of \fB\-\-compile \-\-install \-\-tidy \-\-run\-lilo\fP.
+Synonym of \fB\-\-compile \-\-install \-\-tidy \-\-update-loader\fP.
 
 .TP
 \fB\-i \-\-compile\-image\fP
@@ -230,15 +233,16 @@ Runs \fBmake bzImage\fP to compile the kernel image.  The default is
 \fB\-I \-\-install\-image\fP
 Installs the kernel image by copying appropriate files to \fB/boot\fP
 directory (or other directory specified by \fIprefix\fP or
-INSTALL_PATH enviromental varialbe).  It will also update symlinks in
-that directory.  By default it is \fByes\fP if exactly 4 arguments are
-given, and thye are: \fIversion\fP \fIimage\fP \fIsystemmap\fP
-\fIprefix\fP, otherwise it is \fBno\fP.
+\fBINSTALL_PATH\fP enviromental varialbe).  It will also update
+symlinks in that directory.  By default it is \fByes\fP if exactly 4
+arguments are given, and thye are: \fIversion\fP \fIimage\fP
+\fIsystemmap\fP \fIprefix\fP, otherwise it is \fBno\fP.
 
 .TP
 \fB\-\-tidy\-image\fP
-Removes really old kernel images from the \fB/boot\fP directory.  The
-default is \fBno\fP.
+Removes really old kernel images from the \fB/boot\fP directory (or
+any other directory given with \fB\-\-bootdir\fP of \fIprefix\fP
+options).  The default is \fBno\fP.
 
 .TP
 \fB\-\-image\fP
@@ -274,7 +278,10 @@ Synonym of \fB\-\-install\-image \-\-install\-modules\fP.
 
 .TP
 \fB\-\-tidy\fP
-Synonym of \fB\-\-tidy\-image \-\-tidy\-modules\fP.
+Synonym of \fB\-\-tidy\-image \-\-tidy\-modules\fP.  You should not
+use any of the \fB\-\-tidy\fP switches if you do not use corresponding
+\fB\-\-install\fP switch as it may leave you with only one kernel or
+modules for only one kernel.
 
 .TP
 \fB\-l \-\-update\-loader\fP
@@ -356,17 +363,17 @@ also \fBpre\fP and \fBpost\fP hooks which are executed at the very
 begining and at the very end of the \fBinstallkernel\fP script.
 
 .PP
-When a hook is executed then all executable scripts from
-\fB/etc/installkernel.d/\fP and
-\fB/etc/installkernel.d/\fIhook\-name\fP/\fR directories are run
-with the hook name as the first argument (in the future more arguments
-may be defined).  For example if there is an executable file \fBfoo\fP
-in \fB/etc/installkernel.d/\fP and \fBbar\fP in
+When a hook is executed all executable scripts from
+\fB/etc/installkernel.d/global/\fP and
+\fB/etc/installkernel.d/\fIhook\-name\fP/\fR directories are run with
+the hook name as the first argument (in the future more arguments may
+be defined).  For example if there is an executable file \fBfoo\fP in
+\fB/etc/installkernel.d/global/\fP and \fBbar\fP in
 \fB/etc/installkernel.d/pre/\fP then when \fBpre\fP hook is executed
-both, \fBfoo\fP and \fBbar\fP, scripts will be run but when a
-\fBpre\-clean\fP hook is executed only \fBfoo\fP will be executed.  To
-understand it better create some scripts in \fB/etc/installkernel.d\fP
-and it's subdirectories and run \fBinstallkernel\fP with
+both, \fBfoo\fP and \fBbar\fP, scripts will be run but when
+a \fBpre\-clean\fP hook is executed only \fBfoo\fP will be executed.
+To understand it better create some scripts in subdirectories of
+\fB/etc/installkernel.d/\fP directory and run \fBinstallkernel\fP with
 \fB\-\-dry\-run\fP option.
 
 .SH LILO CONFIG
@@ -374,10 +381,10 @@ and it's subdirectories and run \fBinstallkernel\fP with
 After the kernel image is installed (when \fB\-\-install\-image is
 true) the new kernel image can be accessed by a \fB/boot/bzImage\fP
 and the old one by \fB/boot/bzImage~\fP symlinks.  The same is with
-\fBSystem.map\fP and \fBconfig\fP.  This way you don't have to alter
-your LILO configuration each time new kernel is installed, therefore,
-usually the \fBlilo.conf\fP (\fB/etc/lilo.conf\fP by default) should
-contain code similar to the fallowing:
+\fBSystem.map\fP and \fBconfig\fP files.  This way you don't have to
+alter your LILO configuration each time, so \fBlilo.conf\fP
+(\fB/etc/lilo.conf\fP by default) should contain code similar to the
+fallowing:
 
 .nf
 image = /boot/bzImage
@@ -428,5 +435,5 @@ properly configured for a non\-root user to be able to run.
 
 .SH AUTHOR
 
-Michal Nazarewicz (\fImina86/AT/tlen.pl\fP).  See
+Michal Nazarewicz (\fImina86/AT/projektcode.org\fP).  See
 <\fIhttp://tinyapps.sourceforge.net/\fP> for more info.
