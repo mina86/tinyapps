@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.29 2006/03/28 13:40:19 mina86 Exp $
-## Copyright (c) 2004,2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+## $Id: installkernel,v 1.30 2006/04/19 09:15:47 mina86 Exp $
+## Copyright (c) 2004-2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,14 +25,16 @@
 ##
 set -e
 USER="$(id -un)"
+ARG0="${0##*/}"
 LOWER_CHARS=abcdefghijklmnopqrstuvwxyz-
 UPPER_CHARS=ABCDEFGHIJKLMNOPQRSTUVWXYZ_
+trap "" USR1 USR2
 
 
 ##
 ## Some nice functions
 ##
-toInt  () {
+toInt () {
 	expr 0$(expr "X$1" : 'X[[:space:]]*\([0-9]*\)' 2>/dev/null || true) + 0
 }
 
@@ -41,23 +43,45 @@ toInt  () {
 ## Version
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
-	echo 'installkernel  v0.14  (c) 2004,2005 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.29 2006/03/28 13:40:19 mina86 Exp $'
+	echo 'installkernel  v0.14.1  (c) 2004-2006 by Micha³ Nazarewicz'
+	echo '$Id: installkernel,v 1.30 2006/04/19 09:15:47 mina86 Exp $'
 	echo
+
+	# Lockfile check
 	if [ -f /tmp/installkernel-lockfile ]; then
-		echo "${0##*/}: lockfile exists"
+		echo "$ARG0: lockfile exists"
 		PID="$(toInt "`cat /tmp/installkernel-lockfile`")"
-		if [ $PID -ne 0 ] && ps -p $PID >/dev/null 2>&1; then
-			echo "${0##*/}: make sure only one instance of installkernel is running"
-			echo "${0##*/}: or remove /tmp/installkernel-lockfile if that is the case"
-			INSTALLKERNEL_EXITED=4
+		if [ $PID -ne 0 ] && kill -0 $PID >/dev/null 2>&1; then
+			echo "$ARG0: make sure only one instance of installkernel is running"
+			echo "$ARG0: or remove /tmp/installkernel-lockfile if that is the case"
 			exit 4
 		fi
 		unset PID
-		echo "${0##*/}: looks like invalid termination; removing lockfile"
+		echo "$ARG0: looks like invalid termination; removing lockfile"
 	fi
 
+	# write lockfile
 	printf "%d" $$ >|/tmp/installkernel-lockfile
+
+	# ps check
+	if PS="$(ps -C "$ARG0" 2>/dev/null)" && \
+		[ $(printf %s "$PS" | wc -l) -gt 2 ]; then
+		echo "$ARG0: seems like another instance of installkernel is running"
+		printf "%s: abort with Ctrl-C or wait 5 seconds for script to continue" "$ARG0"
+		I=0
+		while [ $I -lt 5 ]; do
+			if ! sleep 1; then
+				echo
+				rm -f /tmp/installkernel-lockfile
+				exit 4
+			else
+				I=$(($I + 1))
+				printf .
+			fi
+		done
+		unset I
+	fi
+	unset PS
 fi
 
 
@@ -80,7 +104,8 @@ usage: installkernel [<options>] [<switches>]
      --su               Tries to became root (implies --user=<current-user>)
   -u --user=<user>      Runs everything not requiring SU privilages as <user>
   -nu --no-user         Synonym of  --user=
-     --nice=<nice>      Adjust priority by <nice>                     [auto]
+     --nice=<nice>      Adjust priority by <nice> (but never lower)
+     --nice=!<nice>     Set pririty to <nice>     (but never lower)   [10]
      --no-nice          Synonym of  --nice=0
 
   -L --log=<file>       Logs everything to <file> not to stdout
@@ -140,11 +165,11 @@ END
 ## Printing helpers
 ##
 error () {
-	__ECODE="$1"
+	__EC="$1"
 	shift
 	echo "${0##*/}: $*" >&2
-	INSTALLKERNEL_EXITED=$__ECODE
-	exit $__ECODE
+	INSTALLKERNEL_EXITED=$__EC
+	exit $__EC
 }
 
 msg () {
@@ -166,7 +191,6 @@ sig_handler () {
 for E in HUP INT QUIT ILL ABRT FPE SEGV PIPE ALRM TERM TSTP; do
 	trap "sig_handler $E" $E
 done
-trap "" USR1 USR2
 
 exit_function () {
 	__EC=$?
@@ -253,21 +277,17 @@ run () {
 	# Don't run really
 	if [ -n "$DRY_RUN" ] && [ -z "$__FORCE" ]; then return 0; fi
 	if [ -n "$__DUMMY" ]; then return 0; fi
-	__EC=0
 
 	# cd cannot be run throught su or nice
 	if [ "X$1" = Xcd ]; then
-		"$@" || __EC=$?
-		return $__EC
+		"$@"
+		return $?
 	fi
 
 	# Run not as
 	if [ -z "$__AS" ] || [ "X$__AS" = "X$USER" ]; then
-		if [ $NICE -ne 0 ]
-		then nice -n "$NICE" "$@" <"$__INPUT" >"$__OUTPUT" || __EC=$?
-		else                 "$@" <"$__INPUT" >"$__OUTPUT" || __EC=$?
-		fi
-		return $__EC
+		"$@" <"$__INPUT" >"$__OUTPUT"
+		return $?
 	fi
 
 	# Run as
@@ -277,11 +297,8 @@ run () {
 		shift
 	done
 
-	if [ $NICE -ne 0 ]
-	then nice -n $NICE su "$__AS" -c "$__ARGS" <"$__INPUT" >"$__OUTPUT" || __EC=$?
-	else               su "$__AS" -c "$__ARGS" <"$__INPUT" >"$__OUTPUT" || __EC=$?
-	fi
-	return $__EC
+	su "$__AS" -c "$__ARGS" <"$__INPUT" >"$__OUTPUT"
+	return $?
 }
 
 
@@ -293,7 +310,7 @@ run_scripts () {
 	if eval [ -z \"\$RUN_`echo $__DIR | tr $LOWER_CHARS $UPPER_CHARS`\" ]
 	then return 0; fi
 
-	for __SCRIPT in /etc/installkernel.d/* /etc/installkernel.d/$__DIR/*; do
+	for __SCRIPT in /etc/installkernel.d/global/* /etc/installkernel.d/$__DIR/*; do
 		if [ -x "$__SCRIPT" ]; then
 			run "$@" "$__SCRIPT" $__DIR
 		fi
@@ -355,8 +372,8 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	##
 	if [ -z "$INSTALL_PATH" ]; then export INSTALL_PATH=/boot; fi
 
-	export VER= BUILD= IMG_PATH= MAP_PATH= RUNAS= NICE=auto ARCH=
-	SU=; LOG_AUTO=; LOG_FILE=;
+	SU=; LOG_AUTO=; LOG_FILE=; NICE=!10; __ARCH="$ARCH"
+	export VER= BUILD= IMG_PATH= MAP_PATH= RUNAS= ARCH=
 
 	export DRY_RUN= PRINT_COMMANDS= VERBOSE= REALLY_VERBOSE=
 	if [ -t 1 ]; then export USE_ANSI=y; else export USE_ANSI=; fi
@@ -538,17 +555,25 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	##
 	## Calculate nice
 	##
-	if [ "X$NICE" = Xauto ]; then
-		NICE=$((10 - `nice`))
-		if [ $NICE -lt 0 ]; then NICE=0; fi
+	if [ X"${NICE#!}" != X"$NICE" ]; then
+		NICE=$((`toInt "${NICE#!}"` - `nice`))
+	else
+		NICE=`toInt "$NICE"`
 	fi
-	NICE=`toInt "$NICE"`
-	if [ $NICE -ne 0 ]; then msg '37;1' NICE "$NICE"; fi
+	if [ "$NICE" -gt 0 ]; then
+		msg '37;1' NICE "$NICE"
+		renice -n $NICE $$
+	fi
+	unset NICE
 
 
 	##
 	## Set ARCH
 	##
+	if [ X"$ARCH" = X- ]; then
+		ARCH="$__ARCH"
+	fi
+	unset __ARCH
 	if [ -z "$ARCH" ]; then
 		ARCH=`uname -m | sed -e 's/i.86/i386/' -e 's/sun4u/sparc64/' \
 	                         -e 's/arm.*/arm/' -e 's/sa110/arm/' \
@@ -571,8 +596,6 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	if [ -n "$SU" ] && [ "`id -u`" -ne 0 ]; then
 		msg '37;1' SU "Becoming super user"
 		unset SU
-		NICETMP="$NICE";
-		NICE=0
 
 		if [ -n "$DRY_RUN" ]; then
 			echo Here you would be asked for root password.
@@ -587,10 +610,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 				ARGS="$ARGS '$(echo "$1" | sed -e "s/'/'\\\\''/")'"
 				shift
 			done
-			if [ "$NICETMP" -ne 0 ]
-			then exec nice -n "$NICETMP" su -c "sh $ARGS"
-			else exec                    su -c "sh $ARGS"
-			fi
+			exec su -c "sh $ARGS"
 			exit $?
 		fi
 	fi
@@ -686,14 +706,14 @@ if [ -n "$TIDY_MODULES" ]; then
 	run -d readlink "$INSTALL_PATH/bzImage"
 	if OVER="`readlink "$INSTALL_PATH/bzImage"` 2>/dev/null"; then
 		OVER=${OVER#bzImage-}
-		OVER=`printf "%s" "$OVER" | sed -e 's/\(-#[0-9][0-9]*\)\?~*$//'`
+		OVER=`printf "%s" "$OVER" | sed -e 's/-#[0-9][0-9]*$//'`
 	fi
 
 	msg '37;1' READLNK bzImage~
 	run -d readlink "$INSTALL_PATH/bzImage~"
 	if OOVER="`readlink "$INSTALL_PATH/bzImage"` 2>/dev/null"; then
 		OOVER=${OVER#bzImage-}
-		OOVER=`printf "%s" "$OOVER" | sed -e 's/\(-#[0-9][0-9]*\)\?~*$//'`
+		OOVER=`printf "%s" "$OOVER" | sed -e 's/-#[0-9][0-9]*$//'`
 	fi
 
 	if [ -n "$OOVER" ] && [ "X$OOVER" != "X$VER" ] && \

@@ -1,3 +1,12 @@
+2006-04-19  Michal Nazarewicz  <mina86/AT/tlen.pl>
+
+	* installkernel: + `ps -p` replaced with `kill -0`
+	+ checking for another instance with `ps -C` added
+	+ '--arch=-' option added
+	+ '--nice=!<value>' option added
+	+ uses `renice` instead of `nice` now
+	+ global hook scripts now in /etc/installkernel.d/global
+
 2006-03-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
 	* installkernel: + bug with tr introduced in prev. ver. fixed
