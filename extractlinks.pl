@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 ##
 ## Extracts links from a HTML page
-## $Id: extractlinks.pl,v 1.2 2005/12/29 18:47:30 mina86 Exp $
+## $Id: extractlinks.pl,v 1.3 2006/04/25 21:18:44 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
-## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+## Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -32,68 +32,71 @@ use Getopt::Long;
 use Pod::Usage;
 
 use URI::URL;
+use URI::file;
 use LWP::UserAgent;
 use HTML::LinkExtor;
-use File::Spec;
 
-#program version
-my $VERSION='0.2';
 
-#For CVS , use following line
-#my $VERSION=sprintf("%d.%02d", q$Revision: 1.2 $ =~ /(\d+)\.(\d+)/);
+my $VERSION = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
+
 
 my $url = '';
-my $linktag = 'all';
-my @links = ();
+my @tags = ();
+my $noabs = 0;
+
 
 pod2usage() unless GetOptions(
-    'tag=s' => \$linktag,
-    'help|?' => sub { pod2usage(-verbose => 1); });
-pod2usage() if (@ARGV == 0);
+    'tag|tags|t=s' => \@tags,
+    'relative|r'   => \$noabs,
+    'help|h|?'     => sub { pod2usage(-verbose => 1); });
+@tags = split(/,/, join ',', @tags);
+
 
 my $error = 0;
+my $parser = HTML::LinkExtor->new(\&linkcallback);
+my $ua = LWP::UserAgent->new;
+my @links;
 
+
+@ARGV = ('-') unless (@ARGV);
 while (@ARGV) {
   $url = shift(@ARGV);
-  if ($url !~ /^[a-z]+:\/\//) {
-    if (File::Spec->file_name_is_absolute($url)) {
-      $url = "file://$url";
-    } else {
-      $url = 'file://' . File::Spec->rel2abs($url);
+  @links = ();
+  my $base;
+
+  if ($url eq '-') {
+    $parser->parse( sub { <STDIN> } );
+    $base = URI::file->cwd;;
+    @links = map { $_ = url($_, $base)->abs; } @links unless ($noabs);
+
+  } else {
+    $url = URI->new($url)->abs(URI::file->cwd);
+
+    my $res = $ua->request(HTTP::Request->new(GET => $url),
+                           sub { $parser->parse($_[0]) });
+
+    if (!$res->is_success) {
+      print('Parse failed: ');
+      print($res->status_line);
+      print("\n");
+      $error = 1;
+    } elsif (!$noabs) {
+      $base = $res->base;
+      @links = map { $_ = url($_, $base)->abs; } @links;
     }
   }
 
-  my $ua = LWP::UserAgent->new;
-  my $parser = HTML::LinkExtor->new(\&linkcallback);
-  my $res = $ua->request(HTTP::Request->new(GET => $url),
-                         sub { $parser->parse($_[0]) });
-
-  if (!$res->is_success) {
-    print('Parse failed: ');
-    print($res->status_line);
-    print("\n");
-    $error = 1;
-  } else {
-    my $base = $res->base;
-    @links = map { $_ = url($_, $base)->abs; } @links;
-
-    print(join("\n", @links), "\n");
-  }
+  print(join("\n", @links), "\n") if (@links);
 }
 
 exit($error);
 
+
 sub linkcallback {
-  my ($tag, %attr) = @_;
-  if ($linktag ne 'all') {
-    if ($linktag eq $tag) {
-      push(@links, values(%attr));
-    }
-  }
-  else {
-    push(@links, values(%attr));
-  }
+  my ($tag, %links) = @_;
+  push @links, values %links if (!@tags || grep { $_ eq $tag } @tags);
 }
+
 
 __END__
 
@@ -103,25 +106,45 @@ extractlinks - Extracts links from a HTML page
 
 =head1 DESCRIPTION
 
-The extractlinks utility shall search the HTML file specified by
-the url parameter and extract all contained links. The url must be
+The extractlinks utility shall search the HTML file specified by the
+url parameter and extract all contained links.  The url must be
 specified as absolute URL.
 
 =head1 SYNOPSIS
 
-extractlinks [--tag=all|img|a|link|...] url [ ... ]
+extractlinks [ -t tags ] [ -r ] [ -- ] [ url ... ]
 
 =head1 OPTIONS
 
 =over 8
 
-=item B<--tag=all|a|img|link|...>
+=item B<-h --help>
 
-Specifies type of HTML tag to search for link. The default option
-is all, so that all HTML tag links are extracted.
+Displays help screen.
+
+=item B<-r --relative>
+
+Won't make links absolute.
+
+=item B<-t --tag=>I<tags>
+
+A comma separated list of HTML tags to search for links.  This option
+may be specified several times.  If not give, links from all HTML rags
+are extracted.
+
+=item I<url>
+
+Can be a URI (eg. I<http://projektoode.org/>), a file name
+(eg. I<index.html>) or a minus sign which will cause the script to
+read HTML page from standard input.  If no URLs are given, - is
+assumed.  Beware that I<www.google.com> will cause script to open
+a B<file> of a given name and not a Google page.
+
+=back
 
 =head1 AUTHOR
 
-Berislav Kovacki <beca@sezampro.yu>
+Berislav Kovacki <beca@sezampro.yu>,
+Michal Nazarewicz <mina86@projektcode.org>
 
 =cut

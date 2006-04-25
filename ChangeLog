@@ -1,3 +1,9 @@
+2006-04-25  Michal Nazarewicz  <mina86/AT/tlen.pl>
+
+	* extractlinks.pl: + supports '-' as standard input.
+	+ supports multiple tags in --tag
+	+ supports printing relative links
+
 2006-04-19  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
 	* installkernel.8: + few typos corrected
