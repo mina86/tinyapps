@@ -1,3 +1,7 @@
+2006-04-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
+
+	* mpd-show.c: + division by 0 when unknown total length bug fixed
+
 2006-04-25  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
 	* extractlinks.pl: + supports '-' as standard input.

@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.9 2006/02/04 21:45:18 mina86 Exp $
+ * $Id: mpd-show.c,v 1.10 2006/04/27 14:15:55 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -416,7 +416,7 @@ void print_song() {
 	default                    : buf[0] = '?'; break;
 	}
 
-	int col = (0.0 + columns) * pos / len, old = buf[col];
+	int col = len ? (0.0 + columns) * pos / len : columns, old = buf[col];
 	buf[col] = buf[columns] = 0;
 	printf("%s\r\33[0m\33[K\33[37;1;44m%s\33[0;37m",
 		   background ? "\0337\33[1;1f" : "", buf);
