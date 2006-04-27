@@ -11,15 +11,14 @@ Tiny Applications Collection TODO List
   - add support for inplace modifications
 
 * extractlinks.pl
-  - allow specifing several tags using --tag option (eg. --tag=a,img)
   - an argument which makes it print relative urls where possible
+  - add manpage
 
 * FvwmTransFocus
   - Nicer config (using *FvwmTransFocus: *)
   - Set initial opacity for all windows after the module is started
   - Different config for transient, sticky, etc windows
   - Refresh windows when background changed doesn't seem to work ;/
-  - Print errors when debug enabled
 
 * installkernel
   - support other bootloaders
@@ -32,6 +31,7 @@ Tiny Applications Collection TODO List
 
 * pingrange.pl
   - allow specifing several ranges of IP adresses
+  - add manpage
 
 * rot13
   - add switch to changeing the value chars should be rotated by
@@ -46,5 +46,5 @@ Tiny Applications Collection TODO List
 * tuptime
   - make more platform independent
   - add command line options for setting location of uptime files
-  - add command line options for setting uptime nad idle
+  - add command line options for setting uptime and idle
   - add configuration file with location of uptime files (far future)
