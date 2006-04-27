@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.9 2006/03/27 18:24:12 mina86 Exp $
+## $Id: quotes.txt,v 1.10 2006/04/27 14:31:27 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -1284,6 +1284,10 @@ their C programs.
 %
  Jedyna ró¿nica miêdzy mn± a wariatem to fakt, ¿e nie jestem wariatem.
 	-- Salvador Domenec Felip Jacint Dalí Domenech (1904-1989)
+%
+ Diagnosing computer problems over IRC is like trying to diagnose brain
+cancer with a pointy stick.
+	-- Mr_Saturn
 %
  Crito, I owe a cock to Asclepius. Will you remember to pay the debt?
 	-- The last words of Socrates (470BC-399BC)
