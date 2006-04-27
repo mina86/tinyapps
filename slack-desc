@@ -9,11 +9,11 @@
 tinyapps: tinyapps (Collection of useful tiny applications)
 tinyapps:
 tinyapps: It includes add, ai-pitr.pl, ai-sid.pl, cdiff, check.sh, checkmail,
-tinyapps: cpuload.sh, cutcom, FvwmTransFocus, get_mks_vir_bases,
-tinyapps: infinite-logger (that's a joke accualy), installkernel, load,
-tinyapps: malloc, mountiso, moz2elinks.pl, mpd-state, null, quotes (set of
-tinyapps: fortunes), rot13, settitle, the-book-of-mozilla (set of fortunes),
-tinyapps: traf.sh, tuptime and xcolor2rgb.
+tinyapps: cpuload.sh, cutcom, drun, extractlinks.pl, FvwmTransFocus, genpass.sh,
+tinyapps: get_mks_vir_bases, getlyrics.pl, gz2bz, installkernel, load, malloc,
+tinyapps: mountiso, moz2elinks.pl, mp3rip, mpd-show, mpd-state, null,
+tinyapps: pingrange.pl, rot13, settitle, splitlines.sh, timer, tpwd, traf.sh,
+tinyapps: tuptime, xcolor2rgb, xgetclass and two sets of fortune cookies.
 tinyapps:
 tinyapps: Michal Nazarewicz (mina86/AT/tlen.pl) is maintainer of the package.
 tinyapps: Package's homepage is located at: <http://tinyapps.sourceforge.net>.

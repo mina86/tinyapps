@@ -1,5 +1,9 @@
 2006-04-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* slack-desc: + new applications added
+
+	* quotes.txt: + new quote from IRC
+
 	* README: + justification fixed
 
 	* Makefile: + mountiso and umountiso are installd in /usr/bin
