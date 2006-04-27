@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.16 2006/01/03 14:19:42 mina86 Exp $
+## $Id: Makefile,v 1.17 2006/04/27 14:19:29 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -11,9 +11,15 @@
 ##
 CC          ?= cc
 CXX         ?= c++
-CFLAGS      ?= -Os -pipe -DNDEBUG -DG_DISABLE_ASSERT -s -fomit-frame-pointer
-CXXFLAGS    ?= -Os -pipe -DNDEBUG -DG_DISABLE_ASSERT -s -fomit-frame-pointer
+ifndef      DEBUG
+CFLAGS      ?= -Os -pipe -DNDEBUG -DG_DISABLE_ASSERT -fomit-frame-pointer
+CXXFLAGS    ?= -Os -pipe -DNDEBUG -DG_DISABLE_ASSERT -fomit-frame-pointer
 LDFLAGS     ?= -s -z combreloc
+else
+CFLAGS      ?= -O0 -g -pipe
+CXXFLAGS    ?= -O0 -g -pipe
+LDFLAGS     ?= -s -z combreloc
+endif
 X11_INC_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
                        /opt/X11R6 /usr /usr/local/include; do [ -f		\
                        "$$DIR/include/X11/X.h" ] && echo				\
@@ -204,18 +210,18 @@ install-FvwmTransFocus: FvwmTransFocus
 install-ai: install-ai-pitr.pl install-ai-sid.pl
 
 install-ai-pitr.pl: ai-pitr.pl
-	${call install,root,root,0755,/usr/games,$<}
+	${call install,root,root,0755,/usr/local/games,$<}
 
 install-ai-sid.pl: ai-sid.pl
-	${call install,root,root,0755,/usr/games,$<}
+	${call install,root,root,0755,/usr/local/games,$<}
 
 install-installkernel: installkernel installkernel.8.gz
 	${call install,root,bin,0755,/usr/local/bin,$<}
 	${call install,root,root,0644,/usr/local/man/man8,${addprefix $<,.8.gz}}
 
 install-mountiso: mountiso umountiso
-	${call install,root,bin,4755,/bin/,mountiso}
-	${call install,root,bin,4755,/bin/,umountiso}
+	${call install,root,bin,4755,/usr/bin/,mountiso}
+	${call install,root,bin,4755,/usr/bin/,umountiso}
 
 install-mpd-state: mpd-state
 	${call install,root,bin,0755,/usr/local/bin,$<}
@@ -315,7 +321,7 @@ distclean: clean
 tinyapps.tgz: package
 
 package: DEST_DIR = ${PWD}/package
-package: install
+package: all install
 ifneq (${EUID}, 0)
 	@${warning It is best to create package as root.}
 endif
@@ -335,18 +341,19 @@ endif
 
 	@echo '  GEN    install/doinst.sh'
 	${Q}mkdir -p -- '${DEST_DIR}/install'
-	${Q}echo 'cd usr/local/bin; for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $FILE; done' >'${DEST_DIR}/install/doinst.sh'
-	${Q}echo 'cd ../../../bin; ln -s mountiso umountiso; chown root:root mountiso; chmod u+s mountiso; cd ..' >>'${DEST_DIR}/install/doinst.sh'
+	${Q}echo 'cd usr/local/bin' >'${DEST_DIR}/install/doinst.sh'
+	${Q}echo 'for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $FILE; done' >>'${DEST_DIR}/install/doinst.sh'
+	${Q}echo 'ln -fs mountiso umountiso; chown root:root mountiso; chmod u+s mountiso' >>'${DEST_DIR}/install/doinst.sh'
 	${Q}chmod 755 -- '${DEST_DIR}/install/doinst.sh'
 	@echo '  CP     slack-desc'
 	${Q}cp -- slack-desc '${DEST_DIR}/install'
 
 	@echo '  TAR    tinyapps.tar'
-	${Q}${RT}tar c -C '${DEST_DIR}' --format=v7 install bin usr >tinyapps.tar
-	${Q}${NR}tar c -C '${DEST_DIR}' --owner=root --group=root --format=v7 install bin usr >tinyapps.tar
-	@echo '  GZIP   tinyapps-{$RELEASE}.tgz'
+	${Q}${RT}tar c -C '${DEST_DIR}' --format=v7 install usr >tinyapps.tar
+	${Q}${NR}tar c -C '${DEST_DIR}' --owner=root --group=root --format=v7 install usr >tinyapps.tar
+	@echo '  GZIP   tinyapps-${RELEASE}.tgz'
 	${Q}gzip -9 <'tinyapps.tar' >'tinyapps-${RELEASE}.tgz'
-	${Q}mv -f -- tinyapps.tar
+	${Q}rm -f -- tinyapps.tar
 
 	@echo '  RM     package'
 	${Q}rm -rf -- '${DEST_DIR}'
