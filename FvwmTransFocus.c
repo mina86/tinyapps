@@ -1,6 +1,6 @@
 /*
  * FVWM module changing opacity depending on focus.
- * $Id: FvwmTransFocus.c,v 1.3 2005/11/20 20:31:45 mina86 Exp $
+ * $Id: FvwmTransFocus.c,v 1.4 2006/04/27 15:33:44 mina86 Exp $
  * Copyright 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  * Some code from transset by Matthew Hawn
  *
@@ -23,7 +23,7 @@
  * Compilation without debug messages:
  *     <CC> -O2 $CFLAGS -I<X11_INC_DIR> -L<X11_LIB_DIR> -lX11 \
  *         -o FvwmTransFocus FvwmTransFocus.c
- * Compilation withh debug messages:
+ * Compilation with debug messages:
  *     <CC> -O2 $CFLAGS -I<X11_INC_DIR> -L<X11_LIB_DIR> -lX11 -DDEBUG \
  *         -o FvwmTransFocus FvwmTransFocus.c
  * Where:
@@ -60,9 +60,9 @@
 
 /********** Debug **********/
 #ifdef DEBUG
-#define debug(format, ...) fprintf(stderr, "%s: " format "\n", MyName, ##__VA_ARGS__)
+#define debug(fmt, ...) fprintf(stderr, "%s: " fmt "\n", MyName, ##__VA_ARGS__)
 #else
-#define debug(format, ...)
+#define debug(fmt, ...)
 #endif
 
 #define MIN(x, y)  ((x),(y)?(x):(y))
@@ -288,7 +288,7 @@ static int ignoreWindow(unsigned long int window) {
 		|| !strncasecmp(class.res_class, "tvtime", 5);
 
 	/* Return */
-	debug("ClassHint: '%s'; '%s'"%s, class.res_name, class.res_class,
+	debug("ClassHint: '%s'; '%s'%s", class.res_name, class.res_class,
 		  num ? " (skipping)" : "");
 	XFree(class.res_name);
 	XFree(class.res_class);
@@ -299,8 +299,8 @@ static int ignoreWindow(unsigned long int window) {
 
 /********** Error handler ********/
 int ErrorHandler(Display *display, XErrorEvent *error) {
-	fprintf(stderr, "%s: X Error: #%d; Request: %d, %d; Id: 0x%lx\n", MyName,
-			error->error_code, error->request_code, error->minor_code,
-			error->resourceid);  /* error->resourceid may be uninitialised */
+	debug("X Error: #%d; Request: %d, %d; Id: 0x%lx\n",
+		  error->error_code, error->request_code, error->minor_code,
+		  error->resourceid);  /* error->resourceid may be uninitialised */
 	return 0;
 }
