@@ -1,3 +1,5 @@
+------- New Release ----------------------------------------------------------
+
 2006-04-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
 	* FvwmTransFocus: + error messages are printed only when debug's on
