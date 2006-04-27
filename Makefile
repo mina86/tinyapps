@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.17 2006/04/27 14:19:29 mina86 Exp $
+## $Id: Makefile,v 1.18 2006/04/27 15:13:25 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -204,8 +204,11 @@ install-%: %
 	${call install,root,bin,0755,/usr/local/bin,$<}
 
 install-FvwmTransFocus: FvwmTransFocus
-	${warning FvwmTransFocus installer is not yet ready.}
-	${warning You have to manualy copy FvwmTransFocus to the directory with FVWM modules.}
+ifeq ("${shell which fvwm-config >/dev/null 2>&1 && echo yes}", "yes")
+	${call install,root,bin,0755,${shell fvwm-config -m},$<}
+else
+	${warning fvwm-config not found. Not installing FvwmTransFocus.}
+endif
 
 install-ai: install-ai-pitr.pl install-ai-sid.pl
 
@@ -310,6 +313,8 @@ clean:
 	${Q}rm -f -- *.o *~ 2>/dev/null
 	@echo '  CLEAN  package release'
 	${Q}rm -rf -- package tinyapps*/
+	@echo '  CLEAN  empty files and directories'
+	${Q}find -empty -exec rm -rf {} \;
 
 distclean: clean
 

@@ -1,5 +1,7 @@
 2006-04-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* Makefile: + FvwmTransFocus installer added
+
 	* slack-desc: + new applications added
 
 	* quotes.txt: + new quote from IRC
