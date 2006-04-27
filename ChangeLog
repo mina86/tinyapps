@@ -1,5 +1,7 @@
 2006-04-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* README: + justification fixed
+
 	* Makefile: + mountiso and umountiso are installd in /usr/bin
 	+ games are installed in /usr/local/games
 	+ DEBUG added

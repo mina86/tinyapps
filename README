@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/01/03 14:19:42 $
+                     $Date: 2006/04/27 14:21:15 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which  may be usefull  in everyday life.   There are
@@ -43,9 +43,9 @@ At the moment the collection includes:
  * cutcom - removes C++ comments  from stdin and outputs the result to
    stdout;
 
- * drun - it's really 'null' with aditional ability to daemonize
-   (hence the name).  Helpful when running X applications from a
-   terminal.
+ * drun  - it's  really  'null' with  aditional  ability to  daemonize
+   (hence  the  name).   Helpful  when  running  X  applications  from
+   a terminal.
 
  * extractlinks.pl  - extracts links  from a  HTML page.   Useful, for
    example, when downloading an Internet gallery;
@@ -63,7 +63,7 @@ At the moment the collection includes:
  * getlyrics.pl - downloads  lyrics of a given song  from the Internet
    (http://www.lyrc.com.ar/ accauly);
 
- * gz2bz - a shell script using gzip and bzip2 to convert gzip
+ * gz2bz  -  a shell  script  using gzip  and  bzip2  to convert  gzip
    compressed files to bzip2 compressed files.
 
  * infinite-logger - loggs every logged message including the messages
@@ -93,8 +93,8 @@ At the moment the collection includes:
  * moz2elinks.pl  -  converts  bookmarks  from  Mozilla's  to  ELinks'
    (http://elinks.or.cz) format;
 
- * mp3rip - a command line utility for ripping tracks from CD Audio.
-   It uses cdparanoia to rip the tracks and lame to encode them to
+ * mp3rip - a  command line utility for ripping  tracks from CD Audio.
+   It uses  cdparanoia to rip  the tracks and  lame to encode  them to
    MP3s.
 
  * mpd-show - tool  ment to display song currently  played in MPD.  It
@@ -129,10 +129,10 @@ At the moment the collection includes:
  * settitle -  Sets the title of  xterm, rxvt, Eterm,  aterm and other
    xterm-compatible terminals;
 
- * splitlines.sh - Splits input, line-by-line, into several files so
+ * splitlines.sh -  Splits input, line-by-line, into  several files so
    that the 1st line goes to the 1st file, the 2nd to the 2nd file and
    so on till it wraps and n+1st line goes to 1st file.  I use it when
-   I want to download a lot of small files using a few instances of
+   I want  to download a lot of  small files using a  few instances of
    wget - it's enought to split file with urls to 2 or 3 files and run
    2/3 instances of wget in the background.
 
@@ -157,11 +157,10 @@ At the moment the collection includes:
  * xcolor2rgb  -  reads from  argument  list  (or  from STDIN,  if  no
    arguments are given) and prints apropriate RGB value to STDOUT.
 
- * xgetclass - prints window's application name and class as returned
-   by XGetClassHint.  May be used in some kind of shell scripts but
-   honestly I just wrote it to test XGetClassHint function and since I
-   did it I decided to include it in tinyapps :)
+ * xgetclass - prints window's  application name and class as returned
+   by XGetClassHint.   May be used in  some kind of  shell scripts but
+   honestly I just  wrote it to test XGetClassHint  function and since
+   I did it I decided to include it in tinyapps :)
 
 More  documentation about  each  utility is  usually  provided in  the
-source  code  or  utility's   README  file  which  is  usually  called
-README.<utility-name>.
+source code.
