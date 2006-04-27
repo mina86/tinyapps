@@ -1,10 +1,11 @@
 a.out
+*.gz *.bz2 *.tar *.tgz
 FvwmTransFocus
 cdiff
 core
 cutcom
+drun
 infinite-logger
-installkernel.8.gz
 installkernel-log*
 load
 malloc
@@ -15,10 +16,6 @@ null
 quotes
 rot13
 timer
-tinyapps*.tar
-tinyapps*.tar.gz
-tinyapps*.tar.bz2
-tinyapps*.tgz
 the-book-of-mozilla
 tuptime
 umountiso
