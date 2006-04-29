@@ -1,5 +1,8 @@
 2006-04-29  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* ivona.sh: New file
+	* Makefile, RELEASE, slack-desc: + ivona.sh added
+
 	* getlyrics.pl: + --mpd and --pipe options added
 
 ------- New Release ----------------------------------------------------------

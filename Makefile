@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.19 2006/04/27 15:36:41 mina86 Exp $
+## $Id: Makefile,v 1.20 2006/04/29 12:29:12 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -94,12 +94,12 @@ install: install-FvwmTransFocus install-add install-ai install-cdiff	\
          install-cpuload.sh install-cutcom install-drun					\
          install-extractlinks.pl install-fortune install-genpass.sh		\
          install-get_mks_vir_bases install-getlyrics.pl install-gz2bz	\
-         install-installkernel install-load install-malloc				\
-         install-moz2elinks.pl install-mountiso install-mp3rip			\
-         install-mpd-state install-null install-pingrange.pl			\
-         install-rot13 install-settitle install-splitlines.sh			\
-         install-timer install-tpwd install-traf.sh install-xcolor2rgb	\
-         install-xgetclass
+         install-installkernel install-ivona.sh install-load			\
+         install-malloc install-moz2elinks.pl install-mountiso			\
+         install-mp3rip install-mpd-state install-null					\
+         install-pingrange.pl install-rot13 install-settitle			\
+         install-splitlines.sh install-timer install-tpwd				\
+         install-traf.sh install-xcolor2rgb install-xgetclass
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
@@ -107,7 +107,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-checkmail uninstall-cpuload.sh uninstall-cutcom	\
            uninstall-drun uninstall-extractlinks.pl uninstall-fortune	\
            uninstall-genpass.sh uninstall-get_mks_vir_bases				\
-           uninstall-getlyrics.pl uninstall-gz2bz						\
+           uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh	\
            uninstall-installkernel uninstall-load uninstall-malloc		\
            uninstall-moz2elinks.pl uninstall-mountiso uninstall-mp3rip	\
            uninstall-mpd-state uninstall-null uninstall-pingrange.pl	\

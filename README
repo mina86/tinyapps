@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/04/27 14:21:15 $
+                     $Date: 2006/04/29 12:29:12 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which  may be usefull  in everyday life.   There are
@@ -74,6 +74,12 @@ At the moment the collection includes:
    automatic.  The first versions required bash to run but the now, it
    is believed  to run on any  POSIX compatible platform so  it can be
    run even on small embeded systems;
+
+ * ivona.sh - uses IVONA speach synthetiser to say given text.  Script
+   uses  demo  available  at  http://www.ivo.pl/  so  it  requires  an
+   Interent conection to work unless  it has all required MP3s cached.
+   IVONA is  a Polish synthetiser so  the script is  rather useful for
+   Poles though it may be used as a base for some English synthetiser.
 
  * load -  shows CPU  load, memory and  net traffic  statistics.  It's
    mostly  ment for  people who  are  curious how  to callculate  such
