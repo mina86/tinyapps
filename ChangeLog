@@ -1,5 +1,11 @@
 2006-04-29  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* ivona.sh: + added -R switch
+	+ added configuration file
+	+ ivonka -> ivona
+	+ added configurable sed script
+	+ exec added
+
 	* ivona.sh: New file
 	* Makefile, RELEASE, slack-desc: + ivona.sh added
 

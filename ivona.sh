@@ -1,8 +1,8 @@
 #!/bin/sh
 
 ##
-## ivonka.sh - synth. human speach using Ivona[tm]
-## $Id: ivona.sh,v 1.1 2006/04/29 12:29:12 mina86 Exp $
+## ivona.sh - synth. human speach using Ivona[tm]
+## $Id: ivona.sh,v 1.2 2006/04/29 19:51:35 mina86 Exp $
 ## Copyright 2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
 ## Based on script by Damian "Rush" Kaczmarek - mail: rush@vox.one.pl
 ##
@@ -36,7 +36,9 @@ CACHE=y
 GENCACHE=y
 
 
-HELP="usage: ${0##*/} <options> [ -- ] <text>
+HELP="usage: ${0##*/} [ -R ] <options> [ -- ] <text>
+ -R                   ignores files found in ~/.ivona/
+
 <options> are:
  -h --help            shows this help screen
  -p --player=player   sets player (%s indicates file name) [$PLAYER]
@@ -63,9 +65,24 @@ script caches downloaded files so you can run script as '${0##*/} -t
 \"\$USER\" zalogowa³ siê'.  On the other hand, it won't sound as good
 as one would want it to.
 
-Script saves cache files in ~/.ivonka/cache or /var/cache/ivonka/ if
+Script saves cache files in ~/.ivona/cache or /var/cache/ivona/ if
 run as root.
 "
+
+
+##
+## Load config
+##
+ROOTMODE=
+if [ X"$1" = X-R ]; then
+	shift
+	ROOTMODE=y
+fi
+if [ -f /etc/ivona/config ]; then . /etc/ivona/config; fi
+if [ -z "$ROOTMODE" ] && [ -f ~/.ivona/config ]; then
+	. ~/ivona/config
+fi
+
 
 
 ##
@@ -175,13 +192,22 @@ get () {
 	##
 	## Format text
 	##
-	__T="$1"
-	__T="$(printf '%s' "$__T" | \
-		sed -e 's/[[:space:]]*[-,;][[:space:]]*/, /g' \
+	__T="$(printf %s "$1" |
+		tr 'QWERTYUIOPASDFGHJKLZXCVBNM¡ÆÊ£ÑÓ¦¬¯;-' \
+		   'qwertyuiopasdfghjklzxcvbnm±æê³ñó¶¼¿,,')"
+	__T="$(printf %s "$__T" | \
+		sed -e 's/[[:space:]]*,[[:space:]]*/, /g' \
 		    -e 's/[[:space:]][[:space:]]*\([?!.]\)/\1/g' \
 		    -e 's/[[:space:]][[:space:]]*/ /g' \
 		    -e 's/^[[:space:]][[:space:]]*//' \
 		    -e 's/[[:space:]][[:space:]]*$//')"
+	if [ -f /etc/ivona/sed ]; then
+		__T="$(printf %s "$__T" | sed -f /etc/ivona/sed)"
+	fi
+	if [ -z "$ROOTMODE" ] && [ -f ~/.ivona/sed ]; then
+		__T="$(printf %s "$__T" | sed -f ~/.ivona/sed)"
+	fi
+
 
 	if [ ${#__T} -gt 100 ]; then
 		err -e 'Text is too long, script does not yet support splitting'
@@ -194,10 +220,11 @@ get () {
 	## Cached?
 	##
 	if [ -n "$CACHE" ]; then
-		if [ -f "$HOME/.ivonka/cache/jacek.$QUALITY.$SPEED.$__T.mp3" ]; then
-			__F="$HOME/.ivonka/cache/jacek.$QUALITY.$SPEED.$__T.mp3"
-		elif [ -f "/var/cache/ivonka/jacek.$QUALITY.$SPEED.$__T.mp3" ]; then
-			__F="/var/cache/ivonka/jacek.$QUALITY.$SPEED.$__T.mp3"
+		if [ -z "$ROOTMODE" ] && \
+			[ -f "$HOME/.ivona/cache/jacek.$QUALITY.$SPEED.$__T.mp3" ]; then
+			__F="$HOME/.ivona/cache/jacek.$QUALITY.$SPEED.$__T.mp3"
+		elif [ -f "/var/cache/ivona/jacek.$QUALITY.$SPEED.$__T.mp3" ]; then
+			__F="/var/cache/ivona/jacek.$QUALITY.$SPEED.$__T.mp3"
 		fi
 	fi
 	if [ -n "$__F" ]; then
@@ -237,11 +264,11 @@ get () {
 	##
 	if [ -n "$GENCACHE" ]; then
 		if [ $(id -u) -eq 0 ]; then
-			mkdir -p /var/cache/ivonka
-			__F="/var/cache/ivonka/jacek.$QUALITY.$SPEED.$__T.mp3"
-		else
-			mkdir -p "$HOME/.ivonka/cache"
-			__F="$HOME/.ivonka/cache/jacek.$QUALITY.$SPEED.$__T.mp3"
+			mkdir -p /var/cache/ivona
+			__F="/var/cache/ivona/jacek.$QUALITY.$SPEED.$__T.mp3"
+		elif [ -z "$ROOTMODE" ]; then
+			mkdir -p "$HOME/.ivona/cache"
+			__F="$HOME/.ivona/cache/jacek.$QUALITY.$SPEED.$__T.mp3"
 		fi
 
 		mv -f -- "$2.part" "$__F"
@@ -263,7 +290,7 @@ get () {
 ##
 ## Generate temporary file
 ##
-TMPFILE=ivonka.$UID.$$
+TMPFILE=ivona.$UID.$$
 if [ -n "$TMPDIR" ] && [ -d "$TMPDIR" ] && [ -w "$TMPDIR" ]; then
 	TMPFILE="$TMPDIR/$TMPFILE";
 elif [ -d /tmp ] && [ -w /tmp ]; then
@@ -332,7 +359,7 @@ if [ -z "$PLAYER" ] || [ X"$PLAYER" = Xauto ]; then
 	else
 		err -e "don't know how to play music"
 	fi
-fi%
+fi
 
 
 ##
@@ -348,8 +375,9 @@ fi
 if [ -z "$PLAY" ]; then exit 0; fi
 
 if ! expr X"$PLAYER" : '.*[^%]\(%%\)*%s' >/dev/null 2>&1; then
-	$PLAYER "$PLAYFILE"
+	exec $PLAYER "$PLAYFILE"
+	exit $?
 fi
 
 PLAYFILE="'$(printf %s "$PLAYFILE" | sed -e "s/'/'\\\\''/")'"
-eval $(printf "$PLAYER" "$PLAYFILE")
+exec eval $(printf "$PLAYER" "$PLAYFILE")
