@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/04/29 12:29:12 $
+                     $Date: 2006/04/29 23:54:44 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which  may be usefull  in everyday life.   There are
@@ -159,6 +159,10 @@ At the moment the collection includes:
  * tuptime  - my  personal favourite  :)  Displays total  (sum of  all
    uptimes)  and biggest  uptime.   Might be  used  as replacement  to
    standard uptime utility;
+
+ * virtman.sh -  adds virtual hosts to Apache  configuration for given
+   user.  May be added to  some kind of adduser script for automagical
+   addition of virtual hosts.
 
  * xcolor2rgb  -  reads from  argument  list  (or  from STDIN,  if  no
    arguments are given) and prints apropriate RGB value to STDOUT.

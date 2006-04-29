@@ -13,7 +13,7 @@ tinyapps: cpuload.sh, cutcom, drun, extractlinks.pl, FvwmTransFocus, genpass.sh,
 tinyapps: get_mks_vir_bases, getlyrics.pl, gz2bz, installkernel, ivona.sh, load,
 tinyapps: malloc, mountiso, moz2elinks.pl, mp3rip, mpd-show, mpd-state, null,
 tinyapps: pingrange.pl, rot13, settitle, splitlines.sh, timer, tpwd, traf.sh,
-tinyapps: tuptime, xcolor2rgb, xgetclass and two sets of fortune cookies.
+tinyapps: tuptime, virtman.sh, xcolor2rgb, xgetclass and 2 sets of fortunes.
 tinyapps:
 tinyapps: Package's maintainer: Michal Nazarewicz (mina86/AT/projektcode.org)
 tinyapps: Package's homepage: <http://tinyapps.sourceforge.net>
