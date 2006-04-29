@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.4 2006/04/29 12:27:50 mina86 Exp $
+## $Id: getlyrics.pl,v 1.5 2006/04/29 23:55:09 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
@@ -38,6 +38,7 @@ my $artist;
 my $songname;
 my $mpd = undef;
 my $pipe = undef;
+my @foo = ();
 
 
 ## Parse args
@@ -70,8 +71,8 @@ if (defined($mpd)) {
 	}
 
 	$songname = $mpd->get_title();
-	$songname ~= s#^.*/##;
-	my @foo = split(/\s-\s/, $songname);
+	$songname =~ s#^.*/##;
+	@foo = split(/\s-\s/, $songname);
 	if (@foo == 2) {
 		print "MPD plays: $songname\n";
 		$artist   = $foo[0];
@@ -88,7 +89,7 @@ if (defined($mpd)) {
 } elsif (defined($pipe)) {
 	$songname = `$pipe 2>/dev/null`;
 	chomp $songname;
-	my @foo = split(/\s-\s/, $songname);
+	@foo = split(/\s-\s/, $songname);
 	if (@foo == 2) {
 		print "Pipe returned: $songname\n";
 		$artist   = $foo[0];
@@ -102,7 +103,7 @@ if (defined($mpd)) {
 
 ## Parse args
 if (!$artist && !$songname && @ARGV) {
-	my @foo = split(/\s-\s/, "@ARGV");
+	@foo = split(/\s-\s/, "@ARGV");
 	if (@foo == 2) {
 		$artist   = $foo[0];
 		$songname = $foo[1];

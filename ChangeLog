@@ -1,5 +1,7 @@
 2006-04-30  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* getlyrics.pl: + bug fixed
+
 	* virtman.sh: New file
 	* Makefile, README, slack-desc: + virtman.sh added
 
