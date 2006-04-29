@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.3 2005/12/29 18:47:15 mina86 Exp $
+## $Id: getlyrics.pl,v 1.4 2006/04/29 12:27:50 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
@@ -32,26 +32,87 @@ use Pod::Usage;
 use Getopt::Long;
 use LWP::UserAgent;
 
-my $VERSION='0.2';
+my $VERSION = '0.3';
 
 my $artist;
 my $songname;
+my $mpd = undef;
+my $pipe = undef;
 
+
+## Parse args
 pod2usage() unless GetOptions(
-    'artist=s' => \$artist,
-    'song=s' => \$songname,
-    'help|?' => sub { pod2usage(-verbose => 1); });
+	'a|artist=s' => \$artist,
+	's|song=s'   => \$songname,
+	'm|mpd:s'    => \$mpd,
+	'p|pipe=s'   => \$pipe,
+	'help|h|?'   => sub { pod2usage(-verbose => 1); });
 
-if (!$artist && !$songname && @ARGV) {
-  my @foo = split(/\s-\s/, "@ARGV");
-  if (@foo == 2) {
-    $artist   = $foo[0];
-    $songname = $foo[1];
-  }
+
+## Read title from MPD
+if (defined($mpd) && $mpd eq 'mpc') {
+	undef $mpd;
+	$pipe = 'mpc --format \'%artist% - %title%\' | head -1';
 }
 
+if (defined($mpd)) {
+	my $port;
+	if ($mpd =~ m/(.*)(?::(\d+))/) {
+		$mpd = $1;
+		$port = $2;
+	}
+
+	use Audio::MPD;
+	$mpd = new Audio::MPD($mpd, $port);
+	if (!$mpd) {
+		print "Could not connect to MPD\n";
+		exit 1;
+	}
+
+	$songname = $mpd->get_title();
+	$songname ~= s#^.*/##;
+	my @foo = split(/\s-\s/, $songname);
+	if (@foo == 2) {
+		print "MPD plays: $songname\n";
+		$artist   = $foo[0];
+		$songname = $foo[1];
+	} else {
+		print "MPD plays: $songname; could not parse\n";
+		exit 1;
+	}
+
+	$mpd->close_connection();
+
+
+## Read title from pipe
+} elsif (defined($pipe)) {
+	$songname = `$pipe 2>/dev/null`;
+	chomp $songname;
+	my @foo = split(/\s-\s/, $songname);
+	if (@foo == 2) {
+		print "Pipe returned: $songname\n";
+		$artist   = $foo[0];
+		$songname = $foo[1];
+	} else {
+		print "Pipe returned: $songname; could not parse\n";
+		exit 1;
+	}
+}
+
+
+## Parse args
+if (!$artist && !$songname && @ARGV) {
+	my @foo = split(/\s-\s/, "@ARGV");
+	if (@foo == 2) {
+		$artist   = $foo[0];
+		$songname = $foo[1];
+	}
+}
+
+## Nothing given
 pod2usage() if (!$artist || !$songname);
 
+## Get and display
 my $lyrics = getlyricspage($artist, $songname);
 if ($lyrics) {
   # If page contains forms, than lyrics is not found...
@@ -61,6 +122,8 @@ if ($lyrics) {
   print html2txt($lyrics);
 };
 
+
+## Download page
 sub getlyricspage {
   my ($artist, $songname) = @_;
   my $lyricspage = 'http://www.lyrc.com.ar/en/tema1en.php';
@@ -79,6 +142,8 @@ sub getlyricspage {
   }
 }
 
+
+## Convert HTML to text
 sub html2txt {
   my $html = shift;
 
@@ -99,6 +164,7 @@ sub html2txt {
   return "$html";
 }
 
+
 __END__
 
 =head1 NAME
@@ -113,33 +179,47 @@ to search for lyrics.
 
 =head1 SYNOPSIS
 
-getlyrics --artist="Artist" --song="Song Name"
-
-getlyrics Artist - Song Name
+getlyrics [ --artist="Artist" --song="Song Name" |  Artist - Song Name | --mpd=pass@host:port | --mpd=mpc | --pipe=command ]
 
 =head1 OPTIONS
 
 =over 8
 
-=item B<--artist="Artist">
+=item B<-a --artist="Artist">
 
 Specifies artist for the searched lyrics.
 
-=item B<--song="Song Name">
+=item B<-s --song="Song Name">
 
 Specifies song name for the searched lyrics.
 
 =item B<Artist - Song Name>
 
 Specifies both, artist and song name for the searched lyrics.  May be
-given as any number of arguments.
+given as any number of arguments so no quoting is required.
 
-=item B<--help>
+=item B<-m --mpd=pass@host:port>
 
-Display this help and exit.
+Instructs the script to get the song artist and title from MPD.  You
+may specify a hostname and port, if none is specified then the
+enviroment variables B<MPD_HOST> and B<MPD_PORT> are checked.  Finally
+if all else fails the defaults B<localhost> and B<6600> are used.  An
+optional password can be specified by prepending it to the hostname,
+seperated an B<@> character.
+
+=item B<-m --mpd=mpc>
+
+Synonym of B<--pipe="mpc --format '%artist% - %title%' | head -1">
+
+=item B<-p --pipe=cmd>
+
+Script will run I<cmd> and take it's output as artist and song name.
+
+=back
 
 =head1 AUTHOR
 
-Berislav Kovacki <beca@sezampro.yu>
+Berislav Kovacki <beca@sezampro.yu>,
+Michal Nazarewicz <mina86@projektcode.org>
 
 =cut

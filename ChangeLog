@@ -1,3 +1,7 @@
+2006-04-29  Michal Nazarewicz  <mina86/AT/tlen.pl>
+
+	* getlyrics.pl: + --mpd and --pipe options added
+
 ------- New Release ----------------------------------------------------------
 
 2006-04-27  Michal Nazarewicz  <mina86/AT/tlen.pl>
