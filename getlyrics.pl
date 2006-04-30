@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.6 2006/04/30 18:45:15 mina86 Exp $
+## $Id: getlyrics.pl,v 1.7 2006/04/30 20:32:18 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
@@ -147,6 +147,7 @@ $foo = LWP::UserAgent->new()->post(
 	]);
 exit 1 unless ($foo->is_success);
 $foo = $foo->content;
+die("No lyrics for ${foo[0]} - ${foo[1]} found\n") if ($foo =~ /<form/i);
 
 
 ##
