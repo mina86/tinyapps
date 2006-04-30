@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.5 2006/04/29 23:55:09 mina86 Exp $
+## $Id: getlyrics.pl,v 1.6 2006/04/30 18:45:15 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
@@ -29,141 +29,145 @@ use warnings;
 
 use English;
 use Pod::Usage;
-use Getopt::Long;
 use LWP::UserAgent;
 
 my $VERSION = '0.3';
 
-my $artist;
-my $songname;
-my $mpd = undef;
-my $pipe = undef;
-my @foo = ();
 
-
+##
 ## Parse args
-pod2usage() unless GetOptions(
-	'a|artist=s' => \$artist,
-	's|song=s'   => \$songname,
-	'm|mpd:s'    => \$mpd,
-	'p|pipe=s'   => \$pipe,
-	'help|h|?'   => sub { pod2usage(-verbose => 1); });
-
-
-## Read title from MPD
-if (defined($mpd) && $mpd eq 'mpc') {
-	undef $mpd;
-	$pipe = 'mpc --format \'%artist% - %title%\' | head -1';
+##
+if (!@ARGV) {
+	pod2usage( -exitval => 1, -verbose => 0, -output => \*STDERR );
+} elsif ($ARGV[0] eq '--help' || $ARGV[0] eq '-h' || $ARGV[0] eq '-?') {
+	pod2usage( -exitval => 0, -verbose => 1 );
+} elsif ($ARGV[0] eq '--man') {
+	pod2usage( -exitval => 0, -verbose => 2 );
 }
 
-if (defined($mpd)) {
-	my $port;
-	if ($mpd =~ m/(.*)(?::(\d+))/) {
-		$mpd = $1;
+
+my ($src, $arg, $foo, @foo) = ('args');;
+if ($ARGV[0] =~ /^--(.*)$/) {
+	$src = $1;
+	shift;
+}
+$arg = "@ARGV";
+
+
+##
+## Source: mpc
+##
+if ($src eq 'mpc') {
+	$src = 'pipe';
+	$arg = 'mpc --format \'%artist% - %title%\' | head -1';
+} elsif ($src eq 'file') {
+	$src = 'pipe';
+	$arg = "cat $arg";
+} elsif ($src eq 'read') {
+	$src = 'pipe';
+	$arg = "cat";
+}
+
+
+##
+## Source: mpd
+##
+if ($src eq 'mpd') {
+	my $port = undef;
+	if ($arg =~ m/(.*)(?::(\d+))/) {
+		$arg = $1;
 		$port = $2;
 	}
 
 	use Audio::MPD;
-	$mpd = new Audio::MPD($mpd, $port);
-	if (!$mpd) {
-		print "Could not connect to MPD\n";
-		exit 1;
+	$arg = new Audio::MPD($arg, $port);
+	if (!$arg) {
+		die "Could not connect to MPD.\n";
 	}
 
-	$songname = $mpd->get_title();
-	$songname =~ s#^.*/##;
-	@foo = split(/\s-\s/, $songname);
-	if (@foo == 2) {
-		print "MPD plays: $songname\n";
-		$artist   = $foo[0];
-		$songname = $foo[1];
+	$foo = $arg->get_title();
+	$foo =~ s#^.*/##;
+	$arg->close_connection();
+
+
+##
+## Source: pipe
+##
+} elsif ($src eq 'pipe') {
+	$foo = `$arg 2>/dev/null`;
+	chomp $foo;
+
+
+##
+## Source: args
+##
+} elsif ($src eq 'args' || $src eq '') {
+	if (!@ARGV) {
+		die "Artist nad song name required\n";
+	} elsif (@ARGV == 2) {
+		@foo = @ARGV;
+	} elsif (@ARGV == 3 && $ARGV[1] =~ /\s*-\s*/) {
+		@foo = ($ARGV[0], $ARGV[1]);
 	} else {
-		print "MPD plays: $songname; could not parse\n";
-		exit 1;
+		$foo = "@ARGV";
 	}
 
-	$mpd->close_connection();
+
+##
+## Unknown source
+##
+} else {
+	die "Invalid argument: --$src\n";
+	exit 1;
+}
 
 
-## Read title from pipe
-} elsif (defined($pipe)) {
-	$songname = `$pipe 2>/dev/null`;
-	chomp $songname;
-	@foo = split(/\s-\s/, $songname);
-	if (@foo == 2) {
-		print "Pipe returned: $songname\n";
-		$artist   = $foo[0];
-		$songname = $foo[1];
+##
+## Parse $foo and @foo
+##
+if (defined($foo)) {
+	$_ = $foo;
+	s/^[\s-]+|[\s-]*$//g;
+	s/\s+/ /g;
+	if (m/^(.+?) - (.+)$/ || m/^(\S+) (.+)$/ || m/^(.+?)-([^ ].*)$/) {
+		@foo = ($1, $2);
 	} else {
-		print "Pipe returned: $songname; could not parse\n";
-		exit 1;
+		die "Cannot parse: $foo\n";
 	}
 }
 
 
-## Parse args
-if (!$artist && !$songname && @ARGV) {
-	@foo = split(/\s-\s/, "@ARGV");
-	if (@foo == 2) {
-		$artist   = $foo[0];
-		$songname = $foo[1];
-	}
-}
-
-## Nothing given
-pod2usage() if (!$artist || !$songname);
-
-## Get and display
-my $lyrics = getlyricspage($artist, $songname);
-if ($lyrics) {
-  # If page contains forms, than lyrics is not found...
-  if ($lyrics =~ /.*<form.*/ig) {
-    die("Lyrics not found!\n");
-  }
-  print html2txt($lyrics);
-};
-
-
+##
 ## Download page
-sub getlyricspage {
-  my ($artist, $songname) = @_;
-  my $lyricspage = 'http://www.lyrc.com.ar/en/tema1en.php';
-
-  my $ua = LWP::UserAgent->new();
-
-  my $response = $ua->post($lyricspage, [
-                        artist => $artist,
-                        songname => $songname]);
-
-  if ($response->is_success) {
-    return $response->content;
-  }
-  else {
-    return undef;
-  }
-}
+##
+$foo = LWP::UserAgent->new()->post(
+	'http://www.lyrc.com.ar/en/tema1en.php', [
+		artist   => $foo[0],
+		songname => $foo[1]
+	]);
+exit 1 unless ($foo->is_success);
+$foo = $foo->content;
 
 
-## Convert HTML to text
-sub html2txt {
-  my $html = shift;
+##
+## HTML to text
+##
+$foo =~ s/<head>.*<\/head>/ /igs;  # Remove HTML Heading
+$foo =~ s/<scrip.*?script>/ /igs;  # Remove Script blocks
+$foo =~ s/<a.*?\/a>/ /igs;         # Remove Links
+$foo =~ s/&nbsp;/ /g;              # Replace &nbsp with spaces
+$foo =~ s/\s+/ /g;                 # Squeeze blanks
+$foo =~ s/<p[^>]*>/\n\n/gi;        # Replace paragraph tags with empty line
+# Replace some formating html tags witConverth new line marks
+$foo =~ s/<(?:br|h[1-6]|li|d[td]||tr)[^>]*>/\n/gi;
+$foo =~ s/(<[^>]*>)+//g;           # Remove HTML tags
+$foo =~ s/\n\s*\n\s*/\n\n/g;       # Squeeze blank lines
+$foo =~ s/^ +| +$//mg;             # Trim lines
+$foo =~ s/^\s+|\s$//g;             # Trime whole code
+# Add 2 empty lines after song name and artist
+$foo =~ s/^([^\n]+)\n+([^\n]+)\n+/$1\n$2\n\n\n/g;
 
-  $html =~ s/<head>.*<\/head>/ /igs;  # Remove HTML Heading
-  $html =~ s/<scrip.*?script>/ /igs;  # Remove Script blocks
-  $html =~ s/<a.*?\/a>/ /igs;         # Remove Links
-  $html =~ s/&nbsp;/ /g;              # Replace &nbsp with spaces
-  $html =~ s/\s\s*/ /g;               # Replace repeated space characters with spaces
-  $html =~ s/<p[^>]*>/\n\n/gi;        # Replace paragraph tags with new line mark
-  # Replace some formating html tags witConverth new line marks
-  $html =~ s/<br.*?>|<\/*h[1-6][^>]*>|<li[^>]*>|<dt[^>]*>|<dd[^>]*>|<\/tr[^>]*>/\n/gi;
-  $html =~ s/(<[^>]*>)+//g;
-  $html =~ s/\n\s*\n\s*/\n\n/g;
-  $html =~ s/\n *| *\n/\n/g;
-  $html =~ s/^\n\n//mg;
-
-  $html =~ s/^([^\n]+\n[^\n]+\n)/$1\n\n/g;
-  return "$html";
-}
+print $foo, "\n";
 
 
 __END__
@@ -175,48 +179,87 @@ getlyrics - Get lyrics from Internet for specified song
 =head1 DESCRIPTION
 
 The getlyrics utility retrieves lyrics from the Internet for the specified
-artist and song name. Internaly, this utility uses http://www.lyrc.com.ar/
+artist and song name. Internally, this utility uses http://www.lyrc.com.ar/
 to search for lyrics.
 
 =head1 SYNOPSIS
 
-getlyrics [ --artist="Artist" --song="Song Name" |  Artist - Song Name | --mpd=pass@host:port | --mpd=mpc | --pipe=command ]
+getlyrics.pl --help | --man
+
+getlyrics.pl --I<scheme> I<arguments>
 
 =head1 OPTIONS
 
+Script need to know artist and song name of the track you want lyrics
+for. There are several schemes which instructs getlyrics.pl how should
+it obtain this information. Some schemes requires arguments and if
+they do you shall specify them as command line arguments just after the
+B<-->I<scheme> part.
+
+If no scheme is given (ie. the first command line argument does not
+start with B<-->) or empty scheme (ie. the first command line argument
+is B<-->) B<--args> is assumed.
+
 =over 8
 
-=item B<-a --artist="Artist">
+=item B<--args>
 
-Specifies artist for the searched lyrics.
+Will get artist and song name from given arguments.  If two arguments
+are given the first will be used as artist and the second as song
+name.  If three arguments are given and the second is a single minus
+sign with optional white spaces the first argument will be used as
+artist and the third as song name.  Otherwise all arguments will be
+concated and parsed as described in PARSING STRING section of man page (see
+B<--man>).
 
-=item B<-s --song="Song Name">
+=item B<--pipe>
 
-Specifies song name for the searched lyrics.
+Script will run command given as arguments and parse it's output
+according to the rules described in PARSING STRING section of man page
+(see B<--man>).
 
-=item B<Artist - Song Name>
+=item B<--file>
 
-Specifies both, artist and song name for the searched lyrics.  May be
-given as any number of arguments so no quoting is required.
+Reads given and parses their output. B<--file >I<files> is a synonym
+of B<--pipe cat >I<files>.
 
-=item B<-m --mpd=pass@host:port>
+=item B<--read>
 
-Instructs the script to get the song artist and title from MPD.  You
-may specify a hostname and port, if none is specified then the
-enviroment variables B<MPD_HOST> and B<MPD_PORT> are checked.  Finally
-if all else fails the defaults B<localhost> and B<6600> are used.  An
-optional password can be specified by prepending it to the hostname,
-seperated an B<@> character.
+Synonym of B<--pipe cat>.
 
-=item B<-m --mpd=mpc>
+=item B<--mpd>
 
-Synonym of B<--pipe="mpc --format '%artist% - %title%' | head -1">
+Instructs the script to get the song artist and title from MPD.
+Argument to this scheme is of the fallowing format:
+[password@][host][:port]. If host or port is not specified environment
+variables B<MPD_HOST> and B<MPD_PORT> are checked.  Finally if all
+else fails the defaults B<localhost> and B<6600> are used.
 
-=item B<-p --pipe=cmd>
+If tags for artist and song name are missing script will try to parse
+current song's file name according to the rules described in PARSING
+STRING section of man page (see B<--man>).
 
-Script will run I<cmd> and take it's output as artist and song name.
+=item B<--mpc>
+
+Synonym of B<--pipe "mpc --format '%artist% - %title%' | head -1">
 
 =back
+
+=head1 PARSING STRING
+
+Output of a pipe and some other strings need to be parsed to obtain
+artist and song name. First, white space and minus signs are removed
+from the beginning and the end of the string. Then, all white spaces
+are changed into a single space character. Finally, the string is
+splited into two strings first using ' - ' and if that fails a single
+space character and if that fails a single minus sign.
+
+For example, "Metallica - One", "Metallica One" and "Metallica-One"
+are splited into "Metallica" being artist and "One" being song
+name. However, "Metallica -One" will be splited into "Metallica" and
+"-One". Also "Black Sabbath Changes" and "Black Sabbath-Changes" won't
+be splited into "Black Sabbath" and "Changes" so you have to use
+"Black Sabbath - Changes".
 
 =head1 AUTHOR
 

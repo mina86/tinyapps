@@ -1,5 +1,9 @@
 2006-04-30  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* getlyrics.pl: + --artist and --song otpions removed.
+	+ --mpd and --pipe options changed it's format.
+	+ --args, --file, --read and --mpc options added.
+
 	* getlyrics.pl: + bug fixed
 
 	* virtman.sh: New file
