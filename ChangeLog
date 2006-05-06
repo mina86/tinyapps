@@ -1,3 +1,7 @@
+2006-05-06  Michal Nazarewicz  <mina86/AT/tlen.pl>
+
+	* installkernel: + renice was called incorrectly
+
 2006-04-30  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
 	* getlyrics.pl: + --artist and --song otpions removed.

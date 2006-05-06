@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.30 2006/04/19 09:15:47 mina86 Exp $
+## $Id: installkernel,v 1.31 2006/05/06 15:41:07 mina86 Exp $
 ## Copyright (c) 2004-2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ toInt () {
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	echo 'installkernel  v0.14.1  (c) 2004-2006 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.30 2006/04/19 09:15:47 mina86 Exp $'
+	echo '$Id: installkernel,v 1.31 2006/05/06 15:41:07 mina86 Exp $'
 	echo
 
 	# Lockfile check
@@ -562,7 +562,8 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	fi
 	if [ "$NICE" -gt 0 ]; then
 		msg '37;1' NICE "$NICE"
-		renice -n $NICE $$
+		if [ -n "$VERBOSE" ]; then renice +$NICE -p $$
+		else renice $NICE -p $$ >/dev/null 2>&1; fi
 	fi
 	unset NICE
 
