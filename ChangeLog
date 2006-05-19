@@ -1,3 +1,7 @@
+2006-05-19  Michal Nazarewicz  <mina86/AT/tlen.pl>
+
+	* FvwmTransFocus.c: + ignores focus change if changed to the same wnd
+
 2006-05-06  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
 	* installkernel: + renice was called incorrectly

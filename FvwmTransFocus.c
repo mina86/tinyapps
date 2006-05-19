@@ -1,6 +1,6 @@
 /*
  * FVWM module changing opacity depending on focus.
- * $Id: FvwmTransFocus.c,v 1.4 2006/04/27 15:33:44 mina86 Exp $
+ * $Id: FvwmTransFocus.c,v 1.5 2006/05/19 19:14:00 mina86 Exp $
  * Copyright 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
  * Some code from transset by Matthew Hawn
  *
@@ -175,10 +175,12 @@ int main (int argc, char **argv) {
 			/* M_FOCUS_CHANGE */
 		case M_FOCUS_CHANGE:
 			debug("M_FOCUS_CHANGE recieved");
-			transSet(prev_id, values[1]);
-			prev_id = buffer[1];
-			transSet(prev_id, values[0]);
-			XSync(display, False);
+			if (prev_id!=buffer[1]) {
+				transSet(prev_id, values[1]);
+				prev_id = buffer[1];
+				transSet(prev_id, values[0]);
+				XSync(display, False);
+			}
 			break;
 
 			/* M_ADD_WINDOW */
