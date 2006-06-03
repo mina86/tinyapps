@@ -1,5 +1,6 @@
 2006-06-03  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* README: + security warning about mountiso added
 	* mountiso.c: + nosuid,noexec,nodev,owner added to options
 
 	* quotes.txt: + few typos fixed and unified spaces at end of sentence

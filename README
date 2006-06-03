@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/04/29 23:54:44 $
+                     $Date: 2006/06/03 12:11:34 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which  may be usefull  in everyday life.   There are
@@ -94,7 +94,9 @@ At the moment the collection includes:
    ISO images  or any other files  using loop option.  You  have to be
    root to use '-o loop' so if you want to mount an ISO image you have
    to login as  root.  This utility should be  SUIDed and then anyoune
-   can use it to mount ISO images;
+   can use it to mount ISO  images.  Beware that this tool is not very
+   secure and must not be used on servers or given access to untrusted
+   users.
 
  * moz2elinks.pl  -  converts  bookmarks  from  Mozilla's  to  ELinks'
    (http://elinks.or.cz) format;
