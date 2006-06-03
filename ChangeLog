@@ -1,5 +1,7 @@
 2006-06-03  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
+	* Makefile: + DEBUG support fixed (LDFLAGS had -s)
+
 	* README: + security warning about mountiso added
 	* mountiso.c: + nosuid,noexec,nodev,owner added to options
 

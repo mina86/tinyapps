@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.21 2006/04/29 23:54:44 mina86 Exp $
+## $Id: Makefile,v 1.22 2006/06/03 12:13:30 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -16,10 +16,9 @@ CFLAGS      ?= -Os -pipe -DNDEBUG -DG_DISABLE_ASSERT -fomit-frame-pointer
 CXXFLAGS    ?= -Os -pipe -DNDEBUG -DG_DISABLE_ASSERT -fomit-frame-pointer
 LDFLAGS     ?= -s -z combreloc
 else
-CFLAGS      ?= -O0 -g -pipe
-CXXFLAGS    ?= -O0 -g -pipe
+CFLAGS      += -O0 -g -pipe
+CXXFLAGS    += -O0 -g -pipe
 CPPFLAGS    += -DDEBUG
-LDFLAGS     ?= -s -z combreloc
 endif
 X11_INC_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
                        /opt/X11R6 /usr /usr/local/include; do [ -f		\
