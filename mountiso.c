@@ -1,6 +1,6 @@
 /*
  * mountiso - Mounts/unmounts ISO images
- * $Id: mountiso.c,v 1.1 2005/08/13 13:22:26 mina86 Exp $
+ * $Id: mountiso.c,v 1.2 2006/06/03 12:10:44 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -39,7 +39,7 @@
 #define DEFAULT_DIR "/mnt/cdrom"
 #define MOUNT       "/bin/mount"
 #define UMOUNT      "/bin/umount"
-#define MNT_OPTS    "loop,ro"
+#define MNT_OPTS    "loop,ro,nosuid,noexec,nodev,owner"
 
 
 int main(int argc, char **argv) {
@@ -68,7 +68,7 @@ int main(int argc, char **argv) {
 	if (mount) {
 		execl(MOUNT, MOUNT, "-o", MNT_OPTS, "--", argv[1], argv[2], NULL);
 	} else {
-		execl(UMOUNT, UMOUNT, "--", argv[1], NULL);
+		execl(UMOUNT, UMOUNT, "-d", "--", argv[1], NULL);
 	}
 	perror(mount ? "exec: " MOUNT : "exec: " UMOUNT);
 }
