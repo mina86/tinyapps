@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.10 2006/04/27 14:31:27 mina86 Exp $
+## $Id: quotes.txt,v 1.11 2006/06/03 10:17:09 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -24,8 +24,8 @@
  Anyone who has never made a mistake has never tried anything new.
 	-- Albert Einstein (1879-1955)
 %
- Do not worry about your difficulties in Mathematics. I can assure you mine
-are still greater.
+ Do not worry about your difficulties in Mathematics.  I can assure you
+mine are still greater.
 	-- Albert Einstein (1879-1955)
 %
  Things should be made as simple as possible, but not any simpler.
@@ -48,16 +48,16 @@ IV will be fought with sticks and stones.
 not sure about the former.
 	-- Albert Einstein (1879-1955)
 %
- I never think of the future. It comes soon enough.
+ I never think of the future.  It comes soon enough.
 	-- Albert Einstein (1879-1955)
 %
- I don't know what is the speed of sound. I don't carry information in my
+ I don't know what is the speed of sound.  I don't carry information in my
 mind that is readily available in books.
 	-- Albert Einstein (1879-1955)
 %
- If my theory of relativity is proven correct, Germany will claim me as a
-German and France will say I am a man of the world. If it's proven wrong,
-France will say I am a German and Germany will say I am a Jew.
+ If my theory of relativity is proven correct, Germany will claim me as
+a German and France will say I am a man of the world.  If it's proven
+wrong, France will say I am a German and Germany will say I am a Jew.
 	-- Albert Einstein (1879-1955)
 %
  If we knew what we were doing, it wouldn't be called research, would it?
@@ -77,7 +77,7 @@ created them.
 flock of sheep led by a lion.
 	-- Alexander the Great (356BC-323BC)
 %
-  Wait a minute...
+ Wait a minute...
 	-- The last words of Pope Alexander VI (1431-1503)
 %
  Well, this is certainly a pleasant surprise.
@@ -93,7 +93,7 @@ ju¿ zosta³o kiedy¶ opisane.
 	-- Andrzej Sapkowski (1948-), Pani Jeziora
 %
  Potwór przest±pi³ z nogi na nogê, podrapa³ siê w ucho.
- -S³uchaj no, ty -rzek³. -Czy ty siê mnie naprawdê nie boisz?
+ -S³uchaj no, ty -rzek³.  -Czy ty siê mnie naprawdê nie boisz?
  -A powinienem?
 	-- Andrzej Sapkowski (1948-), Ziarno Prawdy
 %
@@ -173,18 +173,18 @@ po¿arem burdel.
 	-- Jaskier, Pó³ wieku poezji
 	-- Andrzej Sapkowski (1948-), Chrzest Ognia
 %
- -Na Wielkie S³oñce. (...) Co¶ ty zrobi³a z w³osami, Assire?
+ -Na Wielkie S³oñce.  (...) Co¶ ty zrobi³a z w³osami, Assire?
  -Umy³am.
 	-- Andrzej Sapkowski (1948-), Chrzest Ognia
 %
  Biedaków nigdy nie staæ na nic, dlatego s± biedakami.
-	-- Codringher.
+	-- Codringher
 	-- Andrzej Sapkowski (1948-), Czar Pogardy
 %
- -Jedno jest na ¶wiecie prawo! -rycza³ gruby kap³an. -Prawo boskie! Ca³a
-natura temu prawu podlega, ca³a ziemia i wszystko, co na tej ziemi ¿yje! A
-czery i magia s± temu prawu przeciwne! Przeklêci wiêc s± czarownicy i
-bliski jest dzieñ gniewu, w którym ogieñ z niebios zniszczy ich plugaw±
+ -Jedno jest na ¶wiecie prawo! -rycza³ gruby kap³an.  -Prawo boskie! Ca³a
+natura temu prawu podlega, ca³a ziemia i wszystko, co na tej ziemi ¿yje!
+A czery i magia s± temu prawu przeciwne! Przeklêci wiêc s± czarownicy
+i bliski jest dzieñ gniewu, w którym ogieñ z niebios zniszczy ich plugaw±
 wyspê! Run± wówczas mury Loxii, Aretuzy i Garstangu, za którymi w³a¶nie
 zbieraj± siê ci poganie, by swe knowania obmy¶laæ! Run± te mury...
  -I trza bêdzie, psia maæ, od nowa stawiaæ.
@@ -204,10 +204,10 @@ s³odka i ma kszta³t.  Spróbujcie zdefiniowaæ kszta³t gruszki.
  -Nigdy nie zna³e¶ takiego?
  -Zna³em wielu, którzy siê za takich uwa¿ali.
  -Ha! Kim byli? Jak siê nazywali? Co potrafili?
- -Wolnego, wolnego, dziewczyno. Nie znam odpowiedzi na te pytania. Czy
-to takie wa¿ne?
- -Pewnie, ¿e wa¿ne! Chcia³abym wiedzieæ... kim tacy szermierze s±. I
-gdzie tacy s±.
+ -Wolnego, wolnego, dziewczyno.  Nie znam odpowiedzi na te pytania.  Czy to
+takie wa¿ne?
+ -Pewnie, ¿e wa¿ne! Chcia³abym wiedzieæ...  kim tacy szermierze s±.
+I gdzie tacy s±.
  -Gdzie s±, to ja wiem.
  -Ha! Wiêc gdzie?
  -Na cmentarzach.
@@ -453,17 +453,17 @@ stronie.
  I have a terrible headache.
 	-- The last words of Franklin Delano Roosevelt (1882-1945)
 %
- The Earth is suffocating... Swear to make them cut me open, so that I
-won't be buried alive.
+ The Earth is suffocating...  Swear to make them cut me open, so that
+I won't be buried alive.
 	-- The last words of Frederic Chopin (1810-1849)
 %
  A jednak siê krêci!
-	-- Gallieo Gallei (1564-1642)
+	-- Galileo Galilei (1564-1642)
 %
  Wolno¶æ oznacza odpowiedzialno¶æ.  Dlatego wiêkszo¶æ ludzi siê jej boi.
 	-- George Bernard Shaw (1856-1950)
 %
- Now I shall go to sleep. Goodnight.
+ Now I shall go to sleep.  Goodnight.
 	-- The last words of Lorde George Gordon Byron (1788-1824)
 %
  Don't try to do it.  Do it or don't do it.
@@ -477,12 +477,7 @@ wszystkie pope³niæ.
  Counting in binary is just like counting in decimal if you are all thumbs.
 	-- Glaser and Way
 %
- Do you spend time with your family? Good. Because a man who doesn't spend
-time with his family can never be a real man.
-	-- Marlon Brando (1924-2004) as Don Vito Corleone
-	-- The Godfather
-%
- Do you spend time with your family? Good. Because a man who doesn't spend
+ Do you spend time with your family? Good.  Because a man who doesn't spend
 time with his family can never be a real man.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
 	-- The Godfather
@@ -491,20 +486,20 @@ time with his family can never be a real man.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
 	-- The Godfather
 %
- I spent my whole life trying not to be careless. Women and children can be
-careless. But not men.
+ I spent my whole life trying not to be careless.  Women and children can
+be careless.  But not men.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
 	-- The Godfather
 %
-Never let anyone outside the family know what you're thinking.
+ Never let anyone outside the family know what you're thinking.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
 	-- The Godfather
 %
- Never get angry. Never make a threat. Reason with people.
+ Never get angry.  Never make a threat.  Reason with people.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
 	-- The Godfather
 %
- Never hate your enemies. It clouds your judgement.
+ Never hate your enemies.  It clouds your judgement.
 	-- Al Pacino (1940-) as Michael Corleone
 	-- The Godfather
 %
@@ -520,7 +515,6 @@ Never let anyone outside the family know what you're thinking.
 	-- James Caan (1939-) as Santino "Sonny" Corleone
 	-- The Godfather
 %
-
  Komisja to zespó³, który tylko wtedy jest w stanie co¶ zdzia³aæ, gdy
 sk³ada siê z trzech osób, z których jedna jest chora, a druga nieobecna.
 	-- H. van Loon
@@ -614,7 +608,7 @@ and the pessimist fears this is true.
  They have computers, and they may have other weapons of mass destruction.
 	-- Janet Reno (1938-)
 %
- Since the day of my birth, my death began its walk. It is walking towards
+ Since the day of my birth, my death began its walk.  It is walking towards
 me, without hurrying.
 	-- The last words of Jean Maurice Eugene Clement Cocteau (1889-1963)
 %
@@ -640,7 +634,7 @@ odbêdzie.
 don't believe this to be a coincidence.
 	-- Jeremy S. Anderson
 %
- Dammit... Don't you dare ask God to help me.
+ Dammit...  Don't you dare ask God to help me.
 	-- The last words of Joan Crawford (1904-1977)
 %
  Normal people scare me...
@@ -653,8 +647,8 @@ does as an adult has no brain.
 	-- John Moore
 %
  Keep you doped with religion and sex and TV,
- And you think youre so clever and classless and free,
- But youre still fucking peasants as far as I can see.
+ And you think you're so clever and classless and free,
+ But you're still fucking peasants as far as I can see.
 	-- John Winston Ono Lennon (1940-1980)
 %
  Will the people in the cheaper seats clap your hands? All the rest of you,
@@ -715,7 +709,7 @@ Mêdrców nie wszystko wie.
  Go on, get out! Last words are for fools who haven't said enough!
 	-- The last words of Karl Heinrich Marx (1818-1883)
 %
- Wierze, ¿e Pan jednak mnie nie opu¶ci.
+ Wierzê, ¿e Pan jednak mnie nie opu¶ci.
  Jakby mia³ wzrok tak± zdobycz wypu¶ciæ.
  Pan, ale który pytasz siê zdziwiony.
  Otó¿ ten jeden z odpowiedniej strony.
@@ -831,7 +825,7 @@ after all.
 some Perl 4 code, and said, "What is that, swearing?"
 	-- Larry Wall (1954-)
 %
- Don't let it end like this. Tell them I said something.
+ Don't let it end like this.  Tell them I said something.
 	-- The last words of Jose Doroteo Arango Arambula (1878-1923)
 		(a.k.a. Francisco Villa a.k.a. Pancho Villa)
 %
@@ -839,7 +833,7 @@ some Perl 4 code, and said, "What is that, swearing?"
 	-- Joshua (the computer)
 	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
 %
- A strange game. The only winning move is not to play. How about a nice
+ A strange game.  The only winning move is not to play.  How about a nice
 game of chess?
 	-- Joshua (the computer)
 	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
@@ -914,8 +908,8 @@ really well.
 Hurd people.
 	-- Linus Benedict Torvalds (1969-)
 %
-If you still don't like it, that's ok: that's why I'm boss. I simply
-know better than you do.
+ If you still don't like it, that's ok: that's why I'm boss.  I simply know
+better than you do.
 	-- Linus Benedict Torvalds (1969-)
 %
  Some people have told me they don't think a fat penguin really embodies
@@ -937,6 +931,9 @@ different places, just write a Unix operating system.
  How should I know if it works? That's what beta testers are for.  I only
 coded it.
 	-- Attributed to Linus Benedict Torvalds (1969-)
+%
+ Those who can't hear the music think the dancers are insane.
+	-- Lord Templeton Judgement
 %
  Applaud, my friends, the comedy is finished.
 	-- The last words of Ludwig van Beethoven (1770-1827)
@@ -1074,22 +1071,22 @@ exercise, get up early, or be respectable.
 pretty, and to someone else, if she is plain.
 	-- Oscar Wide (1854-1900), The Importance of Being Earnest
 %
- I always pass on good advice. It is the only thing to do with it. It is
-never of any use to oneself.
+ The only thing to do with good advice is pass it on.  It is never any use
+to oneself.
 	-- Oscar Wide (1854-1900), An Ideal Husband
-^
+%
  Sooner or later we have all to pay for what we do.
 	-- Oscar Wide (1854-1900), An Ideal Husband
 %
- I love talking about nothing, father. It is the only thing I know anything
-about.
+ I love talking about nothing, father.  It is the only thing I know
+anything about.
 	-- Oscar Wide (1854-1900), An Ideal Husband
 %
- Women have a wonderful instinct about things. They can discover everything
-except the obvious.
+ Women have a wonderful instinct about things.  They can discover
+everything except the obvious.
 	-- Oscar Wide (1854-1900), An Ideal Husband
 %
- My wallpaper and I are fighting a duel to the death. One or the other of
+ My wallpaper and I are fighting a duel to the death.  One or the other of
 us has to go.
 	-- The last words of Oscar Wide (1854-1900)
 %
@@ -1102,17 +1099,13 @@ us has to go.
  I have nothing to declare except my Genius.
 	-- Attributed to Oscar Wide (1854-1900)
 %
- My own business bores me to death. I prefer other people's.
+ My own business bores me to death.  I prefer other people's.
 	-- Attributed to Oscar Wide (1854-1900)
 %
  No man is rich enough to buy back his own past.
 	-- Attributed to Oscar Wide (1854-1900)
 %
  The one duty we owe to history is to rewrite it.
-	-- Attributed to Oscar Wide (1854-1900)
-%
- The only thing to do with good advice is pass it on. It is never any use
-to oneself.
 	-- Attributed to Oscar Wide (1854-1900)
 %
  What a pity that in life we only get our lessons when they are of no use
@@ -1161,7 +1154,7 @@ Show is...  a lifestyle.
 wy¶miej± ciê.
 	-- Pittakos
 %
-Only the dead have seen the end of word.
+ Only the dead have seen the end of word.
 	-- Plato (427 BC-347 BC)
 %
  Cz³owiekiem jestem i nic co ludzkie nie jest mi obce.
@@ -1198,14 +1191,14 @@ And you will know my name is the Lord when I lay my vengeance upon you.
  All hell can't stop us now!
 	-- Rage Against the Machine, Guerilla Radio
 %
- Typos are very important to all written form. It gives the reader
+ Typos are very important to all written form.  It gives the reader
 something to look for so they aren't distracted by the total lack of
 content in your writing.
 	-- Randy Keith Milholland
 %
- Sometimes people do things that hurt and it's not because they mean
-to. They just do. It doesn't necessarily have anything to do with you, but
-you end up hurt because of it.
+ Sometimes people do things that hurt and it's not because they mean to.
+They just do.  It doesn't necessarily have anything to do with you, but you
+end up hurt because of it.
 	-- Randy Keith Milholland
 %
  I think I'm going to make it!
@@ -1230,33 +1223,33 @@ nothing.
  A generation which ignores history has no past-and no future.
 	-- Robert Anson Heinlein (1907-1988)
 %
- Always listen to experts. They'll tell you what can't be done, and
-why. Then do it.
+ Always listen to experts.  They'll tell you what can't be done, and why.
+Then do it.
 	-- Robert Anson Heinlein (1907-1988)
 %
- Anyone who cannot cope with mathematics is not fully human. At best he
-is a tolerable subhuman who has learned to wear shoes, bathe, and not
-make messes in the house.
+ Anyone who cannot cope with mathematics is not fully human.  At best he is
+a tolerable subhuman who has learned to wear shoes, bathe, and not make
+messes in the house.
 	-- Robert Anson Heinlein (1907-1988)
 %
  Climate is what you expect, weather is what you get.
 	-- Robert Anson Heinlein (1907-1988)
 %
- Courage is the complement of fear. A man who is fearless cannot be
-courageous. (He is also a fool.)
+ Courage is the complement of fear.  A man who is fearless cannot be
+courageous.  (He is also a fool.)
 	-- Robert Anson Heinlein (1907-1988)
 %
- Democracy is based on the assumption that a million men are wiser than
-one man. How's that again? I missed something.
- Autocracy is based on the assumption that one man is wiser than a
-million men. Let's play that over again, too. Who decides?
+ Democracy is based on the assumption that a million men are wiser than one
+man.  How's that again? I missed something.
+ Autocracy is based on the assumption that one man is wiser than a million
+men.  Let's play that over again, too.  Who decides?
 	-- Robert Anson Heinlein (1907-1988)
 %
 Never underestimate the power of human stupidity.
 	-- Robert Anson Heinlein (1907-1988)
 %
- One man's "magic" is another man's engineering. "Supernatural" is a
-null word.
+ One man's "magic" is another man's engineering.  "Supernatural" is a null
+word.
 	-- Robert Anson Heinlein (1907-1988)
 %
  Place your clothes and weapons where you can find them in the dark.
@@ -1289,7 +1282,7 @@ their C programs.
 cancer with a pointy stick.
 	-- Mr_Saturn
 %
- Crito, I owe a cock to Asclepius. Will you remember to pay the debt?
+ Crito, I owe a cock to Asclepius.  Will you remember to pay the debt?
 	-- The last words of Socrates (470BC-399BC)
 %
  I'm going to live forever, or die trying!
@@ -1325,7 +1318,7 @@ be right.
 quickly, and get on with improving your other innovations.
 	-- Attributed to Steve Jobs (1955-)
 %
-You can't just ask customers what they want and then try to give that to
+ You can't just ask customers what they want and then try to give that to
 them.  By the time you get it built, they'll want something new.
 	-- Attributed to Steve Jobs (1955-)
 %
@@ -1494,7 +1487,7 @@ purpose is not to receive messages.
  Signifying nothing.
 	-- William Shakespeare (1564-1616)), Macbeth
 %
- Life was like a box of chocolates. You never know what you're gonna get.
+ Life is like a box of chocolates.  You never know what you're gonna get.
 	-- Forrest Gump's mom
 	-- Winstion Groom (1944-), Forrest Gump
 %
