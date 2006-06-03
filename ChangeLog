@@ -1,3 +1,7 @@
+2006-06-03  Michal Nazarewicz  <mina86/AT/tlen.pl>
+
+	* mkpkg: New file
+
 2006-05-19  Michal Nazarewicz  <mina86/AT/tlen.pl>
 
 	* FvwmTransFocus.c: + ignores focus change if changed to the same wnd

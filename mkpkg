@@ -1,0 +1,103 @@
+#!/bin/sh
+##
+## Creates a Slackware package
+## $Id: mkpkg,v 1.1 2006/06/03 10:06:06 mina86 Exp $
+## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+
+
+set -e
+
+
+##
+## Strip executables
+##
+echo Stripping executables
+find -type f | xargs file | grep "ELF.*\(executable\|shared object\)" | \
+	cut -d: -f1 | xargs strip --strip-unneeded 2>/dev/null
+
+
+##
+## Search for *.new files and add them do doinst.sh
+##
+echo Searching for \*.new files
+find -type f -name '*.new' | sed -e 's/.new$//' -e "s/'/'\\''/g" \
+	-e "s/^.*$/cfg '&'/" >mkpkg-new
+
+if [ -s mkpkg-new ]; then
+	echo Adding \*.new files to doinst.sh
+	mkdir -p install
+	cat <<EOF >>install/doinst.sh
+
+NEW_CONFIG=
+cfg () {
+	if ! [ -r "\$1" ]; then
+		mv -- "\$1.new" "\$1"
+		NEW_CONFIG=yes
+	elif ! cmp "\$1" "\$1.new" >/dev/null 2>&1; then
+		rm -- "\$1.new"
+	else
+		NEW_CONFIG=yes
+	fi
+}
+
+EOF
+	cat mkpkg-new >>install/doinst.sh
+	echo '[ -z "\$NEW_CONFIG" ] || echo "New configuration file(s) present"' \
+		>>install/doinst.sh
+	chmod 755 install/doinst.sh
+fi
+rm -f mkpkg-new
+
+
+##
+## Gzip man pages
+##
+echo Gzipping man pages
+find -path '*/man?/' -name '*.?' \! -name '*.Z' -print0 | \
+	xargs -0 --no-run-if-empty gzip -9
+
+
+##
+## Description
+##
+if ! [ -s install/slack-desc ]; then
+	printf 'Enter description (^D to finish)\n%s\n' \
+		'----------------------------------------------------------------------|'
+	{ echo; cat; } | cat -s >mkpkg-desc
+	LINES=$(wc -l <mkpkg-desc)
+	while [ $LINES -lt 11 ]; do
+		echo >>mkpkg-desc
+		LINES=$(($LINES + 1))
+	done
+	if [ $LINES -gt 11 ]; then
+		echo warning: Description has more then 11 lines
+	fi
+
+	PKG="${PWD##*/}"; PKG="${PKG%-*-*-*}"
+	mkdir -p install
+	while IFS= read LINE; do
+		printf '%s: %s\n' "$PKG" "$LINE" >>install/slack-desc
+	done <mkpkg-desc
+	rm -f mkpkg-desc
+fi
+
+
+##
+## Make package
+##
+makepkg "$PWD.tgz"
