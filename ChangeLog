@@ -1,5 +1,9 @@
 2006-07-08  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* quotes.txt: + new quotes by Mikolaj Rej and Stanislaw Lem
+	+ new authors: Doug Larson, Leszek Kolakowski, Zygmunt Mycielski
+	+ Stanislaw Lem death date added
+
 	* installkernel: + --overwrite option added
 	+ --no-nice fixed
 

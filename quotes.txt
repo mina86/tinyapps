@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.11 2006/06/03 10:17:09 mina86 Exp $
+## $Id: quotes.txt,v 1.12 2006/07/08 15:09:17 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -387,6 +387,18 @@ very good name and now I am looking for a suitable language.
 %
  An algorithm must be seen to be believed.
 	-- Attributed to Donald Ervin Knuth (1938-)
+%
+ Accomplishing the impossible means only that the boss will add it to your
+regular duties
+	-- Doug Larson
+%
+ Home computers are being called upon to perform many new functions,
+including the consumption of homework formerly eaten by the dog.
+	-- Doug Larson
+%
+ Instead of giving a politician the keys to the city, it might be better to
+change the locks
+	-- Doug Larson
 %
  Slow down and enjoy life.  It's not only the scenery you miss by going too
 fast - you also miss the sense of where you are going and why.
@@ -858,6 +870,14 @@ conclution that your defencesystem SUCKS!
 peace like retarded pygmies.
 	-- Lester Bowles Pearson (1897-1972)
 %
+ Gdy filozof dojdzie do koñca drogi do m±dro¶ci, dowiaduje siê rzeczy,
+jakie ludzie pro¶ci i m±drzy wiedzieli od zawsze.
+	-- Leszek Ko³akowski (1927-)
+%
+ Jak odmienny sens mog± mieæ identycznie brzmi±ce twierdzenia, umieszczone
+w ró¿nych doktrynach.
+	-- Leszek Ko³akowski (1927-)
+%
  Kotki maj± ten bardzo niedogodny zwyczaj (zauwa¿y³a pewnego razu Alicja),
 ¿e cokolwiek im powiesz, one zawsze mrucz±.  Gdyby mrucza³y tylko zamiast
 "tak", a miaucza³y zamiast "nie", lub wed³ug jakiej¶ podobnej
@@ -1026,6 +1046,9 @@ robi± tylko, co im ka¿e system, tak ¶lepy jak one...
 %
  A niechaj narodowie w¿dy postroni znaj±, ¿e Polacy nie gêsi, i¿ swój jêzyk
 maj±.
+	-- Miko³aj Rej (1505-1569)
+%
+ Bo zaw¿dy ci wiêcej jedz±, którzy bli¿ej misy siedz±.
 	-- Miko³aj Rej (1505-1569)
 %
  Look at things what we created, I'm not proud what we have done
@@ -1298,7 +1321,32 @@ zachowaæ w u³amku sekundy tak drobnym, ¿e ca³a sekunda jest przy nim
 wieczno¶ci±, Kosmos, ze wzglêdu na swe rozmiary, musia³by siê w ów zakazany
 sposób zachowaæ odpowiednio d³u¿ej.  Na przyk³ad przez piêtna¶cie miliardów
 lat...
-	-- Stanis³aw Lem (1921-), Dzienniki Gwiazdowe, Podró¿ Osiemnasta
+	-- Stanis³aw Lem (1921-2006), Dzienniki Gwiazdowe, Podró¿ Osiemnasta
+%
+ Dopóki nie skorzysta³em z Internetu, nie wiedzia³em, ¿e na ¶wiecie jest
+tylu idiotów
+	-- Stanis³aw Lem (1921-2006)
+%
+ Faith is, at one and the same time, absolutely necessary and altogether
+impossible.
+	-- Stanis³aw Lem (1921-2006)
+%
+ (...) by³a to wielka i niezmiernie pracowita, na wiele stron maszynopisu
+roz³o¿ona brednia (...)
+	-- Stanis³aw Lem (1921-2006)
+%
+ Im bardziej zaawansowane technicznie (doskonalsze!) medium, tym bardziej
+prymitywne, b³ahe i bezu¿yteczne wiadomo¶ci s± przy jego pomocy
+przekazywane.
+	-- Stanis³aw Lem (1921-2006)
+%
+ - Ja siê tu chyba powieszê - pomy¶la³. Nie wpad³o mu do g³owy, ¿e wobec
+braku ci±¿enia nawet takie wyj¶cie nie jest mo¿liwe.
+	-- Stanis³aw Lem (1921-2006), Opowie¶ci o pilocie Pirxie, rozdzia³ 1.
+%
+ Nikt nic nie czyta, a je¶li czyta, to nic nie rozumie, a je¶li nawet
+rozumie, to nic nie pamiêta.
+	-- Stanis³aw Lem (1921-2006), Opowie¶ci o pilocie Pirxie, rozdzia³ 1.
 %
  Trzeba siê uczyæ, a nie chodziæ do szko³y.
 	-- Stanis³aw Lipiñski
@@ -1561,6 +1609,10 @@ matched up the letters.
  The one who says it cannot be done should never interrupt the one who is
 doing it.
 	-- The Roman Rule
+%
+ Herbata od mieszania nie zrobi siê s³odsza, w tym celu bowiem trzeba
+dosypaæ cukru.
+	-- Zygmunt Mycielski (1907-1987)
 %
  The world is coming to an end!  Repent and return those library books!
 %
