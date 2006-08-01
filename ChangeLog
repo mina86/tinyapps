@@ -1,3 +1,12 @@
+2006-07-31  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* tpwd: + bugfix: -h option was ignored
+	+ shows usage if invalid number of arguments
+	+ some reformatting
+
+	* lesspipe: New file
+	* Makefile, README: + lesspipe added
+
 2006-07-08  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* quotes.txt: + new quotes by Mikolaj Rej and Stanislaw Lem
