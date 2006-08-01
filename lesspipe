@@ -1,0 +1,354 @@
+#!/bin/sh
+##
+## lessfile/lesspipe filter for less pager
+## $Id: lesspipe,v 1.1 2006/08/01 02:43:45 mina86 Exp $
+## Copyright (c) 2006 by Michal Nazareicz (mina86/AT/mina86.com)
+##
+## Written by: Behan Webster <behanw@pobox.com>
+##             Darren Stalder
+##             Thomas Schoepf <schoepf@debian.org>
+##             Y.Dirson
+##         and Michal Nazarewicz <mina86/AT/mina86.com>
+##
+## This software is OSI Certified Open Source Software.
+## OSI Certified is a certification mark of the Open Source Initiative.
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
+##
+
+##
+## See lesspipe --help for usage.
+##
+
+
+##
+## No arguments
+##
+if [ $# -eq 0 ] || [ X"$1" = X--install-lessopen ] || \
+	[ X"$1" = X--install-lessfile ] || [ X"$1" = X--install--lesspipe ]; then
+	FULLPATH="$(cd "${0%/*}"; pwd)/${0##*/}"
+	# FIXME: Escaping needed
+
+	LESSFILE=
+	if [ X"$1" = X--install-lessopen ] || [ X"$1" = X--install-lessfile ]
+	then LESSFILE=y
+	elif [ X"$1" != X--install-lesspipe ] && [ X"${0##*/}" = Xlessfile ]
+	then LESSFILE=y
+	fi
+
+	case "$SHELL" in
+	*csh)
+		if [ -n "$LESSFILE" ]; then
+			echo "setenv LESSOPEN '$FULLPATH --open %s';"
+			echo "setenv LESSCLOSE '$FULLPATH --close %s %s';"
+		else
+			echo "setenv LESSOPEN '|$FULLPATH --pipe %s';"
+			echo "unsetenv LESSCLOSE;"
+		fi
+		;;
+	*)
+		if [ -n "$LESSFILE" ]; then
+			echo "export LESSOPEN='$FULLPATH --open %s';"
+			echo "export LESSCLOSE='$FULLPATH --close %s %s';"
+		else
+			echo "export LESSOPEN='|$FULLPATH --pipe %s';"
+			echo "unset LESSCLOSE;"
+		fi
+		;;
+	esac
+
+	exit 0
+fi
+
+
+
+##
+## Called as LESSCLOSE
+##
+if [ $# -eq 3 ] && [ X"$1" = X--close ]; then
+	shift
+	if [ -n "$BASH" ]; then
+		if [ -O "$2" ]; then
+			rm -f -- "$2"
+		else
+			echo "Error in deleting $2" >&2
+		fi
+	else
+		if [ -f "$2" ]; then
+			rm -f -- "$2"
+		else
+			echo "Error in deleting $2" >&2
+		fi
+	fi
+	exit 0
+fi
+
+
+
+##
+## Ugh?
+##
+if [ $# -ne 2 ] || ( [ X"$1" != X--open ] && [ X"$1" != X--pipe ] ); then
+	FULLPATH="$(cd "${0%/*}"; pwd)/${0##*/}"
+	# FIXME: Escaping needed
+
+cat <<EOF
+usage: eval "\$($FULLPATH [ <option> ])"
+<option> can be:
+  --install-lesspipe  installs input processor as lesspipe
+  --install-lessopen  installs input processor as lessopwn
+  --install-lessfile  synonym of  --install-lessopen
+EOF
+	[ X"$1" = X--help ] || [ X"$1" = X-h ]
+	exit $?
+fi
+
+
+
+##
+## We were called as LESSOPEN
+##
+LESSFILE=; [ X"$1" = X--pipe ] || LESSFILE=y
+shift
+
+
+## Helper function to list contents of ISO files (CD images)
+iso_list() {
+	set -- "$1" "$(isoinfo -d -i "$1")"
+	printf %s "$2" | grep -q ^Rock\.Ridge && set --- "$1" "$2" "$3 -R"
+	printf %s "$2" | grep -q ^Joliet      && set --- "$1" "$2" "$3 -J"
+	printf %s\n "$2"
+	isoinfo -f $3 -i "$1"
+}
+
+
+## Echos temporary file name
+tmpfile () {
+	set -- "${1-less-}" "$(umask)"
+	umask 077
+	if which tempfile >/dev/null 2>&1
+	then tempfile -d "${TMPDIR-/tmp}" -p "${1-less-}"
+	else printf %s/%s "${TMPDIR-/tmp}" "${1-less-}.${id -u}.$RANDOM.$$"
+	fi
+	umask "$2"
+}
+
+
+## Check if application is available and executes command or prints
+## error and other stuff
+run () {
+	if [ X"$1" = X-- ]; then
+		which "$2" >/dev/null 2>&1
+		return $?
+	fi
+
+	if ! which "$1" >/dev/null 2>&1; then
+		printf 'No %s available.\n' "$1"
+		return 1
+	fi
+
+	if [ $# -eq 1 ]; then
+		return 0
+	else
+		"$@"
+	fi
+}
+
+
+## Exit function
+exit_function () {
+	if [ X"$3" = Xdownloaded ]; then
+		rm -f -- "$1" "$1-err"
+	fi
+
+	if [ -n "$2" ]; then
+		if [ -s "$2" ]; then
+			printf %s "$2"
+		else
+			rm -f -- "$3"
+		fi
+	fi
+}
+
+trap 'exit_function "$@"' 0
+
+
+## Redirect output
+if [ -n "$LESSFILE" ]; then
+	set -- "$1" "$(tmpfile lessf-)"
+	exec >"$2"
+else
+	set -- "$1" ''
+fi
+#exec 2>/dev/null
+
+
+## User has his own fitler
+[ -x ~/.lessfilter ] && ~/.lessfilter "$1" && exit 0
+
+
+## URL
+FILENAME="${1##*/}"
+if ! [ -e "$1" ] && [ X"${1#*://}" != X"$1" ]; then
+	which wget >/dev/null 2>&1 || which curl >/dev/null 2>&1 || exit 0
+
+	FILENAME="${FILENAME%%\?*}"
+	set -- "$(tmpfile lessg-)" "$2" downloaded "$1"
+	trap 'rm -f -- "$1"' 0
+
+	ERR=
+	if which wget >/dev/null 2>&1; then
+		wget --no-check-certificate -S -o "$1-err" -O "$1" -- "$4" || ERR=y
+	else
+		curl -o "$1" -s -- "$4" 2>"$1-err" || ERR=y
+	fi
+
+	if [ -n "$ERR" ]; then
+		echo "Could not downlaod $1"
+		echo
+		cat -- "$1-err"
+		exit 0
+	fi
+fi
+
+
+## File is not readable
+[ -r "$1" ] || exit 0
+
+
+## Show contetn of directories
+if [ -d "$1" ]; then
+	/bin/ls -l -- "$1" 2>&1
+	exit 0
+fi
+
+
+## Filter
+case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjklzxcvbnm)" in
+
+# Man pages
+*.[1-9n]|*.man)
+	if run file && run nroff && file -L "$1" | grep -F roff >/dev/null
+	then nroff -S -mandoc "$1"; fi
+	;;
+
+*.[1-9n].gz|*.man.gz)
+	if run file && run nroff && run gzip && \
+		gzip -d <"$1" | file - | grep -F roff >/dev/null
+	then gzip -d <"$1" | nroff -S -mandoc -; fi
+	;;
+
+*.[1-9n].bz2|*.man.bz2)
+	if run file && run nroff && run bzip2 && \
+		bzip2 -d <"$1" | file - | grep -F roff >/dev/null
+	then bzip2 -d <"$1" | nroff -S -mandoc -; fi
+	;;
+
+
+# Tar archives
+*.tar)                                   tar tvvf "$1" ;;
+*.tgz)     run gzip  && gzip  -d <"$1" | tar tvv       ;;
+*.tar.gz)  run gzip  && gzip  -d <"$1" | tar tvv       ;;
+*.tar.z)   run gzip  && gzip  -d <"$1" | tar tvv       ;;
+*.tar.dz)  run gzip  && gzip  -d <"$1" | tar tvv       ;;
+*.tbz)     run bzip  && bzip  -d <"$1" | tar tvv       ;;
+*.tar.bz)  run bzip  && bzip  -d <"$1" | tar tvv       ;;
+*.tbz2)    run bzip2 && bzip2 -d <"$1" | tar tvv       ;;
+*.tar.bz2) run bzip2 && bzip2 -d <"$1" | tar tvv       ;;
+
+
+# Compressed files
+*.gz)  run gzip  -d <"$1" ;;
+*.z)   run gzip  -d <"$1" ;;
+*.dz)  run gzip  -d <"$1" ;;
+*.bz)  run bzip  -d <"$1" ;;
+*.bz2) run bzip2 -d <"$1" ;;
+
+
+# Other archives
+*.arj)       run unarj l "$1" ;;
+*.lha|*.lzh) run lha v "$1" ;;
+*.cab)       run cabextract -l "$1" ;;
+
+*.rar|*.r[0-9][0-9])
+	if   run --   rar; then   rar v "$1"
+	elif run -- unrar; then unrar v "$1"
+	else echo "No rar or unrar available"
+	fi
+	;;
+
+*.jar|*.war|*.xpi|*.zip)
+	if   run --     unzip; then     unzip -v "$1"
+	elif run -- miniunzip; then miniunzip -l "$1"
+	elif run -- miniunz  ; then miniunz   -l "$1"
+	else echo "No unzip, miniunzip or miniunz available"
+	fi
+	;;
+
+*.zoo)
+	if   run --   zoo; then   zoo  v "$1"
+	elif run -- unzoo; then unzoo -l "$1"
+	else echo "No unzoo or zoo available"
+	fi
+	;;
+
+
+## CD Images
+*.iso) run isoinfo && iso_list "$1" ;;
+
+*.bin|*.raw)
+	if run file && run isoinfo && file "$1" | grep -F ISO\.9660 >/dev/null;
+	then iso_list "$1"; fi
+	;;
+
+
+## Binary software packages
+*.deb|*.udeb)
+	if run dpkg; then
+		echo "$1:"; dpkg --info "$1"
+		echo
+		echo '*** Contents:'; dpkg-deb --contents "$1"
+	fi
+	;;
+
+*.rpm)
+	if run rpm; then
+		echo "$1:"; rpm -q -i -p "$1"
+		echo
+		echo '*** Contents:'
+		rpm -q -l -p "$1"
+	else echo "rpm isn't available, no query on rpm package possible"; fi
+	;;
+
+
+## Documents, images, etc
+*.doc) run catdoc "$1" ;;
+*.dvi) run dvi2tty "$1" ;;
+*.ps)  run ps2ascii "$1" ;;
+*.pdf) run pdftotext "$1" - ;;
+
+*.gif|*.jpeg|*.jpg|*.pcd|*.png|*.tga|*.tiff|*.tif)
+	run identify -verbose "$1"
+	;;
+
+
+## If file was downloaded it needs to be cated
+*)
+	if [ X"$3" = Xdownloaded ]; then cat -- "$1"; fi
+	;;
+esac
