@@ -1,3 +1,8 @@
+2006-08-03  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* lesspipe: + added escaping
+	+ added cache
+
 2006-07-31  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* tpwd: + bugfix: -h option was ignored

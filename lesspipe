@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## lessfile/lesspipe filter for less pager
-## $Id: lesspipe,v 1.1 2006/08/01 02:43:45 mina86 Exp $
+## $Id: lesspipe,v 1.2 2006/08/03 00:17:51 mina86 Exp $
 ## Copyright (c) 2006 by Michal Nazareicz (mina86/AT/mina86.com)
 ##
 ## Written by: Behan Webster <behanw@pobox.com>
@@ -37,12 +37,23 @@
 
 
 ##
+## Escape string
+##
+esc () {
+	if [ -n "$*" ]; then
+		printf %s "$*" | sed -e "s/'/'\\\\''/g"
+	fi
+}
+
+
+
+##
 ## No arguments
 ##
 if [ $# -eq 0 ] || [ X"$1" = X--install-lessopen ] || \
 	[ X"$1" = X--install-lessfile ] || [ X"$1" = X--install--lesspipe ]; then
-	FULLPATH="$(cd "${0%/*}"; pwd)/${0##*/}"
-	# FIXME: Escaping needed
+	FULLPATH="$(cd "$(dirname "$0")"; pwd)/${0##*/}"
+	FULLPATH="$(esc "'$(esc "$FULLPATH")'")"
 
 	LESSFILE=
 	if [ X"$1" = X--install-lessopen ] || [ X"$1" = X--install-lessfile ]
@@ -52,25 +63,17 @@ if [ $# -eq 0 ] || [ X"$1" = X--install-lessopen ] || \
 	fi
 
 	case "$SHELL" in
-	*csh)
-		if [ -n "$LESSFILE" ]; then
-			echo "setenv LESSOPEN '$FULLPATH --open %s';"
-			echo "setenv LESSCLOSE '$FULLPATH --close %s %s';"
-		else
-			echo "setenv LESSOPEN '|$FULLPATH --pipe %s';"
-			echo "unsetenv LESSCLOSE;"
-		fi
-		;;
-	*)
-		if [ -n "$LESSFILE" ]; then
-			echo "export LESSOPEN='$FULLPATH --open %s';"
-			echo "export LESSCLOSE='$FULLPATH --close %s %s';"
-		else
-			echo "export LESSOPEN='|$FULLPATH --pipe %s';"
-			echo "unset LESSCLOSE;"
-		fi
-		;;
+	*csh) _SET=setenv; _UNSET=unsetenv; _EQ=' ';;
+	*)    _SET=export; _UNSET=unset;    _EQ='=';;
 	esac
+
+	if [ -n "$LESSFILE" ]; then
+		printf "$_SET LESSOPEN$_EQ'%s';\\n$_SET LESSCLOSE$_EQ'%s';\\n" \
+			"$FULLPATH --open %s" "$FULLPATH --close %s %s"
+	else
+		printf "$_SET LESSOPEN$_EQ'%s';\\n$_UNSET LESSCLOSE;\\n" \
+			"|$FULLPATH --open %s"
+	fi
 
 	exit 0
 fi
@@ -104,8 +107,8 @@ fi
 ## Ugh?
 ##
 if [ $# -ne 2 ] || ( [ X"$1" != X--open ] && [ X"$1" != X--pipe ] ); then
-	FULLPATH="$(cd "${0%/*}"; pwd)/${0##*/}"
-	# FIXME: Escaping needed
+	FULLPATH="$(cd "$(dirname "$0")"; pwd)/${0##*/}"
+	FULLPATH="'$(esc "$FULLPATH")'"
 
 cat <<EOF
 usage: eval "\$($FULLPATH [ <option> ])"
@@ -123,6 +126,7 @@ fi
 ##
 ## We were called as LESSOPEN
 ##
+set -e
 LESSFILE=; [ X"$1" = X--pipe ] || LESSFILE=y
 shift
 
@@ -130,8 +134,8 @@ shift
 ## Helper function to list contents of ISO files (CD images)
 iso_list() {
 	set -- "$1" "$(isoinfo -d -i "$1")"
-	printf %s "$2" | grep -q ^Rock\.Ridge && set --- "$1" "$2" "$3 -R"
-	printf %s "$2" | grep -q ^Joliet      && set --- "$1" "$2" "$3 -J"
+	printf %s "$2" | grep ^Rock\.Ridge >/dev/null && set -- "$1" "$2" "$3 -R"
+	printf %s "$2" | grep ^Joliet      >/dev/null && set -- "$1" "$2" "$3 -J"
 	printf %s\n "$2"
 	isoinfo -f $3 -i "$1"
 }
@@ -173,7 +177,8 @@ run () {
 ## Exit function
 exit_function () {
 	if [ X"$3" = Xdownloaded ]; then
-		rm -f -- "$1" "$1-err"
+		[ X"$5" = Xcached ] || rm -f -- "$1"
+		rm -f -- "$1-err"
 	fi
 
 	if [ -n "$2" ]; then
@@ -206,22 +211,34 @@ fi
 FILENAME="${1##*/}"
 if ! [ -e "$1" ] && [ X"${1#*://}" != X"$1" ]; then
 	which wget >/dev/null 2>&1 || which curl >/dev/null 2>&1 || exit 0
-
 	FILENAME="${FILENAME%%\?*}"
-	set -- "$(tmpfile lessg-)" "$2" downloaded "$1"
-	trap 'rm -f -- "$1"' 0
+
+	CACHE=; GET=y
+	if which md5sum >/dev/null 2>&1 && [ -d ~/.lesscache ]; then
+		CACHE=$(printf %s "$3" | md5sum | cut -d\  -f1)
+		if [ -n "$(find "$HOME/.lesscache" -maxdepth 1 -type f \
+		                -name "$CACHE" -mtime -7)" ]; then
+			GET=
+		fi
+		set -- "$HOME/.lesscache/$CACHE" "$2" downloaded "$1" cached
+	else
+		set -- "$(tmpfile lessg-)" "$2" downloaded "$1"
+	fi
 
 	ERR=
-	if which wget >/dev/null 2>&1; then
+	if [ -z "$GET" ]; then
+		:
+	elif which wget >/dev/null 2>&1; then
 		wget --no-check-certificate -S -o "$1-err" -O "$1" -- "$4" || ERR=y
 	else
 		curl -o "$1" -s -- "$4" 2>"$1-err" || ERR=y
 	fi
 
 	if [ -n "$ERR" ]; then
-		echo "Could not downlaod $1"
+		echo "Could not downlaod $4"
 		echo
 		cat -- "$1-err"
+		rm -f -- "$1"
 		exit 0
 	fi
 fi
@@ -261,7 +278,7 @@ case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjk
 
 
 # Tar archives
-*.tar)                                   tar tvvf "$1" ;;
+*.tar)                                   tar tvv <"$1" ;;
 *.tgz)     run gzip  && gzip  -d <"$1" | tar tvv       ;;
 *.tar.gz)  run gzip  && gzip  -d <"$1" | tar tvv       ;;
 *.tar.z)   run gzip  && gzip  -d <"$1" | tar tvv       ;;
@@ -320,15 +337,18 @@ case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjk
 ## Binary software packages
 *.deb|*.udeb)
 	if run dpkg; then
-		echo "$1:"; dpkg --info "$1"
+		echo "$1:"
+		dpkg --info "$1"
 		echo
-		echo '*** Contents:'; dpkg-deb --contents "$1"
+		echo '*** Contents:'
+		dpkg-deb --contents "$1"
 	fi
 	;;
 
 *.rpm)
 	if run rpm; then
-		echo "$1:"; rpm -q -i -p "$1"
+		echo "$1:"
+		rpm -q -i -p "$1"
 		echo
 		echo '*** Contents:'
 		rpm -q -l -p "$1"
@@ -349,6 +369,14 @@ case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjk
 
 ## If file was downloaded it needs to be cated
 *)
-	if [ X"$3" = Xdownloaded ]; then cat -- "$1"; fi
+	if [ X"$3" != Xdownloaded ]; then
+		:
+	elif [ -z "$2" ]; then
+		cat -- "$1"
+	elif [ X"$5" = Xcached ]; then
+		cp -f -- "$1" "$2"
+	else
+		mv -f -- "$1" "$2"
+	fi
 	;;
 esac
