@@ -1,0 +1,248 @@
+#!/bin/sh
+##
+## Mounts or unmounts series of partitions
+## $Id: mnt,v 1.1 2006/08/03 12:38:38 mina86 Exp $
+## Copyright (c) 2003-2006 by Tomekk (tomekk/AT/oswiecim.eu.org)
+## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/tlen.pl)
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+
+set -e
+
+
+##
+## Prints full absolute path to given file
+##
+fullname () {
+	# Empty
+	if [ -z "$1" ]; then
+		printf %s "$PWD"
+		return
+	fi
+
+	# Remove /s
+	while [ X"${1%/}"  != X"$1" ]; do set -- "${1%/}"; done
+	while [ X"${1#//}" != X"$1" ]; do set -- "${1#/}"; done
+
+	# Those vere only slashes
+	if [ -z "$1" ]; then
+		printf /
+		return
+	fi
+
+	# No more slashes
+	if [ X"${1#*/}" = X"$1" ]; then
+		printf %s/%s "${PWD%/}" "$1"
+		return
+	fi
+
+	# Split
+	set -- "${1%/*}" "${1##*/}"
+
+	# Empty directory (was / )
+	if [ -z "$1" ]; then
+		printf /%s "$2"
+		return
+	fi
+
+	# Print
+	printf %s/%s "$( cd -- "$1"; printf %s "${PWD%/}" )" "$2"
+}
+
+
+##
+## Printfs error messages
+##
+err () {
+	printf '%s: ' "${0##*/}"
+	printf "$@"
+	echo
+}
+
+die () {
+	__exit="$1"
+	shift
+	err "$@"
+	exit $__exit
+}
+
+
+##
+## Escaping
+##
+esc_sed () {
+	if [ -n "$*" ]; then
+		printf %s "$*" | sed -e 's:[/.\\*^$[]:\\&:g'
+	fi
+}
+
+esc_sh () {
+	if [ -n "$*" ]; then
+		printf %s "$*" | sed -e "s/'/'\\\\''/g"
+	fi
+}
+
+
+##
+## Runs command
+##
+run () {
+	if [ -z "$_SU" ]; then
+		"$@"
+		return $?
+	fi
+
+	__CMD=
+	while [ $# -ne 0 ]; do
+		__CMD="$__CMD '$(esc_sh "$1")'"
+		shift
+	done
+	su -c "$__CMD"
+	return $?
+}
+
+
+##
+## Sets DEVICE and POINT variables
+##
+set_device_point () {
+	DEVICE=
+	POINT=
+	if   [ -z        "$1" ]; then return 1
+	elif [ -b        "$1" ]; then DEVICE="$(fullname "$1")"
+	elif [ -b   "/dev/$1" ]; then DEVICE="$(fullname "/dev/$1")"
+	elif [ -d        "$1" ]; then POINT="$(fullname "$1")"
+	elif [ -d "/media/$1" ]; then POINT="$(fullname "/media/$1")"
+	elif [ -d   "/mnt/$1" ]; then POINT="$(fullname "/mnt/$1")"
+	else return 1
+	fi
+	return 0
+}
+
+
+##
+## Prints fstab line corresponding to given DEVICE/POINT
+##
+get_fstab_entry () {
+	if   [ -n "$1" ] && [ -n "$2" ]; then set -- "$(esc_sed "$1") $(esc_sed "$2")"
+	elif [ -n "$1" ]               ; then set -- "$(esc_sed "$1")"
+	elif [ -n "$2" ]               ; then set -- "[^ ][^ ]* $(esc_sed "$2")"
+	else return
+	fi
+
+	sed -ne 's/#.*$//' -e 's/[[:space:]][[:space:]]*/ /g' \
+		-e "/^ \?$1 / {" -e p -e q -e "}" </etc/fstab
+}
+
+
+##
+## Prints usage
+##
+usage () {
+	echo asd
+}
+
+
+
+##
+## Parse arguments
+##
+_FORCE=
+_SU=
+
+while [ $# -ne 0 ] && [ X"${1#-}" != X"$1" ] && [ X"$1" != X-- ]; do
+	ARG="$1"
+	shift
+
+	# Long options
+	case "$ARG" in
+		--help)     ARG="-h"  ;;
+		--version)  ARG="-V"  ;;
+		--force)    ARG="-f"  ;;
+		--no-force) ARG="-nf" ;;
+		--su)       ARG="-s"  ;;
+		--no-su)    ARG="-ns" ;;
+		--*|-)      die 1 '%s: unknown option' "$ARG";;
+	esac
+
+	# Short options
+	VALUE=y
+	ARG="${ARG#-}"
+	while [ -n "$ARG" ]; do
+		CH="${ARG#?}"
+		CH="${ARG%$CH}"
+		ARG="${ARG#?}"
+
+		case "$CH" in
+		f) _FORCE=$VALUE; CH=;;
+		s) _SU=$VALUE;    CH=;;
+		esac
+
+		if [ -z "$CH" ]; then
+			VALUE=y
+			continue
+		fi
+		[ -n "$VALUE" ] || die 1 'n option expects f or s option'
+
+		case "$CH" in
+		h) usage full; exit 0 ;;
+		V) usage ver;  exit 0 ;;
+		n) VALUE=;;
+		*) die 1 '%s: unknown option' "$CH";;
+		esac
+	done
+	[ -n "$VALUE" ] || die 1 'n option expects f or s option'
+
+done
+unset ARG VALUE
+
+[ X"$1" != X-- ] || shift
+
+
+
+##
+## One argument
+##
+if [ $# -eq 1 ]; then
+	if ! set_device_point "$1"; then
+		err '%s: no such device nor mount point' "$1"
+		exit 1
+	fi
+
+	# Find fstab entry
+	IFS=' ' set -- $(get_fstab_entry "$DEVICE" "$POINT")
+	if [ $# -eq 0 ]; then
+		err '%s: not present in /etc/fstab' "$DEVICE$POINT"
+		exit 1
+	fi
+
+	# auto?
+	if [ -z "$_FORCE" ] &&  \
+		! printf %s ",$4," | grep -F ',noauto,' >/dev/null 2>&1; then
+		err '%s: is mounted automatically; refuse to do anything' \
+			"$DEVICE$POINT"
+		exit 1
+	fi
+
+	# (u)mount
+	if mount | grep -e "^$1 on $2 " >/dev/null 2>&1; then
+		run umount "$DEVICE$POINT"
+	else
+		run mount "$DEVICE$POINT"
+	fi
+
+	exit $?
+fi
