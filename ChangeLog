@@ -1,5 +1,10 @@
 2006-08-03  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* Makefile, README: + show added
+	* show: New file
+
+2006-08-03  Michal Nazarewicz  <mina86/AT/mina86.com>
+
 	* lesspipe: + added escaping
 	+ added cache
 

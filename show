@@ -1,0 +1,122 @@
+#!/bin/sh
+##
+## Shows colorized log
+## $Id: show,v 1.1 2006/08/05 16:58:09 mina86 Exp $
+## Copyright (c) 2006 by Marcin H³ybin
+##                       Michal Nazareicz (mina86/AT/tlen.pl)
+## Licensed under the Academic Free License version 2.1.
+##
+
+set -e
+
+
+##
+## Default variables
+##
+SHOWLINES="${SHOWLINES:-50}"
+SHOWPAGER="${SHOWPAGER:-less -r}"
+if [ -z "$SHOWCOLOR" ]; then
+	if which ccze >/dev/null 2>&1
+	then SHOWCOLOR="ccze -A"
+	else SHOWCOLOR=cat
+	fi
+fi
+SHOWLOGDIRS=":${SHOWLOGDIRS-/var/log}"
+SHOWLOGEXTS=":${SHOWLOGEXTS-.log}"
+
+ARG0="${0##*/}"
+
+
+##
+## Searches for log file
+##
+log_file () {
+	__OIFS="$IFS"
+	IFS=:
+	for __D in $SHOWLOGDIRS; do
+		for __E in $SHOWLOGEXTS; do
+			[ -r "$__D/$1$__E" ] || continue
+			FILE="$__D/$1$__E"
+			IFS="$__OIFS"
+			return 0
+		done
+	done
+	echo "$ARG0: $1: no such file" >&2
+	exit 1
+}
+
+
+##
+## Cheks number of arguments
+##
+check_args () {
+	__NUM="$1"
+	while [ $# -ne 1 ]; do
+		shift
+		if [ $__NUM -eq "$1" ]; then return 0; fi
+	done
+	echo "$ARG0: wrong number of arguments; type 'show --help' for help" >&2
+	exit 1
+}
+
+
+##
+## Usage
+##
+if [ $# -eq 0 ] || [ X"$1" = X--help ] || [ "X$1" = X-h ]; then
+	cat << EOF
+usage: $ARG0 [ s | show ] [ <lines> ] <file>   displayes <file>
+       $ARG0 ( f | find ) <pattern> <file>     greps <pattern> from <file>
+       $ARG0 ( l | list )                      lists log files in /var/log
+
+sexamples: $ARG0 f ahes auth.log
+           $ARG0 l
+           $ARG0 /var/log/httpd/access.log
+           $ARG0 500 /var/log/messages
+EOF
+
+
+##
+## Find
+##
+elif [ X"$1" = Xf ] || [ X"$1" = Xfind ]; then
+	check_args $# 3
+	log_file "$3"
+	grep "$2" -- "$FILE" | $SHOWCOLOR | $SHOWPAGER
+
+
+##
+## List
+##
+elif [ X"$1" = Xl ] || [ X"$1" = Xlist ]; then
+	check_args $# 1
+	OIFS="$IFS"
+	IFS=:
+	for DIR in $SHOWLOGDIRS; do
+		[ -n "$DIR" ] && [ X"$DIR" != X. ] && [ X"$DIR" != X.. ] || continue
+		cd "$DIR" || continue
+		echo "-------------------- $DIR --------------------"
+		find . -type f \! -name '*.gz' \! -name '*.[0-9]' | \
+			cut -d/ -f2- | sort | ${PAGER:-less}
+		cd -
+	done
+	IFS="$OIFS"
+
+
+##
+## Show
+##
+else
+	if [ X"$1" = Xs ] || [ X"$1" = Xshow ]; then shift; fi
+	check_args $# 1 2
+
+	if [ $# -eq 2 ]; then
+		SHOWLINES="$1"
+		shift
+	fi
+
+	log_file "$1"
+	NUM=$(( $(wc -l <"$FILE") - $SHOWLINES ))
+	[ $NUM -gt 1 ] || NUM=1
+	$SHOWCOLOR <"$FILE" | $SHOWPAGER +$NUM
+fi

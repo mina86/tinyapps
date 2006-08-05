@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.23 2006/08/01 02:44:29 mina86 Exp $
+## $Id: Makefile,v 1.24 2006/08/05 16:58:09 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -97,8 +97,8 @@ install: install-FvwmTransFocus install-add install-ai install-cdiff	\
          install-load install-malloc install-moz2elinks.pl				\
          install-mountiso install-mp3rip install-mpd-state				\
          install-null install-pingrange.pl install-rot13				\
-         install-settitle install-splitlines.sh install-timer			\
-         install-tpwd install-traf.sh install-virtman.sh				\
+         install-settitle install-show install-splitlines.sh			\
+         install-timer install-tpwd install-traf.sh install-virtman.sh	\
          install-xcolor2rgb install-xgetclass
 
 
@@ -112,9 +112,9 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-malloc uninstall-moz2elinks.pl uninstall-mountiso	\
            uninstall-mp3rip uninstall-mpd-state uninstall-null			\
            uninstall-pingrange.pl uninstall-rot13 uninstall-settitle	\
-           uninstall-splitlines.sh uninstall-timer uninstall-tpwd		\
-           uninstall-traf.sh uninstall-virtman.sh uninstall-xcolor2rgb	\
-           uninstall-xgetclass
+           uninstall-show uninstall-splitlines.sh uninstall-timer		\
+           uninstall-tpwd uninstall-traf.sh uninstall-virtman.sh		\
+           uninstall-xcolor2rgb uninstall-xgetclass
 
 
 ##
@@ -221,7 +221,7 @@ install-ai-sid.pl: ai-sid.pl
 	${call install,root,root,0755,/usr/local/games,$<}
 
 install-installkernel: installkernel installkernel.8.gz
-	${call install,root,bin,0755,/usr/local/bin,$<}
+	${call install,root,bin,0755,/usr/local/sbin,$<}
 	${call install,root,root,0644,/usr/local/man/man8,${addprefix $<,.8.gz}}
 
 install-mountiso: mountiso umountiso
@@ -239,6 +239,9 @@ install-mpd-state: mpd-state
 	${Q}ln -fs -- mpd-state-wrapper.sh ${DEST_DIR}/usr/local/bin/state-sync
 	@echo '  LNK    state-amend'
 	${Q}ln -fs -- mpd-state-wrapper.sh ${DEST_DIR}/usr/local/bin/state-amend
+
+install-show: show
+	${call install,root,bin,0755,/usr/local/sbin,$<}
 
 install-fortune: install-quotes install-the-book-of-mozilla
 
@@ -277,7 +280,7 @@ uninstall-ai-sid.pl:
 	${call uninstall,/usr/games/ai-sid.pl}
 
 uninstall-installkernel:
-	${call uninstall,/usr/local/bin/installkernel}
+	${call uninstall,/usr/local/sbin/installkernel}
 	${call uninstall,/usr/local/man/man8/installkernel.8.gz}
 
 uninstall-mountiso:
@@ -291,6 +294,9 @@ uninstall-mpd-state:
 	${call uninstall,/usr/local/bin/state-restore}
 	${call uninstall,/usr/local/bin/state-sync}
 	${call uninstall,/usr/local/bin/state-amend}
+
+uninstall-installkernel:
+	${call uninstall,/usr/local/sbin/show}
 
 uninstall-fortune: uninstall-quotes uninstall-the-book-of-mozilla
 

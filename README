@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/08/01 02:44:29 $
+                     $Date: 2006/08/05 16:58:09 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which  may be usefull  in everyday life.   There are
@@ -141,6 +141,11 @@ At the moment the collection includes:
 
  * settitle -  Sets the title of  xterm, rxvt, Eterm,  aterm and other
    xterm-compatible terminals;
+
+ * show  -  shows colorized  (if  ccza  is  available) log  file  with
+   possible  option of  searching for  a pattern.   Small but  handy -
+   u don't have  to write `less /var/log/syslog` anymore  and get ugly
+   black and white log. :P
 
  * splitlines.sh -  Splits input, line-by-line, into  several files so
    that the 1st line goes to the 1st file, the 2nd to the 2nd file and
