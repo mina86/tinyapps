@@ -3,6 +3,8 @@
 	* Makefile, README: + show added
 	* show: New file
 
+	* show: + ccze is extremally slow; fixed to use tail
+
 2006-08-03  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* lesspipe: + added escaping

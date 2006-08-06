@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Shows colorized log
-## $Id: show,v 1.1 2006/08/05 16:58:09 mina86 Exp $
+## $Id: show,v 1.2 2006/08/06 12:45:27 mina86 Exp $
 ## Copyright (c) 2006 by Marcin H³ybin
 ##                       Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
@@ -116,7 +116,11 @@ else
 	fi
 
 	log_file "$1"
-	NUM=$(( $(wc -l <"$FILE") - $SHOWLINES ))
-	[ $NUM -gt 1 ] || NUM=1
-	$SHOWCOLOR <"$FILE" | $SHOWPAGER +$NUM
+	if [ X"$SHOWCOLOR" = Xcat ] || [ X"$SHOWCOLOR" = X'cat -s' ]; then
+		NUM=$(( $(wc -l <"$FILE") - $SHOWLINES ))
+		[ $NUM -gt 1 ] || NUM=1
+		$SHOWCOLOR <"$FILE" | $SHOWPAGER +$NUM
+	else
+		tail -n "$NUM" <"$FILE" | $SHOWCOLOR | $SHOWPAGER
+	fi
 fi
