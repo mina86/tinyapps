@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Truncates pwd to specified number of characters
-## $Id: tpwd,v 1.2 2006/08/01 02:39:10 mina86 Exp $
+## $Id: tpwd,v 1.3 2006/08/06 14:37:48 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ##
 ## This software is OSI Certified Open Source Software.
@@ -25,22 +25,72 @@
 ##   -> http://tinyapps.sourceforge.net/
 ##
 
-  if [ X"$1" = X-P ]; then P="$(pwd -P)"; shift
-elif [ X"$1" = X-L ]; then P="$(pwd -L)"; shift
-else                       P="$PWD"
+
+## Generic function
+if [ X"$1" = X--function ]; then
+cat <<EOF
+	tpwd () {
+		set -- \$? "\$@"
+		if [ X"\$2" != X-n ] || [ X"\${3#-}" != X"\$3" ] || [ \$# -gt 6 ] || \
+			[ -z "\$HOME" ]; then shift; "\$(which tpwd)" "\$@"; return; fi
+		set -- \$1 "\${3:-30}" "\${4-...}" "\$5" "\${6:-\$PWD}"
+		[ X"\$5" = X"\${5#\$HOME}" ] || \
+			set -- "\$1" "\${2:-30}" "\${3-...}" "\$4" "~\${5#\$HOME}"
+
+		if [ \${#5} -le \$2 ] || [ \${4:-\${#3}} -ge \$2 ]
+		then printf %s "\$5"; return \$1; fi
+		printf %s "\$3"; set -- \$1 "\$(( \$2 - \${4:-\${#3}} ))" "\${5#?}"
+		while [ \${#3} -gt \$2 ]; do set -- \$1 "\$2" "\${3#?}"; done
+		printf %s "\$3"; return \$1
+	}
+EOF
+	exit
 fi
 
+
+## Bash function
+if [ X"$1" = X--bash ]; then
+	cat <<EOF
+tpwd () {
+	local EC=\$? P="\$PWD" E="echo" ARGS=( \$@ )
+	if [ X"\$1" = X-P ] || [ X"\$1" = X-L ]; then P="\$(pwd \$1)"; shift; fi
+	if [ X"\$1" = X-n ]; then E='printf %s'; shift; fi
+	if [ \$# -gt 4 ] || [ X"\${3#-}" != X"\$3" ] || [ -z "\$HOME" ]
+	then "\$(which tpwd)" "\${ARGS[@]}"; return \$?; fi
+
+	P="\${4-\$P}"; P="\${P/#\$HOME/~}"
+	if [ \${#P} -le \${1:-30} ]
+	then \$E "\$P"
+	else \$E "\$2\${P:\$(( \${#P} - \${1:-30} + \${3:-\${#2}} ))}"
+	fi
+	return \$EC
+}
+EOF
+	exit
+fi
+
+
+## PWD
+if [ X"$1" = X-P ] || [ X"$1" = X-L ]
+then P="$(pwd $1)"; shift
+else P="$PWD"; fi
+
+## New line
 if [ X"$1" = X-n ]; then E='printf %s'; shift; else E=echo; fi
 
-if [ $# -gt 3 ] || [ X"$1" = X"--help" ] || [ X"$1" = X"-h" ]; then
+## Usage
+if [ $# -gt 4 ] || [ X"${1#-}" != X"$1" ]; then
 	cat <<EOF
-usage: tpwd [ -L | -P ] [ -n ] [<len> [<trunc> [<tlen>]]]
+usage: tpwd [ -L | -P ] [ -n ] [<len> [<trunc> [<tlen> [<path>]]]]
+       eval "$(tpwd --bash)"      defines bash function
+       eval "$(tpwd --function)"  defines generic POSIX shell function
  -L       uses  'pwd -L'  instead of  \$PWD
  -P       uses  'pwd -P'  instead of  \$PWD
  -n       doesn't print new line character at the end
  <len>    maximum length of printed string                       [30]
  <trunc>  string to print at the beginning if pwd was trunced   [...]
  <tlen>   length of <trunc> (useful if using ANSI codes)
+ <path>   path to use instead of \$PWD
 
 It might be used in PS1 varaible to truncate very long PWD's which
 normaly would took a whole line (or more), eg:
@@ -51,33 +101,19 @@ EOF
 	exit $?
 fi
 
-
-if [ -n "$HOME" ]; then
-	H="$HOME"
-else
-	H="$(eval echo ~$(logname))"
-fi
-H="${H%/}"
-
+## PWD
+P="${4-$P}"; H="${HOME:-$(eval echo ~$(id -un))}"; H="${H%/}"
 if                [ X"$P" != X"${P#//}" ]; then P="${P#/}"  ; fi
 if [ -n "$H" ] && [ X"$P" != X"${P#$H}" ]; then P="~${P#$H}"; fi
 
+## Short enough or trunc too long
 LEN=${1-30}
-if [ ${#P} -le $LEN ]; then
-	$E "$P"
-	exit 0
-fi
+if [ ${#P} -le $LEN ]; then $E "$P"; exit; fi
+TRUNC=${2-...}; LEN=$(( $LEN - ${3-${#TRUNC}} ))
+if [ $LEN -le 0 ]; then $E "$TRUNC"; exit; fi
 
-TRUNC=${2-...}
-LEN=$(( $LEN - ${3-${#TRUNC}} ))
-if [ $LEN -le 0 ]; then
-	$E "$TRUNC"
-	exit 0
-fi
-
-if [ -n "$BASH_VERSION" ]; then
-	$E "$TRUNC${P:$(( ${#P} - $LEN ))}"
-else
-	while [ ${#P} -gt $LEN ]; do P="${P%?}"; done
-	$E "$TRUNC$P"
+## Print
+if [ -n "$BASH_VERSION" ]
+then $E "$TRUNC${P:$(( ${#P} - $LEN ))}"
+else while [ ${#P} -gt $LEN ]; do P="${P%?}"; done; $E "$TRUNC$P"
 fi

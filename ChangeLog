@@ -5,6 +5,10 @@
 
 	* show: + ccze is extremally slow; fixed to use tail
 
+	* tpwd: + added --function and --bash
+	+ added <path> - 4th argument
+	+ bit shortenend
+
 2006-08-03  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* lesspipe: + added escaping
