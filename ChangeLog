@@ -1,3 +1,7 @@
+2006-08-08  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* tpwd: + fixed bug with options passed to bash function
+
 2006-08-03  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* Makefile, README: + show added
