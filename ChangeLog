@@ -1,5 +1,7 @@
 2006-09-14  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* quotes.txt: + new quotes
+
 	* lesspipe: + bug fixed when installing pipe
 	+ better handling of temporary file names
 	+ bug fixed in lessopen (file name was written to temp file)

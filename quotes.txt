@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.12 2006/07/08 15:09:17 mina86 Exp $
+## $Id: quotes.txt,v 1.13 2006/09/14 15:57:00 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -10,6 +10,10 @@
 %
  I have always found that mercy bears richer fruits than strict justice.
 	-- Abraham Lincoln (1809-1865)
+%
+ History teaches us that men and nations behave wisely once they have
+exhausted all other alternatives
+	-- Abbe Eban
 %
  When the music's over, turn off the lights.
 	-- The last words of Adolf Hitler (1889-1945)
@@ -69,6 +73,10 @@ wrong, France will say I am a German and Germany will say I am a Jew.
  We can't solve problems by using the same kind of thinking we used when we
 created them.
 	-- Albert Einstein (1879-1955)
+%
+ Learn all you can from the mistakes of others.  You won't have time to
+make them all yourself.
+	-- Alfred P. Sheinwold (1912-1997)
 %
  To the strongest!
 	-- Alexander the Great (356BC-323BC)
@@ -249,6 +257,9 @@ they make it easier to do don't need to be done.
  Damn! A bullet!
 	-- The last words of Antonio Jose de Sucre (1795-1830)
 %
+ Bardzo zaawansowana technologia niewiele ró¿ni siê od magii.
+	-- Arthur C. Clarke (1917-)
+%
  A bullet to his head won't bring back the dead, but it'll lift the spirit
 of my people!
 	-- Asian Dub Foundation, Assassin
@@ -283,8 +294,8 @@ ones in movies.
  I'll be in Hell before you start breakfast!
 	-- The last words of "Black Jack" Ketchum
 %
- Good morning, Robert.
-	-- The last words of John Calvin Coolidge, Jr. (1872-1933)
+ The real problem is not whether machines think but whether men do.
+	-- Burrhus Frederic Skinner (1904-1990)
 %
  No man is wise enough, nor good enough to be trusted with unlimited
 power.
@@ -292,6 +303,9 @@ power.
 %
  Why not? After all, it belongs to Him!
 	-- The last words of Sir Charles Spencer Chaplin (1889-1977)
+%
+ There is no such thing as "trusted users".
+	-- +Chiron+ on alt.os.linux.slackware
 %
 Trust no one.
 	-- Fox Mulder (David Duchowny)
@@ -475,6 +489,10 @@ I won't be buried alive.
  Wolno¶æ oznacza odpowiedzialno¶æ.  Dlatego wiêkszo¶æ ludzi siê jej boi.
 	-- George Bernard Shaw (1856-1950)
 %
+ I want to die peacefully in my sleep, like my grandfather did, not
+screaming like the passengers who were in his car...
+	-- George Burns
+%
  Now I shall go to sleep.  Goodnight.
 	-- The last words of Lorde George Gordon Byron (1788-1824)
 %
@@ -620,6 +638,10 @@ and the pessimist fears this is true.
  They have computers, and they may have other weapons of mass destruction.
 	-- Janet Reno (1938-)
 %
+ Lord, help me be the person my dog thinks I am.
+ (Bo¿e, pomó¿ mi byæ takim cz³owiekiem, za jakiego bierze mnie mój pies.)
+	-- Janusz Leon Wi¶niewski (1954-)
+%
  Since the day of my birth, my death began its walk.  It is walking towards
 me, without hurrying.
 	-- The last words of Jean Maurice Eugene Clement Cocteau (1889-1963)
@@ -653,6 +675,9 @@ don't believe this to be a coincidence.
 	-- Luna Lovegood
 	-- Joanne K. Rowling (1965-),
 		Harry Potter and the Order of the Phoenix
+%
+ Good morning, Robert.
+	-- The last words of John Calvin Coolidge, Jr. (1872-1933)
 %
  He who hasn't hacked assembly language as a youth has no heart.  He who
 does as an adult has no brain.
@@ -1508,6 +1533,9 @@ It is a sobering thought, for example, that when Mozart was my age, he had
 been dead for two years.
 	-- Thomas Andrew Lehrer (1928-)
 %
+ Maybe we are short of offensive fortunes.
+	-- Thomas Overgaard on alt.os.linux.slackware
+%
  Why not?
 	-- The last words of Timothy Leary
 %
@@ -1609,6 +1637,9 @@ matched up the letters.
  The one who says it cannot be done should never interrupt the one who is
 doing it.
 	-- The Roman Rule
+%
+It works, sort of.
+	-- Xerox Labs, 1973
 %
  Herbata od mieszania nie zrobi siê s³odsza, w tym celu bowiem trzeba
 dosypaæ cukru.
@@ -1732,3 +1763,8 @@ without either laughing or crying.
 
  The only man who kills like that is Bugs Moran.
 	-- Al Capone, on the Saint Valentine
+%
+A: Because it messes up the order in which people normally read text.
+Q: Why is it such a bad thing?
+A: Top-posting.
+Q: What is the most annoying thing on usenet and in e-mail?
