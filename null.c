@@ -1,8 +1,7 @@
 /*
  * Discards standard input.
- * $Id: null.c,v 1.5 2005/12/23 14:40:10 mina86 Exp $
- * By Michal Nazarewicz (mina86/AT/tlen.pl)
- * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+ * $Id: null.c,v 1.6 2006/09/14 15:09:39 mina86 Exp $
+ * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,20 +19,27 @@
  */
 
 /*
- * usage:
- *   command | null         (pipe feature)
- *   null    command        (exec feature)
- *   null -d command        (exec + daemonize feature)
- *   null -D command        (exec + daemonize feature and PID written)
- *   drun    command        (synonym of  null -d command )
- *   drun -D command        (synonym of  null -D command )
+ * usage: null [ [ -b | -B | -d | -D ] <program> <args> ]
  *
- * Pipe feature is used to discard stdout of a command.  Exec feature
- * discards both - stdout and stderr.  If -d or -D is given or it's
- * run as drun (daemon run) the command will be put into background.
- * Each of the features can be disabled by editing the defines in the
- * source file.  Running it as xrun has the same effect as running it
- * as drun.
+ * If called without arguments program will eat data send to it's
+ * stdin so one can type `command | null` instead of `command
+ * >/dec/null`. ;)
+ *
+ * If called with a command executes it with stdout and stderr
+ * redirected to /dev/null.
+ *
+ * If -b is given before the command program will first fork() and
+ * then execute the command with stdout and stderr refirected to
+ * /dev/null. -B makes it also print the PID of the process.
+ *
+ * If -d is given before the command program will fork(), setsid() (to
+ * become process group and session group leader), fork() once again
+ * (so process cannot regain a controlling terminal), then close() all
+ * opened file descriptors above 2, and finally execute the command
+ * with all stdin, stdout and stderr redirected to/from /dev/null. -D
+ * makes it also print the PID of the process.
+ *
+ * Running it as drun or xrun defaults to the -b parameter.
  */
 
 
@@ -45,21 +51,18 @@
 #define HAVE_UNISTD_H
 
 /* Comment this out if you want an exec feature to be compiled it. */
-/* #define DISABLE_EXEC /**/
+/* #define DISABLE_EXEC */
 
-/* Comment this out if you want an daemonize feature to be compiled
-  in.  Note, that deamonize feature works only if exec feature is
-  compiled in.
-/* #define DISABLE_DAEMONIZE /**/
+/* Comment this out if you want forking to work. */
+/* #define DISABLE_DAEMONIZE */
 
 /* Comment this out if you want the app to take -d and -D arguments.
    This takes effect only if daemonize feature is turned on. */
-/* #define DISABLE_ARGS /**/
+/* #define DISABLE_ARGS */
 
 /* Comment this out if you do not want the app to assume it was run as
-   drun and daemonize by default.  This requires daemonize to be
-   compiled.  Moreover, it will disable a pipe feature.  */
-/* #define BUILD_DRUN /**/
+   drun and daemonize by default.  It will disable a pipe feature.  */
+/* #define BUILD_DRUN */
 
 /* Size of buffer used when reading data from stdin. */
 #define BUFFER_SIZE 1024
@@ -88,6 +91,7 @@
 
 /******** Includes ********/
 #ifdef HAVE_UNISTD_H
+# include <sys/types.h>
 # include <unistd.h>
 # ifndef DISABLE_EXEC
 #  include <fcntl.h>
@@ -96,6 +100,9 @@
 # include <stdio.h>
 #endif
 
+#ifndef CHAR_BIT
+# include <limits.h>
+#endif
 
 
 /******** Main ********/
@@ -106,11 +113,17 @@ int main(void) {
 int main(int argc, char **argv) {
 #endif
 
+#ifndef DISABLE_DAEMONIZE
+	int daemonize = 0;
+#else
+# define daemonize 0
+#endif
+
 
 	/* No args given or exec feature disabled */
 	if (argc==1) {
 #ifdef BUILD_DRUN
-		write(2, "usage: drun [-D] command\n", 25);
+		write(2, "usage: drun [-D | -b | -B ] command\n", 36);
 		return 1;
 #else
 		char buf[BUFFER_SIZE];
@@ -127,11 +140,9 @@ int main(int argc, char **argv) {
 
 #ifndef DISABLE_EXEC
 # ifndef DISABLE_DAEMONIZE
-	int daemonize = 0;
-
 #  ifdef BUILD_DRUN
 	daemonize = 1;
-#  else
+#  else /* BUILD_DRUN */
 	/* Check whether was run as drun */
 	char *c, *s = argv[0];
 	for (c = argv[0]; *c; ++c) {
@@ -143,46 +154,81 @@ int main(int argc, char **argv) {
 		&& s[1]=='r' && s[2]=='u' && s[3]=='n' && !s[4]) {
 		daemonize = 1;
 	}
-#  endif
+#  endif /* BUILD_DRUN */
 
 #  ifndef DISABLE_ARGS
 	/* Check whether -d or -D was given */
 	if (argc>2 && argv[1][0]=='-' && !argv[1][2]) {
-		if (argv[1][1]=='D') {
-			daemonize = 2;
-			++argv;
-#   ifndef BUILD_DRUN
-		} else if (argv[1][1]=='d') {
-			daemonize = 1;
-			++argv;
-#   endif
+		switch (argv[1][1]) {
+		case 'b': if (daemonize!=1) { daemonize = 1; ++argv; } break;
+		case 'B': daemonize = 2; ++argv; break;
+		case 'd': daemonize = 3; ++argv; break;
+		case 'D': daemonize = 4; ++argv; break;
 		}
 	}
-#  endif
+#  endif /* DISABLE_ARGS */
 
 
-	/* Daemonize */
+	/* Fork into background */
 	if (daemonize) {
-		pid_t pid = fork();
-		switch (pid) {
+		pid_t pid;
+		char buf[sizeof(pid_t) * CHAR_BIT / 3 + 2];
+		int i;
+
+		switch (pid = fork()) {
 		case -1: return 2;
 		case  0: break;
 		default:
 			if (daemonize!=2) return 0;
-			char buf[32]; buf[31] = '\n';
-			int i = 31;
-			do { buf[--i] = '0' + (pid%10); } while ((pid/=10)!=0);
-			write(1, buf+i, 32 - i);
-			return 0;
+			buf[i = sizeof(buf) - 1] = '\n';
+			do { buf[--i] = '0' + (pid % 10); } while (pid /= 10);
+			write(1, buf+i, sizeof(buf) - i);
+			_exit(0);
 		}
 	}
-# endif
+
+	/* Daemonize */
+	if (daemonize>2) {
+		pid_t pid;
+		char buf[sizeof(pid_t) * CHAR_BIT / 3 + 2];
+		int i, max;
+
+		setsid();
+		pid = fork();
+
+		switch (pid) {
+		case -1: return 2;
+		case  0: break;
+		default:
+			if (daemonize!=4) return 0;
+			buf[i = sizeof(buf) - 1] = '\n';
+			do { buf[--i] = '0' + (pid % 10); } while (pid /= 10);
+			write(1, buf+i, sizeof(buf) - i);
+			_exit(0);
+		}
+
+		/* Close all fds */
+		max = sysconf(_SC_OPEN_MAX);
+		for (i = 2; ++i<max; close(i));
+	}
+# endif /* DISABLE_DAEMONIZE */
 
 
 
 	/* Run app */
-	int fd = open("/dev/null", O_RDONLY);
-	if (fd==-1 || dup2(fd, 1)==-1 || dup2(fd, 2)==-1) return 1;
-	return execvp(argv[1], argv + 1);
-#endif
+	{
+		int fd;
+
+		if (daemonize>2) {
+			int fd = open("/dev/null", O_RDWR);
+			if (fd==-1 || dup2(fd, 0)==-1 ||
+				dup2(fd, 1)==-1 || dup2(fd, 2)==-1) return 1;
+		} else {
+			int fd = open("/dev/null", O_WRONLY);
+			if (fd==-1 || dup2(fd, 1)==-1 || dup2(fd, 2)==-1) return 1;
+		}
+
+		return execvp(argv[1], argv + 1);
+	}
+#endif /* DISABLE_EXEC */
 }

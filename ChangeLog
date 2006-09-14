@@ -1,5 +1,8 @@
 2006-09-14  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* null.c: -b and -B switches added
+	+ -d/-D now performs "real" daemonization
+
 	* check.sh: + check_proc() uses pkill if present
 	+ better handling of temporary file
 	+ '-n' added after '[' where needed for better portability
