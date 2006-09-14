@@ -1,5 +1,9 @@
 2006-09-14  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* lesspipe: + bug fixed when installing pipe
+	+ better handling of temporary file names
+	+ bug fixed in lessopen (file name was written to temp file)
+
 	* null.c: -b and -B switches added
 	+ -d/-D now performs "real" daemonization
 

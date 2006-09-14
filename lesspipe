@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## lessfile/lesspipe filter for less pager
-## $Id: lesspipe,v 1.2 2006/08/03 00:17:51 mina86 Exp $
+## $Id: lesspipe,v 1.3 2006/09/14 15:28:02 mina86 Exp $
 ## Copyright (c) 2006 by Michal Nazareicz (mina86/AT/mina86.com)
 ##
 ## Written by: Behan Webster <behanw@pobox.com>
@@ -51,7 +51,7 @@ esc () {
 ## No arguments
 ##
 if [ $# -eq 0 ] || [ X"$1" = X--install-lessopen ] || \
-	[ X"$1" = X--install-lessfile ] || [ X"$1" = X--install--lesspipe ]; then
+	[ X"$1" = X--install-lessfile ] || [ X"$1" = X--install-lesspipe ]; then
 	FULLPATH="$(cd "$(dirname "$0")"; pwd)/${0##*/}"
 	FULLPATH="$(esc "'$(esc "$FULLPATH")'")"
 
@@ -72,7 +72,7 @@ if [ $# -eq 0 ] || [ X"$1" = X--install-lessopen ] || \
 			"$FULLPATH --open %s" "$FULLPATH --close %s %s"
 	else
 		printf "$_SET LESSOPEN$_EQ'%s';\\n$_UNSET LESSCLOSE;\\n" \
-			"|$FULLPATH --open %s"
+			"|$FULLPATH --pipe %s"
 	fi
 
 	exit 0
@@ -141,15 +141,38 @@ iso_list() {
 }
 
 
-## Echos temporary file name
+## Creates temporary file and echos it's path
 tmpfile () {
-	set -- "${1-less-}" "$(umask)"
+	set -- "${1-less-}" "$(umask)" .
+
+	# Find temp dir
+	for __TMP in "$TMPDIR" "$TMP" "$TEMP" ~/tmp /tmp; do
+		if [ -n "$__TMP" ] && [ -d "$__TMP" ] && [ -w "$__TMP" ]; then
+			set -- "$1" "$2" "$__TMP"
+			break
+		fi
+	done
+
+	# tempfile exists
 	umask 077
-	if which tempfile >/dev/null 2>&1
-	then tempfile -d "${TMPDIR-/tmp}" -p "${1-less-}"
-	else printf %s/%s "${TMPDIR-/tmp}" "${1-less-}.${id -u}.$RANDOM.$$"
+	if which tempfile >/dev/null 2>&1; then
+		tempfile -d "$3" -p "$1"
+		umask "$2"
+		return 0
 	fi
-	umask "$2"
+
+	# Race condition present
+	set -- "$3/$1$RANDOM.$$" "$2"
+	for __TMP in "" .0 .1 .2 .3 .4 .5 .6 .7 .8 .9; do
+		if [ -e "$1$__TMP" ] || ! :>"$1$__TMP"; then continue; fi
+		printf %s "$1$__TMP"
+		umask "$2"
+		return 0
+	done
+
+	# Unable to create temp file
+	echo unable to create temporary file >&2
+	exit 1
 }
 
 
@@ -183,7 +206,7 @@ exit_function () {
 
 	if [ -n "$2" ]; then
 		if [ -s "$2" ]; then
-			printf %s "$2"
+			printf %s "$2" >&3
 		else
 			rm -f -- "$3"
 		fi
@@ -196,7 +219,7 @@ trap 'exit_function "$@"' 0
 ## Redirect output
 if [ -n "$LESSFILE" ]; then
 	set -- "$1" "$(tmpfile lessf-)"
-	exec >"$2"
+	exec 3>&1 >"$2"
 else
 	set -- "$1" ''
 fi
@@ -205,7 +228,6 @@ fi
 
 ## User has his own fitler
 [ -x ~/.lessfilter ] && ~/.lessfilter "$1" && exit 0
-
 
 ## URL
 FILENAME="${1##*/}"
