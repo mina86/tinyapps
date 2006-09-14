@@ -1,3 +1,9 @@
+2006-09-14  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* check.sh: + check_proc() uses pkill if present
+	+ better handling of temporary file
+	+ '-n' added after '[' where needed for better portability
+
 2006-08-08  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* tpwd: + fixed bug with options passed to bash function

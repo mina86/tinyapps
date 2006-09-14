@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Pings specified host and runs specified program if no responding
-## $Id: check.sh,v 1.5 2005/12/23 14:23:24 mina86 Exp $
+## $Id: check.sh,v 1.6 2006/09/14 15:03:32 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 ##
 version () {
 	echo 'Check v0.2  (c) 2005 by Micha³ Nazarewicz'
-	echo '$Id: check.sh,v 1.5 2005/12/23 14:23:24 mina86 Exp $'
+	echo '$Id: check.sh,v 1.6 2006/09/14 15:03:32 mina86 Exp $'
 	echo
 }
 
@@ -99,6 +99,7 @@ EOF
 ##
 ## Init variables
 ##
+umask 077
 if [ -n "$BASH_VERSION" ]
 then declare -i SLEEP=10 RETRY=10 COUNT=0
 else SLEEP=10; RETRY=10; COUNT=0
@@ -108,9 +109,6 @@ KEEPGOING=
 export CHECK_QUIET= CHECK_IGNORESIG=
 TRAPCMD="exit 0"
 CMD="check_ping www.google.com"
-
-export CHECK_TMP=check-connection-$$-$RANDOM
-if [ -d /tmp ] && [ -w /tmp ]; then CHECK_TMP=/tmp/$CHECK_TMP; fi
 
 
 ##
@@ -140,12 +138,12 @@ while [ $# -ne 0 ]; do
 	(-*) echo Unknown option: "$1"; exit 1; ;;
 	(*) break; ;;
 	esac
-	shift;
+	shift
 done
 [ $# -eq 0 ] && set -- exit 1
 
 
-[ "$CHECK_QUIET" ] || version
+[ -n "$CHECK_QUIET" ] || version
 
 
 ##
@@ -166,7 +164,7 @@ fi
 ##
 check_ping () {
 	ping -c 1 "$1" 2>/dev/null >"$CHECK_TMP" || return 1
-	[ $CHECK_QUIET ] || head -n 2 "$CHECK_TMP" |tail -n 1
+	[ -n "$CHECK_QUIET" ] || head -n 2 "$CHECK_TMP" |tail -n 1
 	return 0
 }
 heck_ping () { check_ping "$@"; }
@@ -174,25 +172,73 @@ heck_ping () { check_ping "$@"; }
 check_proc_load () {
 	LOAD="$(ps -o %cpu -C "$1" |tail -n+2)"
 	if [ ! "$LOAD" ]; then
-		[ $CHECK_QUIET ] || printf '%s: not running\n' "$1"
+		[ -n "$CHECK_QUIET" ] || printf '%s: not running\n' "$1"
 		return 0
 	fi
-	[ $CHECK_QUIET ] || printf '%s: CPU Load %5s%%\n' "$1" $LOAD
+	[ -n "$CHECK_QUIET" ] || printf '%s: CPU Load %5s%%\n' "$1" $LOAD
 
 	[ $(echo "$LOAD" |cut -d. -f1) -lt "$2" ]
 }
 heck_proc_load () { check_proc_load "$@"; }
 
 check_proc () {
-	if ! ps -C "$1" >/dev/null 2>/dev/null; then return 1; fi
+	if [ -z "$__CHECK_PROC_PKILL_PRESENT" ]; then
+		which pkill >/dev/null 2>&1
+		__CHECK_PROC_PKILL_PRESENT=$?
+	fi
+
+	if [ $__CHECK_PROC_PKILL_PRESENT -eq 0 ]; then
+		if ! pkill -0 "^$1\$"; then return 1; fi
+	elif ! ps -C "$1" >/dev/null 2>/dev/null; then
+		return 1
+	fi
+
+	if [ -n "$CHECK_QUIET" ]; then return 0; fi
 	case "$__CHECK_PROC_GLOBAL_VAR" in
 	(1) printf '%s: running  (/)\r'  "$1"; __CHECK_PROC_GLOBAL_VAR=2; ;;
 	(2) printf '%s: running  (-)\r'  "$1"; __CHECK_PROC_GLOBAL_VAR=3; ;;
 	(3) printf '%s: running  (\\)\r' "$1"; __CHECK_PROC_GLOBAL_VAR=0; ;;
 	(*) printf '%s: running  (|)\r'  "$1"; __CHECK_PROC_GLOBAL_VAR=1; ;;
 	esac
+	return 0
 }
 heck_proc () { check_proc "$@"; }
+
+
+##
+## Temporary file
+##
+
+# Find temp dir
+CHECK_TMP=.
+for N in "$TMPDIR" "$TMP" "$TEMP" ~/tmp /tmp; do
+	if [ -n "$N" ] && [ -d "$N" ] && [ -w "$N" ]; then
+		CHECK_TMP="$N"
+		break
+	fi
+done
+
+# tempfile exists
+if which tempfile >/dev/null 2>&1; then
+	export CHECK_TMP="$(tempfile -d "$CHECK_TMP" -p "check-")"
+else
+# tempfile does not exist
+	if [ X"$RANDOM" = X"$RANDOM" ]; then RANDOM=$(date +%s); fi
+	export CHECK_TMP=$(printf %s/check-%x-%x "$CHECK_TMP" $$ "$RANDOM")
+
+	# Race condition present
+	for N in "" .0 .1 .2 .3 .4 .5 .6 .7 .8 .9; do
+		if [ -e "$CHECK_TMP$N" ] || ! :>"$CHECK_TMP$N"; then continue; fi
+		CHECK_TMP="$CHECK_TMP$N"
+		break;
+	done
+
+	# Unable to create temp file
+	echo unable to create temporary file >&2
+	exit 0
+fi
+
+trap '[ -f "$CHECK_TMP" ] && rm -f -- "$CHECK_TMP"' 0
 
 
 ##
@@ -201,12 +247,11 @@ heck_proc () { check_proc "$@"; }
 catch_sig () {
 	if [ -n "$CHECK_IGNORESIG" ] || [ "X$1" = XUSR1 ] ||
 		[ "X$1" = XUSR2 ] || [ "X$1" = XALRM ]; then
-		[ $CHECK_QUIET ] || echo "Got SIG$1; ignoring..."
+		[ -n "$CHECK_QUIET" ] || echo "Got SIG$1; ignoring..."
 		return 0
 	fi
 
-	[ $CHECK_QUIET ] || echo "Got SIG$1; terminating..."
-	[ -f "$TMP" ] && rm -f -- "$TMP"
+	[ -n "$CHECK_QUIET" ] || echo "Got SIG$1"
 	$TRAPCMD
 }
 
@@ -215,10 +260,11 @@ for E in HUP INT QUIT ABRT SEGV PIPE ALRM TERM USR1 USR2; do
 done
 
 
+
 ##
 ## Loop
 ##
-while true; do
+while :; do
 	## OK
 	if $CMD; then
 		COUNT=0
@@ -229,14 +275,14 @@ while true; do
 	## Not OK
 	export CHECK_EXIT_CODE=$?
 	COUNT=$(( $COUNT + 1 ))
-	[ $CHECK_QUIET ] || printf " !!! %3d / %3d\r" "$COUNT" "$RETRY"
+	[ -n "$CHECK_QUIET" ] || printf " !!! %3d / %3d\r" "$COUNT" "$RETRY"
 
 	## Limit reached
 	if [ $COUNT -ge $RETRY ]; then
-		[ $CHECK_QUIET ] || echo ' !!! Checking failed.'
+		[ -n "$CHECK_QUIET" ] || echo ' !!! Checking failed.'
 		[ -f "$CHECK_TMP" ] && rm -f -- "$CHECK_TMP"
 		"$@"
-		[ $KEEPGOING ] || exit 0;
+		[ -n "$KEEPGOING" ] || exit 0;
 		COUNT=0
 	fi
 
