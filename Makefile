@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.24 2006/08/05 16:58:09 mina86 Exp $
+## $Id: Makefile,v 1.25 2006/09/14 15:10:20 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -295,7 +295,7 @@ uninstall-mpd-state:
 	${call uninstall,/usr/local/bin/state-sync}
 	${call uninstall,/usr/local/bin/state-amend}
 
-uninstall-installkernel:
+uninstall-show:
 	${call uninstall,/usr/local/sbin/show}
 
 uninstall-fortune: uninstall-quotes uninstall-the-book-of-mozilla
