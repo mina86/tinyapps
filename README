@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/08/05 16:58:09 $
+                     $Date: 2006/09/25 18:53:39 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and other  things which  may be usefull  in everyday life.   There are
@@ -146,6 +146,9 @@ At the moment the collection includes:
    possible  option of  searching for  a pattern.   Small but  handy -
    u don't have  to write `less /var/log/syslog` anymore  and get ugly
    black and white log. :P
+
+ * SlackBuild.gen - generates a SlackBuild template.  It was not
+   really debuged yet but I believe that it'll work quit good.
 
  * splitlines.sh -  Splits input, line-by-line, into  several files so
    that the 1st line goes to the 1st file, the 2nd to the 2nd file and
