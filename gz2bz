@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## gzip to bzip2 converter
-## $Id: gz2bz,v 1.2 2005/11/22 21:29:19 mina86 Exp $
-## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
+## $Id: gz2bz,v 1.3 2006/09/28 15:06:19 mina86 Exp $
+## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -27,8 +27,8 @@ set -e
 ## Version
 ##
 version () {
-	echo 'gz2bz  ver. 0.1   (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)'
-	echo '$Id: gz2bz,v 1.2 2005/11/22 21:29:19 mina86 Exp $'
+	echo 'gz2bz  ver. 0.1   (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)'
+	echo '$Id: gz2bz,v 1.3 2006/09/28 15:06:19 mina86 Exp $'
 	echo
 }
 

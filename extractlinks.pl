@@ -1,9 +1,9 @@
 #!/usr/bin/perl -w
 ##
 ## Extracts links from a HTML page
-## $Id: extractlinks.pl,v 1.3 2006/04/25 21:18:44 mina86 Exp $
+## $Id: extractlinks.pl,v 1.4 2006/09/28 15:01:46 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
-## Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
+## Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -37,7 +37,7 @@ use LWP::UserAgent;
 use HTML::LinkExtor;
 
 
-my $VERSION = sprintf("%d.%02d", q$Revision: 1.3 $ =~ /(\d+)\.(\d+)/);
+my $VERSION = sprintf("%d.%02d", q$Revision: 1.4 $ =~ /(\d+)\.(\d+)/);
 
 
 my $url = '';
@@ -134,17 +134,17 @@ are extracted.
 
 =item I<url>
 
-Can be a URI (eg. I<http://projektoode.org/>), a file name
+Can be a URI (eg. I<http://mina86.com/>), a file name
 (eg. I<index.html>) or a minus sign which will cause the script to
 read HTML page from standard input.  If no URLs are given, - is
-assumed.  Beware that I<www.google.com> will cause script to open
-a B<file> of a given name and not a Google page.
+assumed.  Beware that I<www.google.com> will cause script to open a
+B<file> of a given name and not a Google page.
 
 =back
 
 =head1 AUTHOR
 
 Berislav Kovacki <beca@sezampro.yu>,
-Michal Nazarewicz <mina86@projektcode.org>
+Michal Nazarewicz <mina86@mina86.com>
 
 =cut

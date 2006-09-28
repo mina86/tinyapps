@@ -1,8 +1,8 @@
 /*
  * Prints/restores MPD's state.
- * $Id: mpd-state.c,v 1.4 2006/01/03 14:05:07 mina86 Exp $
+ * $Id: mpd-state.c,v 1.5 2006/09/28 15:06:19 mina86 Exp $
  * Copyright (c) 2005 by Avuton Olrich (avuton/AT/gmail.com)
- * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+ * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

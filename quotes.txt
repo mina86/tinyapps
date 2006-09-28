@@ -1,7 +1,7 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.13 2006/09/14 15:57:00 mina86 Exp $
-## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+## $Id: quotes.txt,v 1.14 2006/09/28 15:06:19 mina86 Exp $
+## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License v. 2.1.
 ##
 ## To create a fortune compatible file use:

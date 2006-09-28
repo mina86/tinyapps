@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## Changes user's password to a random one
-## $Id: one-time-pass.sh,v 1.2 2005/08/26 17:29:34 mina86 Exp $
-## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+## $Id: one-time-pass.sh,v 1.3 2006/09/28 15:06:19 mina86 Exp $
+## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

@@ -1,7 +1,7 @@
 /*
  * tuptime - Shows total and biggest uptime.
- * $Id: tuptime.c,v 1.4 2005/07/12 17:23:52 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
+ * $Id: tuptime.c,v 1.5 2006/09/28 15:06:18 mina86 Exp $
+ * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

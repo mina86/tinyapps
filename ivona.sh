@@ -2,8 +2,8 @@
 
 ##
 ## ivona.sh - synth. human speach using Ivona[tm]
-## $Id: ivona.sh,v 1.2 2006/04/29 19:51:35 mina86 Exp $
-## Copyright 2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
+## $Id: ivona.sh,v 1.3 2006/09/28 15:01:46 mina86 Exp $
+## Copyright 2006 by Michal Nazarewicz (mina86/AT/mina86.com>
 ## Based on script by Damian "Rush" Kaczmarek - mail: rush@vox.one.pl
 ##
 ## This program is free software; you can redistribute it and/or modify

@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.7 2006/04/30 20:32:18 mina86 Exp $
+## $Id: getlyrics.pl,v 1.8 2006/09/28 15:01:46 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
-## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -265,6 +265,6 @@ be splited into "Black Sabbath" and "Changes" so you have to use
 =head1 AUTHOR
 
 Berislav Kovacki <beca@sezampro.yu>,
-Michal Nazarewicz <mina86@projektcode.org>
+Michal Nazarewicz <mina86@mina86.com>
 
 =cut

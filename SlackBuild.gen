@@ -1,8 +1,8 @@
 #! /bin/sh
 ##
 ## SlackBuild.gen - Script for generating SlackBuild files
-## $Id: SlackBuild.gen,v 1.2 2006/09/25 19:00:36 mina86 Exp $
-## Copyright (c) 2004-2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
+## $Id: SlackBuild.gen,v 1.3 2006/09/28 15:01:46 mina86 Exp $
+## Copyright (c) 2004-2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ set -e
 umask 077
 
 echo "SlackBuild Template Generator"
-echo '$Id: SlackBuild.gen,v 1.2 2006/09/25 19:00:36 mina86 Exp $'
+echo '$Id: SlackBuild.gen,v 1.3 2006/09/28 15:01:46 mina86 Exp $'
 echo "Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)"
 echo
 echo
@@ -176,7 +176,7 @@ prompt ARCH       "Package architecture" i686  is_valid_arch
 ##
 ## Start of SlacBuild
 ##
-REV='$Revision: 1.2 $'
+REV='$Revision: 1.3 $'
 REV="${REV#*: }"
 REV="${REV% *}"
 cat <<EOF >&3
@@ -486,7 +486,7 @@ makepkg -l y -c n "\$CWD/\$PKGNAME-\$VERSION-\$ARCH-\$BUILD.tgz"
 echo
 echo
 echo "######## Package \$PKGNAME-\$VERSION-\$ARCH-\$BUILD has been created ########"
-echo "######## All files in \$TMP remains there. ########"
+echo "######## All files in \$TMP remain there. ########"
 echo
 echo
 EOF

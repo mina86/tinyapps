@@ -1,8 +1,8 @@
 #!/bin/bash
 ##
 ## Shows TX/RX for eth0 over 1sec
-## $Id: traf.sh,v 1.4 2005/07/11 00:20:58 mina86 Exp $
-## By Michal Nazareicz (mina86/AT/tlen.pl)
+## $Id: traf.sh,v 1.5 2006/09/28 15:06:18 mina86 Exp $
+## By Michal Nazareicz (mina86/AT/mina86.com)
 ##  & Stanislaw Klekot (dozzie/AT/irc.pl)
 ## Released to Public Domain
 ##

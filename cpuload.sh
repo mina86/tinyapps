@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## Displays the CPU load.
-## $Id: cpuload.sh,v 1.7 2005/08/26 18:25:40 mina86 Exp $
-## By Michal Nazareicz (mina86/AT/tlen.pl)
+## $Id: cpuload.sh,v 1.8 2006/09/28 15:06:19 mina86 Exp $
+## By Michal Nazareicz (mina86/AT/mina86.com)
 ## Released to Public Domain
 ##
 

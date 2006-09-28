@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## splitlines - Splits input, line-by-line, into several files
-## $Id: splitlines.sh,v 1.1 2006/01/03 14:19:42 mina86 Exp $
-## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/tlen.pl)
+## $Id: splitlines.sh,v 1.2 2006/09/28 15:06:19 mina86 Exp $
+## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -25,7 +25,7 @@
 ## Version & usage
 ##
 version () {
-	echo 'splitlines 0.1   (c) 2006 by Micha³ Nazarewicz (mina86/AT/tlen.pl)'
+	echo 'splitlines 0.1   (c) 2006 by Micha³ Nazarewicz (mina86/AT/mina86.com)'
 	echo Licensed under the GNU General Public License
 	echo
 }

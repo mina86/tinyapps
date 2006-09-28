@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## virtman.sh - Adds virtual hosts to Apache configuration file
-## $Id: virtman.sh,v 1.1 2006/04/29 23:54:44 mina86 Exp $
-## Copyright 2006 by Michal Nazarewicz (mina86/AT/projektcode.org)
+## $Id: virtman.sh,v 1.2 2006/09/28 15:01:46 mina86 Exp $
+## Copyright 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

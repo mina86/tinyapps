@@ -1,7 +1,7 @@
 /*
  * mountiso - Mounts/unmounts ISO images
- * $Id: mountiso.c,v 1.2 2006/06/03 12:10:44 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
+ * $Id: mountiso.c,v 1.3 2006/09/28 15:06:19 mina86 Exp $
+ * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

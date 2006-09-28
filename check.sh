@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## Pings specified host and runs specified program if no responding
-## $Id: check.sh,v 1.6 2006/09/14 15:03:32 mina86 Exp $
-## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+## $Id: check.sh,v 1.7 2006/09/28 15:06:19 mina86 Exp $
+## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -31,7 +31,7 @@
 ##
 version () {
 	echo 'Check v0.2  (c) 2005 by Micha³ Nazarewicz'
-	echo '$Id: check.sh,v 1.6 2006/09/14 15:03:32 mina86 Exp $'
+	echo '$Id: check.sh,v 1.7 2006/09/28 15:06:19 mina86 Exp $'
 	echo
 }
 

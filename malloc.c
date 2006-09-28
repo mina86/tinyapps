@@ -1,7 +1,7 @@
 /*
  * Allocates specified amount of memory.
- * $Id: malloc.c,v 1.7 2005/11/20 20:21:28 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/tlen.pl)
+ * $Id: malloc.c,v 1.8 2006/09/28 15:06:19 mina86 Exp $
+ * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
 

@@ -1,7 +1,7 @@
 /*
  * Prints window's ClassHint
- * $Id: xgetclass.c,v 1.2 2005/11/20 20:32:51 mina86 Exp $
- * Copyright 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+ * $Id: xgetclass.c,v 1.3 2006/09/28 15:06:18 mina86 Exp $
+ * Copyright 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
 
