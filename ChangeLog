@@ -1,3 +1,8 @@
+2006-09-28  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* README, slack-desc: + description changed
+	+ email updated
+
 2006-09-25  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* SlackBuild.gen: + New file

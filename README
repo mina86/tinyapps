@@ -1,14 +1,14 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/09/25 18:53:39 $
+                     $Date: 2006/09/28 15:01:23 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
-and other  things which  may be usefull  in everyday life.   There are
-only a few tools  at the moment but more are hoped  to be added in the
-near future.
+and  other things  which  may be  useful  in everyday  life of  system
+administrators, users  and programmers.   They can be  also used  as a
+base for a more specialised application as they are all Open Source.
 
-If you have  written utility which may be usefull  for others and want
-to share it please email me  at mina86/AT/tlen.pl, I'll be glad to add
+If you have written utility which may be useful for others and want to
+share it please email me  at mina86/AT/mina86.com, I'll be glad to add
 your utility to the collection.
 
 At the moment the collection includes:
@@ -25,18 +25,18 @@ At the moment the collection includes:
 
  * cdiff (C and sed versions) -  adds ANSI codes to the output of diff
    making it a bit more readable.  Both versions read input from stdin
-   and send colorized output to stdout;
+   and send colourised output to stdout;
 
- * check.sh  -  performes a  defined  checking (whether  www.googl.com
+ * check.sh  -  performs  a  defined checking  (whether  www.googl.com
    responds to pings by default) and runs specified command if failed.
-   May be  used to automaticly shut  down PC when  connection is lost,
+   May be used to automatically  shut down PC when connection is lost,
    try to reconnect, monitor a server machine and send message to it's
-   admin if it's down or keep given application running;
+   admin if it's down, keep given application running and many more;
 
  * checkmail -  checks whether mboxes  given as arguments  contain any
    urnead mail;
 
- * cpuload.sh -  tiny script showing  the cpuload.  May be  useful for
+ * cpuload.sh - tiny  script showing the CPU load.   May be useful for
    people  interested in  how  it  is calculated  (see  also load  and
    traf.sh);
 
@@ -51,7 +51,7 @@ At the moment the collection includes:
    example, when downloading an Internet gallery;
 
  * FvwmTransFocus  - an  FVWM  module which  changes windows'  opacity
-   depending  on  focus.  Whn  window  looses  focus  it becomes  more
+   depending  on focus.   When  window looses  focus  it becomes  more
    transparent which looks "neet";
 
  * genpass.sh - generates a random 64-character long password;
@@ -61,7 +61,7 @@ At the moment the collection includes:
    does only download up-to-date virus bases and nothing more;
 
  * getlyrics.pl - downloads  lyrics of a given song  from the Internet
-   (http://www.lyrc.com.ar/ accauly);
+   (http://www.lyrc.com.ar/ actually);
 
  * gz2bz  -  a shell  script  using gzip  and  bzip2  to convert  gzip
    compressed files to bzip2 compressed files.
@@ -78,13 +78,13 @@ At the moment the collection includes:
  * ivona.sh - uses IVONA speach synthetiser to say given text.  Script
    uses  demo  available  at  http://www.ivo.pl/  so  it  requires  an
    Interent conection to work unless  it has all required MP3s cached.
-   IVONA is  a Polish synthetiser so  the script is  rather useful for
-   Poles though it may be used as a base for some English synthetiser.
+   IVONA is  a Polish synthesiser so  the script is  rather useful for
+   Poles though it may be used as a base for some English synthesiser.
 
  * lesspipe -  an input processor  for less pager  which automatically
-   uncompresses  compressed  files, list  contents  of archives,  list
+   decompresses  compressed  files, list  contents  of archives,  list
    contents of a  directory, download file from the  Internet and many
-   other.
+   more.
 
  * load -  shows CPU  load, memory and  net traffic  statistics.  It's
    mostly  ment for  people who  are  curious how  to callculate  such
@@ -93,7 +93,7 @@ At the moment the collection includes:
 
  * malloc -  a small program  which allocates memory.   Sounds stupid?
    Mayby, but in theory it can help freeing RAM and therefore speeding
-   up the PC;
+   up the machine;
 
  * mountiso  - a simple  mount/umount wrapper  for mounting/unmounting
    ISO images  or any other files  using loop option.  You  have to be
@@ -101,7 +101,7 @@ At the moment the collection includes:
    to login as  root.  This utility should be  SUIDed and then anyoune
    can use it to mount ISO  images.  Beware that this tool is not very
    secure and must not be used on servers or given access to untrusted
-   users.
+   users;
 
  * moz2elinks.pl  -  converts  bookmarks  from  Mozilla's  to  ELinks'
    (http://elinks.or.cz) format;
@@ -110,7 +110,7 @@ At the moment the collection includes:
    It uses  cdparanoia to rip  the tracks and  lame to encode  them to
    MP3s.
 
- * mpd-show - tool  ment to display song currently  played in MPD.  It
+ * mpd-show - tool meant to  display song currently played in MPD.  It
    displays it  in a terminal  in one line with  background indicating
    the progress.  It  requires libmpdclient.h and libmpdclient.c files
    to compile;
@@ -123,17 +123,17 @@ At the moment the collection includes:
    behaving like Avuton Olrich's state-utils.
 
  * null  - a C  program (null.c)  and a  shell script  (null.sh) which
-   discard  standard input.   It is  ment  for people  who thnik  that
-   '>/dev/null' is too  long to type every time :) It  may also be run
+   discard  standard input.   It is  meant for  people who  thnik that
+   '>/dev/null' is too long to type  every time. :) It may also be run
    with arguments  and the given program  will be run  and both stdout
    and stderr will be redirected to /dev/null;
 
  * one-time-pass.sh -  another joke.  It  works like passwd  with this
-   difference that it automaticly generates a random password which is
-   not  revelad  to  the  user,  therefore he  doesn't  know  his  own
+   difference that it automatically  generates a random password which
+   is  not revealed to  the user,  therefore he  doesn't know  his own
    password;
 
- * pingrange.pl - pings a range of adresses;
+ * pingrange.pl - pings a range of addresses;
 
  * quotes.txt - a collection of quotations (some are in Polish);
 
@@ -142,25 +142,25 @@ At the moment the collection includes:
  * settitle -  Sets the title of  xterm, rxvt, Eterm,  aterm and other
    xterm-compatible terminals;
 
- * show  -  shows colorized  (if  ccza  is  available) log  file  with
-   possible  option of  searching for  a pattern.   Small but  handy -
-   u don't have  to write `less /var/log/syslog` anymore  and get ugly
-   black and white log. :P
+ * show  - shows  colourised  (if  ccza is  available)  log file  with
+   possible option of searching for  a pattern.  Small but handy - you
+   don't  have to write  `less /var/log/syslog`  anymore and  get ugly
+   black and white log;
 
- * SlackBuild.gen - generates a SlackBuild template.  It was not
-   really debuged yet but I believe that it'll work quit good.
+ * SlackBuild.gen  -  generates a  SlackBuild  template.   It was  not
+   really debugged yet but I believe that it'll work quit good;
 
  * splitlines.sh -  Splits input, line-by-line, into  several files so
    that the 1st line goes to the 1st file, the 2nd to the 2nd file and
    so on till it wraps and n+1st line goes to 1st file.  I use it when
    I want  to download a lot of  small files using a  few instances of
-   wget - it's enought to split file with urls to 2 or 3 files and run
+   wget - it's enough to split file  with urls to 2 or 3 files and run
    2/3 instances of wget in the background.
 
- * the-book-of-mozilla -  a collection of quotations from  The Book of
-   Mozilla (most are unofficial);
+ * the-book-of-mozilla.txt - a collection  of quotations from The Book
+   of Mozilla (most are unofficial);
 
- * timer - a text-mdoe timer counting with accuracy to 0.01 s;
+ * timer - a text-mode timer counting with accuracy to 0.01 s;
 
  * tpwd -  truncates PWD  to specified number  of characters.   May be
    used in PS1  to display only the  end of the PWD instead  of a full
@@ -179,13 +179,13 @@ At the moment the collection includes:
    user.  May be added to  some kind of adduser script for automagical
    addition of virtual hosts.
 
- * xcolor2rgb  -  reads from  argument  list  (or  from STDIN,  if  no
-   arguments are given) and prints apropriate RGB value to STDOUT.
+ * xcolor2rgb  -  reads from  argument  list  (or  from stdin,  if  no
+   arguments are given) and prints appropriate RGB value to stdout.
 
  * xgetclass - prints window's  application name and class as returned
    by XGetClassHint.   May be used in  some kind of  shell scripts but
    honestly I just  wrote it to test XGetClassHint  function and since
-   I did it I decided to include it in tinyapps :)
+   I did it I decided to include it in tinyapps. :)
 
 More  documentation about  each  utility is  usually  provided in  the
 source code.

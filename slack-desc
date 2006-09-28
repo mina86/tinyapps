@@ -1,19 +1,20 @@
 # HOW TO EDIT THIS FILE:
-# The "handy ruler" below makes it easier to edit a package description.  Line
-# up the first '|' above the ':' following the base package name, and the '|' on
-# the right side marks the last column you can put a character in.  You must make
-# exactly 11 lines for the formatting to be correct.  It's also customary to
-# leave one space after the ':'.
+# The "handy ruler" below makes it easier to edit a package
+# description.  Line up the first '|' above the ':' following the base
+# package name, and the '|' on the right side marks the last column
+# you can put a character in.  You must make exactly 11 lines for the
+# formatting to be correct.  It's also customary to leave one space
+# after the ':'.
 
         |-----handy-ruler------------------------------------------------------|
 tinyapps: tinyapps (Collection of useful tiny applications)
 tinyapps:
-tinyapps: It includes add, ai-pitr.pl, ai-sid.pl, cdiff, check.sh, checkmail,
-tinyapps: cpuload.sh, cutcom, drun, extractlinks.pl, FvwmTransFocus, genpass.sh,
-tinyapps: get_mks_vir_bases, getlyrics.pl, gz2bz, installkernel, ivona.sh, load,
-tinyapps: malloc, mountiso, moz2elinks.pl, mp3rip, mpd-show, mpd-state, null,
-tinyapps: pingrange.pl, rot13, settitle, splitlines.sh, timer, tpwd, traf.sh,
-tinyapps: tuptime, virtman.sh, xcolor2rgb, xgetclass and 2 sets of fortunes.
+tinyapps: Tiny Applications Collection is a set of small programs, shell scripts
+tinyapps: and  other things  which  may be  useful  in everyday  life of  system
+tinyapps: administrators, users  and programmers.   They can be  also used  as a
+tinyapps: base for a more specialised application as they are all Open Source.
 tinyapps:
-tinyapps: Package's maintainer: Michal Nazarewicz (mina86/AT/projektcode.org)
+tinyapps: If you have  written utility and want  to share it you may  send it to
+tinyapps: package's maintainer.
+tinyapps: Package's maintainer: Michal Nazarewicz (mina86/AT/mina86.com)
 tinyapps: Package's homepage: <http://tinyapps.sourceforge.net>
