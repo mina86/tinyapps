@@ -1,5 +1,7 @@
 2006-09-29  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* libmpdclient.c, libmpdclient.h: + new version
+
 	* mpd-show.c: + a bit rewritten
 	+ supports formatting, added -f option
 	+ scrolls title if too long
