@@ -1,19 +1,31 @@
 #!/bin/bash
 ##
 ## Shows TX/RX for eth0 over 1sec
-## $Id: traf.sh,v 1.5 2006/09/28 15:06:18 mina86 Exp $
+## $Id: traf.sh,v 1.6 2006/09/29 18:30:49 mina86 Exp $
 ## By Michal Nazareicz (mina86/AT/mina86.com)
 ##  & Stanislaw Klekot (dozzie/AT/irc.pl)
 ## Released to Public Domain
 ##
 
-eval "$(
-	awk '/eth0/{ sub(/^.*:/, ""); print "TX1=" $9 "\nRX1=" $1 }' /proc/net/dev
-)"
+set -e
+INT="${1-eth0}"
+
+get_traffic () {
+	TX2=0; RX2=0;
+	while read LINE; do
+		expr X"${LINE%%:*}" : X".*\\($INT\\)" >/dev/null || continue
+		set -- ${LINE#*:}
+		RX2=$(( $RX2 + $1 ))
+		TX2=$(( $RX2 + $9 ))
+	done </proc/net/dev
+}
+
+get_traffic
+
 while sleep 1; do
-	eval "$(
-		awk '/eth0/{ sub(/^.*:/, ""); print "TX2=" $9 "\nRX2=" $1 }' /proc/net/dev
-	)"
+	TX1=$TX2
+	RX1=$RX2
+	get_traffic
 
 	TX=$(( $TX2 - $TX1 ))
 	RX=$(( $RX2 - $RX1 ))
@@ -29,8 +41,7 @@ while sleep 1; do
 		fi
 		I=$(( $I + 512 ))
 	done
-	printf "< %6d > %6d  %s\n" $TX $RX "$PROGRESS"
-
-	TX1=$TX2
-	RX1=$RX2
+	if [ $TX -gt 2048 ]; then TX="$(( $TX / 1024 )) K"; fi
+	if [ $RX -gt 2048 ]; then RX="$(( $RX / 1024 )) K"; fi
+	printf "< %6s > %6s  %s\n" "$TX" "$RX" "$PROGRESS"
 done

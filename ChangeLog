@@ -1,5 +1,7 @@
 2006-09-29  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* traf.sh: + parametrised
+
 	* mpd-show.c: + usage() fixed
 	+ columns read COLUMNS env variable
 	+ disc, comment, filenoext, pathnoext, dir tags added
