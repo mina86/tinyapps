@@ -1,3 +1,9 @@
+2006-09-29  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* mpd-show.c: + a bit rewritten
+	+ supports formatting, added -f option
+	+ scrolls title if too long
+
 2006-09-28  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* README, slack-desc: + description changed

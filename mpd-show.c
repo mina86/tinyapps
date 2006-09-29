@@ -1,7 +1,7 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.10 2006/04/27 14:15:55 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/tlen.pl)
+ * $Id: mpd-show.c,v 1.11 2006/09/29 09:40:56 mina86 Exp $
+ * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,63 +20,75 @@
 
 
 #define HAVE_SIGNAL_H
-#define HAVE_ICONV_H
 
-
-#include "libmpdclient.h"
 
 #include <unistd.h>
+#include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
+#include <getopt.h>
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
-#ifdef HAVE_ICONV_H
-#include <iconv.h>
-#endif
+
+#include "libmpdclient.h"
 
 
-static const char *program_name = NULL;
-#define ERR(msg, ...) fprintf(stderr, "%s: " msg "\n", program_name, __VA_ARGS__)
 
-
-/********** Config **********/
+/********** Defaults **********/
 #define DEFAULT_HOST    "localhost"
 #define DEFAULT_PORT    6600
 #define DEFAULT_COLUMNS 80
-#define CHARSET_FROM    "UTF8"
-#define DEFAULT_CHARSET "ISO-8859-1"
+/*#define CHARSET_FROM    "UTF8" */
+/*#define DEFAULT_CHARSET "ISO-8859-2" */
+#define DEFAULT_FORMAT "[[%artist% <&%album%> ]|[%artist% - ]|" \
+                       "[<%album%> ]][%track%. ]%title%|%file%"
 
 
-/********** Macros **********/
-#define STRDUP(str) ((str) ? iconvdup(str) : NULL)
-#define STREQ(s1, s2) ((s1)==(s2) || ((s1!=NULL) && (s2!=NULL) \
-									  && !strcmp(s1, s2)))
+
+/******************** Error messages ********************/
+static const char *program_name = "mpd-show";
+#define ERR(msg, ...) fprintf(stderr, "%s: " msg "\n", program_name, __VA_ARGS__)
 
 
-/********** Some global variables **********/
-static char *host = NULL, *password = NULL;
-static long int port = 0;
 
-static int columns = DEFAULT_COLUMNS, background = 0;
+/******************** Types ********************/
+struct config {
+	char *host, *password;
+	char *format, *buffer;
+	long port;
+	unsigned columns, background;
+};
 
-static long int songid = -2;
-static int len = 1, pos = 0, state = 0, opos = 0, ostate = 0;
-static char *buf = NULL;
+struct name {
+	size_t capacity, len, scroll;
+	char *buffer;
+	int state;
+};
 
-#ifdef HAVE_ICONV_H
-static iconv_t conv = (iconv_t)-1;
-#endif
+struct state {
+	long songid;
+	unsigned pos, opos, len;
+	short state, redisplay;
+};
 
 
-/********** Functions declaration **********/
-void usage();
-void parse_args(int argc, char **argv);
 
-mpd_Connection *connect_to_mpd();
-int  get_song(mpd_Connection *conn);
-void print_song();
+/******************** Functions ********************/
+void parse_arguments(int argc, char **argv, struct config *config);
+
+mpd_Connection *connect_to_mpd(struct config *config);
+void fill_name_with_error(mpd_Connection *conn, struct name *name);
+
+void zero_state(struct state *state);
+int get_song(mpd_Connection *conn, struct config *config, struct state *state,
+             struct name *name);
+
+void redisplay(struct config *config, struct name *name, struct state *state);
+void loop_redisplay(struct config *config, struct name *name,
+                    struct state *state, unsigned time);
+
 
 #ifdef HAVE_SIGNAL_H
 static int signum = 0;
@@ -86,39 +98,22 @@ void signal_resize (int sig);
 #define signum 0
 #endif
 
-#ifdef HAVE_ICONV_H
-char *iconvdup(char *s);
-#else
-#define iconvdup(str) strdup(str)
-#endif
 
 
-
-/********** Main **********/
+/******************** Main ********************/
 int main(int argc, char **argv) {
 	mpd_Connection *conn;
-
-	/* Catch signals */
-#ifdef HAVE_SIGNAL_H
-	signal(SIGWINCH, &signal_resize );
-	signal(SIGHUP  , &signal_handler);
-	signal(SIGINT  , &signal_handler);
-	signal(SIGQUIT , &signal_handler);
-#endif
+	struct config config;
+	struct name name = { 0, 0, 0, 0, ' ' };
+	struct state state;
 
 
-	/* Init */
-	parse_args(argc, argv);
-	if ((buf = malloc(columns+1))==NULL) {
-		perror("malloc");
-	}
-#ifdef HAVE_ICONV_H
-	conv = iconv_open(DEFAULT_CHARSET, CHARSET_FROM);
-#endif
+	/* Parse arguments */
+	parse_arguments(argc, argv, &config);
 
 
 	/* Daemonize */
-	if (background==2) {
+	if (config.background==2) {
 		pid_t pid;
 		switch (pid = fork()) {
 		case -1: perror("fork"); return -1;
@@ -132,53 +127,52 @@ int main(int argc, char **argv) {
 	}
 
 
+	/* Catch signals */
+#ifdef HAVE_SIGNAL_H
+	signal(SIGWINCH, signal_resize );
+	signal(SIGHUP  , signal_handler);
+	signal(SIGINT  , signal_handler);
+	signal(SIGQUIT , signal_handler);
+#endif
 
-	/* The Loop */
+
+	/* Main loop */
+	conn = connect_to_mpd(&config);
 	do {
+		int error = 0;
+		zero_state(&state);
+
 		/* Connect */
-		for (conn = connect_to_mpd(); !signum && conn->error; ) {
-			mpd_closeConnection(conn);
-			memset(buf, ' ', columns); memset(buf, '-', 3);
-			state = -1; songid = -2; pos = 0; len = 1;
-			print_song();
-			sleep(5);
-			conn = connect_to_mpd();
-		}
-
-
-		/* Print song */
-		for (; !signum && get_song(conn); sleep(1)){
-			if (background || state!=ostate
-				|| (int)((0.0 + columns) *  pos / len)
-				!= (int)((0.0 + columns) * opos / len)) {
-				print_song();
+		while (!signum && conn->error) {
+			if (error!=conn->error) {
+				fill_name_with_error(conn, &name);
+				state.pos = 0;
+				state.len = 1;
+				state.redisplay = 1;
+				error = conn->error;
 			}
+			mpd_closeConnection(conn);
+			loop_redisplay(&config, &name, &state, 5);
+			conn = connect_to_mpd(&config);
 		}
 
 
-		/* Clear state */
-		mpd_closeConnection(conn);
+		/* Get and display song */
+		while (!signum && get_song(conn, &config, &state, &name)) {
+			loop_redisplay(&config, &name, &state, 1);
+		}
 	} while (!signum);
 
 
-	/* Close everything and exit */
-#ifdef HAVE_ICONV_H
-	if (conv!=(iconv_t)-1) {
-		iconv_close(conv);
-	}
-#endif
-	if (!background) {
-		fputs("\33[2K\r", stdout);
-	}
-	free(buf);
-	free(host);
-	if (password!=NULL) free(password);
-	return 0;
+	/* Return */
+	mpd_closeConnection(conn);
+	write(0, "\n", 1);
+	return signum;
 }
 
 
 
-/********** Usage information **********/
+/******************** Usage ********************/
 void usage() {
 	printf("mpd-state  0.12.1  (c) 2005 by Avuton Olrich & Michal Nazarewicz\n"
 		   "usage: %s [ <options> ] [ [<pass>@]<host> [ <port> ]]\n"
@@ -186,6 +180,7 @@ void usage() {
 		   " -b      run in background mode (does not fork into bockground)\n"
 		   " -B      run in background mode and fork into background\n"
 		   " -c<col> assume terminal is <col>-character wide            [80]\n"
+		   " -f<format>  use <format> for displaying song (see mpc(1))\n"
 		   "\n"
 		   "<pass>  password used to connect; if no set no password is used\n"
 		   "<host>  hostname MPD is running; if not set MPD_HOST is used;\n"
@@ -197,13 +192,16 @@ void usage() {
 
 
 
-/********** Parse arguments **********/
-void parse_args(int argc, char **argv) {
-	char *hostarg = NULL, *portarg = NULL, *test;
+/******************** Parse arguments ********************/
+void parse_arguments(int argc, char **argv, struct config *config) {
+	char *hostarg = 0, *portarg = 0, *end;
+	int opt;
+
 
 	/* Program name */
 	program_name = strrchr(argv[0], '/');
-	program_name = program_name==NULL ? *argv : (program_name + 1);
+	program_name = program_name ? program_name + 1 : *argv;
+
 
 	/* Help */
 	if (argc>1 && !strcmp(argv[1], "--help")) {
@@ -211,29 +209,42 @@ void parse_args(int argc, char **argv) {
 		exit(0);
 	}
 
+
+	/* Defults */
+	config->format  = DEFAULT_FORMAT;
+	config->columns = DEFAULT_COLUMNS;
+	config->background = 0;
+
+
 	/* Get opts */
-	int opt;
-	char *end;
 	opterr = 0;
-	while ((opt = getopt(argc, argv, "-hbBc:"))!=-1) {
+	while ((opt = getopt(argc, argv, "-hbBc:f:"))!=-1) {
 		switch (opt) {
 		case 'h': usage(); exit(0);
-		case 'b': background = 1; break;
-		case 'B': background = 2; break;
+		case 'b': config->background = 1; break;
+		case 'B': config->background = 2; break;
 
 			/* Columns */
 		case 'c':
-			columns = strtol(optarg, &end, 0);
-			if (columns<10 || *end) {
-				ERR("invalid terminal width: %s", optarg);
-				exit(1);
+			{
+				long c = strtol(optarg, &end, 0);
+				if (c<3 || *end) {
+					ERR("invalid terminal width: %s", optarg);
+					exit(1);
+				}
+				config->columns = c;
 			}
+			break;
+
+			/* Format */
+		case 'f':
+			config->format = optarg;
 			break;
 
 			/* An argument */
 		case 1:
-			if (hostarg==NULL) { hostarg = optarg; break; }
-			if (portarg==NULL) { portarg = optarg; break; }
+			if (!hostarg) { hostarg = optarg; break; }
+			if (!portarg) { portarg = optarg; break; }
 			ERR("invalid argument: %s", optarg);
 			exit(1);
 
@@ -246,44 +257,51 @@ void parse_args(int argc, char **argv) {
 
 
 	/* Host and password */
-	if (hostarg==NULL && (hostarg = getenv("MPD_HOST"))==NULL) {
+	if (!hostarg && !(hostarg = getenv("MPD_HOST"))) {
 		hostarg = DEFAULT_HOST;
 	}
 
-	hostarg = strdup(hostarg);
-	host = strchr(hostarg, '@');
-	if (host==NULL) {
-		host = hostarg;
+	config->host = strchr(hostarg, '@');
+	if (!config->host) {
+		config->host = hostarg;
+		config->password = 0;
 	} else {
-		*host = 0;
-		host = strdup(host+1);
-		password = strdup(hostarg);
-		free(hostarg);
+		*config->host = 0;
+		++config->host;
+		config->password = hostarg;
 	}
 
+
 	/* Port */
-	if (portarg==NULL && (portarg = getenv("MPD_PORT"))==NULL) {
-		port = DEFAULT_PORT;
+	if (!portarg && !(portarg = getenv("MPD_PORT"))) {
+		config->port = DEFAULT_PORT;
 	} else {
-		port = strtol(portarg, &test, 10);
-		if (port<0 || *test!='\0') {
+		config->port = strtol(portarg, &end, 10);
+		if (config->port<0 || *end) {
 			ERR("invalid port: %s", portarg);
 			exit(1);
 		}
+	}
+
+
+	/* Buffer */
+	config->buffer = malloc(config->columns+64);
+	if (!config->buffer) {
+		ERR("not enought memory to allocate %d btyes", config->columns+64);
+		exit(1);
 	}
 }
 
 
 
-/********** Connects to MPD **********/
-mpd_Connection *connect_to_mpd() {
-	/* Connect */
-	mpd_Connection *conn = mpd_newConnection(host, port, 10);
-	if (conn->error) return conn;
+/******************** Connect to MPD ********************/
+mpd_Connection *connect_to_mpd(struct config *config) {
+	mpd_Connection *conn = mpd_newConnection(config->host, config->port, 10);
 
 	/* Send password */
-	if (password) {
-		mpd_sendPasswordCommand(conn, password);
+	if (config->password) {
+		if (conn->error) return conn;
+		mpd_sendPasswordCommand(conn, config->password);
 		if (conn->error) return conn;
 		mpd_finishCommand(conn);
 	}
@@ -294,12 +312,192 @@ mpd_Connection *connect_to_mpd() {
 
 
 
-/********** Queries the song information **********/
-int  get_song(mpd_Connection *conn) {
-	/* get status */
-	mpd_Status *status = NULL;
-	mpd_sendStatusCommand(conn);       if (conn->error) return 0;
-	status = mpd_getStatus(conn);      if (conn->error) return 0;
+/******************** Append to name ********************/
+size_t append_to_name(struct name *name, size_t offset,
+                      const char *str, size_t len) {
+	if (offset+len+1>=name->capacity) {
+		size_t cap = (offset + len + 1 + 128) & ~127;
+		char *tmp = name->buffer ? realloc(name->buffer, cap) : malloc(cap);
+		if (!tmp) {
+			return offset;
+		}
+		name->capacity = cap;
+		name->buffer = tmp;
+	}
+	memcpy(name->buffer + offset, str, len);
+	name->buffer[offset + len] = 0;
+	return offset + len;
+}
+
+inline size_t append_to_name_cstr(struct name *name, size_t offset,
+                                  const char *str) {
+	return append_to_name(name, offset, str, strlen(str));
+}
+
+
+
+/******************** Fill name with error message ********************/
+void fill_name_with_error(mpd_Connection *conn, struct name *name) {
+	if (conn->error) {
+		name->state  = '!';
+		name->len    = append_to_name_cstr(name, 0, conn->errorStr);
+		name->scroll = 0;
+	}
+}
+
+
+
+/******************** Formats song title ********************/
+const char *skip_formatting(const char *p) {
+	unsigned stack = 0;
+	for (; *p; ++p) {
+		if (*p == '[') {
+			++stack;
+		} else if (*p=='#' && p[1]) {
+			++p;
+		} else if (stack) {
+			if (*p==']') --stack;
+		} else if (*p=='&' || *p=='|' || *p==']') {
+			break;
+		}
+	}
+	return p;
+}
+
+
+size_t format_song_internal(const mpd_Song *song, const char *p,
+                            struct name *name, size_t offset,
+                            const char **last) {
+	static char _buffer[sizeof(int) * 3 + 3];
+	char found = 0, *temp;
+	size_t off = offset, len;
+
+	while (*p) {
+		/* Copy variable chars */
+		const char *end = p;
+		while (*end && *end!='#' && *end!='%' && *end!='|' && *end!='&'
+		       && *end!='[' && *end!=']') ++end;
+		if (p!=end) {
+			off = append_to_name(name, off, p, end - p);
+			p = end;
+			continue;
+		}
+
+		/* Escape */
+		if (*p=='#' && *++p) {
+			off = append_to_name(name, off, p, 1);
+			++p;
+			continue;
+		}
+
+		/* OR */
+		if (*p=='|') {
+			++p;
+			if (!found) {
+				off = offset;
+			} else {
+				p = skip_formatting(p);
+			}
+			continue;
+		}
+
+		/* AND */
+		if (*p=='&') {
+			++p;
+			if (!found) {
+				p = skip_formatting(p);
+			} else {
+				found = 0;
+			}
+			continue;
+		}
+
+		/* Open group */
+		if (*p=='[') {
+			size_t o = format_song_internal(song, p+1, name, off, &p);
+			if (o!=off) {
+				found = 1;
+				off = o;
+			}
+			continue;
+		}
+
+		/* Close group */
+		if (*p==']') {
+			if (last) *last = p+1;
+			return found ? off : offset;
+		}
+
+		/* Tag */
+		for (end = ++p; *end>='a' && *end<='z'; ++end);
+		len = end - p;
+
+		temp = 0;
+		if      (len==6 && !strncmp("artist"  , p, 6)) temp = song->artist;
+		else if (len==5 && !strncmp("title"   , p, 5)) temp = song->title;
+		else if (len==5 && !strncmp("album"   , p, 5)) temp = song->album;
+		else if (len==5 && !strncmp("track"   , p, 5)) temp = song->track;
+		else if (len==4 && !strncmp("path"    , p, 4)) temp = song->file;
+		else if (len==4 && !strncmp("name"    , p, 4)) temp = song->name;
+		else if (len==4 && !strncmp("date"    , p, 4)) temp = song->date;
+		else if (len==5 && !strncmp("genre"   , p, 5)) temp = song->genre;
+		else if (len==8 && !strncmp("composer", p, 8)) temp = song->composer;
+		else if (len==4 && !strncmp("time"    , p, 4)) {
+			if (song->time!=MPD_SONG_NO_TIME) {
+				snprintf(_buffer, sizeof _buffer, "%d:%d",
+				         song->time/60, song->time % 60);
+				temp = _buffer;
+			}
+		} else if (len==8 && !strncmp("filename", p, 8)) {
+			if (song->file) {
+				temp = strrchr(song->file, '/');
+				if (temp) ++temp;
+			}
+		}
+
+		if (temp) {
+			found = 1;
+			off = append_to_name_cstr(name, off, temp);
+		}
+
+		p = end;
+		if (*p=='%') ++p;
+	}
+
+	if (last) *last = p;
+	return off;
+}
+
+
+void format_song(struct config *config, struct name *name, mpd_Song *song) {
+	name->len    = format_song_internal(song, config->format, name, 0, 0);
+	name->scroll = 0;
+}
+
+
+
+/******************** Zerores state ********************/
+void zero_state(struct state *state) {
+	state->songid    = -2;
+	state->len       = 1;
+	state->pos       = state->opos = 0;
+	state->state     = MPD_STATUS_STATE_PAUSE;
+	state->redisplay = 1;
+}
+
+
+
+/******************** Queries song from MPD ********************/
+int get_song(mpd_Connection *conn, struct config *config, struct state *state,
+             struct name *name) {
+	mpd_Status *status;
+	mpd_InfoEntity *info;
+
+	state->redisplay = 0;
+
+	/* Get status */
+	mpd_sendStatusCommand(conn);  if (conn->error) return 0;
+	status = mpd_getStatus(conn); if (conn->error) return 0;
 	mpd_nextListOkCommand(conn);
 	if (conn->error) {
 		mpd_freeStatus(status);
@@ -307,127 +505,146 @@ int  get_song(mpd_Connection *conn) {
 	}
 
 	/* Error */
+	/*
 	if (status->error) {
-		if (songid!=-1) {
-			len = strlen(status->error);
-			memcpy(buf, status->error, len>columns ? columns : len);
-			opos = pos = 0;
-			len = 1;
-			ostate = songid = -2;
-			state = -1;
-		} else {
-			ostate = MPD_STATUS_STATE_PAUSE;
+		if (state->songid!=-1) {
+			name->len = append_to_name_cstr(name, 0, status->error);
+			state->songid    = -1;
+			state->pos       = state->opos = 0;
+			state->len       = 1;
+			state->redisplay = 1;
+			name->state      = ' ';
 		}
+		return 1;
 	}
+	*/
 
 	/* Copy status */
-	opos = pos;
-	pos = status->elapsedTime;
-	ostate = state;
-	state = status->state;
-	len = status->totalTime;
-	if (status->songid==songid) {
+	state->opos   = state->pos;
+	state->pos    = status->elapsedTime;
+	if (status->state!=state->state) {
+		switch ((state->state = status->state)) {
+		case MPD_STATUS_STATE_STOP : name->state = '#'; break;
+		case MPD_STATUS_STATE_PLAY : name->state = '>'; break;
+		case MPD_STATUS_STATE_PAUSE: name->state = ' '; break;
+		default                    : name->state = '?'; break;
+		}
+		state->redisplay = 1;
+	}
+
+	/* It's the same song */
+	if (status->songid==state->songid) {
 		mpd_freeStatus(status);
 		return 1;
 	}
 
-	ostate = state^1;
-	songid = status->songid;
-	mpd_freeStatus(status);
+	/* It's different song */
+	state->redisplay = 1;
+	state->len    = status->totalTime;
+	state->songid = status->songid;
 
-	/* get song info */
-	mpd_InfoEntity *entity;
+	/* Get song info */
 	mpd_sendCurrentSongCommand(conn);      if (conn->error) return 0;
-	entity = mpd_getNextInfoEntity(conn);  if (!entity) return 0;
-	if (entity->type!=MPD_INFO_ENTITY_TYPE_SONG) {
-		mpd_freeInfoEntity(entity);
+	info = mpd_getNextInfoEntity(conn);    if (!info) return 0;
+	if (info->type!=MPD_INFO_ENTITY_TYPE_SONG) {
+		mpd_freeInfoEntity(info);
 		return 0;
 	}
 
-	/* init strings and lengths */
-#define artist entity->info.song->artist
-#define album  entity->info.song->album
-	const char *title = entity->info.song->title;
-	if (!title) {
-		title = !artist && !album ? entity->info.song->file : "Unknown title";
-	}
-
-	int artist_len, album_len, title_len, sum, col;
-	artist_len = artist ? strlen(artist) : 0;
-	album_len  = album  ? strlen(album ) : 0;
-	title_len  = title  ? strlen(title ) : 0;
-	sum = artist_len + album_len + title_len;
-	col = columns - 3;
-
-	if (sum>col && artist_len>col>>2) {
-		artist_len = artist_len-sum+col<col>>2 ? col>>2 : artist_len-sum+col;
-		sum = artist_len + album_len + title_len;
-	}
-
-	if (sum>col && album_len >col>>2) {
-		album_len  = album_len -sum+col<col>>2 ? col>>2 : album_len -sum+col;
-		sum = artist_len + album_len + title_len;
-	}
-
-	if (sum>col && title_len >col>>1) {
-		title_len  = title_len -sum+col<col>>1 ? col>>1 : title_len -sum+col;
-		sum = artist_len + album_len + title_len;
-	}
-
-	/* fill buffer */
-	memset(buf, ' ', columns);
-	buf[columns] = 0;
-
-	col = 2;
-	if (artist_len) {
-		memcpy(buf + col, artist, artist_len);
-		col += artist_len;
-	}
-
-	if (album_len) {
-		if (artist_len) ++col;
-		buf[col++] = '<';
-		memcpy(buf + col, album, album_len);
-		col += album_len;
-		buf[col++] = '>';
-		++col;
-	} else if (artist_len) {
-		++col;
-		buf[col++] = '-';
-		++col;
-	}
-
-	memcpy(buf + col, title, title_len);
-
-	/* return */
-	mpd_freeInfoEntity(entity);
+	/* Format song string */
+	format_song(config, name, info->info.song);
+	mpd_freeInfoEntity(info);
 	return 1;
 }
 
 
 
-/********** Formats and prints song to stdout **********/
-void print_song() {
-	switch (state) {
-	case MPD_STATUS_STATE_STOP : buf[0] = '#'; break;
-	case MPD_STATUS_STATE_PLAY : buf[0] = '>'; break;
-	case MPD_STATUS_STATE_PAUSE: buf[0] = ' '; break;
-	case -1                    :               break;
-	default                    : buf[0] = '?'; break;
+/******************** Displays title ********************/
+void redisplay(struct config *config, struct name *name, struct state *state){
+	static const char separator[] = "   * * *   ";
+	static const size_t sep_len = sizeof(separator) - 1;
+
+	/* Aliases */
+	const size_t columns = config->columns;
+	char *const buffer = config->buffer + 0;
+
+	/* Fill buffer with song name */
+	if (name->len <= columns - 3) {
+		memcpy(buffer + 3, name->buffer, name->len);
+		memset(buffer + 3 + name->len, ' ', columns - 3 - name->len);
+	} else {
+		size_t off = 3;
+		if (name->scroll >= name->len + sep_len) {
+			name->scroll = 0;
+		}
+
+		/* Name for the first time */
+		if (name->scroll<name->len) {
+			size_t l = name->len - name->scroll;
+			if (l > columns - off) l = columns - off;
+			memcpy(buffer + off, name->buffer + name->scroll, l);
+			off += l;
+		}
+
+		/* Separator */
+		if (off<columns) {
+			size_t o = off==3 ? name->scroll - name->len : 0;
+			size_t l = sep_len - o;
+			if (l > columns - off) l = columns - off;
+			memcpy(buffer + off, separator + o, l);
+			off += l;
+		}
+
+		/* Name for the second time */
+		if (off<columns) {
+			memcpy(buffer + off, name->buffer, columns - off);
+		}
+
+		++name->scroll;
 	}
 
-	int col = len ? (0.0 + columns) * pos / len : columns, old = buf[col];
-	buf[col] = buf[columns] = 0;
-	printf("%s\r\33[0m\33[K\33[37;1;44m%s\33[0;37m",
-		   background ? "\0337\33[1;1f" : "", buf);
-	buf[col] = old;
-	printf("%s%s", buf + col, background ? "\338" : "");
-	fflush(stdout);
+	/* Init buffer */
+	memcpy(buffer - 26, "\0337\33[1;1f\r\33[0m\33[K\33[37;1;44m", 26);
+	buffer[0] = name->state;
+	buffer[1] = ' ';
+	buffer[columns  ] = '\33';
+	buffer[columns+1] = '8';
+
+	/* Print */
+	{
+		size_t split = state->pos * columns / state->len;
+		if (split>columns) split = columns;
+		write(0, buffer - (config->background ? 26 : 18),
+		      split + (config->background ? 26 : 18));
+		write(0, "\33[0;37m", 7);
+		write(0, buffer+split, columns-split+(config->background ? 2 :0));
+	}
 }
 
 
+
+/******************** Redisplays and waits time seconds ********************/
+void loop_redisplay(struct config *config, struct name *name,
+                    struct state *state, unsigned time) {
+	if (name->len > config->columns - 3) {
+		for (time *= 2; time && !signum; --time) {
+			redisplay(config, name, state);
+			usleep(500000);
+		}
+	} else{
+		if (state->redisplay ||
+	        state-> pos*config->columns/state->len !=
+	        state->opos*config->columns/state->len) {
+			redisplay(config, name, state);
+		}
+		sleep(time);
+	}
+}
+
+
+
+/******************** Signal handler ********************/
 #ifdef HAVE_SIGNAL_H
-/********** Signal handler **********/
 void signal_handler(int sig) {
 	if (signum) {
 		exit(1);
@@ -438,25 +655,6 @@ void signal_handler(int sig) {
 
 /********** Terminal have been resized **********/
 void signal_resize (int sig) {
-}
-#endif
-
-
-#ifdef HAVE_ICONV_H
-/********** Duplicates a string and performs conversion **********/
-char *iconvdup(char *s) {
-	if (conv==(iconv_t)-1) {
-		return strdup(s);
-	}
-
-	char *out = malloc((columns>>1)+1);
-	if (out==NULL) {
-		return NULL;
-	}
-
-	char *o = out;
-	size_t sleft = columns<<2, oleft = columns>>1;
-	iconv(conv, &s, &sleft, &o, &oleft);
-	return out;
+	sig = sig; /* supress warning */
 }
 #endif
