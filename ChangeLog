@@ -1,5 +1,9 @@
 2006-09-29  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* mpd-show.c: + usage() fixed
+	+ columns read COLUMNS env variable
+	+ disc, comment, filenoext, pathnoext, dir tags added
+
 	* libmpdclient.c, libmpdclient.h: + new version
 
 	* mpd-show.c: + a bit rewritten

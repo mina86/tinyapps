@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.11 2006/09/29 09:40:56 mina86 Exp $
+ * $Id: mpd-show.c,v 1.12 2006/09/29 17:51:25 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,7 +27,6 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include <getopt.h>
 #ifdef HAVE_SIGNAL_H
 #include <signal.h>
 #endif
@@ -174,20 +173,21 @@ int main(int argc, char **argv) {
 
 /******************** Usage ********************/
 void usage() {
-	printf("mpd-state  0.12.1  (c) 2005 by Avuton Olrich & Michal Nazarewicz\n"
-		   "usage: %s [ <options> ] [ [<pass>@]<host> [ <port> ]]\n"
-		   "<options> are:\n"
-		   " -b      run in background mode (does not fork into bockground)\n"
-		   " -B      run in background mode and fork into background\n"
-		   " -c<col> assume terminal is <col>-character wide            [80]\n"
-		   " -f<format>  use <format> for displaying song (see mpc(1))\n"
-		   "\n"
-		   "<pass>  password used to connect; if no set no password is used\n"
-		   "<host>  hostname MPD is running; if not set MPD_HOST is used;\n"
-		   "        if that is also missing '" DEFAULT_HOST "' is assumed\n"
-		   "<port>  port MPD is listining; if not set MPD_PORT is used;\n"
-		   "        if that is also missing %d is assumed\n",
-		   program_name, DEFAULT_PORT);
+	printf("mpd-show   (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)\n" \
+		   "$Id: mpd-show.c,v 1.12 2006/09/29 17:51:25 mina86 Exp $\n"
+		   "\n"															\
+		   "usage: %s [ <options> ] [ <host> [ <port> ]]\n"				\
+		   "<options> are:\n"											\
+		   " -b      run in background mode (does not fork into background)\n" \
+		   " -B      run in background mode and fork into background\n" \
+		   " -c<col> assume terminal is <col>-character wide; defaults to COLUMNS or %d\n" \
+		   " -f<fmt> use <fmt> for displaying song (for syntax see mpc(1)); supports\n" \
+		   "         following tags: album, artist, comment, composer, date, dir, disc,\n" \
+		   "         file, filenoext, genre, name, path, pathnoext, time, title and track.\n" \
+		   "<host>   host name MPD is running with optional password and '@' character\n" \
+		   "         at the beginning; defaults to MPD_HOST or '" DEFAULT_HOST "'\n" \
+		   "<port>   port MPD is listening; defaults to MPD_PORT or %d\n",
+		   program_name, DEFAULT_COLUMNS, DEFAULT_PORT);
 }
 
 
@@ -212,7 +212,7 @@ void parse_arguments(int argc, char **argv, struct config *config) {
 
 	/* Defults */
 	config->format  = DEFAULT_FORMAT;
-	config->columns = DEFAULT_COLUMNS;
+	config->columns = 0;
 	config->background = 0;
 
 
@@ -280,6 +280,22 @@ void parse_arguments(int argc, char **argv, struct config *config) {
 		if (config->port<0 || *end) {
 			ERR("invalid port: %s", portarg);
 			exit(1);
+		}
+	}
+
+
+	/* Columns */
+	if (!config->columns) {
+		end = getenv("COLUMNS");
+		if (end) {
+			long c = strtol(end, &end, 0);
+			if (c<3 || *end) {
+				ERR("invalid terminal width: %s", getenv("COLUMNS"));
+				exit(1);
+			}
+			config->columns = c;
+		} else {
+			config->columns = DEFAULT_COLUMNS;
 		}
 	}
 
@@ -442,16 +458,42 @@ size_t format_song_internal(const mpd_Song *song, const char *p,
 		else if (len==4 && !strncmp("date"    , p, 4)) temp = song->date;
 		else if (len==5 && !strncmp("genre"   , p, 5)) temp = song->genre;
 		else if (len==8 && !strncmp("composer", p, 8)) temp = song->composer;
+		else if (len==4 && !strncmp("disc"    , p, 4)) temp = song->disc;
+		else if (len==7 && !strncmp("comment" , p, 7)) temp = song->comment;
 		else if (len==4 && !strncmp("time"    , p, 4)) {
 			if (song->time!=MPD_SONG_NO_TIME) {
 				snprintf(_buffer, sizeof _buffer, "%d:%d",
 				         song->time/60, song->time % 60);
 				temp = _buffer;
 			}
-		} else if (len==8 && !strncmp("filename", p, 8)) {
-			if (song->file) {
-				temp = strrchr(song->file, '/');
-				if (temp) ++temp;
+		} else if (!song->file) {
+			/* check that just in case */
+		} else if (len==4 && !strncmp("file", p, 4)) {
+			temp = strrchr(song->file, '/');
+			temp = temp ? temp + 1 : song->file;
+		} else if (len==9 && (!strncmp("filenoext", p, 9) ||
+		                      !strncmp("pathnoext", p, 9))) {
+			char *ch, *dot = 0;
+			for (temp = ch = song->file; *ch; ++ch) {
+				if (*ch=='/') {
+					temp = ch+1;
+					dot = 0;
+				} else if (*ch=='.') {
+					dot = ch;
+				}
+			}
+			if (*p=='p') temp = song->file;
+			if (temp && dot) {
+				found = 1;
+				off = append_to_name(name, off, temp, dot - temp);
+				temp = 0;
+			}
+		} else if (len==3 && !strncmp("dir", p, 3)) {
+			temp = strrchr(song->file, '/');
+			if (temp) {
+				found = 1;
+				off = append_to_name(name, off, song->file, temp-song->file);
+				temp = 0;
 			}
 		}
 
