@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.12 2006/09/29 17:51:25 mina86 Exp $
+ * $Id: mpd-show.c,v 1.13 2006/09/29 19:45:21 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -42,7 +42,7 @@
 /*#define CHARSET_FROM    "UTF8" */
 /*#define DEFAULT_CHARSET "ISO-8859-2" */
 #define DEFAULT_FORMAT "[[%artist% <&%album%> ]|[%artist% - ]|" \
-                       "[<%album%> ]][%track%. ]%title%|%file%"
+                       "[<%album%> ]][%track%. &%title%]|%title%|%file%"
 
 
 
@@ -174,7 +174,7 @@ int main(int argc, char **argv) {
 /******************** Usage ********************/
 void usage() {
 	printf("mpd-show   (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)\n" \
-		   "$Id: mpd-show.c,v 1.12 2006/09/29 17:51:25 mina86 Exp $\n"
+		   "$Id: mpd-show.c,v 1.13 2006/09/29 19:45:21 mina86 Exp $\n"
 		   "\n"															\
 		   "usage: %s [ <options> ] [ <host> [ <port> ]]\n"				\
 		   "<options> are:\n"											\
