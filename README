@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/09/28 15:01:23 $
+                     $Date: 2006/09/29 20:39:21 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and  other things  which  may be  useful  in everyday  life of  system
@@ -22,6 +22,10 @@ At the moment the collection includes:
  * ai-sid.pl - it's a joke as well.   An 8 line long AI which might by
    written    by   Sid    from   UserFriendly.     Fore    more   see:
    http://ars.userfriendly.org/cartoons/?id=20001014 ;
+
+ * changelog.pl  -   application  providing  global   change  log  for
+   administrators to  fill and  users to read.   For instance,  can be
+   used in /etc/profile to show all news;
 
  * cdiff (C and sed versions) -  adds ANSI codes to the output of diff
    making it a bit more readable.  Both versions read input from stdin

@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.26 2006/09/28 15:06:19 mina86 Exp $
+## $Id: Makefile,v 1.27 2006/09/29 20:39:21 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -88,33 +88,35 @@ all: FvwmTransFocus cdiff cutcom drun infinite-logger				\
      the-book-of-mozilla rot13 timer tuptime umountiso xgetclass
 
 
-install: install-FvwmTransFocus install-add install-ai install-cdiff	\
-         install-cdiff.sed install-check.sh install-checkmail			\
-         install-cpuload.sh install-cutcom install-drun					\
-         install-extractlinks.pl install-fortune install-genpass.sh		\
-         install-get_mks_vir_bases install-getlyrics.pl install-gz2bz	\
-         install-installkernel install-ivona.sh install-lesspipe		\
-         install-load install-malloc install-moz2elinks.pl				\
-         install-mountiso install-mp3rip install-mpd-state				\
-         install-null install-pingrange.pl install-rot13				\
-         install-settitle install-show install-splitlines.sh			\
-         install-timer install-tpwd install-traf.sh install-virtman.sh	\
-         install-xcolor2rgb install-xgetclass
+install: install-FvwmTransFocus install-add install-ai					\
+         install-changelog.pl install-cdiff install-cdiff.sed			\
+         install-check.sh install-checkmail install-cpuload.sh			\
+         install-cutcom install-drun install-extractlinks.pl			\
+         install-fortune install-genpass.sh install-get_mks_vir_bases	\
+         install-getlyrics.pl install-gz2bz install-installkernel		\
+         install-ivona.sh install-lesspipe install-load install-malloc	\
+         install-moz2elinks.pl install-mountiso install-mp3rip			\
+         install-mpd-state install-null install-pingrange.pl			\
+         install-rot13 install-settitle install-show					\
+         install-splitlines.sh install-timer install-tpwd				\
+         install-traf.sh install-virtman.sh install-xcolor2rgb			\
+         install-xgetclass
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
-           uninstall-cdiff uninstall-cdiff.sed uninstall-check.sh		\
-           uninstall-checkmail uninstall-cpuload.sh uninstall-cutcom	\
-           uninstall-drun uninstall-extractlinks.pl uninstall-fortune	\
-           uninstall-genpass.sh uninstall-get_mks_vir_bases				\
-           uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh	\
-           uninstall-installkernel uninstall-lesspipe uninstall-load	\
-           uninstall-malloc uninstall-moz2elinks.pl uninstall-mountiso	\
-           uninstall-mp3rip uninstall-mpd-state uninstall-null			\
-           uninstall-pingrange.pl uninstall-rot13 uninstall-settitle	\
-           uninstall-show uninstall-splitlines.sh uninstall-timer		\
-           uninstall-tpwd uninstall-traf.sh uninstall-virtman.sh		\
-           uninstall-xcolor2rgb uninstall-xgetclass
+           uninstall-changelog.pl uninstall-cdiff uninstall-cdiff.sed	\
+           uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh	\
+           uninstall-cutcom uninstall-drun uninstall-extractlinks.pl	\
+           uninstall-fortune uninstall-genpass.sh						\
+           uninstall-get_mks_vir_bases uninstall-getlyrics.pl			\
+           uninstall-gz2bz uninstall-ivona.sh uninstall-installkernel	\
+           uninstall-lesspipe uninstall-load uninstall-malloc			\
+           uninstall-moz2elinks.pl uninstall-mountiso uninstall-mp3rip	\
+           uninstall-mpd-state uninstall-null uninstall-pingrange.pl	\
+           uninstall-rot13 uninstall-settitle uninstall-show			\
+           uninstall-splitlines.sh uninstall-timer uninstall-tpwd		\
+           uninstall-traf.sh uninstall-virtman.sh uninstall-xcolor2rgb	\
+           uninstall-xgetclass
 
 
 ##
