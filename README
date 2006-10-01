@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/09/29 20:39:21 $
+                     $Date: 2006/10/01 19:58:49 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and  other things  which  may be  useful  in everyday  life of  system
@@ -178,6 +178,10 @@ At the moment the collection includes:
  * tuptime  - my  personal favourite  :)  Displays total  (sum of  all
    uptimes)  and biggest  uptime.   Might be  used  as replacement  to
    standard uptime utility;
+
+ * tv - Perl script showing  TV programme.  It gets data from tv.o2.pl
+   so it's usable for Poles mostly  but in the future it is planned to
+   provide plugins allowing to download data from other sites.
 
  * virtman.sh -  adds virtual hosts to Apache  configuration for given
    user.  May be added to  some kind of adduser script for automagical
