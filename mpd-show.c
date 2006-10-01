@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.13 2006/09/29 19:45:21 mina86 Exp $
+ * $Id: mpd-show.c,v 1.14 2006/10/01 20:02:45 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,8 +41,9 @@
 #define DEFAULT_COLUMNS 80
 /*#define CHARSET_FROM    "UTF8" */
 /*#define DEFAULT_CHARSET "ISO-8859-2" */
-#define DEFAULT_FORMAT "[[%artist% <&%album%> ]|[%artist% - ]|" \
-                       "[<%album%> ]][%track%. &%title%]|%title%|%file%"
+#define DEFAULT_FORMAT "[[%artist% <&%album%> ]|[%artist% - ]|[<%album%> ]]" \
+                       "[[%track%. &%title%]|%title%|Unknown title]|" \
+                       "%filenoext%"
 
 
 
@@ -174,7 +175,7 @@ int main(int argc, char **argv) {
 /******************** Usage ********************/
 void usage() {
 	printf("mpd-show   (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)\n" \
-		   "$Id: mpd-show.c,v 1.13 2006/09/29 19:45:21 mina86 Exp $\n"
+		   "$Id: mpd-show.c,v 1.14 2006/10/01 20:02:45 mina86 Exp $\n"
 		   "\n"															\
 		   "usage: %s [ <options> ] [ <host> [ <port> ]]\n"				\
 		   "<options> are:\n"											\
@@ -582,7 +583,7 @@ int get_song(mpd_Connection *conn, struct config *config, struct state *state,
 
 	/* It's different song */
 	state->redisplay = 1;
-	state->len    = status->totalTime;
+	state->len    = status->totalTime ? status->totalTime : 1;
 	state->songid = status->songid;
 
 	/* Get song info */
@@ -654,7 +655,7 @@ void redisplay(struct config *config, struct name *name, struct state *state){
 
 	/* Print */
 	{
-		size_t split = state->pos * columns / state->len;
+		size_t split = state->len ? state->pos * columns / state->len : 0;
 		if (split>columns) split = columns;
 		write(0, buffer - (config->background ? 26 : 18),
 		      split + (config->background ? 26 : 18));
@@ -674,7 +675,7 @@ void loop_redisplay(struct config *config, struct name *name,
 			usleep(500000);
 		}
 	} else{
-		if (state->redisplay ||
+		if (state->redisplay || !state->len ||
 	        state-> pos*config->columns/state->len !=
 	        state->opos*config->columns/state->len) {
 			redisplay(config, name, state);

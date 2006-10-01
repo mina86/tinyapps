@@ -1,5 +1,7 @@
 2006-10-01  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* mpd-show.c: + division by zero bug fixed
+
 	* README: + tv added
 	* tv: New file
 
