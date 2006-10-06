@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 ##
 ## Pings specified range of IP addresses
-## $Id: pingrange.pl,v 1.1 2005/09/22 16:41:28 mina86 Exp $
+## $Id: pingrange.pl,v 1.2 2006/10/06 13:54:01 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
+## Copyright (C) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -26,81 +27,111 @@
 use strict;
 use warnings;
 
-use English;
 use Pod::Usage;
 use Net::Ping;
 use Getopt::Long;
 
-my $VERSION='0.2';
 
+
+
+my $VERSION='0.2';
+$| = 1;
+
+
+
+##
+## Arguments
+##
 my $timeout = 3;
 my $protocol = 'tcp';
-my $address = '';
-
-$OUTPUT_AUTOFLUSH = 1;
-
 pod2usage() unless GetOptions(
-    'timeout=i' => \$timeout,
-    'protocol=s' => \$protocol,
-    'help|?' => sub { pod2usage(-verbose => 1); });
-pod2usage() if ($#ARGV != 0);
+    't|timeout=i'  => \$timeout,
+    'p|protocol=s' => \$protocol,
+    'h|help|?'     => sub { pod2usage(-verbose => 1); },
+    'man'          => sub { pod2usage(-verbose => 2); });
 
-$address = shift @ARGV;
+pod2usage( -exitval => 1, -verbose => 0, -output => \*STDERR )
+	 unless @ARGV;
 
-my @lowip;
-my @hiip;
 
-($lowip[0], $lowip[1], $lowip[2], $lowip[3],
- $hiip[0],  $hiip[1],  $hiip[2],  $hiip[3] ) = getiprange($address);
 
-my ($ip1, $ip2, $ip3, $ip4);
-my ($ping, $host);
+##
+## Decode
+##
+my ($error, @ranges, @decoded);
+LOOP: while ($_ = shift @ARGV) {
+	my ($ip, $mask);
 
-foreach $ip1 ($lowip[0]..$hiip[0]) {
-  foreach $ip2 ($lowip[1]..$hiip[1]) {
-    foreach $ip3 ($lowip[2]..$hiip[2]) {
-      foreach $ip4 ($lowip[3]..$hiip[3]) {
-        $host = "$ip1.$ip2.$ip3.$ip4";
-        $ping = Net::Ping->new($protocol, $timeout);
-        print "$host [ping]\n" if $ping->ping($host, 1);
-        $ping->close();
-      }
-    }
-  }
+	# nnn.nnn.nnn.nnn/nn
+	if (/^(?:\d+\.){3}\d+\/\d+$/) {
+		($ip, $mask) = split(/\//);
+		next if $mask >= 32;
+		$mask = 0xffffffff ^ ((1 << $mask) - 1);
+		$_ = $ip . '/' . ($mask>>24) . '.' .  (($mask>>16) & 0xff) . '.' .
+			(($mask>>16) & 0xff) . '.' . ($mask & 0xff);
+		# pass thrugh
+	}
+
+	# nnn.nnn.nnn.nnn/nnn.nnn.nnn.nnn
+	if (/^(?:\d+\.){3}\d+\/(?:\d+\.){3}\d+$/) {
+		($ip, $mask) = split(/\//);
+		my @ip   = split(/\./, $ip  );
+		my @mask = split(/\./, $mask);
+		for $ip (@ip) {
+			$mask = shift @mask;
+			next LOOP if $ip > 255 || $mask > 255;
+			push @decoded, $ip & $mask, $ip | ($mask ^ 0xff);
+		}
+		next;
+	}
+
+	# nnn-nnn.nnn-nnn.nnn-nnn.nnn-nnn
+	if (/^(?:\d+(?:-\d+)?\.){3}\d+(?:-\d+)?$/) {
+		for (split(/\./)) {
+			if (/^(\d+)-(\d+)$/) {
+				next LOOP if $1 > 255 || $2>255 || $1>$2;
+				push @decoded, $1, $2;
+			} else {
+				next LOOP if $_ > 255;
+				push @decoded, $_, $_;
+			}
+		}
+		next;
+	}
+
+} continue {
+	if (@decoded==8) {
+		push @ranges, [ @decoded ];
+	} else {
+		print STDERR "pingrange: $_: invalid IP range\n";
+		$error = 1;
+	}
 }
 
-sub getiprange {
-  my $range = shift;
-  my @lowip;
-  my @hiip;
+exit 1 if $error;
 
-  if (!($range =~ /^(\d{1,3}|\d{1,3}-\d{1,3})\.(\d{1,3}|\d{1,3}-\d{1,3})\.(\d{1,3}|\d{1,3}-\d{1,3})\.(\d{1,3}|\d{1,3}-\d{1,3})$/)) {
-    pod2usage();
-  }
 
-  ($lowip[0], $hiip[0]) = decoderange($1);
-  ($lowip[1], $hiip[1]) = decoderange($2);
-  ($lowip[2], $hiip[2]) = decoderange($3);
-  ($lowip[3], $hiip[3]) = decoderange($4);
-
-  return (@lowip, @hiip);
+##
+## Ping
+##
+$error = 1;
+my $ping = Net::Ping->new($protocol, $timeout);
+for (@ranges) {
+	for my $ip1 ($_->[0]..$_->[1]) {
+		for my $ip2 ($_->[2]..$_->[3]) {
+			for my $ip3 ($_->[4]..$_->[5]) {
+				for my $ip4 ($_->[6]..$_->[7]) {
+					next unless $ping->ping("$ip1.$ip2.$ip3.$ip4");
+					print "$ip1.$ip2.$ip3.$ip4 [ping]\n";
+					$error = 0;
+				}
+			}
+		}
+	}
 }
+$ping->close();
+exit $error;
 
-sub decoderange
-{
-  my $range = shift;
-  my @retval = (0, 255);
-
-  if ($range =~ /^(\d+)-(\d+)$/) {
-    @retval = ($1, $2);
-  }
-  else
-  {
-    @retval = ($range, $range);
-  }
-
-  return @retval;
-}
 
 __END__
 
@@ -114,32 +145,62 @@ The pingrange utility sends ping to a range of network hosts.
 
 =head1 SYNOPSIS
 
-pingrange [OPTIONS] address_range
+pingrange [OPTIONS] I<address-range> [ I<address-range> ... ]
 
 =head1 OPTIONS
 
 =over 8
 
-=item B<--timeout=sec>
+=item B<-h> B<--help>
 
-Sets the ping timeout to number of seconds. Default is 3 seconds.
+Display help screen and exit.
 
-=item B<--protocol=tcp|udp|icmp>
+=item B<--man>
 
-Sets the type of ping protocol. The default protocol is tcp.
-You may have to be root to use icmp ping.
+Display man page and exit.
 
-=item B<--help>
+=item B<-t> B<--timeout=>I<sec>
 
-Display this help and exit.
+Sets the ping timeout to I<sec> seconds.  Default is 3 second.
 
-=item B<address_range>
+=item B<-p> B<--protocol=tcp|udp|icmp>
 
-address_range format must be of a1[-a2].b1[-b2].c1[-c2].d1[-d2] form.
-For example: 192.168.0-2.0-128
+Sets the type of ping protocol.  The default protocol is tcp.  You may
+have to be root to use icmp ping.
+
+=item I<address_range>
+
+I<address_range> may be specified several times and must be of one of the following forms:
+
+=over 4
+
+=item a.b.c.d/mask
+
+=item a.b.c.d/A.B.C.D
+
+Pins all hosts from given network.
+
+=item a[-A].b[-B].c[-C].d[-D]
+
+Pings all hosts from given range.
+
+=back
+
+For example:
+
+=over 4
+
+=item 192.168.0-2.0-128
+
+=item 192.168.2.0/9
+
+=item 192.168.2.0/255.255.254.0
+
+=back
+
+=back
 
 =head1 AUTHOR
 
-Berislav Kovacki <beca@sezampro.yu>
-
-=cut
+Berislav Kovacki <beca@sezampro.yu>,
+Michal Nazarewicz <mina86@mina86.com>
