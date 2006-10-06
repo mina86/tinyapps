@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.14 2006/10/01 20:02:45 mina86 Exp $
+ * $Id: mpd-show.c,v 1.15 2006/10/06 10:23:46 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -41,9 +41,11 @@
 #define DEFAULT_COLUMNS 80
 /*#define CHARSET_FROM    "UTF8" */
 /*#define DEFAULT_CHARSET "ISO-8859-2" */
-#define DEFAULT_FORMAT "[[%artist% <&%album%> ]|[%artist% - ]|[<%album%> ]]" \
-                       "[[%track%. &%title%]|%title%|Unknown title]|" \
-                       "%filenoext%"
+#define DEFAULT_FORMAT \
+	"[[[%artist% <&%album%> ]|[%artist% - ]|[<%album%> ]]" \
+	"&[[%track%. &%title%]|%title%]]"  \
+	"|[[%track%. &%title%]|%title%]"   \
+	"|%filenoext%"
 
 
 
@@ -175,7 +177,7 @@ int main(int argc, char **argv) {
 /******************** Usage ********************/
 void usage() {
 	printf("mpd-show   (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)\n" \
-		   "$Id: mpd-show.c,v 1.14 2006/10/01 20:02:45 mina86 Exp $\n"
+		   "$Id: mpd-show.c,v 1.15 2006/10/06 10:23:46 mina86 Exp $\n"
 		   "\n"															\
 		   "usage: %s [ <options> ] [ <host> [ <port> ]]\n"				\
 		   "<options> are:\n"											\
@@ -524,7 +526,7 @@ void zero_state(struct state *state) {
 	state->songid    = -2;
 	state->len       = 1;
 	state->pos       = state->opos = 0;
-	state->state     = MPD_STATUS_STATE_PAUSE;
+	state->state     = -2;
 	state->redisplay = 1;
 }
 
