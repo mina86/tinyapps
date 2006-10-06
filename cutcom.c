@@ -1,78 +1,108 @@
 /*
  * Removes C++ comments from a file.
- * $Id: cutcom.c,v 1.3 2006/09/28 15:06:19 mina86 Exp $
+ * $Id: cutcom.c,v 1.4 2006/10/06 17:28:04 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
 
 #include <stdio.h>
 
-#define S_TEXT 0
-#define S_STRING 1
-#define S_SLASH 3
-#define S_LINE_COMMENT 4
-#define S_BLOCK_COMMENT 5
-#define S_STAR 6
+
+enum state {
+	S_TEXT,
+	S_STRING,
+	S_STRING_BS,
+	S_CHAR,
+	S_CHAR_BS,
+	S_SLASH,
+	S_LINE_COMM,
+	S_BLCK_COMM,
+	S_STAR
+};
+
+
+struct state_function {
+	unsigned char ch, new_state, print, pad;
+	const char *pre_print;
+};
+
+
+static const struct state_function s_text_functions[] = {
+		{ '/' , S_SLASH    , 0, 0, 0   },
+		{ '"' , S_STRING   , 1, 0, 0   },
+		{ '\'', S_CHAR     , 1, 0, 0   },
+		{ 0   , S_TEXT     , 1, 0, 0   },
+};
+
+static const struct state_function s_string_functions[] = {
+		{ '"' , S_TEXT     , 1, 0, 0   },
+		{ '\\', S_STRING_BS, 1, 0, 0   },
+		{ 0   , S_STRING   , 1, 0, 0   },
+};
+
+static const struct state_function s_string_bs_functions[] = {
+		{ 0   , S_STRING   , 1, 0, 0   },
+	};
+
+static const struct state_function s_char_functions[] = {
+		{ '"' , S_TEXT     , 1, 0, 0   },
+		{ '\\', S_CHAR_BS  , 1, 0, 0   },
+		{ 0   , S_STRING   , 1, 0, 0   },
+};
+
+static const struct state_function s_char_bs_functions[] = {
+		{ 0   , S_CHAR     , 1, 0, 0   },
+};
+
+static const struct state_function s_slash_functions[] = {
+		{ '/' , S_LINE_COMM, 0, 0, 0   },
+		{ '*' , S_BLCK_COMM, 0, 0, 0   },
+		{ 0   , S_TEXT     , 1, 0, "/" },
+};
+
+static const struct state_function s_line_comm_functions[] = {
+		{ '\n', S_TEXT     , 1, 0, 0   },
+		{ 0   , S_LINE_COMM, 0, 0, 0   },
+};
+
+static const struct state_function s_block_comm_functions[] = {
+		{ '*' , S_STAR     , 0, 0, 0   },
+		{ 0   , S_BLCK_COMM, 0, 0, 0   },
+};
+
+static const struct state_function s_star_functions[] = {
+		{ '/' , S_TEXT     , 0, 0, 0   },
+		{ 0   , S_BLCK_COMM, 0, 0, 0   },
+};
+
+
+static const struct state_function *const states[] = {
+	s_text_functions,
+	s_string_functions,
+	s_string_bs_functions,
+	s_char_functions,
+	s_char_bs_functions,
+	s_slash_functions,
+	s_line_comm_functions,
+	s_block_comm_functions,
+	s_star_functions,
+};
+
 
 int main(void) {
-	unsigned int state = S_TEXT, ch, skip_next = 0, str_char;
+	int ch, state = 0;
+
 	while ((ch = getchar())!=EOF) {
-		switch (state) {
-		case S_TEXT:
-			switch (ch) {
-			case '/':
-				state = S_SLASH;
-				break;
-			case '"':
-			case '\'':
-				state = S_STRING;
-				str_char = ch;
-			default:
-				putchar(ch);
-			}
-			break;
-
-		case S_STRING:
-			putchar(ch);
-			if (skip_next) {
-				skip_next = 0;
-			} else 	if (ch=='\\') {
-				skip_next = 1;
-			} else if (ch==str_char) {
-				state = S_TEXT;
-			}
-			break;
-
-		case S_SLASH:
-			switch (ch) {
-			case '/':
-				state = S_LINE_COMMENT;
-				break;
-			case '*':
-				state = S_BLOCK_COMMENT;
-				break;
-			default:
-				putchar('/');
-				putchar(ch);
-				state = S_TEXT;
-			}
-			break;
-
-		case S_LINE_COMMENT:
-			if (ch=='\n') {
-				state = S_TEXT;
-			}
-			break;
-
-		case S_BLOCK_COMMENT:
-			if (ch=='*') {
-				state = S_STAR;
-			}
-			break;
-
-		case S_STAR:
-			state = ch=='/'?S_TEXT:S_BLOCK_COMMENT;
+		const struct state_function *func = states[state];
+		while (func->ch && func->ch!=ch) ++func;
+		if (func->pre_print) {
+			fputs(func->pre_print, stdout);
 		}
+		if (func->print) {
+			putchar(ch);
+		}
+		state = func->new_state;
 	}
+
 	return 0;
 }
