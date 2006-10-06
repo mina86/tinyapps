@@ -1,6 +1,6 @@
 /*
  * Prints window's ClassHint
- * $Id: xgetclass.c,v 1.3 2006/09/28 15:06:18 mina86 Exp $
+ * $Id: xgetclass.c,v 1.4 2006/10/06 14:06:46 mina86 Exp $
  * Copyright 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
@@ -29,34 +29,39 @@
 
 
 int main(int argc, char **argv) {
+	char *c;
+	unsigned long wnd;
+	Display *display;
+	XClassHint class;
+
 	/* Get executable name */
-	char *MyName = strrchr(argv[0], '/');
-	MyName = MyName==NULL ? argv[0] : (MyName + 1);
+	for (c = *argv; *c; ++c) {
+		if (*c=='/' && c[1]) {
+			*argv = ++c;
+		}
+	}
 
 	/* Invalid number of arguments */
 	if (argc!=2) {
-		fprintf(stderr, "usage: %s <wnd-id>\n", MyName);
+		fprintf(stderr, "usage: %s <wnd-id>\n", *argv);
 		return 1;
 	}
 
 	/* Parse win id */
-	char *c;
-	unsigned long int wnd = strtoul(argv[1], &c, 0);
+	wnd = strtoul(argv[1], &c, 0);
 	if (*c) {
-		fprintf(stderr, "usage: %s <wnd-id>\n", MyName);
+		fprintf(stderr, "usage: %s <wnd-id>\n", *argv);
 		return 1;
 	}
 
 	/* Open display */
-	c = XDisplayName(NULL);
-	Display *display = XOpenDisplay(c);
-	if (!display) {
-		fprintf(stderr, "%s: can't open display %s\n", MyName, c);
+	c = XDisplayName(0);
+	if (!(display = XOpenDisplay(c))) {
+		fprintf(stderr, "%s: can't open display %s\n", *argv, c);
 		return 1;
 	}
 
 	/* Get class */
-	XClassHint class = {0, 0};
 	XGetClassHint(display, wnd, &class);
 
 	/* Print */

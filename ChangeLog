@@ -1,5 +1,7 @@
 2006-10-06  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* xgetclass.c: + conforming to C89 (I hope)
+
 	* pingrange.pl: + more address range formats added
 	+ can specify several ranges
 
