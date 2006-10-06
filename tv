@@ -136,56 +136,57 @@ sub add ($$$$) {
 	}
 
 	# FIXME:
-	return unless $hour > ($HOUR - 100) && $hour < 10400;
+	return unless $hour > ($HOUR - 100);
 
 	$prog{$chan} = [ ] unless defined $prog{$chan};
 	push @{$prog{$chan}}, [ $chan, $hour, $title, $desc ];
 }
 
 for (@ids) {
-	for my $dzien (qw/0 1/) {
-		my ($chan, $hour, $title);
-		for (split /\n+/, download $_, $dzien) {
-			# Channel name
-			if (m#class=t3.*<b>\s*(\S[^<>]*\S)\s*</b>#) {
-				$chan = $1;
-				next;
-			}
-			next unless defined $chan;
+	my ($d, $prev, $chan, $hour, $title) = (0);
+	for (split /\n+/, download $_, 0) {
+		# Channel name
+		if (m#class=t3.*<b>\s*(\S[^<>]*\S)\s*</b>#) {
+			$chan = $1;
+			next;
+		}
+		next unless defined $chan;
 
-			# Hour
-			if (m~<font color="(?:#......)?">(?:<b>)?(\d\d):(\d\d)(?:</b>)?</font>~) {
-				if (defined $title) {
-					add($chan, $hour, $title, undef);
-					undef $title;
-				} elsif (defined $hour) {
-					err $chan, $hour, 'missing entry';
-				}
-				$hour = $dzien . $1 . $2;
-				next
-			}
-			next unless defined $hour;
-
-			# Title
-			if (m~<font class=t1 color=#......><b>(.*)</b></font>~) {
-				$title = $1;
-				next;
-			}
-			next unless defined $title;
-
-			# Description
-			if (m~<nobr>-(.*)</nobr>~) {
-				add($chan, $hour, $title, $1);
-				undef $hour;
+		# Hour
+		if (m~<font color="(?:#......)?">(?:<b>)?(\d\d):(\d\d)(?:</b>)?</font>~) {
+			if (defined $title) {
+				$prev = $hour;
+				add($chan, $hour, $title, undef);
 				undef $title;
+			} elsif (defined $hour) {
+				err $chan, $hour, 'missing entry';
 			}
+			$hour = $d . $1 . $2;
+			++$d if defined $prev && $prev>$hour;
+			next;
 		}
+		next unless defined $hour;
 
-		# Add pending item
-		if (defined $title) {
-			add($chan, $hour, $title, undef);
-			undef $hour;
+		# Title
+		if (m~<font class=t1 color=#......><b>(.*)</b></font>~) {
+			$title = $1;
+			next;
 		}
+		next unless defined $title;
+
+		# Description
+		if (m~<nobr>-(.*)</nobr>~) {
+			$prev = $hour;
+			add($chan, $hour, $title, $1);
+			undef $hour;
+			undef $title;
+		}
+	}
+
+	# Add pending item
+	if (defined $title) {
+		add($chan, $hour, $title, undef);
+		undef $hour;
 	}
 }
 
