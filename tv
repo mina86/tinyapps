@@ -9,8 +9,8 @@ use LWP::UserAgent;
 use File::Spec;
 
 
-sub err (@) { print STDERR join(': ', 'wp', @_), "\n"; }
-sub d (@) { die join(': ', 'wp', @_), "\n"; }
+sub err (@) { print STDERR join(': ', 'tv', @_), "\n"; }
+sub d (@)   { die          join(': ', 'tv', @_), "\n"; }
 
 my $URL = 'http://tv.o2.pl/program/';
 my $ua = LWP::UserAgent->new;

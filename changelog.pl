@@ -1,7 +1,7 @@
 #! /usr/bin/perl -w
 ##
 ## ChangeLog Viewer/Editor
-## $Id: changelog.pl,v 1.1 2006/09/29 20:39:21 mina86 Exp $
+## $Id: changelog.pl,v 1.2 2006/10/06 13:52:19 mina86 Exp $
 ## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -27,8 +27,8 @@ use File::Temp qw/ tempfile /;
 use Text::Wrap;
 
 
-sub err (@) { print STDERR join(': ', 'wp', @_), "\n"; }
-sub d   (@) { die          join(': ', 'wp', @_), "\n"; }
+sub err (@) { print STDERR join(': ', 'changelog', @_), "\n"; }
+sub d   (@) { die          join(': ', 'changelog', @_), "\n"; }
 
 
 ## The directory must exist before first run of changelog.pl

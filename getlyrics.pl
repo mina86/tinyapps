@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.8 2006/09/28 15:01:46 mina86 Exp $
+## $Id: getlyrics.pl,v 1.9 2006/10/06 13:51:12 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -221,8 +221,8 @@ according to the rules described in PARSING STRING section of man page
 
 =item B<--file>
 
-Reads given and parses their output. B<--file >I<files> is a synonym
-of B<--pipe cat >I<files>.
+Reads given and parses their output. B<--file> I<files> is a synonym
+of B<--pipe cat> I<files>.
 
 =item B<--read>
 
