@@ -1,6 +1,6 @@
 /*
  * tuptime - Shows total and biggest uptime.
- * $Id: tuptime.c,v 1.5 2006/09/28 15:06:18 mina86 Exp $
+ * $Id: tuptime.c,v 1.6 2006/10/06 17:29:51 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,7 +64,7 @@
 
 /* Error messages stuff */
 char *program_name;   /* Name program was run with */
-#define ERR(msg, ...) fprintf(stderr, "%s: " msg "\n", program_name, ##__VA_ARGS__)
+#define ERR(msg, arg) fprintf(stderr, "%s: " msg "\n", program_name, arg)
 #define ERRS(msg) ERR("%s", msg);
 
 
@@ -87,7 +87,7 @@ void print_uptime(char *title, double uptime, double idle) {
 	double sec = uptime - m * 60;
 	m %= 60;
 
-	printf("%s %3d d %2d:%02d:%05.2lf (%5.2f%% idle)",
+	printf("%s %3d d %2d:%02d:%05.2f (%5.2f%% idle)",
 		   title, d, h, m, sec, idle*100/uptime);
 }
 
@@ -172,7 +172,7 @@ int main (int argc, char **argv) {
 
 	/* Print raw */
 	if (mode=='r') {
-		printf("%.2lf %.2lf\n%.2lf %.2lf\n", tuptime, tidle, muptime, midle);
+		printf("%.2f %.2f\n%.2f %.2f\n", tuptime, tidle, muptime, midle);
 		return 0;
 	}
 
@@ -181,9 +181,9 @@ int main (int argc, char **argv) {
 	print_uptime("total:   ", tuptime, tidle);
 	putchar('\n');
 	print_uptime("biggest: ", muptime, midle);
-	printf(" (%.2lf%% of total)\n", muptime*100/tuptime);
+	printf(" (%.2f%% of total)\n", muptime*100/tuptime);
 	print_uptime("current: ", uptime, idle);
-	printf(" (%.2lf%% of total, %.2lf%% of biggest)\n",
+	printf(" (%.2f%% of total, %.2f%% of biggest)\n",
 		   uptime*100/tuptime, uptime*100/muptime);
 	return 0;
 }

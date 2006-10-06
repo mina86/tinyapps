@@ -1,5 +1,7 @@
 2006-10-06  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* tuptime.c: + %lf -> %f in printf
+
 	* cutcom.c: + rebuild - states defined in constants not in code
 
 	* tuptime.c: + conforming to C89 (I hope)
