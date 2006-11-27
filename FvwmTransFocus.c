@@ -1,6 +1,6 @@
 /*
  * FVWM module changing opacity depending on focus.
- * $Id: FvwmTransFocus.c,v 1.6 2006/09/28 15:06:19 mina86 Exp $
+ * $Id: FvwmTransFocus.c,v 1.7 2006/11/27 18:58:38 mina86 Exp $
  * Copyright 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Some code from transset by Matthew Hawn
  *
@@ -52,6 +52,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <strings.h>
+#include <unistd.h>
 #include <X11/Xlib.h>
 #include <X11/Xatom.h>
 #include <X11/Xutil.h>
@@ -61,11 +63,11 @@
 /********** Debug **********/
 #ifdef DEBUG
 #define debug(fmt, ...) fprintf(stderr, "%s: " fmt "\n", MyName, ##__VA_ARGS__)
+#define debugs(string) fprintf(stderr, "%s: %s", MyName, (string))
 #else
 #define debug(fmt, ...)
+#define debugs(string)
 #endif
-
-#define MIN(x, y)  ((x),(y)?(x):(y))
 
 
 
@@ -107,7 +109,7 @@ static unsigned long readLong();
 static void readLongs(char *buffer, int count);
 static void transSet(unsigned long int window, double value);
 static int ignoreWindow(unsigned long int window);
-static int ErrorHandler(Display *display, XErrorEvent *error);
+static int ErrorHandler(Display *dsp, XErrorEvent *error);
 
 
 
@@ -116,7 +118,7 @@ int main (int argc, char **argv) {
 	/* Get executable name */
 	MyName = strrchr(argv[0], '/');
 	MyName = MyName==NULL ? argv[0] : (MyName + 1);
-	debug("Starting");
+	debugs("Starting");
 
 	/* Check args */
 	if (argc<6) {
@@ -142,13 +144,14 @@ int main (int argc, char **argv) {
 
 
 	/* Init module */
-	debug("Initializing");
+	debugs("Initializing");
 	char set_mask_mesg[50];
-	sprintf(set_mask_mesg, "SET_MASK %lu", M_FOCUS_CHANGE | M_ADD_WINDOW);
+	sprintf(set_mask_mesg, "SET_MASK %lu",
+	        (unsigned long)M_FOCUS_CHANGE | M_ADD_WINDOW);
 	send(set_mask_mesg);
 #ifndef DONT_USE_MX_PROPERTY_CHANGE
 	sprintf(set_mask_mesg, "SET_MASK %lu",
-			M_EXTENDED_MSG | MX_PROPERTY_CHANGE_BACKGROUND);
+			(unsigned long)M_EXTENDED_MSG | MX_PROPERTY_CHANGE_BACKGROUND);
 	send(set_mask_mesg);
 #endif
 	send("NOP FINISHED STARTUP");
@@ -163,18 +166,21 @@ int main (int argc, char **argv) {
 	unsigned long prev_id = 0;
 
 	/* Loop */
-	debug("Loop begins");
+	debugs("Loop begins");
 	for(;;){
 		while (readLong()!=START_FLAG);               /* Wait for START_FLAG */
 		type = readLong();                            /* Type */
 		size = readLong() - 4;                        /* Size */
+		if (size > sizeof buffer / sizeof *buffer) {
+			size = sizeof buffer / sizeof *buffer;
+		}
 		readLong();                                   /* Ignore Timestamp */
-		readLongs((char *)(&buffer), MIN(size, 252)); /* Body */
+		readLongs((char *)(&buffer), size);           /* Body */
 
 		switch (type) {
 			/* M_FOCUS_CHANGE */
 		case M_FOCUS_CHANGE:
-			debug("M_FOCUS_CHANGE recieved");
+			debugs("M_FOCUS_CHANGE recieved");
 			if (prev_id!=buffer[1]) {
 				transSet(prev_id, values[1]);
 				prev_id = buffer[1];
@@ -185,7 +191,7 @@ int main (int argc, char **argv) {
 
 			/* M_ADD_WINDOW */
 		case M_ADD_WINDOW:
-			debug("M_ADD_WINDOW recieved");
+			debugs("M_ADD_WINDOW recieved");
 			transSet(buffer[1], values[2]);
 			XSync(display, False);
 			break;
@@ -230,7 +236,7 @@ void readLongs(char *buf, int count) {
 	int n;
 	for (count *= sizeof(unsigned long); count>0; count -= n) {
 		if ((n = read(fvin, buf, count))<=0) {
-			debug("Stopping");
+			debugs("Stopping");
 			XCloseDisplay(display);
 			exit(0);
 		}
@@ -300,9 +306,10 @@ static int ignoreWindow(unsigned long int window) {
 
 
 /********** Error handler ********/
-int ErrorHandler(Display *display, XErrorEvent *error) {
+int ErrorHandler(Display *dsp, XErrorEvent *error) {
+	(void)dsp; (void)error;
 	debug("X Error: #%d; Request: %d, %d; Id: 0x%lx\n",
-		  error->error_code, error->request_code, error->minor_code,
-		  error->resourceid);  /* error->resourceid may be uninitialised */
+	      error->error_code, error->request_code, error->minor_code,
+	      error->resourceid);  /* error->resourceid may be uninitialised */
 	return 0;
 }
