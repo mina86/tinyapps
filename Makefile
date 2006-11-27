@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.27 2006/09/29 20:39:21 mina86 Exp $
+## $Id: Makefile,v 1.28 2006/11/27 18:59:00 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -95,12 +95,11 @@ install: install-FvwmTransFocus install-add install-ai					\
          install-fortune install-genpass.sh install-get_mks_vir_bases	\
          install-getlyrics.pl install-gz2bz install-installkernel		\
          install-ivona.sh install-lesspipe install-load install-malloc	\
-         install-moz2elinks.pl install-mountiso install-mp3rip			\
-         install-mpd-state install-null install-pingrange.pl			\
-         install-rot13 install-settitle install-show					\
-         install-splitlines.sh install-timer install-tpwd				\
-         install-traf.sh install-virtman.sh install-xcolor2rgb			\
-         install-xgetclass
+         install-moz2elinks.pl install-mp3rip install-mpd-state			\
+         install-null install-pingrange.pl install-rot13				\
+         install-settitle install-show install-splitlines.sh			\
+         install-timer install-tpwd install-traf.sh install-virtman.sh	\
+         install-xcolor2rgb install-xgetclass
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
@@ -111,7 +110,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-get_mks_vir_bases uninstall-getlyrics.pl			\
            uninstall-gz2bz uninstall-ivona.sh uninstall-installkernel	\
            uninstall-lesspipe uninstall-load uninstall-malloc			\
-           uninstall-moz2elinks.pl uninstall-mountiso uninstall-mp3rip	\
+           uninstall-moz2elinks.pl uninstall-mp3rip						\
            uninstall-mpd-state uninstall-null uninstall-pingrange.pl	\
            uninstall-rot13 uninstall-settitle uninstall-show			\
            uninstall-splitlines.sh uninstall-timer uninstall-tpwd		\
@@ -227,8 +226,8 @@ install-installkernel: installkernel installkernel.8.gz
 	${call install,root,root,0644,/usr/local/man/man8,${addprefix $<,.8.gz}}
 
 install-mountiso: mountiso umountiso
-	${call install,root,bin,4755,/usr/bin/,mountiso}
-	${call install,root,bin,4755,/usr/bin/,umountiso}
+	${call install,root,bin,4755,/usr/local/bin/,mountiso}
+	${call install,root,bin,4755,/usr/local/bin/,umountiso}
 
 install-mpd-state: mpd-state
 	${call install,root,bin,0755,/usr/local/bin,$<}
@@ -276,18 +275,18 @@ uninstall-FvwmTransFocus:
 uninstall-ai: uninstall-ai-pitr.pl uninstall-ai-sid.pl
 
 uninstall-ai-pitr.pl:
-	${call uninstall,/usr/games/ai-pitr.pl}
+	${call uninstall,/usr/local/games/ai-pitr.pl}
 
 uninstall-ai-sid.pl:
-	${call uninstall,/usr/games/ai-sid.pl}
+	${call uninstall,/usr/local/games/ai-sid.pl}
 
 uninstall-installkernel:
 	${call uninstall,/usr/local/sbin/installkernel}
 	${call uninstall,/usr/local/man/man8/installkernel.8.gz}
 
 uninstall-mountiso:
-	${call uninstall,/bin/mountiso}
-	${call uninstall,/bin/umountiso}
+	${call uninstall,/usr/local/bin/mountiso}
+	${call uninstall,/usr/local/bin/umountiso}
 
 uninstall-mpd-state:
 	${call uninstall,/usr/local/bin/mpd-state}
@@ -346,8 +345,8 @@ endif
 	             '${DEST_DIR}/usr/local/bin/state-restore'	\
 	             '${DEST_DIR}/usr/local/bin/state-sync'		\
 	             '${DEST_DIR}/usr/local/bin/state-amend'
-	@echo '  RM     umountiso'
-	${Q}rm -f -- '${DEST_DIR}/bin/umountiso'
+#	@echo '  RM     umountiso'
+#	${Q}rm -f -- '${DEST_DIR}/bin/umountiso'
 
 	@echo '  GEN    usr/doc/tinyapps-${RELEASE}'
 	${Q}mkdir -p -- '${DEST_DIR}/usr/doc/tinyapps-${RELEASE}'
@@ -358,7 +357,7 @@ endif
 	${Q}mkdir -p -- '${DEST_DIR}/install'
 	${Q}echo 'cd usr/local/bin' >'${DEST_DIR}/install/doinst.sh'
 	${Q}echo 'for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $FILE; done' >>'${DEST_DIR}/install/doinst.sh'
-	${Q}echo 'ln -fs mountiso umountiso; chown root:root mountiso; chmod u+s mountiso' >>'${DEST_DIR}/install/doinst.sh'
+#	${Q}echo 'ln -fs mountiso umountiso; chown root:root mountiso; chmod u+s mountiso' >>'${DEST_DIR}/install/doinst.sh'
 	${Q}chmod 755 -- '${DEST_DIR}/install/doinst.sh'
 	@echo '  CP     slack-desc'
 	${Q}cp -- slack-desc '${DEST_DIR}/install'
