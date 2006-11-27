@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.28 2006/11/27 18:59:00 mina86 Exp $
+## $Id: Makefile,v 1.29 2006/11/27 19:28:32 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -93,12 +93,13 @@ install: install-FvwmTransFocus install-add install-ai					\
          install-check.sh install-checkmail install-cpuload.sh			\
          install-cutcom install-drun install-extractlinks.pl			\
          install-fortune install-genpass.sh install-get_mks_vir_bases	\
-         install-getlyrics.pl install-gz2bz install-installkernel		\
-         install-ivona.sh install-lesspipe install-load install-malloc	\
-         install-moz2elinks.pl install-mp3rip install-mpd-state			\
-         install-null install-pingrange.pl install-rot13				\
-         install-settitle install-show install-splitlines.sh			\
-         install-timer install-tpwd install-traf.sh install-virtman.sh	\
+         install-getlyrics.pl install-gz2bz install-inplace				\
+         install-installkernel install-ivona.sh install-lesspipe		\
+         install-load install-malloc install-moz2elinks.pl				\
+         install-mp3rip install-mpd-state install-null					\
+         install-pingrange.pl install-rot13 install-settitle			\
+         install-show install-splitlines.sh install-timer install-tpwd	\
+         install-traf.sh install-tv install-virtman.sh					\
          install-xcolor2rgb install-xgetclass
 
 
@@ -108,14 +109,14 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-cutcom uninstall-drun uninstall-extractlinks.pl	\
            uninstall-fortune uninstall-genpass.sh						\
            uninstall-get_mks_vir_bases uninstall-getlyrics.pl			\
-           uninstall-gz2bz uninstall-ivona.sh uninstall-installkernel	\
-           uninstall-lesspipe uninstall-load uninstall-malloc			\
-           uninstall-moz2elinks.pl uninstall-mp3rip						\
+           uninstall-gz2bz uninstall-ivona.sh uninstall-inplace			\
+           uninstall-installkernel uninstall-lesspipe uninstall-load	\
+           uninstall-malloc uninstall-moz2elinks.pl uninstall-mp3rip	\
            uninstall-mpd-state uninstall-null uninstall-pingrange.pl	\
            uninstall-rot13 uninstall-settitle uninstall-show			\
            uninstall-splitlines.sh uninstall-timer uninstall-tpwd		\
-           uninstall-traf.sh uninstall-virtman.sh uninstall-xcolor2rgb	\
-           uninstall-xgetclass
+           uninstall-traf.sh uninstall-tv uninstall-virtman.sh			\
+           uninstall-xcolor2rgb uninstall-xgetclass
 
 
 ##

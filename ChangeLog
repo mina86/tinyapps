@@ -1,3 +1,7 @@
+2006-11-27  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* inplace: New file
+
 2006-10-06  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* tuptime.c: + %lf -> %f in printf

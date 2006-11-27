@@ -1,0 +1,158 @@
+#! /bin/sh
+##
+## inplace - Script for 'in place' file replacing
+## $Id: inplace,v 1.1 2006/11/27 19:28:32 mina86 Exp $
+## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.vom)
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 2 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, write to the Free Software
+## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+
+
+set -e
+readonly ARGV0=${0##*/}
+
+err () {
+	echo "$ARGV0: $*" >&2
+	exit 1
+}
+
+
+
+##
+## usage
+##
+usage () {
+	echo 'inplace  v0.1  (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)'
+	echo '$Id: inplace,v 1.1 2006/11/27 19:28:32 mina86 Exp $'
+	[ X"$1" != Xversion ] || exit 0
+
+	cat <<EOF
+
+usage: $ARGV0 -h | --help | -V | --version
+       $ARGV0 [ -s[<suffix>] ] <command> [ <argumet> ... ] -- <file> [ ... ]
+
+Runs <command> with given <argument>s for each <file> as a standard
+input replacing it's contents with what <command> outputs to standard
+output.
+
+Options:
+  -h --help     displays this help screen
+  -V --version  displays version
+  -s<suffix>    back ups each <file> to <file><suffix>
+  -s            back ups each <file> to <file>.bak
+
+When separating file names and command arguments the first '--' is used.
+EOF
+
+}
+
+
+##
+## Parse args
+##
+SUFFIX=
+while [ $# -gt 0 ] && [ X"$1" != X"${1#-}" ]; do
+	case "$1" in
+	(-h|--help)     usage full     ;;
+	(-V|--version)  usage version  ;;
+	(-s|--suffix)   SUFFIX=.bak    ;;
+	(-s?*)          SUFFIX=${1#-s} ;;
+	(*) err "$1: unknown option;  type  $ARG0 --help  for help"
+	esac
+	shift
+done
+
+
+##
+## Find first --
+##
+NUM=1
+while [ $NUM -le $# ] && eval [ X\"\$$NUM\" -ne X-- ]; do
+	NUM=$(( $NUM + 1 ))
+done
+[ $NUM -gt $# ] || err 'no -- given'
+[ $NUM -ne 1  ] || err 'no command given'
+[ $NUM -ne $# ] || err 'no files given'
+
+
+
+##
+## Temporary file
+##
+if [ -z "$SUFFIX" ]; then
+	# Find temp dir
+	TMPFILE=.
+	for N in "$TMPDIR" "$TMP" "$TEMP" ~/tmp /tmp; do
+		if [ -n "$N" ] && [ -d "$N" ] && [ -w "$N" ]; then
+			TMPFILE="$N"
+			break
+		fi
+	done
+
+	# tempfile exists
+	UMASK=$(umask)
+	umask 077
+	if which tempfile >/dev/null 2>&1; then
+		TMPFILE="$(tempfile -d "$CHECK_TMP" -p "inplace-")"
+	else
+	# tempfile does not exist
+		if [ X"$RANDOM" = X"$RANDOM" ]; then RANDOM=$(date +%s); fi
+		TMPFILE=$(printf %s/inplace-%x-%x "$TMPFILE" $$ "$RANDOM")
+
+		# Race condition present
+		for N in "" .0 .1 .2 .3 .4 .5 .6 .7 .8 .9; do
+			if [ -e "$TMPFILE$N" ] || ! :>"$TMPFILE$N"; then continue; fi
+			TMPFILE="$EMPFILE$N"
+			break
+		done
+
+		# Unable to create temp file
+		err unable to create temporary file
+	fi
+
+	trap 'rm -f -- "$TMPFILE"' 0
+fi
+
+
+
+##
+## Main loop
+##
+N=1
+for FILE in "$@"; do
+	# Command
+	if [ $N -lt $NUM ]; then
+		eval CMD_$N=\$FILE
+		N=$(( $N + 1 ))
+		continue
+	fi
+
+	# --
+	if [ $N -eq $NUM ]; then
+		set --
+		while [ $NUM -gt 1 ]; do
+			NUM=$(( $NUM - 1 ))
+			eval "set -- \"\$CMD_$NUM\" \"\$@\"; unset CMD_$NUM"
+		done
+		continue
+	fi
+
+	# File
+	if [ -n "$SUFFIX" ]; then
+		cp -fp -- "$FILE" "$FILE$SUFFIX" && "$@" <"$FILE$SUFFIX" >"$FILE"
+	else
+		"$@" <"$FILE" >"$TMPFILE" && cat <"$TMPFILE" >"$FILE"
+	fi
+done

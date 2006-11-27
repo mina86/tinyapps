@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2006/10/01 19:58:49 $
+                     $Date: 2006/11/27 19:28:32 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and  other things  which  may be  useful  in everyday  life of  system
@@ -72,6 +72,9 @@ At the moment the collection includes:
 
  * infinite-logger - loggs every logged message including the messages
    logget by itself :]
+
+ * inplace -  a shell script which  runs given commmand  for all given
+   files and replace their content with whatever the command returns;
 
  * installkernel  - pretty  complex  script for  installing the  Linux
    kernel.   It  makes  a  lot  of aspects  of  upgrading  the  kernel
