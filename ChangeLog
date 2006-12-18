@@ -1,3 +1,9 @@
+2006-12-18  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* installkernel: + better way of checking version number
+	* installkernel.8: + note on need to modify
+	include/linux/version.h removed
+
 2006-11-27  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* inplace: New file

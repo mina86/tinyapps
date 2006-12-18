@@ -1,8 +1,8 @@
-.TH installkernel 8 "19 April, 2006" "version 0.14.1" "Linux System Administration"
+.TH installkernel 8 "19 April, 2006" "version 0.14.2" "Linux System Administration"
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.10 2006/09/28 15:01:46 mina86 Exp $
+\" $Id: installkernel.8,v 1.11 2006/12/18 19:36:01 mina86 Exp $
 \" Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 \"
 
@@ -142,10 +142,7 @@ arguments are given) the \fB\-\-bootdir\fP option.
 \fB\-\-dry\-run\fP
 only prints what would be done.  This implies
 \fB\-\-print\-commands\fP.  \fBWARNING\fP In some cases it DO modify
-the source tree.  In various situations the script needs to know the
-version number of the Linux kernel.  To get this piece of information
-it needs to update \fBinclude/linux/version.h\fP file and therefore it
-runs \fBmake include/linux/version.h\fP.  The default is \fBno\fP.
+the source tree.  The default is \fBno\fP.
 
 .TP
 \fB\-\-print\-commands\fP
@@ -315,8 +312,7 @@ Invalid arguments where given.
 .TP
 \fB2\fP
 Some other errors detected by the script.  At the moment, this
-includes the situation when include/linux/version.h file was missing
-or unreadable.
+includes the situation when kernel version could not be\ determined.
 
 .TP
 \fB3\fP
