@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.14 2006/09/28 15:06:19 mina86 Exp $
+## $Id: quotes.txt,v 1.15 2006/12/18 19:49:46 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -16,7 +16,7 @@ exhausted all other alternatives
 	-- Abbe Eban
 %
  When the music's over, turn off the lights.
-	-- The last words of Adolf Hitler (1889-1945)
+	-- Adolf Hitler (1889-1945)  [last words]
 %
  So far as the laws of mathematics refer to reality, they are not certain.
  And so far as they are certain, they do not refer to reality.
@@ -86,10 +86,10 @@ flock of sheep led by a lion.
 	-- Alexander the Great (356BC-323BC)
 %
  Wait a minute...
-	-- The last words of Pope Alexander VI (1431-1503)
+	-- Pope Alexander VI (1431-1503)  [last words]
 %
  Well, this is certainly a pleasant surprise.
-	-- The last words of Andrew Mutton
+	-- Andrew Mutton  [last words]
 %
  Real Programmers always confuse Christmas and Halloween because Oct31
 == Dec25 !
@@ -98,12 +98,12 @@ flock of sheep led by a lion.
  Wszystko ju¿ kiedy¶ by³o, wszystko ju¿ siê kiedy¶ wydarzy³o.  I wszystko
 ju¿ zosta³o kiedy¶ opisane.
 	-- Vysogota z Corvo
-	-- Andrzej Sapkowski (1948-), Pani Jeziora
+	-- from Andrzej Sapkowski (1948-), Pani Jeziora
 %
  Potwór przest±pi³ z nogi na nogê, podrapa³ siê w ucho.
  -S³uchaj no, ty -rzek³.  -Czy ty siê mnie naprawdê nie boisz?
  -A powinienem?
-	-- Andrzej Sapkowski (1948-), Ziarno Prawdy
+	-- from Andrzej Sapkowski (1948-), Ziarno Prawdy
 %
  Tam za moment zacznie siê rze¼.  A za moment plus moment zjawi± siê
 pierwsi ranni.  Wszyscy wiedz±, co maj± robiæ, ka¿dy zna swoje obowi±zki i
@@ -118,7 +118,7 @@ Pomagaæ potrzebuj±cym.  Pomo¿emy wiêc banalnie tylu, ilu zdo³amy pomóc.
 Nie damy rady zrobiæ du¿o wiêcej, ni¿ bêdziemy w stanie.  Ale postarajmy
 siê wszyscy, ¿eby to nie by³o mniej.
 	-- Rusty
-	-- Andrzej Sapkowski (1948-), Pani Jeziora
+	-- from Andrzej Sapkowski (1948-), Pani Jeziora
 %
  Jedne z p³omyczków wysokie by³y i mocne, ¶wieci³y jasno i ¿ywo, inne za¶
 by³y malutkie, chwiejne i drgaj±ce, a ¶wiat³o ich ziemnia³o i zamiera³o.
@@ -128,12 +128,12 @@ niemal¿e zupe³nie.
  -Czyj jest ten gasn±cy ognik? -zapyta³ wied¼min.
  -Twój -odrzek³a ¦mieræ.
 	-- Flourens Delannoy, Bajki i klechdy
-	-- Andrzej Sapkowski (1948-), Pani Jeziora
+	-- from Andrzej Sapkowski (1948-), Pani Jeziora
 %
  Dobra, dobra.  ¯arty na bok, jak powiedzia³ król Dezmod, gdy w¶ród uczty
 go¶cie nagle zaczêli sinieæ i umieraæ.
 	-- Geralt
-	-- Andrzej Sapkowski (1948-), Pani Jeziora
+	-- from Andrzej Sapkowski (1948-), Pani Jeziora
 %
  Od pietnastu lat piszê, pies z kulaw± nog± siê tym nie zainteresowa³, a
 teraz podobno jaki¶ k...a film nakrêcili.
@@ -144,7 +144,7 @@ teraz podobno jaki¶ k...a film nakrêcili.
  Raz znów dadz± znaæ o zmierzchu,
  ¯e kto¶ flaki ma na wierzchu
 	-- Nieznany autor, Na wojence
-	-- Andrzej Sapkowski (1948-), Wie¿a Jaskó³ki
+	-- from Andrzej Sapkowski (1948-), Wie¿a Jaskó³ki
 %
  Zabójstwo jest zawsze zabójstwem, bez wzglêdu na motywy i okoliczno¶ci.
 Przeto ci, którzy zabijaj± lub przygotowuj± zabójstwo, to przestêpcy i
@@ -153,7 +153,7 @@ sêdziami.  Nikt z tych, którzy obmy¶laj± i zadaj± przemoc, nie ma prawa
 uwa¿aæ siê za lepszego od zwyk³ego zbrodniarza.  Bo wszelka przemoc z
 natury swojej nieuchronnie wiedzie do zbrodni.
 	-- Nicodemus de Boot, Medytacie o ¿yciu, szczê¶ciu i pomy¶lno¶ci
-	-- Andrzej Sapkowski (1948-), Krew Elfów
+	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
  Wówczas rzek³a wró¿ka do wied¼mina: "Tak± ci dam radê: obuj ¿elazne buty,
 we¼ do rêki kostur ¿elazny.  Id¼ w ¿elaznych butach na koniec ¶wiata, a
@@ -165,7 +165,7 @@ wied¼min poszed³ przez ogieñ i wodê, wstecz siê nie ogl±da³.  Ale nie wzi±³
 ni butów ¿elaznych, ni kostura.  Wzi±³ tylko swój miecz wied¼miñski.  Nie
 pos³ucha³ s³ów wró¿ki.  I dobrze zrobi³, bo to by³a z³a wró¿ka.
 	-- Flourens Delannoy, Bajki i klechdy
-	-- Andrzej Sapkowski (1948-), Chrzest Ognia
+	-- from Andrzej Sapkowski (1948-), Chrzest Ognia
 %
  Pozna³em w ¿yciu wielu wojskowych.  Zna³em marsza³ków, genera³ów,
 wojewodów i hetmanów, triumfatorów liczbych kampanii i bitew.
@@ -179,15 +179,15 @@ dziwniejsze jest, ¿e prawdziwa wojna - a kilka prawdziwych wojen
 widzia³em - pod wzglêdem porz±dku i ³adu do z³udzenia przypomina ogarniêty
 po¿arem burdel.
 	-- Jaskier, Pó³ wieku poezji
-	-- Andrzej Sapkowski (1948-), Chrzest Ognia
+	-- from Andrzej Sapkowski (1948-), Chrzest Ognia
 %
  -Na Wielkie S³oñce.  (...) Co¶ ty zrobi³a z w³osami, Assire?
  -Umy³am.
-	-- Andrzej Sapkowski (1948-), Chrzest Ognia
+	-- from Andrzej Sapkowski (1948-), Chrzest Ognia
 %
  Biedaków nigdy nie staæ na nic, dlatego s± biedakami.
 	-- Codringher
-	-- Andrzej Sapkowski (1948-), Czar Pogardy
+	-- from Andrzej Sapkowski (1948-), Czar Pogardy
 %
  -Jedno jest na ¶wiecie prawo! -rycza³ gruby kap³an.  -Prawo boskie! Ca³a
 natura temu prawu podlega, ca³a ziemia i wszystko, co na tej ziemi ¿yje!
@@ -196,16 +196,16 @@ i bliski jest dzieñ gniewu, w którym ogieñ z niebios zniszczy ich plugaw±
 wyspê! Run± wówczas mury Loxii, Aretuzy i Garstangu, za którymi w³a¶nie
 zbieraj± siê ci poganie, by swe knowania obmy¶laæ! Run± te mury...
  -I trza bêdzie, psia maæ, od nowa stawiaæ.
-	-- Andrzej Sapkowski (1948-), Czar Pogardy
+	-- from Andrzej Sapkowski (1948-), Czar Pogardy
 %
  O mi³o¶ci wiem niewiele.  Z mi³o¶ci± jest jak z gruszk±.  Gruszka jest
 s³odka i ma kszta³t.  Spróbujcie zdefiniowaæ kszta³t gruszki.
 	-- Jaskier, Pó³ wieku poezji
-	-- Andrzej Sapkowski (1948-), Czar Pogardy
+	-- from Andrzej Sapkowski (1948-), Czar Pogardy
 %
  Odejd¼ st±d i wychêdó¿ siê sam.
 	-- Egzorcyzm
-	-- Andrzej Sapkowski (1948-), Ostatnie ¯yczenie
+	-- from Andrzej Sapkowski (1948-), Ostatnie ¯yczenie
 %
  -Kto jest najszybszym szermierzem na ¶wiecie?
  -Nie mam pojêcia.
@@ -219,7 +219,7 @@ I gdzie tacy s±.
  -Gdzie s±, to ja wiem.
  -Ha! Wiêc gdzie?
  -Na cmentarzach.
-	-- Andrzej Sapkowski (1948-), Krew Elfów
+	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
  Nic, tylko by¶cie siê chêdo¿yli, w kó³ko, bez wyboru, z kim popad³o i
 gdzie popad³o.  A waszym kobietom wystarczy byle si±¶æ na mêskich portkach,
@@ -229,33 +229,33 @@ Chcia³a¶ rozumieæ, tak czy nie? To i masz szczer± prawdê i wiern± historiê
 szybszym tempie nadmuchuje baby.  A z wami, lud¼mi, trudno konkurowaæ,
 zarówno w mordowaniu, jak i w chêdo¿eniu...
 	-- Yarpen Zigrin
-	-- Andrzej Sapkowski (1948-), Krew Elfów
+	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
 Dobry elf, to martwy elf.
 	-- Marsza³ek Milan Raupenneck
-	-- Andrzej Sapkowski (1948-), Krew Elfów
+	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
  Nie mam nic przeciwko wied¼minom.  Niech sobie poluj± na wampiry.  Byleby
 tylko p³acili podatki.
 	-- Radowid III ¦mia³y
-	-- Andrzej Sapkowski (1948-), Krew Elfów
+	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
  Zaiste wielkiego trzeba zadufania i wielkiego za¶lepienia, by posokê
 lej±c± siê z szafotu nazwaæ sprawiedliwo¶ci±.
 	-- Vysogota z Corvo
-	-- Andrzej Sapkowski (1948-), Wie¿a Jaskó³ki
+	-- from Andrzej Sapkowski (1948-), Wie¿a Jaskó³ki
 %
  Król bezgranicznie kocha³ sw± ma³¿onkê, królow±, a ona ca³ym sercem
 kocha³a jego.  Co¶ takiego musia³o skoñczyæ siê nieszczê¶ciem.
 	-- Flourens Delannoy, Bajki i klechdy
-	-- Andrzej Sapkowski (1948-), Wierza Jaskó³ki
+	-- from Andrzej Sapkowski (1948-), Wierza Jaskó³ki
 %
  Computers make it easier to do a lot of things, but most of the things
 they make it easier to do don't need to be done.
 	-- Andy A. Rooney (1919-)
 %
  Damn! A bullet!
-	-- The last words of Antonio Jose de Sucre (1795-1830)
+	-- Antonio Jose de Sucre (1795-1830)  [last words]
 %
  Bardzo zaawansowana technologia niewiele ró¿ni siê od magii.
 	-- Arthur C. Clarke (1917-)
@@ -269,7 +269,7 @@ homosexual or really smart.
 	-- Becky Rodenbeck
 %
  Shoot me in the chest!
-	-- The last words of Benito Amilcare Andrea Mussolini (1883-1945)
+	-- Benito Amilcare Andrea Mussolini (1883-1945)  [last words]
 %
  Democracy is two wolves and a lamb voting on what to have for lunch.
 	-- Benjamin Franklin (1706-1790)
@@ -278,21 +278,8 @@ homosexual or really smart.
 ones in movies.
 	-- Bill Bulko
 %
- Spojrza³ w górê szybu kopalni.
- Chc±c sprawdziæ, czy wóz w dó³ zje¿d¿a.
- I zje¿d¿a³.
-	-- BioWare, Baldur's Gate
-%
- Kiedy nie bêdê móg³ staæ o w³asnych si³ach, nadejdzie czas na ¶mieræ.
-	-- Dan M.
-	-- BioWare, Baldur's Gate
-%
- Wszyscy umieraj±, tak to ju¿ jest w tym ¿yciu.
-	-- Russa
-	-- BioWare, Baldur's Gate
-%
  I'll be in Hell before you start breakfast!
-	-- The last words of "Black Jack" Ketchum
+	-- "Black Jack" Ketchum  [last words]
 %
  The real problem is not whether machines think but whether men do.
 	-- Burrhus Frederic Skinner (1904-1990)
@@ -302,18 +289,16 @@ power.
 	-- Charles Colton
 %
  Why not? After all, it belongs to Him!
-	-- The last words of Sir Charles Spencer Chaplin (1889-1977)
+	-- Sir Charles Spencer Chaplin (1889-1977)  [last words]
 %
  There is no such thing as "trusted users".
 	-- +Chiron+ on alt.os.linux.slackware
 %
-Trust no one.
-	-- Fox Mulder (David Duchowny)
-	-- Chris Carter (1956-), The X Files
+ Trust no one.
+	-- Fox Mulder (David Duchowny) from Chris Carter (1956-), The X Files
 %
-In most of my work, the laws of physics rarely seems to apply.
-	-- Fox Mulder (David Duchowny)
-	-- Chris Carter (1956-), The X Files
+ In most of my work, the laws of physics rarely seems to apply.
+	-- Fox Mulder (David Duchowny) from Chris Carter (1956-), The X Files
 %
  I don't understand why cheerleaders won't talk to me.  Maybe I don't throw
 five touchdowns against Newport High, but let's see one of those football
@@ -351,6 +336,10 @@ grade a student who says that two-thirds times three is 1.9999999?
 famous.
 	-- David Bradley (1949-)
 %
+ UNIX is basically a simple operating system, but you have to be a genius
+to understand the simplicity.
+	-- Dennis MacAlistair Ritchie (1941-)
+%
  Documentation is like sex: when it is good, it is very, very good; and
 when it is bad, it is better than nothing.
 	-- Dick Brandon
@@ -380,9 +369,11 @@ it.
 	-- Donald Ervin Knuth (1938-)
 %
  The hardest thing is to go to sleep at night, when there are so many
-urgent things needing to be done.  A huge gap exists between what we know
-is possible with today's machines and what we have so far been able to
-finish.
+urgent things needing to be done.
+	-- Donald Ervin Knuth (1938-)
+%
+ A huge gap exists between what we know is possible with today's machines
+and what we have so far been able to finish.
 	-- Donald Ervin Knuth (1938-)
 %
  The psychological profiling [of a programmer] is mostly the ability to
@@ -397,10 +388,10 @@ been sorted with the help of a computer.
  The most important thing in the programming language is the name.  A
 language will not succeed without a good name.  I have recently invented a
 very good name and now I am looking for a suitable language.
-	-- Attributed to Donald Ervin Knuth (1938-)
+	-- Donald Ervin Knuth (1938-)  [attrib.]
 %
  An algorithm must be seen to be believed.
-	-- Attributed to Donald Ervin Knuth (1938-)
+	-- Donald Ervin Knuth (1938-)  [attrib.]
 %
  Accomplishing the impossible means only that the boss will add it to your
 regular duties
@@ -437,7 +428,7 @@ show their absence.
 	-- Edsger Wybe Dijkstra (1930-2002)
 %
  Such is life.
-	-- The last words of Edward "Ned" Kelly (1854[?]-1880)
+	-- Edward "Ned" Kelly (1854[?]-1880)  [last words]
 %
  Masochizm wynika z niewiedzy.
 	-- Edward Stachowski
@@ -455,33 +446,33 @@ kryminalistów.
  The reason that there are so few good conversationalists is that most
 people are thinking about what they are going to say and not about what the
 others are saying.
-	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
+	-- Francois de La Rochefoucauld (1613-1680)  [attrib.]
 %
  Those who spend too much time on the little things usually become
 incapable of great ones.
-	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
+	-- Francois de La Rochefoucauld (1613-1680)  [attrib.]
 %
  How can we expect others to keep our secrets if we cannot keep them
 ourselves?
-	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
+	-- Francois de La Rochefoucauld (1613-1680)  [attrib.]
 %
  Only great men have great faults.
-	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
+	-- Francois de La Rochefoucauld (1613-1680)  [attrib.]
 %
  It is never more difficult to speak well than when one is ashamed to be
 silent.
-	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
+	-- Francois de La Rochefoucauld (1613-1680)  [attrib.]
 %
  Spory nie trwa³yby tak d³ugo, gdyby brak s³uszno¶ci by³ tylko po jednej
 stronie.
-	-- Attribtued to Francois de La Rochefoucauld (1613-1680)
+	-- Francois de La Rochefoucauld (1613-1680)  [attrib.]
 %
  I have a terrible headache.
-	-- The last words of Franklin Delano Roosevelt (1882-1945)
+	-- Franklin Delano Roosevelt (1882-1945)  [last words]
 %
  The Earth is suffocating...  Swear to make them cut me open, so that
 I won't be buried alive.
-	-- The last words of Frederic Chopin (1810-1849)
+	-- Frederic Chopin (1810-1849)  [last words]
 %
  A jednak siê krêci!
 	-- Galileo Galilei (1564-1642)
@@ -494,11 +485,10 @@ screaming like the passengers who were in his car...
 	-- George Burns
 %
  Now I shall go to sleep.  Goodnight.
-	-- The last words of Lorde George Gordon Byron (1788-1824)
+	-- Lorde George Gordon Byron (1788-1824)  [last words]
 %
  Don't try to do it.  Do it or don't do it.
-	-- Yoda
-	-- Gorge Walton Lucas Jr (1944-), Star Wars
+	-- Yoda from Gorge Walton Lucas, Jr. (1944-), Star Wars
 %
  Ucz siê na cudzych b³êdach.  ¯ycie jest za krótkie, aby¶ zd±¿y³ je
 wszystkie pope³niæ.
@@ -510,40 +500,40 @@ wszystkie pope³niæ.
  Do you spend time with your family? Good.  Because a man who doesn't spend
 time with his family can never be a real man.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  I'm gonna make him an offer he can't refuse.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  I spent my whole life trying not to be careless.  Women and children can
 be careless.  But not men.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  Never let anyone outside the family know what you're thinking.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  Never get angry.  Never make a threat.  Reason with people.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  Never hate your enemies.  It clouds your judgement.
 	-- Al Pacino (1940-) as Michael Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  I'll make him an offer he can't refuse.
 	-- Al Pacino (1940-) as Michael Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  Don't ask me about my business, Kay.
 	-- Al Pacino (1940-) as Michael Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  We don't discuss business at the table.
 	-- James Caan (1939-) as Santino "Sonny" Corleone
-	-- The Godfather
+	-- from The Godfather
 %
  Komisja to zespó³, który tylko wtedy jest w stanie co¶ zdzia³aæ, gdy
 sk³ada siê z trzech osób, z których jedna jest chora, a druga nieobecna.
@@ -554,7 +544,7 @@ smyczy.
 	-- Hans Krailsheimer
 %
  That was a great game of golf, fellers.
-	-- The last words of Harry Lillis "Bing" Crosby (1903-1977)
+	-- Harry Lillis "Bing" Crosby (1903-1977)  [last words]
 %
  Take my wife.  Please.
 	-- Henny Youngman (1906-1998)
@@ -608,8 +598,8 @@ shoulders of giants.
  That quantity which, when multiplied by, divided by, added to, or
 subtracted from the answer you get, gives you the answer you should have
 gotten.
-	-- Skinner's Constant (a.k.a. Flannagan's Finagling Factor a.k.a.
-		Sta³e Janosika in Poland)
+	-- Skinner's Constant (or Flannagan's Finagling Factor or
+		Sta³e Janosika)
 %
  God is Real, unless declared Integer.
 	-- J. Allan Toogood
@@ -633,7 +623,7 @@ and the pessimist fears this is true.
 	-- James Branch Cabell (1879-1958)
 %
  I can't sleep.
-	-- The last words of Sir James Matthew Barrie (1860-1937)
+	-- Sir James Matthew Barrie (1860-1937)  [last words]
 %
  They have computers, and they may have other weapons of mass destruction.
 	-- Janet Reno (1938-)
@@ -644,17 +634,17 @@ and the pessimist fears this is true.
 %
  Since the day of my birth, my death began its walk.  It is walking towards
 me, without hurrying.
-	-- The last words of Jean Maurice Eugene Clement Cocteau (1889-1963)
+	-- Jean Maurice Eugene Clement Cocteau (1889-1963)  [last words]
 %
  Dziwne jest to ¿ycie...  Jeste¶my ma³ymi dzieæmi, a nazajutrz mamy 50 lat,
 a ca³e dzieciñstwo mo¿emy zamkn±æ w ma³ym zardzewia³ym pude³eczku.
 	-- Dominique Bretodeau
-	-- Jean-Pierre Jeunet (1953-)
+	-- from Jean-Pierre Jeunet (1953-)
 		Le Fabuleux destin d'Amélie Poulain (a.k.a. Amelie)
 %
  ¯ycie, to tylko niekoñcz±ca siê próba przedstawienia, które nigdy siê nie
 odbêdzie.
-	-- Jean-Pierre Jeunet (1953-)
+	-- from Jean-Pierre Jeunet (1953-)
 		Le Fabuleux destin d'Amélie Poulain (a.k.a. Amelie)
 %
  Hardware: the parts of a computer that can be kicked.
@@ -662,14 +652,14 @@ odbêdzie.
 %
  Just 100 more lines of code...
 	-- Dwayne Duncan
-	-- Jeffrey T. Darlington, General Protection Fault
+	-- from Jeffrey T. Darlington, General Protection Fault
 %
  There are two major products that come out of Berkeley: LSD and UNIX.  We
 don't believe this to be a coincidence.
 	-- Jeremy S. Anderson
 %
  Dammit...  Don't you dare ask God to help me.
-	-- The last words of Joan Crawford (1904-1977)
+	-- Joan Crawford (1904-1977)  [last words]
 %
  Normal people scare me...
 	-- Luna Lovegood
@@ -677,7 +667,7 @@ don't believe this to be a coincidence.
 		Harry Potter and the Order of the Phoenix
 %
  Good morning, Robert.
-	-- The last words of John Calvin Coolidge, Jr. (1872-1933)
+	-- John Calvin Coolidge, Jr. (1872-1933)  [last words]
 %
  He who hasn't hacked assembly language as a youth has no heart.  He who
 does as an adult has no brain.
@@ -721,10 +711,10 @@ umieraj±, zas³uguj± na ¿ycie.  Czy mo¿esz ich nim obdarzyæ? Nie b±d¼ wiêc
 tak pochopny w ferowaniu wyroków ¶mierci.  Nawet bowiem najm±drzejszy z
 Mêdrców nie wszystko wie.
 	-- Gandalf
-	-- John Ronald Reuel Tolkien (1892-1973), W³adca Pier¶cieni
+	-- from John Ronald Reuel Tolkien (1892-1973), W³adca Pier¶cieni
 %
  Chcieli¶my dobrze, a wysz³o jak zawsze...
-	-- Attributed to Joseph Stalin (1879-1953)
+	-- Joseph Stalin (1879-1953)  [attrib.]
 %
  Veni, vidi, vici.
 	-- Julius Caesar (100BC-44BC)
@@ -734,29 +724,35 @@ Mêdrców nie wszystko wie.
 	-- Julius Caesar (100BC-44BC)
 %
  Et tu, Brute?
-	-- The last words of Julius Caesar (100BC-44BC)
+	-- Julius Caesar (100BC-44BC)  [last words]
 %
  Ciemno¶æ, widzê ciemno¶æ, ciemno¶æ widzê.
 	-- Maks (Jerzy Sthur)
-	-- Juliusz Machulski (1955-), Seksmisja
+	-- from Juliusz Machulski (1955-), Seksmisja
 %
  Nuclear war can ruin your whole compile.
 	-- Karl Lehenbauer
 %
  Go on, get out! Last words are for fools who haven't said enough!
-	-- The last words of Karl Heinrich Marx (1818-1883)
+	-- Karl Heinrich Marx (1818-1883)  [last words]
 %
  Wierzê, ¿e Pan jednak mnie nie opu¶ci.
  Jakby mia³ wzrok tak± zdobycz wypu¶ciæ.
  Pan, ale który pytasz siê zdziwiony.
  Otó¿ ten jeden z odpowiedniej strony.
-	-- Kazik Staszewski (1963-), Poznaj swój raj
+	-- from Kazik Staszewski (1963-), Poznaj swój raj
 %
  Chcecie mnie powiesiæ, to mnie powie¶cie.
-	-- Kazik Staszewski (1963-), Poznaj swój raj
+	-- from Kazik Staszewski (1963-), Poznaj swój raj
 %
  Hitler powtarza³ te¿, ¿e nie chce wojny wcale.
-	-- Kazik Staszewski (1963-), Mars napada
+	-- from Kazik Staszewski (1963-), Mars napada
+%
+ When in doubt, use brute force.
+	-- Kenneth Lane Thompson (1943-)
+%
+ One of my most productive days was throwing away 1000 lines of code.
+	-- Kenneth Lane Thompson (1943-)
 %
  Najs³abszym ogniwem w ka¿dym systemie bezpieczeñstwa s± ludzie.
 	-- Kevin David Mitnick (1963-)
@@ -766,19 +762,19 @@ Mêdrców nie wszystko wie.
 %
  Only human.
 	-- Agent Brown
-	-- Larry & Andy Wachowski, The Matrix
+	-- from Larry & Andy Wachowski, The Matrix
 %
  There is no spoon.
 	-- Spoon Boy
-	-- Larry & Andy Wachowski, The Matrix
+	-- from Larry & Andy Wachowski, The Matrix
 %
  Do you think that's air you're breathing now?
 	-- Morpheus
-	-- Larry & Andy Wachowski, The Matrix
+	-- from Larry & Andy Wachowski, The Matrix
 %
  Choice is an ilusion created between those with a power and those without.
 	-- Romero Vinci
-	-- Larry & Andy Wachowski, The Matrix
+	-- from Larry & Andy Wachowski, The Matrix
 %
  And I don't like doing silly things (except on purpose).
 	-- Larry Wall (1954-)
@@ -863,21 +859,20 @@ some Perl 4 code, and said, "What is that, swearing?"
 	-- Larry Wall (1954-)
 %
  Don't let it end like this.  Tell them I said something.
-	-- The last words of Jose Doroteo Arango Arambula (1878-1923)
-		(a.k.a. Francisco Villa a.k.a. Pancho Villa)
+	-- Jose Doroteo Arango Arambula (1878-1923)  [last words]
 %
  Shall we play a game?
 	-- Joshua (the computer)
-	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
+	-- from Lawrence Lasker, Walter F. Parkes, WarGames (1983)
 %
  A strange game.  The only winning move is not to play.  How about a nice
 game of chess?
 	-- Joshua (the computer)
-	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
+	-- from Lawrence Lasker, Walter F. Parkes, WarGames (1983)
 %
  Mr McKitrick, After a careful consideration I have came to the
 conclution that your defencesystem SUCKS!
-	-- Lawrence Lasker, Walter F. Parkes, WarGames (1983)
+	-- from Lawrence Lasker, Walter F. Parkes, WarGames (1983)
 %
  Mówca powinien wyczerpaæ temat, nie s³uchaczy.
 	-- Sir Leonard Spencer Churchill (1874-1965)
@@ -889,7 +884,7 @@ conclution that your defencesystem SUCKS!
 	-- Sir Leonard Spencer Churchill (1874-1965)
 %
  I'm bored with it all.
-	-- The last words of Sir Leonard Spencer Churchill (1874-1965)
+	-- Sir Leonard Spencer Churchill (1874-1965)  [last words]
 %
  The grim fact is that we prepare for war like precocious giants and for
 peace like retarded pygmies.
@@ -908,14 +903,14 @@ w ró¿nych doktrynach.
 "tak", a miaucza³y zamiast "nie", lub wed³ug jakiej¶ podobnej
 zasady -powiedzia³a Alicja, -wtedy mo¿na by³oby prowadziæ rozmowê.  Lecz
 jak mo¿esz rozmawiaæ z kim¶, kto zawsze mówi to samo?
-	-- Lewis Carroll (Charles Lutwidge Dodgson, 183-1898),
+	-- from Lewis Carroll (Charles Lutwidge Dodgson, 183-1898),
 		Through the Looking Glass
 %
  Dijkstra probably hates me.
 	-- Linus Benedict Torvalds (1969-) in kernel/sched.c v1.1.42
 %
  My name is Linus, and I am your God.
-	-- Linus Benedict Torvalds (1969-) at the Linux Expo, Durham NC. 1998
+	-- Linus Benedict Torvalds (1969-)
 %
  Only wimps use tape backup: real men just upload their important stuff on
 ftp, and let the rest of the world mirror it.
@@ -970,18 +965,22 @@ about what they say if they had.
 different places, just write a Unix operating system.
 	-- Linus Benedict Torvalds (1969-)
 %
+ I'd rather listen to Newton than to Mundie.  He may have been dead for
+almost three hundred years, but despite that he stinks up the room less.
+	-- Linus Benedict Torvalds (1969-) on MS executive Craig Mundie
+%
  Software is like sex; it's better when it's free.
-	-- Attributed to Linus Benedict Torvalds (1969-)
+	-- Linus Benedict Torvalds (1969-)  [attrib.]
 %
  How should I know if it works? That's what beta testers are for.  I only
 coded it.
-	-- Attributed to Linus Benedict Torvalds (1969-)
+	-- Linus Benedict Torvalds (1969-)  [attrib.]
 %
  Those who can't hear the music think the dancers are insane.
 	-- Lord Templeton Judgement
 %
  Applaud, my friends, the comedy is finished.
-	-- The last words of Ludwig van Beethoven (1770-1827)
+	-- Ludwig van Beethoven (1770-1827)  [last words]
 %
  Ala ma kota.
 	-- Marian Falski (1881-1974)
@@ -998,8 +997,8 @@ you aren't.
 conditions.
 	-- Mark Twain (1835-1910)
 %
- Lepiej jest nie odzywaæ siê wcale i wydawaæ siê g³upim, ni¿ odezwaæ siê i
-rozwiaæ wszelkie w±tpliwo¶ci.
+ Better to keep your mouth shut and be thought a fool than to open it
+and remove all doubt.
 	-- Mark Twain (1835-1910)
 %
  Nothing good ever comes of violence.
@@ -1019,25 +1018,25 @@ will die for, he isn't fit to live.
 %
  In the end, we will remember not the words of our enemies but the silence
 of our friends.
-	-- Attributed to Dr. Martin Luther King Jr. (1929-1968)
+	-- Dr. Martin Luther King Jr. (1929-1968)  [attrib.]
 %
  Waving away a cloud of smoke, I look up, and am blinded by a bright, white
 light.  It's God.  No, not Richard Stallman, or Linus Torvalds, but God.
 In a booming voice, He says: "This is a sign.  Use Linux, the free UNIX
-system for the 386.
+system for the 386."
 	-- Matt Welsh
 %
  Take a look to the sky just before you die.
-	-- Metallica, For Whom The Bell Tolls
+	-- from Metallica, For Whom The Bell Tolls
 %
  Before you judge me take a look at you.
-	-- Metallica, Holier Than Thou
+	-- from Metallica, Holier Than Thou
 %
  To secure peace is to prepare for war.
-	-- Metallica, Don't Tread on Me
+	-- from Metallica, Don't Tread on Me
 %
  Life is ours, we live it our way
-	-- Metallica, Nothing Else Matters
+	-- from Metallica, Nothing Else Matters
 %
  Careful what you wish,
  Careful what you say,
@@ -1045,12 +1044,12 @@ system for the 386.
  You may regret it,
  Careful what you wish,
  You just might get it.
-	-- Metallica, King Nothing
+	-- from Metallica, King Nothing
 %
  Kill, it's such a friendly word,
  Seems the only way,
  For reaching out again
-	-- Metallica, Welcome Home (Sanitarium)
+	-- from Metallica, Welcome Home (Sanitarium)
 %
  Programming is like sex: one mistake and you have to support it for the
 rest of your life.
@@ -1077,7 +1076,7 @@ maj±.
 	-- Miko³aj Rej (1505-1569)
 %
  Look at things what we created, I'm not proud what we have done
-	-- Narnia, Angels are Crying
+	-- from Narnia, Angels are Crying
 %
  That's one small step for [a] man, one giant leap for mankind.
 	-- Neil Armstrong (1930-)
@@ -1100,13 +1099,13 @@ zdechn±æ.
 	-- Norm Schryer
 %
  Get these fucking nuns away from me.
-	-- The last words of George Norman Douglas (1868-1952)
+	-- George Norman Douglas (1868-1952)  [last words]
 %
  They don't make bugs like Bunny anymore.
 	-- Olav Mjelde
 %
  Give me coffee, I'm going to write.
-	-- The last words of Olavo Braz Martins dos Guimaraes Bilac (1865-1918)
+	-- Olavo Braz Martins dos Guimaraes Bilac (1865-1918)  [last words]
 %
  Experience is the name everyone gives to their mistakes.
 	-- Oscar Wide (1854-1900)
@@ -1136,32 +1135,32 @@ everything except the obvious.
 %
  My wallpaper and I are fighting a duel to the death.  One or the other of
 us has to go.
-	-- The last words of Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [last words]
 %
  A true friend stabs you in the front
-	-- Attributed to Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [attrib.]
 %
  Always forgive your enemies; nothing annoys them so much.
-	-- Attributed to Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [attrib.]
 %
  I have nothing to declare except my Genius.
-	-- Attributed to Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [attrib.]
 %
  My own business bores me to death.  I prefer other people's.
-	-- Attributed to Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [attrib.]
 %
  No man is rich enough to buy back his own past.
-	-- Attributed to Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [attrib.]
 %
  The one duty we owe to history is to rewrite it.
-	-- Attributed to Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [attrib.]
 %
  What a pity that in life we only get our lessons when they are of no use
 to us.
-	-- Attributed to Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [attrib.]
 %
  Life is too important to be taken seriously.
-	-- Attributed to Oscar Wide (1854-1900)
+	-- Oscar Wide (1854-1900)  [attrib.]
 %
  +       /*
  +        * The meaning of life, the universe, and everything. Plus
@@ -1187,13 +1186,13 @@ a shell, and DOS is a boot partition virus.
 	-- Peter H. Coffin
 %
  How were the receipts today at Madison Square garden?
-	-- The last words of Phineas Taylor Barnum (1810-1891)
+	-- Phineas Taylor Barnum (1810-1891)  [last words]
 %
   Well, I mean, there is no--there is no difference between a private life
 and a public life.  My--my life is my life, is The Truman Show.  The Truman
 Show is...  a lifestyle.
 	-- Meryl
-	-- Peter Weir (1944-), The Truman Show
+	-- from Peter Weir (1944-), The Truman Show
 %
  Trzeba milczeæ albo mówiæ rzeczy lepsze od milczenia.
 	-- Pitagoras (VI BC)
@@ -1214,12 +1213,12 @@ wy¶miej± ciê.
  -Zed's.
  -Who's Zed?
  -Zed's dead, baby, Zed's dead.
-	-- Quentin Tarantino (1963-), Pulp Fiction
+	-- from Quentin Tarantino (1963-), Pulp Fiction
 %
  PUMPKIN: Everybody be cool this is a robbery!
  HONEY BUNNY: Any of you fuckin' pricks move and I'll execute every one of
 you motherfuckers!  Got that?
-	-- Quentin Tarantino (1963-), Pulp Fiction
+	-- from Quentin Tarantino (1963-), Pulp Fiction
 %
  The path of the righteous man is beset on all sides by the
 inequities of the selfish and the tyranny of evil men.
@@ -1230,14 +1229,14 @@ And I will strike down upon thee with great vengeance and furious
 anger those who attempt to poison and destroy my brothers.
 And you will know my name is the Lord when I lay my vengeance upon you.
 	-- Jules
-	-- Quentin Tarantino (1963-), Pulp Fiction
+	-- from Quentin Tarantino (1963-), Pulp Fiction
 %
  It has to start somewhere,
  It has to start sometime,
  What better place then here?
  What better time than now?
  All hell can't stop us now!
-	-- Rage Against the Machine, Guerilla Radio
+	-- from Rage Against the Machine, Guerilla Radio
 %
  Typos are very important to all written form.  It gives the reader
 something to look for so they aren't distracted by the total lack of
@@ -1250,7 +1249,7 @@ end up hurt because of it.
 	-- Randy Keith Milholland
 %
  I think I'm going to make it!
-	-- The last words of Richard Loeb
+	-- Richard Loeb  [last words]
 %
  Love your country, but never trust its government.
 	-- Robert Anson Heinlein (1907-1988)
@@ -1307,7 +1306,7 @@ word.
 	-- Robert Anson Heinlein (1907-1988)
 %
  Being right too soon is socially unacceptable.
-	-- Attribtued to Robert Anson Heinlein (1907-1988)
+	-- Robert Anson Heinlein (1907-1988)  [attrib.]
 %
  ... one of the main causes of the fall of the Roman Empire was that,
 lacking zero, they had no way to indicate successful termination of
@@ -1331,10 +1330,10 @@ cancer with a pointy stick.
 	-- Mr_Saturn
 %
  Crito, I owe a cock to Asclepius.  Will you remember to pay the debt?
-	-- The last words of Socrates (470BC-399BC)
+	-- Socrates (470BC-399BC)  [last words]
 %
  I'm going to live forever, or die trying!
-	-- Attributed to Spider Robinson (1948-)
+	-- Spider Robinson (1948-)  [attrib.]
 %
  (...) pewne zjawiska w najmniejszej skali zachodz± sposobem jakby
 kredytowym.  Mezony, te cz±steczki elementarne, naruszaj± czasem prawa
@@ -1346,7 +1345,7 @@ zachowaæ w u³amku sekundy tak drobnym, ¿e ca³a sekunda jest przy nim
 wieczno¶ci±, Kosmos, ze wzglêdu na swe rozmiary, musia³by siê w ów zakazany
 sposób zachowaæ odpowiednio d³u¿ej.  Na przyk³ad przez piêtna¶cie miliardów
 lat...
-	-- Stanis³aw Lem (1921-2006), Dzienniki Gwiazdowe, Podró¿ Osiemnasta
+	-- from Stanis³aw Lem (1921-2006), Dzienniki Gwiazdowe
 %
  Dopóki nie skorzysta³em z Internetu, nie wiedzia³em, ¿e na ¶wiecie jest
 tylu idiotów
@@ -1367,11 +1366,11 @@ przekazywane.
 %
  - Ja siê tu chyba powieszê - pomy¶la³. Nie wpad³o mu do g³owy, ¿e wobec
 braku ci±¿enia nawet takie wyj¶cie nie jest mo¿liwe.
-	-- Stanis³aw Lem (1921-2006), Opowie¶ci o pilocie Pirxie, rozdzia³ 1.
+	-- from Stanis³aw Lem (1921-2006), Opowie¶ci o pilocie Pirxie
 %
  Nikt nic nie czyta, a je¶li czyta, to nic nie rozumie, a je¶li nawet
 rozumie, to nic nie pamiêta.
-	-- Stanis³aw Lem (1921-2006), Opowie¶ci o pilocie Pirxie, rozdzia³ 1.
+	-- from Stanis³aw Lem (1921-2006), Opowie¶ci o pilocie Pirxie
 %
  Trzeba siê uczyæ, a nie chodziæ do szko³y.
 	-- Stanis³aw Lipiñski
@@ -1389,24 +1388,24 @@ be right.
 %
  Sometimes when you innovate, you make mistakes.  It is best to admit them
 quickly, and get on with improving your other innovations.
-	-- Attributed to Steve Jobs (1955-)
+	-- Steve Jobs (1955-)  [attrib.]
 %
  You can't just ask customers what they want and then try to give that to
 them.  By the time you get it built, they'll want something new.
-	-- Attributed to Steve Jobs (1955-)
+	-- Steve Jobs (1955-)  [attrib.]
 %
  You know, we don't grow most of the food we eat.  We wear clothes other
 people make.  We speak a language that other people developed.  We use a
 mathematics that other people evolved...  I mean, we're constantly taking
 things.  It's a wonderful, ecstatic feeling to create something that puts
 it back in the pool of human experience and knowledge.
-	-- Attributed to Steve Jobs (1955-)
+	-- Steve Jobs (1955-)  [attrib.]
 %
  Never trust a computer you can't throw out a window.
 	-- Steve Wo¼niak (1950-)
 %
  Wherever smart people work, doors are unlocked.
-	-- Attributed to Steve Wo¼niak (1950-)
+	-- Steve Wo¼niak (1950-)  [attrib.]
 %
  If toast always lands butter-side down, and cats always land on their
 feet, what happen if you strap toast on the back of a cat and drop it?
@@ -1537,7 +1536,7 @@ been dead for two years.
 	-- Thomas Overgaard on alt.os.linux.slackware
 %
  Why not?
-	-- The last words of Timothy Leary
+	-- Timothy Leary  [last words]
 %
  Po¿yteczna praca jest zawsze cicha i niezauwa¿alna.
 	-- To³stoj
@@ -1547,29 +1546,29 @@ purpose is not to receive messages.
 	-- Umberto Eco (1932-)
 %
  Because I felt like killing a Monk.
-	-- Attributed to Umberto Eco (1932-)
+	-- Umberto Eco (1932-)  [attrib.]
 		(asked why he wrote The Name of the Rose)
 %
  Jesus Christ, who are these people?
 	-- William Henry Gates III (1955-)
 %
  A right is not what someone gives you; it's what no one can take from you.
-	-- Attribtued to William Ramsey Clark (1927-)
+	-- William Ramsey Clark (1927-)  [attrib.]
 %
  Life's but a walking shadow, a poor player
  That struts and frets his hour upon the stage
  And then is heard no more.  It is a tale
  Told by an idiot, full of sound and fury,
  Signifying nothing.
-	-- William Shakespeare (1564-1616)), Macbeth
+	-- from William Shakespeare (1564-1616)), Macbeth
 %
  Life is like a box of chocolates.  You never know what you're gonna get.
 	-- Forrest Gump's mom
-	-- Winstion Groom (1944-), Forrest Gump
+	-- from Winstion Groom (1944-), Forrest Gump
 %
  I guess sometimes there just aren't enough rocks.
 	-- Forrest Gump
-	-- Winstion Groom (1944-), Forrest Gump
+	-- from Winstion Groom (1944-), Forrest Gump
 %
  There's many a boy here today who looks on war as all glory, but, boys, it
 is all hell.
@@ -1593,10 +1592,14 @@ is all hell.
 %
  I don't mind your thinking slowly; I mind your publishing faster than you
 think.
-	-- Attribtued to Wolfgang Ernst Pauli (1900-1958)
+	-- Wolfgang Ernst Pauli (1900-1958)  [attrib.]
 %
  This isn't right.  This isn't even wrong.
-	-- Attribtued to Wolfgang Ernst Pauli (1900-1958)
+	-- Wolfgang Ernst Pauli (1900-1958)  [attrib.]
+%
+ Herbata od mieszania nie zrobi siê s³odsza, w tym celu bowiem trzeba
+dosypaæ cukru.
+	-- Zygmunt Mycielski (1907-1987)
 %
  /* You are not expected to understand this */
 	-- comment in the context-switching code of the V6 Unix kernel
@@ -1641,10 +1644,6 @@ doing it.
 It works, sort of.
 	-- Xerox Labs, 1973
 %
- Herbata od mieszania nie zrobi siê s³odsza, w tym celu bowiem trzeba
-dosypaæ cukru.
-	-- Zygmunt Mycielski (1907-1987)
-%
  The world is coming to an end!  Repent and return those library books!
 %
  43rd Law of Computing: Anything that can go wr
@@ -1653,9 +1652,8 @@ dosypaæ cukru.
  Hey! I hate these Microsoft guys! What a rotten compiler! It only accepts
 16,384 local variables in a function!
 %
- Stallman: "God told me I programmed the best editor in the world!"
- Torvalds: "Well, God told *me* that I programmed the best OS in the
-world!"
+ Stallman: God told me I programmed the best editor in the world!
+ Torvalds: Well, God told *me* that I programmed the best OS in the world!
  Knuth: "Wait, wait - I never said that."
 %
  The world is going for shut down.  Please log off.
@@ -1726,8 +1724,6 @@ którymi nie ma ¿adnych sporów.
 %
  Na pocz±tku by³ chaos i tak ju¿ zosta³o.
 %
- I surf the web, therefore I am.
-%
  Give a man a match, and he'll be warm for a minute, but set him on fire,
 and he'll be warm for the rest of his life.
 %
@@ -1752,6 +1748,9 @@ without either laughing or crying.
 %
  jedni lubia Opera, inni Firefoxa, a jeszcze inni sciagac trojany ;)
 	-- Hihnt
+%
+ Thou shalt not follow the NULL pointer, for chaos and madness await thee
+at its end.
 %
  Nobody shot me.
 	-- Frank Gusenberg, his last words, when asked by police who had
