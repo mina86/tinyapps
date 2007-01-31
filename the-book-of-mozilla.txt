@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotations from The Book of Mozilla.
-## $Id: the-book-of-mozilla.txt,v 1.3 2006/09/28 15:06:18 mina86 Exp $
+## $Id: the-book-of-mozilla.txt,v 1.4 2007/01/31 18:58:48 mina86 Exp $
 ## By Michal Nazarewicz (mina86/AT/mina86.com)
 ## Released to Public Domain
 ##
@@ -27,6 +27,12 @@ reborn with its strength renewed, and the followers of Mammon cowered in
 horror.
 	from The Book of Mozilla, 7:15
 	(Red Letter Edition)
+% Official
+The elementals fought and sent back the armies of Mammon to the inner
+world. The scribe ended the inspired parchments, letting the believers cry
+over that new view on Earth. Long after the thunder and the fire, came the
+sun and finally the long awaited rainbow...
+	from The Book of Mozilla, 8:23
 % Unofficial
 And so the beast became agile. The unbelievers fell silent and the
 followers of Mammon were left behind. The beast had been improved and
@@ -69,7 +75,7 @@ and people people did feast upon the lambs, and sloths, and carp, and
 anchovies, and orangutans, and breakfast cereals, and fruit bats and large
 toothpaste tubes and pigeons. But of lizards they did not feast upon. [27]
 A year came to pass, and the ones close to the Lizard saw a new minion as
-it grew from the Book. [28] But alas; For the Book had been kept in bad
+it grew from The Book. [28] But alas; For the Book had been kept in bad
 places, and it was full of locusts. [29] And the New Lizard did grew angry
 and said that the Old Book was cursed and threw it far. And the weak minion
 did perish. [30] The New Lizard took out a book that was new and blank all
@@ -151,7 +157,7 @@ fox, its red fur burning with the great fire that the followers
 remembered. The Pragma looked on in horror as the fox rose to its feet and
 raised its head, its eyes burning with Power, and the followers rejoiced in
 happiness. For the Fire Bird was gone, but the Fire Fox had replaced it."
-	from the Book of Mozilla, 8:4
+	from The Book of Mozilla, 8:4
 % Bugzilla
 Then, tired of exploring the followers of Mammon didst rest. And lo, from
 the depths of the bird cameth a mighty fox. And casting even fire (and
