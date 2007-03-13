@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.15 2006/12/18 19:49:46 mina86 Exp $
+## $Id: quotes.txt,v 1.16 2007/03/13 07:47:33 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -12,7 +12,7 @@
 	-- Abraham Lincoln (1809-1865)
 %
  History teaches us that men and nations behave wisely once they have
-exhausted all other alternatives
+exhausted all other alternatives.
 	-- Abbe Eban
 %
  When the music's over, turn off the lights.
@@ -78,9 +78,6 @@ created them.
 make them all yourself.
 	-- Alfred P. Sheinwold (1912-1997)
 %
- To the strongest!
-	-- Alexander the Great (356BC-323BC)
-%
  I would not fear a pack of lions led by a sheep, but I would always fear a
 flock of sheep led by a lion.
 	-- Alexander the Great (356BC-323BC)
@@ -142,7 +139,7 @@ teraz podobno jaki¶ k...a film nakrêcili.
  Na wojence bywa ró¿nie,
  Raz kto¶ komu¶ g³ówê ur¿nie,
  Raz znów dadz± znaæ o zmierzchu,
- ¯e kto¶ flaki ma na wierzchu
+ ¯e kto¶ flaki ma na wierzchu.
 	-- Nieznany autor, Na wojence
 	-- from Andrzej Sapkowski (1948-), Wie¿a Jaskó³ki
 %
@@ -181,10 +178,6 @@ po¿arem burdel.
 	-- Jaskier, Pó³ wieku poezji
 	-- from Andrzej Sapkowski (1948-), Chrzest Ognia
 %
- -Na Wielkie S³oñce.  (...) Co¶ ty zrobi³a z w³osami, Assire?
- -Umy³am.
-	-- from Andrzej Sapkowski (1948-), Chrzest Ognia
-%
  Biedaków nigdy nie staæ na nic, dlatego s± biedakami.
 	-- Codringher
 	-- from Andrzej Sapkowski (1948-), Czar Pogardy
@@ -206,6 +199,15 @@ s³odka i ma kszta³t.  Spróbujcie zdefiniowaæ kszta³t gruszki.
  Odejd¼ st±d i wychêdó¿ siê sam.
 	-- Egzorcyzm
 	-- from Andrzej Sapkowski (1948-), Ostatnie ¯yczenie
+%
+ Gdy ciê maj± wieszaæ, popro¶ o szklankê wody.  Nigdy nie wiadomo, co siê
+wydarzy, zanim przynios±.
+	-- from Andrzej Sapkowski (1948-), Pani Jeziora
+%
+ (...) jak rzek³a m³odziutka Cerro do króla Vridanka na ich pierwszecj
+schadzce: "Niebrzydka rzecz, ale czy ma jakie¶ zastosowanie praktyczne?"
+	-- Yarpen Zigrin
+	-- from Andrzej Sapkowski (1948-), Pani Jeziora
 %
  -Kto jest najszybszym szermierzem na ¶wiecie?
  -Nie mam pojêcia.
@@ -231,8 +233,21 @@ zarówno w mordowaniu, jak i w chêdo¿eniu...
 	-- Yarpen Zigrin
 	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
-Dobry elf, to martwy elf.
+ Lepiej zgin±æ, ni¿ ¿yæ ze ¶wiadomo¶ci±, ¿e zrobi³o siê co¶, co wymaga
+wybaczenia.
+	-- Yarpen Zigrin
+	-- from Andrzej Sapkowski (1948-), Krew Elfów
+%
+ Dobry elf, to martwy elf.
 	-- Marsza³ek Milan Raupenneck
+	-- from Andrzej Sapkowski (1948-), Krew Elfów
+%
+ Nietolerancja i zabobon zawsze by³y w³asno¶ci± g³upich miêdzy pospólstwem
+i nigdy, jak mniemam, z gruntu wykorzenione nie bêd±, bo równie wieczne s±
+jak sama g³upota.  Tam, gdzie dzi¶ piêtrz± siê góry, bêd± kiedy¶ morza,
+tam, gdzie dzi¶ we³ni± siê morza, bed± kiedy¶ pustynie.  A g³upota
+pozostanie g³upot±.
+	-- Medytacje o ¿yciu, szczê¶ciu i pomy¶lno¶ci
 	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
  Nie mam nic przeciwko wied¼minom.  Niech sobie poluj± na wampiry.  Byleby
@@ -249,6 +264,11 @@ lej±c± siê z szafotu nazwaæ sprawiedliwo¶ci±.
 kocha³a jego.  Co¶ takiego musia³o skoñczyæ siê nieszczê¶ciem.
 	-- Flourens Delannoy, Bajki i klechdy
 	-- from Andrzej Sapkowski (1948-), Wierza Jaskó³ki
+%
+ A ja my¶lê, ¿e ca³e z³o tego ¶wiata bierze siê z my¶lenia.  Zw³aszcza w
+wykonaniu ludzi ca³kiem ku temu nie maj±cych predyspozycji.
+	-- Zawisza Czarny
+	-- from Andrzej Sapkowski (1948-), Narrenturm
 %
  Computers make it easier to do a lot of things, but most of the things
 they make it easier to do don't need to be done.
@@ -288,6 +308,10 @@ ones in movies.
 power.
 	-- Charles Colton
 %
+ Don't worry about the world coming to an end today.  It's already tomorrow
+in Australia.
+	~- Charles Schultz
+%
  Why not? After all, it belongs to Him!
 	-- Sir Charles Spencer Chaplin (1889-1977)  [last words]
 %
@@ -295,10 +319,12 @@ power.
 	-- +Chiron+ on alt.os.linux.slackware
 %
  Trust no one.
-	-- Fox Mulder (David Duchowny) from Chris Carter (1956-), The X Files
+	-- David William Duchovny (1960-) as Fox Mulder
+	-- from Chris Carter (1956-), The X Files
 %
  In most of my work, the laws of physics rarely seems to apply.
-	-- Fox Mulder (David Duchowny) from Chris Carter (1956-), The X Files
+	-- David William Duchovny (1960-) as Fox Mulder
+	-- from Chris Carter (1956-), The X Files
 %
  I don't understand why cheerleaders won't talk to me.  Maybe I don't throw
 five touchdowns against Newport High, but let's see one of those football
@@ -309,7 +335,7 @@ morons program in assembly language!
 and get a new one every six months.
 	-- Clifford Stoll
 %
-Many subjects aren't fun.  I wonder how the fun-to-learn teacher handles
+ Many subjects aren't fun.  I wonder how the fun-to-learn teacher handles
 the Holocaust, Rape of Nanking, or American slavery...
 	-- Clifford Stoll
 %
@@ -402,7 +428,7 @@ including the consumption of homework formerly eaten by the dog.
 	-- Doug Larson
 %
  Instead of giving a politician the keys to the city, it might be better to
-change the locks
+change the locks.
 	-- Doug Larson
 %
  Slow down and enjoy life.  It's not only the scenery you miss by going too
@@ -527,14 +553,6 @@ be careless.  But not men.
 	-- Al Pacino (1940-) as Michael Corleone
 	-- from The Godfather
 %
- Don't ask me about my business, Kay.
-	-- Al Pacino (1940-) as Michael Corleone
-	-- from The Godfather
-%
- We don't discuss business at the table.
-	-- James Caan (1939-) as Santino "Sonny" Corleone
-	-- from The Godfather
-%
  Komisja to zespó³, który tylko wtedy jest w stanie co¶ zdzia³aæ, gdy
 sk³ada siê z trzech osób, z których jedna jest chora, a druga nieobecna.
 	-- H. van Loon
@@ -628,10 +646,6 @@ and the pessimist fears this is true.
  They have computers, and they may have other weapons of mass destruction.
 	-- Janet Reno (1938-)
 %
- Lord, help me be the person my dog thinks I am.
- (Bo¿e, pomó¿ mi byæ takim cz³owiekiem, za jakiego bierze mnie mój pies.)
-	-- Janusz Leon Wi¶niewski (1954-)
-%
  Since the day of my birth, my death began its walk.  It is walking towards
 me, without hurrying.
 	-- Jean Maurice Eugene Clement Cocteau (1889-1963)  [last words]
@@ -660,14 +674,6 @@ don't believe this to be a coincidence.
 %
  Dammit...  Don't you dare ask God to help me.
 	-- Joan Crawford (1904-1977)  [last words]
-%
- Normal people scare me...
-	-- Luna Lovegood
-	-- Joanne K. Rowling (1965-),
-		Harry Potter and the Order of the Phoenix
-%
- Good morning, Robert.
-	-- John Calvin Coolidge, Jr. (1872-1933)  [last words]
 %
  He who hasn't hacked assembly language as a youth has no heart.  He who
 does as an adult has no brain.
@@ -799,10 +805,6 @@ of course match nothing.   :-)
 %
  #define SIGILL 6         /* blech */
 	-- Larry Wall (1954-) in perl.c from the perl source code
-%
- Does the same as the system call of that name.
- If you don't know what it does, don't worry about it.
-	-- Larry Wall (1954-) in the perl man page regarding chroot(2)
 %
  double value;                /* or your money back! */
  short changed;               /* so triple your money back! */
@@ -1064,7 +1066,7 @@ rest of your life.
  Kiedy nie bêdê móg³ programowaæ, nadejdzie czas na ¶mieræ.
 	-- Micha³ Pawel Nazarewicz (1986-)
 %
-Bateryjki!...  Wszystko bateryjki!...  Zdaje im siê, ¿e robi±, co chc±, a
+ Bateryjki!...  Wszystko bateryjki!...  Zdaje im siê, ¿e robi±, co chc±, a
 robi± tylko, co im ka¿e system, tak ¶lepy jak one...
 	-- Micha³ Pawel Nazarewicz (1986-)
 %
@@ -1173,10 +1175,6 @@ to us.
  Besides, I think Slackware sounds better than 'Microsoft,' don't you?
 	-- Patrick J. Volkerding
 %
- Man is ready to die for an idea, provided that ideas is not quite clear to
-him.
-	-- Paul Eldridge
-%
  God may not play dice with the universe, but something strange is going on
 with the prime numbers.
 	-- Paul Erdos (1913-1996)
@@ -1185,14 +1183,9 @@ with the prime numbers.
 a shell, and DOS is a boot partition virus.
 	-- Peter H. Coffin
 %
- How were the receipts today at Madison Square garden?
-	-- Phineas Taylor Barnum (1810-1891)  [last words]
-%
-  Well, I mean, there is no--there is no difference between a private life
-and a public life.  My--my life is my life, is The Truman Show.  The Truman
-Show is...  a lifestyle.
-	-- Meryl
-	-- from Peter Weir (1944-), The Truman Show
+ S± rzeczy na niebie i ziemi, o których nie ¶ni³o siê filozofom.  Wiêkszo¶æ
+z nich jest w Polsce.
+	-- Piotr Ba³troczyk
 %
  Trzeba milczeæ albo mówiæ rzeczy lepsze od milczenia.
 	-- Pitagoras (VI BC)
@@ -1215,9 +1208,9 @@ wy¶miej± ciê.
  -Zed's dead, baby, Zed's dead.
 	-- from Quentin Tarantino (1963-), Pulp Fiction
 %
- PUMPKIN: Everybody be cool this is a robbery!
- HONEY BUNNY: Any of you fuckin' pricks move and I'll execute every one of
-you motherfuckers!  Got that?
+ -Everybody be cool this is a robbery!
+ -Any of you fuckin' pricks move and I'll execute every one of you
+motherfuckers!  Got that?
 	-- from Quentin Tarantino (1963-), Pulp Fiction
 %
  The path of the righteous man is beset on all sides by the
@@ -1364,7 +1357,7 @@ prymitywne, b³ahe i bezu¿yteczne wiadomo¶ci s± przy jego pomocy
 przekazywane.
 	-- Stanis³aw Lem (1921-2006)
 %
- - Ja siê tu chyba powieszê - pomy¶la³. Nie wpad³o mu do g³owy, ¿e wobec
+ -Ja siê tu chyba powieszê -pomy¶la³. Nie wpad³o mu do g³owy, ¿e wobec
 braku ci±¿enia nawet takie wyj¶cie nie jest mo¿liwe.
 	-- from Stanis³aw Lem (1921-2006), Opowie¶ci o pilocie Pirxie
 %
@@ -1594,9 +1587,6 @@ is all hell.
 think.
 	-- Wolfgang Ernst Pauli (1900-1958)  [attrib.]
 %
- This isn't right.  This isn't even wrong.
-	-- Wolfgang Ernst Pauli (1900-1958)  [attrib.]
-%
  Herbata od mieszania nie zrobi siê s³odsza, w tym celu bowiem trzeba
 dosypaæ cukru.
 	-- Zygmunt Mycielski (1907-1987)
@@ -1641,7 +1631,7 @@ matched up the letters.
 doing it.
 	-- The Roman Rule
 %
-It works, sort of.
+ It works, sort of.
 	-- Xerox Labs, 1973
 %
  The world is coming to an end!  Repent and return those library books!
@@ -1706,9 +1696,6 @@ Pro-Logic Surround Sound with Bass Boost and all the music is free.
 dziennikarzy, a gdy przeczytaj± te k³amstwa w gazetach, zaczynaj± w nie
 wierzyæ.
 %
- Dzieci udaj± ¿o³nierzy.  To ma sens.  Dlaczego jednak ¿o³nierze udaj±
-dzieci.
-%
  Ludzie s± jak Windows: Ka¿dy ma jakiego¶ wirusa.
 %
  Mo¿e dla ¶wiata jeste¶ nikim, ale dla kogo¶ mo¿esz byæ ca³ym ¶wiatem.
@@ -1734,9 +1721,6 @@ and he'll be warm for the rest of his life.
  Hey, ISPs, leav our packets alone!
 %
  Never date a tennis player; to them love means nothing.
-%
- No one who's seen it in action can say the phrase "government help"
-without either laughing or crying.
 %
  Dobrze, czy ¼le - byle z nazwiskiem.
 %
