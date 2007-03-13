@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.9 2006/10/06 13:51:12 mina86 Exp $
+## $Id: getlyrics.pl,v 1.10 2007/03/13 07:42:58 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -27,11 +27,10 @@
 use strict;
 use warnings;
 
-use English;
 use Pod::Usage;
 use LWP::UserAgent;
 
-my $VERSION = '0.3';
+my $VERSION = '0.4';
 
 
 ##
@@ -45,8 +44,7 @@ if (!@ARGV) {
 	pod2usage( -exitval => 0, -verbose => 2 );
 }
 
-
-my ($src, $arg, $foo, @foo) = ('args');;
+my ($src, $arg, $foo, @foo) = ('args');
 if ($ARGV[0] =~ /^--(.*)$/) {
 	$src = $1;
 	shift;
@@ -60,12 +58,6 @@ $arg = "@ARGV";
 if ($src eq 'mpc') {
 	$src = 'pipe';
 	$arg = 'mpc --format \'%artist% - %title%\' | head -1';
-} elsif ($src eq 'file') {
-	$src = 'pipe';
-	$arg = "cat $arg";
-} elsif ($src eq 'read') {
-	$src = 'pipe';
-	$arg = "cat";
 }
 
 
@@ -79,15 +71,17 @@ if ($src eq 'mpd') {
 		$port = $2;
 	}
 
-	use Audio::MPD;
-	$arg = new Audio::MPD($arg, $port);
-	if (!$arg) {
-		die "Could not connect to MPD.\n";
-	}
+	eval {
+		require Audio::MPD;
+		$arg = new Audio::MPD($arg, $port);
+		return unless $arg;
 
-	$foo = $arg->get_title();
-	$foo =~ s#^.*/##;
-	$arg->close_connection();
+		$foo = $arg->get_title();
+		$foo =~ s#^.*/##;
+		$arg->close_connection();
+
+		1;
+	} or die "Could not connect to MPD.\n";
 
 
 ##
@@ -95,7 +89,42 @@ if ($src eq 'mpd') {
 ##
 } elsif ($src eq 'pipe') {
 	$foo = `$arg 2>/dev/null`;
-	chomp $foo;
+
+
+##
+## Source: file or read
+##
+} elsif ($src eq 'file' || $src eq 'read') {
+	$foo = join '', <>;
+
+
+##
+## Source: xmms
+##
+} elsif ($src eq 'xmms') {
+
+	$foo = eval {
+		require XMMS::InfoPipe;
+		my $xmms = XMMS::InfoPipe->new();
+		return unless $xmms->is_running;
+		return $xmms->{'info'}->{'Title'} if defined $xmms->{'info'}->{'Title'};
+		return $xmms->{'info'}->{'File'}  if defined $xmms->{'info'}->{'File'} ;
+		return; # unusual event
+
+	} || eval {
+		my ($in, $out, $ret);
+		return unless sysopen($out, $ENV{'HOME'} . '/.xmms/inpipe' , 1);
+		return unless sysopen($in , $ENV{'HOME'} . '/.xmms/outpipe', 0);
+		syswrite $out, "\nout flush\nreport title\n";
+		return unless sysread $in, $ret, 4096;
+		return $ret;
+	};
+
+	if ($foo) {
+		$foo =~ s#.*[/\\]##;
+	} else {
+		die "Could not obtain song from XMMS\n";
+	}
 
 
 ##
@@ -221,12 +250,10 @@ according to the rules described in PARSING STRING section of man page
 
 =item B<--file>
 
-Reads given and parses their output. B<--file> I<files> is a synonym
-of B<--pipe cat> I<files>.
-
 =item B<--read>
 
-Synonym of B<--pipe cat>.
+Reads content of files given as arguments or from standard input if no
+files where given.
 
 =item B<--mpd>
 
@@ -243,6 +270,14 @@ STRING section of man page (see B<--man>).
 =item B<--mpc>
 
 Synonym of B<--pipe "mpc --format '%artist% - %title%' | head -1">
+
+=item B<--xmms>
+
+Instructs the script to get the song artist from XMMS.  Script first
+tries to use XMMS::InfoPipe module.  If it doesn't exist,
+xmms-infopipe XMMS plugin or XMMS itself is not running, script tries
+to open B<$HOME/.xmms/inpipe> and B<$HOME/.xmms/outpipe> pipes to use
+xmmspipe plugin.
 
 =back
 
