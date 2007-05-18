@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.10 2007/03/13 07:42:58 mina86 Exp $
+## $Id: getlyrics.pl,v 1.11 2007/05/18 21:24:04 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -169,6 +169,7 @@ if (defined($foo)) {
 ##
 ## Download page
 ##
+print STDERR "Getting lyrics for ${foo[0]} - ${foo[1]}\n";
 $foo = LWP::UserAgent->new()->post(
 	'http://www.lyrc.com.ar/en/tema1en.php', [
 		artist   => $foo[0],

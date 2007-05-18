@@ -5,6 +5,8 @@
 
 	* Makefile: + added -Wall switch to compile commands
 
+	* getlyrics.pl: + added message when tool is about to download lytics
+
 2007-03-13  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mkpkg: + small fixes
