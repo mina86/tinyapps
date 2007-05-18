@@ -1,6 +1,6 @@
 /*
  * Allocates specified amount of memory.
- * $Id: malloc.c,v 1.8 2006/09/28 15:06:19 mina86 Exp $
+ * $Id: malloc.c,v 1.9 2007/05/18 21:22:24 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
@@ -31,7 +31,7 @@
 
 /********** Variables **********/
 #ifdef HAVE_SIGNAL_H
-static int signum = 0;
+static volatile int signum = 0;
 #else
 #define signum 0
 #endif
@@ -53,8 +53,14 @@ int main(int argc, char **argv) {
 	long to_allocate, allocated = 0;
 	int dot;
 
+	/* Invalid number of arguments */
+	if (argc!=2) {
+		usage();
+		return 2;
+	}
+
 	/* Parse arguments */
-	to_allocate =  parse_arg(argv[1]);
+	to_allocate = parse_arg(argv[1]);
 	if (to_allocate<0) {
 		usage();
 		return 2;
@@ -74,7 +80,8 @@ int main(int argc, char **argv) {
 	}
 
 	/* Return */
-	progress(-allocated, to_allocate);
+	progress(allocated, to_allocate);
+	putchar('\n');
 	return signum ? -signum : (allocated < to_allocate ? 1 : 0);
 }
 
@@ -134,40 +141,31 @@ void progress(long allocated, long to_allocate) {
 	static char dots[] = "=============================="
 		"==============================";
 
-	/* Final print */
-	int done = 0;
-	if (allocated<0) {
-		done = 1;
-		allocated = -allocated;
-	}
+	long size = allocated;
+	int i;
 
 	/* Print dots */
-	int d = (int)allocated*50.0/to_allocate;
-	if (d==0) d = 1;
-	if (allocated!=to_allocate) dots[d-1] = '>';
-	dots[d] = 0;
+	i = allocated * 50 / to_allocate;
+	if (i==0) {
+		i = 1;
+	}
+	if (allocated!=to_allocate) {
+		dots[i-1] = '>';
+	}
+	dots[i] = 0;
 	printf("\r   [%-50s]  ", dots);
+	dots[i-1] = dots[i] = '=';
 
 	/* Format size in a friendly way */
-	int i = 0;
-	long size = allocated;
-	for (;; ++i, size >>= 10) {
-		if (size<1024) {
-			printf("%5d %ciB", size, units[i]);
-			break;
-		} else if (size<102400) {
-			printf("%5.1f %ciB", size/1024.0, units[i+1]);
-			break;
-		}
+	for (i = 0; size > 102400; size >>= 10) {
+		++i;
+	}
+	if (size<1024) {
+		printf("%5ld %ciB", size, units[i]);
+	} else {
+		printf("%5.1f %ciB", size/1024.0, units[i+1]);
 	}
 
 	/* Percentage */
-	printf(" (%5.1f%)\r", allocated*100.0/to_allocate);
-
-	/* End */
-	if (done) {
-		putchar('\n');
-	} else {
-		dots[d-1] = dots[d] = '=';
-	}
+	printf(" (%5.1f%%)\r", allocated*100.0/to_allocate);
 }
