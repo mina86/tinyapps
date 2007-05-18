@@ -3,6 +3,8 @@
 	* malloc.c: + checks number of arguments
 	+ now ANSI C compatible
 
+	* Makefile: + added -Wall switch to compile commands
+
 2007-03-13  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mkpkg: + small fixes

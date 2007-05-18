@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.29 2006/11/27 19:28:32 mina86 Exp $
+## $Id: Makefile,v 1.30 2007/05/18 21:23:22 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -20,6 +20,7 @@ CFLAGS      += -O0 -g -pipe
 CXXFLAGS    += -O0 -g -pipe
 CPPFLAGS    += -DDEBUG
 endif
+CPPFLAGS    += -Wall
 X11_INC_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
                        /opt/X11R6 /usr /usr/local/include; do [ -f		\
                        "$$DIR/include/X11/X.h" ] && echo				\
