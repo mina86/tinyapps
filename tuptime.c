@@ -1,6 +1,6 @@
 /*
  * tuptime - Shows total and biggest uptime.
- * $Id: tuptime.c,v 1.6 2006/10/06 17:29:51 mina86 Exp $
+ * $Id: tuptime.c,v 1.7 2007/05/18 22:03:40 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -70,17 +70,18 @@ char *program_name;   /* Name program was run with */
 
 /* Usage information */
 void usage() {
-	printf("tuptime  0.1  (c) 2005 Michal Nazarewicz\n"
-		   "usage: %s [ -h | -p | -r ]\n"
-		   " -h  prints this screen\n"
-		   " -p  prints total uptime (default)\n"
-		   " -r  prints total uptime in raw format (like in /proc/uptime)\n",
-		   program_name);
+	puts("tuptime  0.1  (c) 2005 Michal Nazarewicz\n"
+	     "usage: tuptime [ -h | [ -b<file> ] [ -u<file> ] -r ]\n"
+	     " -h        prints this screen\n"
+	     " -b<file>  path to 'buptime' file (default '" BUPTIME "')\n"
+	     " -u<file>  path to 'uptime' file (default '" UPTIME "')\n"
+	     " -r        prints total uptime in raw format");
+
 }
 
 
 /* Prints uptime */
-void print_uptime(char *title, double uptime, double idle) {
+void print_uptime(const char *title, double uptime, double idle) {
 	int d = uptime / 24 / 3600;
 	int h = (int)(uptime/3600) % 24;
 	int m = (int)(uptime/ 60 );
@@ -94,10 +95,12 @@ void print_uptime(char *title, double uptime, double idle) {
 
 /* Main */
 int main (int argc, char **argv) {
-	int i;
-	char *c, mode;
-	FILE *fp;
+	const char *buptime_file = BUPTIME, *uptime_file = UPTIME;
 	double uptime, idle, tuptime, tidle, muptime, midle;
+	char *c, mode = 'p';
+	FILE *fp;
+	int i;
+
 
 	/* Parse program name */
 	for (program_name = c = *argv; *c; ++c) {
@@ -106,55 +109,74 @@ int main (int argc, char **argv) {
 		}
 	}
 
-	/* Usage information */
-	if (argc>2) {
-		ERRS("too many arguments");
-		usage();
-		return 1;
-	} else if (argc==2 && (argv[1][0]!='-' || argv[1][2])) {
-		ERR("invalid arguments: %s", argv[1]);
-		usage();
-		return 1;
-	}
 
-	/* Help? */
-	mode = argc==2 ? argv[1][1] : 'p';
-	if (mode=='h') {
-		usage();
-		return 0;
-	}
+	/* Parse arguments */
+	i = 0;
+	c = 0;
+	while ((c && *++c) || (c = 0) || ++i < argc) {
+		char *arg;
+		if (!c) {
+			c = argv[i];
+			if (c[0]!='-' || c[1]==0 || c[1]=='-') {
+				ERR("invalid argument: %s", argv[i]);
+				return 1;
+			}
+			++c;
+		}
 
-	/* Unknown mode */
-	if (mode!='p' && mode!='r') {
-		ERR("invalid arguments: %s", argv[1]);
-		usage();
-		return 1;
+		switch (*c) {
+		case 'h':
+			usage();
+			return 0;
+
+		case 'r':
+			mode = 'r';
+			break;
+
+		case 'b':
+		case 'u':
+			if (c[1]) {
+				arg = c + 1;
+			} else if (++i<argc) {
+				arg = argv[i];
+			} else {
+				ERR("parameter expected after -%c", *c);
+				return 1;
+			}
+			*c == 'b' ? (buptime_file = arg) : (uptime_file = arg);
+			c = 0;
+			break;
+
+		default:
+			ERR("invalid option: -%c", *c);
+			return 1;
+		}
 	}
 
 
 	/* Read /proc/uptime */
-	fp = fopen(UPTIME, "r");
-	if (fp==NULL) {
-		ERRS("could not open " UPTIME " for reading");
+	fp = fopen(uptime_file, "r");
+	if (!fp) {
+		ERR("could not open %s", uptime_file);
 		return 2;
 	}
 	if (fscanf(fp, "%lf %lf", &uptime, &idle)!=2) {
 		fclose(fp);
-		ERR("error reading %s", UPTIME);
+		ERR("error reading %s", uptime_file);
 		return 2;
 	}
 	fclose(fp);
 
 
 	/* Read buptime */
-	fp = fopen(BUPTIME, "r");
-	if (fp==NULL) {
-		ERRS("could not open " BUPTIME " for reading (skipping)");
+	fp = fopen(buptime_file, "r");
+	if (!fp) {
+		ERR("could not open %s (skipping)", buptime_file);
 		tuptime = tidle = 0;
 	} else {
 		i = fscanf(fp, "%lf %lf %lf %lf", &tuptime, &tidle, &muptime, &midle);
 		if (i!=2 && i!=4) {
-			ERRS("error reading " BUPTIME " (skipping)");
+			ERR("error reading %s (skipping)", buptime_file);
 			tuptime = tidle = 0;
 		}
 		fclose(fp);

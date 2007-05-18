@@ -37,6 +37,4 @@ Tiny Applications Collection TODO List
 
 * tuptime
   - make more platform independent
-  - add command line options for setting location of uptime files
-  - add command line options for setting uptime and idle
   - add configuration file with location of uptime files (far future)

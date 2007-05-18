@@ -7,6 +7,10 @@
 
 	* getlyrics.pl: + added message when tool is about to download lytics
 
+	* tuptime.c: + accepts -b and -u arguments for giving files location
+	+ -p option removed
+	+ now ANSI C compatible
+
 2007-03-13  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mkpkg: + small fixes
