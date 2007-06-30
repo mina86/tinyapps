@@ -1,10 +1,11 @@
 /*
  * Timer.
- * $Id: timer.c,v 1.3 2006/09/28 15:06:18 mina86 Exp $
+ * $Id: timer.c,v 1.4 2007/06/30 08:41:02 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
 
+#define _POSIX_C_SOURCE 199309
 #include <unistd.h>
 #include <time.h>
 

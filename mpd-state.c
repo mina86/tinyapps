@@ -1,6 +1,6 @@
 /*
  * Prints/restores MPD's state.
- * $Id: mpd-state.c,v 1.5 2006/09/28 15:06:19 mina86 Exp $
+ * $Id: mpd-state.c,v 1.6 2007/06/30 08:41:02 mina86 Exp $
  * Copyright (c) 2005 by Avuton Olrich (avuton/AT/gmail.com)
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
@@ -79,27 +79,30 @@ int main(int argc, char **argv) {
 /********** Usage information **********/
 void usage() {
 	printf("mpd-state  0.12.1  (c) 2005 by Avuton Olrich & Michal Nazarewicz\n"
-		   "usage: %s [ -rasSpPoO ] [ <host> [ <port> ]]]\n"
-		   " -r      restere the state read from stdin (default is to\n"
-		   "         print status to stdout)\n"
-		   " -a      add to the playlist (instead of replacing the playlist)\n"
-		   " -s      ommit state\n"
-		   " -S      ommit everything but state\n"
-		   " -p      ommit playlsit\n"
-		   " -P      ommit everything but playlsit\n"
-		   " -o      ommit outputs (useful if you are using old MPD)\n"
-		   " -O      ommit everything but outputs\n"
-		   " <host>  hostname MPD is running; if not set MPD_HOST is used;\n"
-		   "         if that is also missing '" DEFAULT_HOST "' is assumed\n"
-		   " <port>  port MPD is listining; if not set MPD_PORT is used;\n"
-		   "         if that is also missing " DEFAULT_PORT " is assumed\n",
-		   program_name);
+	       "usage: %s [ -rasSpPoO ] [ <host> [ <port> ]]]\n"
+	       " -r      restere the state read from stdin (default is to\n"
+	       "         print status to stdout)\n"
+	       " -a      add to the playlist (instead of replacing the playlist)\n"
+	       " -s      ommit state\n"
+	       " -S      ommit everything but state\n"
+	       " -p      ommit playlsit\n"
+	       " -P      ommit everything but playlsit\n"
+	       " -o      ommit outputs (useful if you are using old MPD)\n"
+	       " -O      ommit everything but outputs\n",
+	       program_name);
+	/* be nice to C89 and make string no longer then 509 chars */
+	puts(  " <host>  hostname MPD is running; if not set MPD_HOST is used;\n"
+	       "         if that is also missing '" DEFAULT_HOST "' is assumed\n"
+	       " <port>  port MPD is listining; if not set MPD_PORT is used;\n"
+	       "         if that is also missing " DEFAULT_PORT " is assumed");
 }
 
 
 
 /********** Parse arguments **********/
 void parse_args(int argc, char **argv) {
+	int opt;
+
 	program_name = strrchr(argv[0], '/');
 	program_name = program_name==NULL ? *argv : (program_name + 1);
 
@@ -108,7 +111,6 @@ void parse_args(int argc, char **argv) {
 		exit(0);
 	}
 
-	int opt;
 	opterr = 0;
 	while ((opt = getopt(argc, argv, "-hraspo"))!=-1) {
 		switch (opt) {

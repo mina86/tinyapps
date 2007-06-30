@@ -1,6 +1,6 @@
 /*
  * Discards standard input.
- * $Id: null.c,v 1.6 2006/09/14 15:09:39 mina86 Exp $
+ * $Id: null.c,v 1.7 2007/06/30 08:41:02 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -144,15 +144,15 @@ int main(int argc, char **argv) {
 	daemonize = 1;
 #  else /* BUILD_DRUN */
 	/* Check whether was run as drun */
-	char *c, *s = argv[0];
-	for (c = argv[0]; *c; ++c) {
-		if (*c=='/') {
-			s = c+1;
+	{
+		char *c, *s = argv[0];
+		for (c = argv[0]; *c; ++c) {
+			if (*c=='/' && c[1] && c[1]!='/') s = ++c;
 		}
-	}
-	if ((s[0]=='d' || s[0]=='x')
-		&& s[1]=='r' && s[2]=='u' && s[3]=='n' && !s[4]) {
-		daemonize = 1;
+		if ((s[0]=='d' || s[0]=='x')
+			&& s[1]=='r' && s[2]=='u' && s[3]=='n' && !s[4]) {
+			daemonize = 1;
+		}
 	}
 #  endif /* BUILD_DRUN */
 
@@ -217,8 +217,6 @@ int main(int argc, char **argv) {
 
 	/* Run app */
 	{
-		int fd;
-
 		if (daemonize>2) {
 			int fd = open("/dev/null", O_RDWR);
 			if (fd==-1 || dup2(fd, 0)==-1 ||

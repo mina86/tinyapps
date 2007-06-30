@@ -1,6 +1,6 @@
 /*
  * FVWM module changing opacity depending on focus.
- * $Id: FvwmTransFocus.c,v 1.7 2006/11/27 18:58:38 mina86 Exp $
+ * $Id: FvwmTransFocus.c,v 1.8 2007/06/30 08:41:02 mina86 Exp $
  * Copyright 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Some code from transset by Matthew Hawn
  *
@@ -72,7 +72,7 @@
 
 
 /********** Defines **********/
-#define DONT_USE_MX_PROPERTY_CHANGE  // PROPERTY_CHANGE doesn't seem to work :(
+#define DONT_USE_MX_PROPERTY_CHANGE /* PROPERTY_CHANGE doesn't seem to work */
 
 #define OPACITY "_NET_WM_WINDOW_OPACITY"
 #define OPAQUE  0xFFFFFFFF
@@ -115,6 +115,10 @@ static int ErrorHandler(Display *dsp, XErrorEvent *error);
 
 /********** Main **********/
 int main (int argc, char **argv) {
+	char *display_name;
+	double values[3];
+	char set_mask_mesg[50];
+
 	/* Get executable name */
 	MyName = strrchr(argv[0], '/');
 	MyName = MyName==NULL ? argv[0] : (MyName + 1);
@@ -127,7 +131,7 @@ int main (int argc, char **argv) {
 	}
 
 	/* Open display */
-	char *display_name = XDisplayName(NULL);
+	display_name = XDisplayName(NULL);
 	if (!(display = XOpenDisplay(display_name))) {
 		fprintf(stderr, "%s: can't open display %s", MyName, display_name);
 		return 1;
@@ -137,7 +141,6 @@ int main (int argc, char **argv) {
 	fvout = atoi(argv[1]);
 	fvin = atoi(argv[2]);
 
-	double values[3];
 	values[0] = argc>6 ? atof(argv[6]) : 0.80;
 	values[1] = argc>7 ? atof(argv[7]) : 0.60;
 	values[2] = argc>8 ? atof(argv[8]) : values[1];
@@ -145,7 +148,6 @@ int main (int argc, char **argv) {
 
 	/* Init module */
 	debugs("Initializing");
-	char set_mask_mesg[50];
 	sprintf(set_mask_mesg, "SET_MASK %lu",
 	        (unsigned long)M_FOCUS_CHANGE | M_ADD_WINDOW);
 	send(set_mask_mesg);
@@ -160,14 +162,13 @@ int main (int argc, char **argv) {
 	XSetErrorHandler(&ErrorHandler);
 
 
-	/* Init loop */
-	unsigned long buffer[252];
-	unsigned long type, size;
-	unsigned long prev_id = 0;
-
 	/* Loop */
 	debugs("Loop begins");
 	for(;;){
+		unsigned long buffer[252];
+		unsigned long type, size;
+		unsigned long prev_id = 0;
+
 		while (readLong()!=START_FLAG);               /* Wait for START_FLAG */
 		type = readLong();                            /* Type */
 		size = readLong() - 4;                        /* Size */
@@ -200,7 +201,7 @@ int main (int argc, char **argv) {
 			/* MX_PROPERTY_CHANGE */
 		case MX_PROPERTY_CHANGE:
 			if (buffer[0]==MX_PROPERTY_CHANGE_BACKGROUND) {
-				debug("MX_PROPERTY_CHANGE_BACKGROUNDR recieved");
+				debugs("MX_PROPERTY_CHANGE_BACKGROUNDR recieved");
 				send("All (!Iconic) RefreshWindow\n");
 			}
 			break;
@@ -258,8 +259,8 @@ void transSet(unsigned long int window, double value) {
 	} else {
 		unsigned long opacity = value<=0 ? 0 : OPAQUE * value;
 		XChangeProperty(display, window, XInternAtom(display, OPACITY, False),
-						XA_CARDINAL, 32, PropModeReplace,
-						(unsigned char *) &opacity, 1L);
+		                XA_CARDINAL, 32, PropModeReplace,
+		                (unsigned char *) &opacity, 1L);
 	}
 }
 
@@ -267,6 +268,10 @@ void transSet(unsigned long int window, double value) {
 
 /* Checks whether the window should be ignored */
 static int ignoreWindow(unsigned long int window) {
+	XClassHint class = {0, 0};
+	unsigned long int ignore, *children = NULL;
+	unsigned int num;
+
 	/* Root window or no window */
 	if (!window) {
 		return 1;
@@ -276,9 +281,6 @@ static int ignoreWindow(unsigned long int window) {
 	/* FVWM gives us a ID of a parent window which does not have a
 	 * ClassHint so we need to find the child with ClassHint.  At least
 	 * that's what it looks like :) */
-	XClassHint class = {0, 0};
-	unsigned long int ignore, *children = NULL;
-	unsigned int num;
 	while (!XGetClassHint(display, window, &class)) {
 		if (!XQueryTree(display, window, &ignore, &ignore, &children, &num)) {
 			return 0;
@@ -297,7 +299,7 @@ static int ignoreWindow(unsigned long int window) {
 
 	/* Return */
 	debug("ClassHint: '%s'; '%s'%s", class.res_name, class.res_class,
-		  num ? " (skipping)" : "");
+	      num ? " (skipping)" : "");
 	XFree(class.res_name);
 	XFree(class.res_class);
 	return num;

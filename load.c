@@ -1,13 +1,13 @@
 /*
  * Shows CPU load and some other information.
- * $Id: load.c,v 1.3 2006/09/28 15:06:19 mina86 Exp $
+ * $Id: load.c,v 1.4 2007/06/30 08:41:02 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
 
 #include <stdio.h>
 #include <stdlib.h>
-#include <stdint.h>
+#include <unistd.h>
 
 
 /**** Defines ****/
@@ -19,10 +19,10 @@ char buffer[BUFFER_SIZE];
 /**** Structire with all information ****/
 typedef struct {
 	struct {
-		uint64_t usr, nice, sys, idle, load, total;
+		unsigned long long usr, nice, sys, idle, load, total;
 	} cpu;
 	struct {
-		uint64_t rec, send;
+		unsigned long long rec, send;
 	} traf;
 	struct {
 		long total, free;
@@ -43,7 +43,7 @@ void update_cpu(State *state) {
 	if (file==NULL) return;
 
 	fscanf(file, "%*s %Ld %Ld %Ld %Ld", &state->cpu.usr, &state->cpu.nice,
-		   &state->cpu.sys, &state->cpu.idle);
+	       &state->cpu.sys, &state->cpu.idle);
 	fclose(file);
 
 	state->cpu.load  = state->cpu.usr + state->cpu.sys + state->cpu.nice;
@@ -59,7 +59,7 @@ void update_traf(State *state) {
 	while (!feof(file)) {
 		fgets(buffer, BUFFER_SIZE, file);
 		if (sscanf(buffer, " eth0:%Ld %*d %*d %*d %*d %*d %*d %*d %Ld",
-				   &state->traf.rec, &state->traf.send)) {
+		           &state->traf.rec, &state->traf.send)) {
 			break;
 		}
 	}
@@ -105,11 +105,11 @@ void make_delta(State *delta, const State *prev, const State *now) {
 /**** Prints state ****/
 void print_state(const State *s) {
 	printf("%4Ld %4Ld %4Ld %4Ld   %4Ld %4Ld   %3d%%   %7ld %7ld   %7Ld %7Ld\n",
-		   s->cpu.usr, s->cpu.nice, s->cpu.sys, s->cpu.idle,
-		   s->cpu.load, s->cpu.total,
-		   (int)(s->cpu.total==0?0:100 * s->cpu.load/s->cpu.total),
-		   s->mem.free, s->mem.total,
-		   s->traf.rec, s->traf.send);
+	       s->cpu.usr, s->cpu.nice, s->cpu.sys, s->cpu.idle,
+	       s->cpu.load, s->cpu.total,
+	       (int)(s->cpu.total==0?0:100 * s->cpu.load/s->cpu.total),
+	       s->mem.free, s->mem.total,
+	       s->traf.rec, s->traf.send);
 }
 
 
@@ -121,7 +121,8 @@ int main(void) {
 	update_traf(states + 1);
 	update_mem(states + 1);
 
-	puts("user nice  sys idle | load  ttl | cpu  | memfree mem-ttl |     rec    send");
+	puts("user nice  sys idle | load  ttl | cpu  | memfree mem-ttl "
+	     "|     rec    send");
 	for(;;) {
 		sleep(1);
 

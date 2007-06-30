@@ -1,3 +1,9 @@
+2007-06-30  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* libmpdclient.c, libmpdclient.h: + updated to 0.13.0
+	* FvwmTransFocus.c, infinite-logger.c, load.c, mpd-state.c,
+	null.c, timer.c: + fixed some compatibility problems and cleaned code
+
 2007-05-18  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* malloc.c: + checks number of arguments
