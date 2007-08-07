@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.16 2007/03/13 07:47:33 mina86 Exp $
+## $Id: quotes.txt,v 1.17 2007/08/07 13:41:15 mina86 Exp $
 ## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -387,9 +387,6 @@ very angry and been widely regarded as a bad move.
  Nie jestem wariatem, jestem samolotem.
 	-- Dogbert
 %
- Premature optimization is the root of all evil.
-	-- Donald Ervin Knuth (1938-)
-%
  Beware of bugs in the above code; I have only proved it correct, not tried
 it.
 	-- Donald Ervin Knuth (1938-)
@@ -605,6 +602,9 @@ week.
 %
  Die, my dear doctor, that's the last thing I shall do!
 	-- Henry John Temple (1784-1865)
+%
+ Premature optimization is the root of all evil.
+	-- Hoare's Dictum
 %
  Kiedy p³onie dom s±siadów, stawk± jest twój w³asny dom.
 	-- Horacy (65BC-8BC)
