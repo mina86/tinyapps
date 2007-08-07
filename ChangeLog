@@ -3,6 +3,9 @@
 	* genpass.sh: + accepts one argument -- password length
 	+ uses pipes instead of $(...) (new lines are not stripped now)
 
+	* getlyrics.pl: + added audacious support
+	+ added cache support
+
 2007-06-30  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* libmpdclient.c, libmpdclient.h: + updated to 0.13.0

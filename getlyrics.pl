@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.11 2007/05/18 21:24:04 mina86 Exp $
+## $Id: getlyrics.pl,v 1.12 2007/08/07 12:36:21 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -30,7 +30,9 @@ use warnings;
 use Pod::Usage;
 use LWP::UserAgent;
 
-my $VERSION = '0.4';
+my $VERSION = '0.5';
+my $GLOBAL_CACHE = '/usr/share/lyrics/';
+my $LOCAL_CACHE  = $ENV{'HOME'} . '/.lyrics/';
 
 
 ##
@@ -52,19 +54,35 @@ if ($ARGV[0] =~ /^--(.*)$/) {
 $arg = "@ARGV";
 
 
+sub run($) {
+	my $ret = `$_[0]`;
+	if ($?) {
+		die $_[1] . ": failed\n";
+	}
+	$ret;
+}
+
+
 ##
 ## Source: mpc
 ##
 if ($src eq 'mpc') {
-	$src = 'pipe';
-	$arg = 'mpc --format \'%artist% - %title%\' | head -1';
-}
+	$foo[0] = run 'mpc --format %artist% | head -n 1';
+	$foo[1] = run 'mpc --format %title%  | head -n 1';
+
+
+##
+## Source: audacious
+##
+} elsif ($src eq 'audacious' || $src eq 'aud' || $src eq 'audtool') {
+	$foo[0] = run 'audtool current-song-tuple-data performer' ;
+	$foo[1] = run 'audtool current-song-tuple-data track_name';
 
 
 ##
 ## Source: mpd
 ##
-if ($src eq 'mpd') {
+} elsif ($src eq 'mpd') {
 	my $port = undef;
 	if ($arg =~ m/(.*)(?::(\d+))/) {
 		$arg = $1;
@@ -88,7 +106,7 @@ if ($src eq 'mpd') {
 ## Source: pipe
 ##
 } elsif ($src eq 'pipe') {
-	$foo = `$arg 2>/dev/null`;
+	$foo = run $arg;
 
 
 ##
@@ -132,7 +150,7 @@ if ($src eq 'mpd') {
 ##
 } elsif ($src eq 'args' || $src eq '') {
 	if (!@ARGV) {
-		die "Artist nad song name required\n";
+		die "Artist and song name required\n";
 	} elsif (@ARGV == 2) {
 		@foo = @ARGV;
 	} elsif (@ARGV == 3 && $ARGV[1] =~ /\s*-\s*/) {
@@ -163,42 +181,89 @@ if (defined($foo)) {
 	} else {
 		die "Cannot parse: $foo\n";
 	}
+} else {
+	$foo[0] =~ s/^\s+|\s+$//mg;
+	$foo[1] =~ s/^\s+|\s+$//mg;
 }
+
+
+##
+## Try cache
+##
+for ($GLOBAL_CACHE . '/' . $foo[0] . '/' . $foo[1],
+     $LOCAL_CACHE  . '/' . $foo[0] . '/' . $foo[1]) {
+	if (-e) {
+		if (open my $fp, '<', $_) {
+			my $line;
+			print $line while defined($line = <$fp>);
+			exit 0;
+		}
+		warn "$_: $!\n";
+	}
+}
+
 
 
 ##
 ## Download page
 ##
 print STDERR "Getting lyrics for ${foo[0]} - ${foo[1]}\n";
-$foo = LWP::UserAgent->new()->post(
+my $res = LWP::UserAgent->new()->post(
 	'http://www.lyrc.com.ar/en/tema1en.php', [
 		artist   => $foo[0],
 		songname => $foo[1]
 	]);
-exit 1 unless ($foo->is_success);
-$foo = $foo->content;
-die("No lyrics for ${foo[0]} - ${foo[1]} found\n") if ($foo =~ /<form/i);
+die "unable to connect to www.lyrc.com.ar\n" unless ($res->is_success);
+$res = $res->content;
+die("No lyrics for ${foo[0]} - ${foo[1]} found\n") if ($res =~ /<form/i);
 
 
 ##
 ## HTML to text
 ##
-$foo =~ s/<head>.*<\/head>/ /igs;  # Remove HTML Heading
-$foo =~ s/<scrip.*?script>/ /igs;  # Remove Script blocks
-$foo =~ s/<a.*?\/a>/ /igs;         # Remove Links
-$foo =~ s/&nbsp;/ /g;              # Replace &nbsp with spaces
-$foo =~ s/\s+/ /g;                 # Squeeze blanks
-$foo =~ s/<p[^>]*>/\n\n/gi;        # Replace paragraph tags with empty line
+$res =~ s/<head>.*<\/head>/ /igs;  # Remove HTML Heading
+$res =~ s/<scrip.*?script>/ /igs;  # Remove Script blocks
+$res =~ s/<a.*?\/a>/ /igs;         # Remove Links
+$res =~ s/&nbsp;/ /g;              # Replace &nbsp with spaces
+$res =~ s/\s+/ /g;                 # Squeeze blanks
+$res =~ s/<p[^>]*>/\n\n/gi;        # Replace paragraph tags with empty line
 # Replace some formating html tags witConverth new line marks
-$foo =~ s/<(?:br|h[1-6]|li|d[td]||tr)[^>]*>/\n/gi;
-$foo =~ s/(<[^>]*>)+//g;           # Remove HTML tags
-$foo =~ s/\n\s*\n\s*/\n\n/g;       # Squeeze blank lines
-$foo =~ s/^ +| +$//mg;             # Trim lines
-$foo =~ s/^\s+|\s$//g;             # Trime whole code
+$res =~ s/<(?:br|h[1-6]|li|d[td]||tr)[^>]*>/\n/gi;
+$res =~ s/(<[^>]*>)+//g;           # Remove HTML tags
+$res =~ s/\n\s*\n\s*/\n\n/g;       # Squeeze blank lines
+$res =~ s/^ +| +$//mg;             # Trim lines
+$res =~ s/^\s+|\s$//g;             # Trime whole code
 # Add 2 empty lines after song name and artist
-$foo =~ s/^([^\n]+)\n+([^\n]+)\n+/$1\n$2\n\n\n/g;
+$res =~ s/^([^\n]+)\n+([^\n]+)\n+/$1\n$2\n\n\n/g;
+$res .= "\n";
 
-print $foo, "\n";
+print $res;
+
+
+##
+## Save in cache
+##
+for ($GLOBAL_CACHE, $LOCAL_CACHE) {
+	my $dir  = $_ . '/' . $foo[0];
+	my $file = $dir . '/' . $foo[1];
+
+	if (-d $dir) {
+		next if ! -w _;
+	} else {
+		next if ! -d || ! -w _;
+		if (!mkdir $dir) {
+			warn "$dir: $!\n";
+			next;
+		}
+	}
+
+	if (open my $fp, '>', $file) {
+		print { $fp } $res;
+		last;
+	}
+
+	warn "$file: $!\n";
+}
 
 
 __END__
@@ -270,15 +335,26 @@ STRING section of man page (see B<--man>).
 
 =item B<--mpc>
 
-Synonym of B<--pipe "mpc --format '%artist% - %title%' | head -1">
+Runs B<mpc --format %artist%> to obtain artist name and then B<mpc
+--format %title%> to obtain title.
+
+=item B<--audacious>
+
+=item B<--audtool>
+
+=item B<--aud>
+
+Runs B<audtool current-song-tuple-data performer> to obtain artist
+name and then B<audtool current-song-tuple-data track_name> to obtain
+title.
 
 =item B<--xmms>
 
 Instructs the script to get the song artist from XMMS.  Script first
-tries to use XMMS::InfoPipe module.  If it doesn't exist,
-xmms-infopipe XMMS plugin or XMMS itself is not running, script tries
-to open B<$HOME/.xmms/inpipe> and B<$HOME/.xmms/outpipe> pipes to use
-xmmspipe plugin.
+tries to use XMMS::InfoPipe module.  If it doesn't exist or
+xmms-infopipe is not running, script tries to open
+B<$HOME/.xmms/inpipe> and B<$HOME/.xmms/outpipe> pipes to use xmmspipe
+plugin.
 
 =back
 
@@ -297,6 +373,19 @@ name. However, "Metallica -One" will be splited into "Metallica" and
 "-One". Also "Black Sabbath Changes" and "Black Sabbath-Changes" won't
 be splited into "Black Sabbath" and "Changes" so you have to use
 "Black Sabbath - Changes".
+
+=head1 CACHE
+
+Starting from version 0.5 this script supports caching.  That is,
+lyrics once downloaded don't get downloaded again.  There are two
+places where cached lyrics are kept: a global cache under
+B</usr/share/lyrics/> and a local, per-user cache under B<~/.lyrics>.
+When reading lyrics or saving them script first tries global and then
+local cache.  To enable caching at least one of those directories have
+to be created.  Note also, that the global cache is meant to be filled
+by root and that lyrics kept there are available for all users to read
+but only for root (or some other privileged user) to write.
+
 
 =head1 AUTHOR
 
