@@ -6,6 +6,9 @@
 	* getlyrics.pl: + added audacious support
 	+ added cache support
 
+	* mountiso.c: + can be compiled not to allow mounting into default dir
+	+ requires user to be ISO file and dreictory owner (more secure now)
+
 2007-06-30  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* libmpdclient.c, libmpdclient.h: + updated to 0.13.0

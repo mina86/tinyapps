@@ -1,6 +1,6 @@
 /*
  * mountiso - Mounts/unmounts ISO images
- * $Id: mountiso.c,v 1.3 2006/09/28 15:06:19 mina86 Exp $
+ * $Id: mountiso.c,v 1.4 2007/08/07 13:34:10 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -27,48 +27,133 @@
  * < should ask for root password >
  * # chown root:bin mountiso
  * # chmod 4755 mountiso
- * # ln -s mountiso umountiso
- * # cp mountiso umountiso /bin
+ * # cp mountiso /usr/bin
  * # exit
  */
 
-#include <unistd.h>
+#include <errno.h>
+#include <limits.h>
+#include <stdarg.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
 
 
-#define DEFAULT_DIR "/mnt/cdrom"
+#define DEFAULT_DIR "/media/cdrom"
 #define MOUNT       "/bin/mount"
 #define UMOUNT      "/bin/umount"
-#define MNT_OPTS    "loop,ro,nosuid,noexec,nodev,owner"
+#define MNT_OPTS    "loop,ro,nosuid,noexec,nodev"
+
+
+static int check_paths(int argc, char **argv, uid_t uid, int mount);
+static const char *mnt_opts(uid_t uid);
 
 
 int main(int argc, char **argv) {
-	char *arg0 = *argv, *c = arg0, mount;
+	int mount;
+	uid_t uid;
 
 	/* Get program name */
-	while (*c) if (*c++=='/') arg0 = c;
-	mount = arg0[0]!='u' ? 1 : 0;
+	{
+		char *ch = strrchr(argv[0], '/');
+		if (ch) {
+			argv[0] = ch + 1;
+		}
+		mount = argv[0][0]!='u';
+	}
 
-	/* Usage */
-	if ((argc!=(1+mount) && argc!=(2+mount)) || (argc>1 && argv[1][0]=='-')) {
+	/* Check arguments */
+#ifdef DEFAULT_DIR
+	if (argc!=1+mount && argc!=2+mount) {
 		fputs("usage: mountiso image.iso [ directory ]\n"
-			  "       umountiso [ image.iso | directory ]\n", stderr);
+		      "       umountiso [ image.iso | directory ]\n", stderr);
 		return 1;
 	}
-
-	/* Must be root */
-	if (getuid() && geteuid()) {
-		fprintf(stderr, "%s: must be SUIDed to work\n", arg0);
+#else
+	if (argc!=2+mount) {
+		fputs("usage: mountiso image.iso directory\n"
+		      "       umountiso image.iso | directory\n", stderr);
 		return 1;
 	}
+#endif
 
-	/* mount/umount */
-	if (setuid(0)) perror("setuid");
+	if ((uid = getuid())) {
+		int ret;
+
+		/* Became root */
+		if (setuid(0)) {
+			fprintf(stderr, "%s: setuid: %s", argv[0], strerror(errno));
+			return 1;
+		}
+
+		/* Check paths */
+		ret = check_paths(argc, argv, uid, mount);
+		if (ret) {
+			return ret;
+		}
+	}
+
+	/* Mount */
+#ifdef DEFAULT_DIR
 	argv[argc] = DEFAULT_DIR;
+#endif
 	if (mount) {
-		execl(MOUNT, MOUNT, "-o", MNT_OPTS, "--", argv[1], argv[2], NULL);
+		execl(MOUNT, MOUNT, "-o", mnt_opts(uid), "--", argv[1], argv[2],
+		      (const char *)0);
 	} else {
-		execl(UMOUNT, UMOUNT, "-d", "--", argv[1], NULL);
+		execl(UMOUNT, UMOUNT, "--", argv[1], (const char *)0);
 	}
-	perror(mount ? "exec: " MOUNT : "exec: " UMOUNT);
+	fprintf(stderr, "%s: %s: %s\n", argv[0], mount ? MOUNT : UMOUNT,
+	        strerror(errno));
+	return 1;
+}
+
+
+
+static int check_paths(int argc, char **argv, uid_t uid, int mount) {
+	int i;
+
+	for (i = 1; i < argc; ++i) {
+		const char *err = 0;
+		struct stat st;
+		char *ch;
+
+#if CHAR_MAX > 127
+		for (ch = argv[i]; *ch && *ch>32 && *ch<=127; ++ch);
+#else
+		for (ch = argv[i]; *ch && *ch>32; ++ch);
+#endif
+
+		if (*ch) {
+			err = "path contains insecure characters";
+		} else if (stat(argv[i], &st)) {
+			err = strerror(errno);
+		} else if (!mount  && !S_ISDIR(st.st_mode) && !S_ISREG(st.st_mode)) {
+			err = "not a directory nor regular file";
+		} else if (mount && i==2 && !S_ISDIR(st.st_mode)) {
+			err = "not a directory";
+		} else if (mount && i==1 && !S_ISREG(st.st_mode)) {
+			err = "not a regular file";
+		} else if (st.st_uid != uid) {
+			err = "you are not an owner";
+		}
+
+		if (err) {
+			fprintf(stderr, "%s: %s: %s\n", argv[0], argv[i], err);
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+
+
+static const char *mnt_opts(uid_t uid) {
+	static char buffer[sizeof(MNT_OPTS)+50];
+	sprintf(buffer, "%s,uid=%lu", MNT_OPTS, (unsigned long)uid);
+	return buffer;
 }
