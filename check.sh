@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Pings specified host and runs specified program if no responding
-## $Id: check.sh,v 1.7 2006/09/28 15:06:19 mina86 Exp $
+## $Id: check.sh,v 1.8 2007/08/08 22:02:02 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -31,7 +31,7 @@
 ##
 version () {
 	echo 'Check v0.2  (c) 2005 by Micha³ Nazarewicz'
-	echo '$Id: check.sh,v 1.7 2006/09/28 15:06:19 mina86 Exp $'
+	echo '$Id: check.sh,v 1.8 2007/08/08 22:02:02 mina86 Exp $'
 	echo
 }
 
@@ -87,7 +87,7 @@ Examples:
     Halts computer if www.google.com stops responding to pings (most likely
     connection was lsot).  May be canceled with Ctrl+C.
 
-  ./check.sh '-check_proc foo -k -q -r100 -i1 -- /path/to/foo' &
+  ./check.sh '-check_proc foo' -k -q -r100 -i1 -- /path/to/foo' &
     Checks whether foo is runing and if not executes it.  Useful when executed
     from system start scripts since it keeps running silently in the
     background.
