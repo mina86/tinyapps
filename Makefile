@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.31 2007/08/08 22:01:45 mina86 Exp $
+## $Id: Makefile,v 1.32 2007/08/09 07:11:43 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -21,14 +21,14 @@ CXXFLAGS    += -O0 -g -pipe
 CPPFLAGS    += -DDEBUG
 endif
 CPPFLAGS    += -Wall
-X11_INC_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
+X11_INC_DIR  = $(shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
                        /opt/X11R6 /usr /usr/local/include; do [ -f		\
                        "$$DIR/include/X11/X.h" ] && echo				\
-                       "$$DIR/include" && break; done}
-X11_LIB_DIR  = ${shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
+                       "$$DIR/include" && break; done)
+X11_LIB_DIR  = $(shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
                        /opt/X11R6 /usr /usr/local/include; do  for LIB	\
                        in lib64 lib; do [ -f "$$DIR/$$LIB/libX11.so" ]	\
-                       && echo "$$DIR/lib" && break; done; done}
+                       && echo "$$DIR/lib" && break; done; done)
 
 ifndef      RELEASE
 RELEASE     := $(shell if [ -f .release ]; \
@@ -37,8 +37,8 @@ RELEASE     := $(shell if [ -f .release ]; \
 endif
 
 
-EUID        := ${id -u}
-ifeq (${EUID}, 0)
+EUID        := $(shell id -u)
+ifeq ($(EUID), 0)
   RT        :=
   NR        := \#
 else
@@ -125,61 +125,61 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
 ##
 %.o: %.c
 	@echo '  CC     $@'
-	${Q}${CC} ${CFLAGS} ${CPPFLAGS} -c -o $@ $<
+	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 %.o: %.cpp
 	@echo '  CXX    $@'
-	${Q}${CXX} ${CXXFLAGS} ${CPPFLAGS} -c -o $@ $<
+	$(Q)$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 %: %.o
 	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} -o $@ $<
+	$(Q)$(CC) $(LDFLAGS) -o $@ $<
 
 %: %.c
 	@echo '  CC     $@.o'
-	${Q}${CC} ${CFLAGS} ${CPPFLAGS} -c -o $@.o $<
+	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@.o $<
 	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} -o $@ $@.o
-	${Q}rm -f -- $@.o
+	$(Q)$(CC) $(LDFLAGS) -o $@ $@.o
+	$(Q)rm -f -- $@.o
 
 %: %.sh
 
 FvwmTransFocus: FvwmTransFocus.o
 	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
+	$(Q)$(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
 
 drun: null
 	@echo '  LN     $@'
-	${Q}rm -f -- drun
-	${Q}ln -s -- null drun
+	$(Q)rm -f -- drun
+	$(Q)ln -s -- null drun
 
 mpd-show: mpd-show.o libmpdclient.o
 	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} $^ -o $@
+	$(Q)$(CC) $(LDFLAGS) $^ -o $@
 
 mpd-state: mpd-state.o libmpdclient.o
 	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} $^ -o $@
+	$(Q)$(CC) $(LDFLAGS) $^ -o $@
 
 quotes: quotes.txt
 	@echo '  GEN    $@'
-	${Q}egrep -v ^\# $< >$@
+	$(Q)egrep -v ^\# $< >$@
 
 the-book-of-mozilla: the-book-of-mozilla.txt
 	@echo '  GEN    $@'
-	${Q}sed -e '/^#/d' -e '/^%/c%' $< >$@
+	$(Q)sed -e '/^#/d' -e '/^%/c%' $< >$@
 
 installkernel.8.gz: installkernel.8
 	@echo '  GZIP   $@'
-	${Q}gzip -9 <$< >$@
+	$(Q)gzip -9 <$< >$@
 
 umountiso: mountiso
 	@echo '  LNK    $@'
-	${Q}[ -f umountiso ] || ln -s mountiso umountiso
+	$(Q)[ -f umountiso ] || ln -s mountiso umountiso
 
 xgetclass: xgetclass.o
 	@echo '  LD     $@'
-	${Q}${CC} ${LDFLAGS} "-L${X11_LIB_DIR}" -lX11 -o $@ $<
+	$(Q)$(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
 
 
 
@@ -188,74 +188,74 @@ xgetclass: xgetclass.o
 ##
 
 # install owner,group,mode,dir,file
-ifeq ("${shell which install >/dev/null 2>&1 && echo yes}", "yes")
+ifeq ("$(shell which install >/dev/null 2>&1 && echo yes)", "yes")
   define install
-	@echo '  INST   ${notdir $5}'
-	${Q}${RT}install -D -o $1 -g $2 -m $3 $5 ${DEST_DIR}$4/${notdir $5}
-	${Q}${NT}install -D             -m $3 $5 ${DEST_DIR}$4/${notdir $5}
+	@echo '  INST   $(notdir $5)'
+	$(Q)$(RT)install -D -o $1 -g $2 -m $3 $5 $(DEST_DIR)$4/$(notdir $5)
+	$(Q)$(NT)install -D             -m $3 $5 $(DEST_DIR)$4/$(notdir $5)
   endef
  else
   define install
-	@echo '  INST   ${notdir $5}'
-	${Q}mkdir -p -m 0755 -- ${DEST_DIR}$4
-	${Q}cp -f -- $5    ${DEST_DIR}$4/${notdir $5}
-	${Q}${RT}chown $1:$2 -- ${DEST_DIR}$4/${notdir $5} 2>/dev/null || true
-	${Q}chmod $3    -- ${DEST_DIR}$4/${notdir $5}
+	@echo '  INST   $(notdir $5)'
+	$(Q)mkdir -p -m 0755 -- $(DEST_DIR)$4
+	$(Q)cp -f -- $5    $(DEST_DIR)$4/$(notdir $5)
+	$(Q)$(RT)chown $1:$2 -- $(DEST_DIR)$4/$(notdir $5) 2>/dev/null || true
+	$(Q)chmod $3    -- $(DEST_DIR)$4/$(notdir $5)
   endef
 endif
 
 
 install-%: %
-	${call install,root,bin,0755,/usr/local/bin,$<}
+	$(call install,root,bin,0755,/usr/local/bin,$<)
 
 install-FvwmTransFocus: FvwmTransFocus
-ifeq ("${shell which fvwm-config >/dev/null 2>&1 && echo yes}", "yes")
-	${call install,root,bin,0755,${shell fvwm-config -m},$<}
+ifeq ("$(shell which fvwm-config >/dev/null 2>&1 && echo yes)", "yes")
+	$(call install,root,bin,0755,$(shell fvwm-config -m),$<)
 else
-	${warning fvwm-config not found. Not installing FvwmTransFocus.}
+	$(warning fvwm-config not found. Not installing FvwmTransFocus.)
 endif
 
 install-ai: install-ai-pitr.pl install-ai-sid.pl
 
 install-ai-pitr.pl: ai-pitr.pl
-	${call install,root,root,0755,/usr/local/games,$<}
+	$(call install,root,root,0755,/usr/local/games,$<)
 
 install-ai-sid.pl: ai-sid.pl
-	${call install,root,root,0755,/usr/local/games,$<}
+	$(call install,root,root,0755,/usr/local/games,$<)
 
 install-installkernel: installkernel installkernel.8.gz
-	${call install,root,bin,0755,/usr/local/sbin,$<}
-	${call install,root,root,0644,/usr/local/man/man8,${addprefix $<,.8.gz}}
+	$(call install,root,bin,0755,/usr/local/sbin,$<)
+	$(call install,root,root,0644,/usr/local/man/man8,$(addprefix $<,.8.gz))
 
 install-mountiso: mountiso umountiso
-	${call install,root,bin,4755,/usr/local/bin/,mountiso}
-	${call install,root,bin,4755,/usr/local/bin/,umountiso}
+	$(call install,root,bin,4755,/usr/local/bin/,mountiso)
+	$(call install,root,bin,4755,/usr/local/bin/,umountiso)
 
 install-mpd-state: mpd-state
-	${call install,root,bin,0755,/usr/local/bin,$<}
-	${call install,root,bin,0755,/usr/local/bin,${addprefix $<,-wrapper.sh}}
+	$(call install,root,bin,0755,/usr/local/bin,$<)
+	$(call install,root,bin,0755,/usr/local/bin,$(addprefix $<,-wrapper.sh))
 	@echo '  LNK    state-save'
-	${Q}ln -fs -- mpd-state-wrapper.sh ${DEST_DIR}/usr/local/bin/state-save
+	$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/state-save
 	@echo '  LNK    state-restore'
-	${Q}ln -fs -- mpd-state-wrapper.sh ${DEST_DIR}/usr/local/bin/state-restore
+	$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/state-restore
 	@echo '  LNK    state-sync'
-	${Q}ln -fs -- mpd-state-wrapper.sh ${DEST_DIR}/usr/local/bin/state-sync
+	$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/state-sync
 	@echo '  LNK    state-amend'
-	${Q}ln -fs -- mpd-state-wrapper.sh ${DEST_DIR}/usr/local/bin/state-amend
+	$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/state-amend
 
 install-show: show
-	${call install,root,bin,0755,/usr/local/sbin,$<}
+	$(call install,root,bin,0755,/usr/local/sbin,$<)
 
 install-fortune: install-quotes install-the-book-of-mozilla
 
 install-quotes: quotes
-	${call install,root,root,0644,/usr/share/games/fortunes,$<}
+	$(call install,root,root,0644,/usr/share/games/fortunes,$<)
 
 install-the-book-of-mozilla: the-book-of-mozilla
-	${call install,root,root,0644,/usr/share/games/fortunes,$<}
+	$(call install,root,root,0644,/usr/share/games/fortunes,$<)
 
 install-xgetclass: xgetclass
-	${call install,root,root,0755,/usr/X11/bin,$<}
+	$(call install,root,root,0755,/usr/X11/bin,$<)
 
 
 
@@ -263,57 +263,57 @@ install-xgetclass: xgetclass
 ## Uninstall rules
 ##
 define uninstall
-	@echo '  UNINST ${notdir ${1}}'
-	${Q}rm -f -- ${DEST_DIR}${1} 2>/dev/null || true
+	@echo '  UNINST $(notdir $(1))'
+	$(Q)rm -f -- $(DEST_DIR)$(1) 2>/dev/null || true
 endef
 
 uninstall-%:
-	${call uninstall,/usr/local/bin/$*}
+	$(call uninstall,/usr/local/bin/$*)
 
 uninstall-FvwmTransFocus:
-ifeq ("${shell which fvwm-config >/dev/null 2>&1 && echo yes}", "yes")
-	${call uninstall,${shell fvwm-config -m}/FvwmTransFocus}
+ifeq ("$(shell which fvwm-config >/dev/null 2>&1 && echo yes)", "yes")
+	$(call uninstall,$(shell fvwm-config -m)/FvwmTransFocus)
 else
-	${warning fvwm-config not found. Not uninstalling FvwmTransFocus.}
+	$(warning fvwm-config not found. Not uninstalling FvwmTransFocus.)
 endif
 
 uninstall-ai: uninstall-ai-pitr.pl uninstall-ai-sid.pl
 
 uninstall-ai-pitr.pl:
-	${call uninstall,/usr/local/games/ai-pitr.pl}
+	$(call uninstall,/usr/local/games/ai-pitr.pl)
 
 uninstall-ai-sid.pl:
-	${call uninstall,/usr/local/games/ai-sid.pl}
+	$(call uninstall,/usr/local/games/ai-sid.pl)
 
 uninstall-installkernel:
-	${call uninstall,/usr/local/sbin/installkernel}
-	${call uninstall,/usr/local/man/man8/installkernel.8.gz}
+	$(call uninstall,/usr/local/sbin/installkernel)
+	$(call uninstall,/usr/local/man/man8/installkernel.8.gz)
 
 uninstall-mountiso:
-	${call uninstall,/usr/local/bin/mountiso}
-	${call uninstall,/usr/local/bin/umountiso}
+	$(call uninstall,/usr/local/bin/mountiso)
+	$(call uninstall,/usr/local/bin/umountiso)
 
 uninstall-mpd-state:
-	${call uninstall,/usr/local/bin/mpd-state}
-	${call uninstall,/usr/local/bin/mpd-state-wrapper.sh}
-	${call uninstall,/usr/local/bin/state-save}
-	${call uninstall,/usr/local/bin/state-restore}
-	${call uninstall,/usr/local/bin/state-sync}
-	${call uninstall,/usr/local/bin/state-amend}
+	$(call uninstall,/usr/local/bin/mpd-state)
+	$(call uninstall,/usr/local/bin/mpd-state-wrapper.sh)
+	$(call uninstall,/usr/local/bin/state-save)
+	$(call uninstall,/usr/local/bin/state-restore)
+	$(call uninstall,/usr/local/bin/state-sync)
+	$(call uninstall,/usr/local/bin/state-amend)
 
 uninstall-show:
-	${call uninstall,/usr/local/sbin/show}
+	$(call uninstall,/usr/local/sbin/show)
 
 uninstall-fortune: uninstall-quotes uninstall-the-book-of-mozilla
 
 uninstall-quotes:
-	${call uninstall,/usr/share/games/fortunes/quotes}
+	$(call uninstall,/usr/share/games/fortunes/quotes)
 
 uninstall-the-book-of-mozilla:
-	${call uninstall,/usr/share/games/fortunes/the-book-of-mozilla}
+	$(call uninstall,/usr/share/games/fortunes/the-book-of-mozilla)
 
 uninstall-xgetclass: xgetclass
-	${call install,root,root,0755,/usr/X11/bin,$<}
+	$(call install,root,root,0755,/usr/X11/bin,$<)
 
 
 
@@ -322,13 +322,13 @@ uninstall-xgetclass: xgetclass
 ##
 clean:
 	@echo '  CLEAN  compiled files'
-	${Q}rm -f -- ${shell cat .cvsignore}
+	$(Q)rm -f -- $(shell cat .cvsignore)
 	@echo '  CLEAN  temporary files'
-	${Q}rm -f -- *.o *~ 2>/dev/null
+	$(Q)rm -f -- *.o *~ 2>/dev/null
 	@echo '  CLEAN  package release'
-	${Q}rm -rf -- package tinyapps*/
+	$(Q)rm -rf -- package tinyapps*/
 	@echo '  CLEAN  empty files and directories'
-	${Q}find -maxdepth 1 -empty -exec rm -rf {} \;
+	$(Q)find -maxdepth 1 -empty -exec rm -rf {} \;
 
 distclean: clean
 
@@ -339,43 +339,43 @@ distclean: clean
 ##
 tinyapps.tgz: package
 
-package: DEST_DIR = ${PWD}/package
+package: DEST_DIR = $(PWD)/package
 package: all install
-ifneq (${EUID}, 0)
-	@${warning It is best to create package as root.}
+ifneq ($(EUID), 0)
+	@$(warning It is best to create package as root.)
 endif
 
 	@echo '  RM     state-save state-restore state-sync state-amend'
-	${Q}rm -f -- '${DEST_DIR}/usr/local/bin/state-save'		\
-	             '${DEST_DIR}/usr/local/bin/state-restore'	\
-	             '${DEST_DIR}/usr/local/bin/state-sync'		\
-	             '${DEST_DIR}/usr/local/bin/state-amend'
+	$(Q)rm -f -- '$(DEST_DIR)/usr/local/bin/state-save'		\
+	             '$(DEST_DIR)/usr/local/bin/state-restore'	\
+	             '$(DEST_DIR)/usr/local/bin/state-sync'		\
+	             '$(DEST_DIR)/usr/local/bin/state-amend'
 #	@echo '  RM     umountiso'
-#	${Q}rm -f -- '${DEST_DIR}/bin/umountiso'
+#	$(Q)rm -f -- '$(DEST_DIR)/bin/umountiso'
 
-	@echo '  GEN    usr/doc/tinyapps-${RELEASE}'
-	${Q}mkdir -p -- '${DEST_DIR}/usr/doc/tinyapps-${RELEASE}'
-	${Q}cp -- LICENSE LICENSE.AFL README TODO ChangeLog '${DEST_DIR}/usr/doc/tinyapps-${RELEASE}/'
-	${Q}cp -- LICENSE.gpl '${DEST_DIR}/usr/doc/tinyapps-${RELEASE}/LICENSE.GPL'
+	@echo '  GEN    usr/doc/tinyapps-$(RELEASE)'
+	$(Q)mkdir -p -- '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)'
+	$(Q)cp -- LICENSE LICENSE.AFL README TODO ChangeLog '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
+	$(Q)cp -- LICENSE.gpl '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/LICENSE.GPL'
 
 	@echo '  GEN    install/doinst.sh'
-	${Q}mkdir -p -- '${DEST_DIR}/install'
-	${Q}echo 'cd usr/local/bin' >'${DEST_DIR}/install/doinst.sh'
-	${Q}echo 'for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $FILE; done' >>'${DEST_DIR}/install/doinst.sh'
-#	${Q}echo 'ln -fs mountiso umountiso; chown root:root mountiso; chmod u+s mountiso' >>'${DEST_DIR}/install/doinst.sh'
-	${Q}chmod 755 -- '${DEST_DIR}/install/doinst.sh'
+	$(Q)mkdir -p -- '$(DEST_DIR)/install'
+	$(Q)echo 'cd usr/local/bin' >'$(DEST_DIR)/install/doinst.sh'
+	$(Q)echo 'for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $$FILE; done' >>'$(DEST_DIR)/install/doinst.sh'
+#	$(Q)echo 'ln -fs mountiso umountiso; chown root:root mountiso; chmod u+s mountiso' >>'$(DEST_DIR)/install/doinst.sh'
+	$(Q)chmod 755 -- '$(DEST_DIR)/install/doinst.sh'
 	@echo '  CP     slack-desc'
-	${Q}cp -- slack-desc '${DEST_DIR}/install'
+	$(Q)cp -- slack-desc '$(DEST_DIR)/install'
 
 	@echo '  TAR    tinyapps.tar'
-	${Q}${RT}tar c -C '${DEST_DIR}' --format=v7 install usr >tinyapps.tar
-	${Q}${NR}tar c -C '${DEST_DIR}' --owner=root --group=root --format=v7 install usr >tinyapps.tar
-	@echo '  GZIP   tinyapps-${RELEASE}.tgz'
-	${Q}gzip -9 <'tinyapps.tar' >'tinyapps-${RELEASE}.tgz'
-	${Q}rm -f -- tinyapps.tar
+	$(Q)$(RT)tar c -C '$(DEST_DIR)' --format=v7 install usr >tinyapps.tar
+	$(Q)$(NR)tar c -C '$(DEST_DIR)' --owner=root --group=root --format=v7 install usr >tinyapps.tar
+	@echo '  GZIP   tinyapps-$(RELEASE).tgz'
+	$(Q)gzip -9 <'tinyapps.tar' >'tinyapps-$(RELEASE).tgz'
+	$(Q)rm -f -- tinyapps.tar
 
 	@echo '  RM     package'
-	${Q}rm -rf -- '${DEST_DIR}'
+	$(Q)rm -rf -- '$(DEST_DIR)'
 
 
 
@@ -384,14 +384,14 @@ endif
 ##
 release: distclean
 	@echo '  CP     *'
-	${Q}mkdir -p -- 'tinyapps-${RELEASE}'
-	${Q}for FILE in *; do [ "X$$FILE" != XCVS ] && \
-		[ "X$$FILE" != 'Xtinyapps-${RELEASE}' ] && \
-		cp -Rf -- "$$FILE" 'tinyapps-${RELEASE}'; done
-	${Q}echo '${RELEASE}' >'tinyapps-${RELEASE}/.release'
+	$(Q)mkdir -p -- 'tinyapps-$(RELEASE)'
+	$(Q)for FILE in *; do [ "X$$FILE" != XCVS ] && \
+		[ "X$$FILE" != 'Xtinyapps-$(RELEASE)' ] && \
+		cp -Rf -- "$$FILE" 'tinyapps-$(RELEASE)'; done
+	$(Q)echo '$(RELEASE)' >'tinyapps-$(RELEASE)/.release'
 
-	@echo '  TARBZ  tinyapps-${RELEASE}.tar.bz2'
-	${Q}tar c 'tinyapps-${RELEASE}' | bzip2 -9 >'tinyapps-${RELEASE}.tar.bz2'
+	@echo '  TARBZ  tinyapps-$(RELEASE).tar.bz2'
+	$(Q)tar c 'tinyapps-$(RELEASE)' | bzip2 -9 >'tinyapps-$(RELEASE).tar.bz2'
 
-	@echo '  RM     tinyapps-${RELEASE}'
-	${Q}rm -rf -- 'tinyapps-${RELEASE}'
+	@echo '  RM     tinyapps-$(RELEASE)'
+	$(Q)rm -rf -- 'tinyapps-$(RELEASE)'
