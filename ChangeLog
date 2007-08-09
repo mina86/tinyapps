@@ -8,6 +8,9 @@
 	+ fixed EUID variable
 	+ changed ${...} with $(...) -- better backwarde compatiblity
 
+	* lesspipe: + help fixed
+	* tpwd: + help fixed
+
 2007-08-07  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* genpass.sh: + accepts one argument -- password length
