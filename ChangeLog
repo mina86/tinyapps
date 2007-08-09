@@ -4,6 +4,10 @@
 	+ fixed EUID variable
 	+ changed ${...} with $(...) -- better backwarde compatiblity
 
+	* Makefile: + fixed doinst.sh
+	+ fixed EUID variable
+	+ changed ${...} with $(...) -- better backwarde compatiblity
+
 2007-08-07  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* genpass.sh: + accepts one argument -- password length

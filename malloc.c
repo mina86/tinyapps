@@ -1,6 +1,6 @@
 /*
  * Allocates specified amount of memory.
- * $Id: malloc.c,v 1.9 2007/05/18 21:22:24 mina86 Exp $
+ * $Id: malloc.c,v 1.10 2007/08/09 07:13:27 mina86 Exp $
  * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
@@ -18,14 +18,20 @@
 /* Comment the next line out if you don't compile for platform with
    signal.h file. */
 #define HAVE_SIGNAL_H
-
+/* Comment the next line out if your platform doesn't have sbrk()
+   function */
+#define HAVE_SBRK
 
 
 /********** Includes **********/
 #include <stdlib.h>
 #include <stdio.h>
 #ifdef HAVE_SIGNAL_H
-#include <signal.h>
+# include <signal.h>
+#endif
+#ifdef HAVE_SBRK
+# include <errno.h>
+# include <unistd.h>
 #endif
 
 
@@ -89,11 +95,11 @@ int main(int argc, char **argv) {
 
 /********** Parses arg **********/
 long parse_arg(char *arg) {
-	long ret = strtol(arg, &arg, 0);
+	double ret = strtod(arg, &arg);
 	switch (*arg) {
-	case 'K':            ++arg; break;
-	case 'M': ret <<=10; ++arg; break;
-	case 'G': ret <<=20; ++arg; break;
+	case 'K':               ++arg; break;
+	case 'M': ret *= 1<<10; ++arg; break;
+	case 'G': ret *= 1<<20; ++arg; break;
 	}
 	return *arg ? -1 : ret;
 }
@@ -121,8 +127,15 @@ void signal_handler(int sig) {
 
 /********** Allocates memory **********/
 int alloc(int num) {
-	char *ptr = malloc(num <<= 10);
+	char *ptr;
+#ifdef HAVE_SBRK
+	errno = 0;
+	ptr = sbrk(num <<= 10);
+	if (errno) return 0;
+#else
+	ptr = malloc(num <<= 10);
 	if (ptr==NULL) return 0;
+#endif
 	do {
 		*ptr++ = --num;
 	} while (!signum && num);
