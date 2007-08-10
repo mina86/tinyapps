@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.32 2007/08/09 07:11:43 mina86 Exp $
+## $Id: Makefile,v 1.33 2007/08/10 09:41:17 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -85,7 +85,7 @@ help:
 ## List of all applications
 ##
 all: FvwmTransFocus cdiff cutcom drun infinite-logger				\
-     installkernel.8.gz load malloc mpd-state null quotes			\
+     installkernel.8.gz load malloc mpd-show mpd-state null quotes	\
      the-book-of-mozilla rot13 timer tuptime umountiso xgetclass
 
 

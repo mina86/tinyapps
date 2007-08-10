@@ -1,3 +1,9 @@
+2007-08-10  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* Makefile: + mpd-show was missing in all target
+
+------- New Release ----------------------------------------------------------
+
 2007-08-09  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* Makefile: + fixed doinst.sh
