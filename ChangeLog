@@ -1,3 +1,8 @@
+2007-08-21  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* getlyrics.pl: + added --edit option
+	+ files in cache are saved in lower case
+
 2007-08-10  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* Makefile: + mpd-show was missing in all target

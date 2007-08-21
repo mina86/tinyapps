@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.12 2007/08/07 12:36:21 mina86 Exp $
+## $Id: getlyrics.pl,v 1.13 2007/08/21 20:28:55 mina86 Exp $
 ## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -35,9 +35,20 @@ my $GLOBAL_CACHE = '/usr/share/lyrics/';
 my $LOCAL_CACHE  = $ENV{'HOME'} . '/.lyrics/';
 
 
+## editFile ($file, $editor, $delete)
+sub editFile ($$$);
+
+
 ##
 ## Parse args
 ##
+my ($edit, $editor) = ( 0, '' );
+if ($ARGV[0] =~ /^--edit(?:=(.*))?$/) {
+	$edit = 1;
+	$editor = $1 ? $1 : '';
+	shift @ARGV;
+}
+
 if (!@ARGV) {
 	pod2usage( -exitval => 1, -verbose => 0, -output => \*STDERR );
 } elsif ($ARGV[0] eq '--help' || $ARGV[0] eq '-h' || $ARGV[0] eq '-?') {
@@ -45,6 +56,7 @@ if (!@ARGV) {
 } elsif ($ARGV[0] eq '--man') {
 	pod2usage( -exitval => 0, -verbose => 2 );
 }
+
 
 my ($src, $arg, $foo, @foo) = ('args');
 if ($ARGV[0] =~ /^--(.*)$/) {
@@ -190,15 +202,19 @@ if (defined($foo)) {
 ##
 ## Try cache
 ##
-for ($GLOBAL_CACHE . '/' . $foo[0] . '/' . $foo[1],
-     $LOCAL_CACHE  . '/' . $foo[0] . '/' . $foo[1]) {
+for ($LOCAL_CACHE  . '/' . lc($foo[0]) . '/' . lc($foo[1]),
+     $GLOBAL_CACHE . '/' . lc($foo[0]) . '/' . lc($foo[1])) {
 	if (-e) {
-		if (open my $fp, '<', $_) {
-			my $line;
-			print $line while defined($line = <$fp>);
+		if ($edit) {
+			editFile $_, $editor, 0;
 			exit 0;
+		} elsif (open FH, '<', $_) {
+			print while <FH>;
+			close FH;
+			exit 0;
+		} else {
+			warn "$_: $!\n";
 		}
-		warn "$_: $!\n";
 	}
 }
 
@@ -237,15 +253,18 @@ $res =~ s/^\s+|\s$//g;             # Trime whole code
 $res =~ s/^([^\n]+)\n+([^\n]+)\n+/$1\n$2\n\n\n/g;
 $res .= "\n";
 
-print $res;
+unless ($edit) {
+	print $res;
+}
 
 
 ##
 ## Save in cache
 ##
+my ($dir, $file);
 for ($GLOBAL_CACHE, $LOCAL_CACHE) {
-	my $dir  = $_ . '/' . $foo[0];
-	my $file = $dir . '/' . $foo[1];
+	$dir  = $_ . '/' . lc $foo[0];
+	$file = $dir . '/' . lc $foo[1];
 
 	if (-d $dir) {
 		next if ! -w _;
@@ -257,12 +276,57 @@ for ($GLOBAL_CACHE, $LOCAL_CACHE) {
 		}
 	}
 
-	if (open my $fp, '>', $file) {
-		print { $fp } $res;
-		last;
+	if (open FH, '>', $file) {
+		print FH $res;
+		close FH;
+		if ($edit) {
+			editFile $file, $editor, 0;
+		}
+		exit 0;
 	}
 
-	warn "$file: $!\n";
+#	warn "$file: $!\n";
+}
+
+
+##
+## Save in /tmp and edit
+##
+if ($edit) {
+	$file = $foo[0] . ' - ' . $foo[1];
+	for ($ENV{'TEMP'}, $ENV{'TMP'}, '/tmp') {
+		next unless -d && -w _;
+		unless (open FH, '>', "$_/$file") {
+			warn "$_/$file: $!\n";
+			next;
+		}
+		print FH $res;
+		close FH;
+		editFile "$_/$file", $editor, 1;
+	}
+}
+
+
+
+sub editFile ($$$) {
+	my ($file, $editor, $delete) = @_;
+
+	for my $e ($editor, $ENV{'VISUAL'}, $ENV{'EDITOR'}, 'vi') {
+		if (defined $e && $e) {
+			$editor = $e;
+			last;
+		}
+	}
+
+	$ENV{'GETLYRICS_LYRICS_FILE'} = $file;
+	unless ($delete) {
+		exec "$editor \"\$GETLYRICS_LYRICS_FILE\"";
+		die "exec: $!\n";
+	}
+
+	system "$editor \"\$GETLYRICS_LYRICS_FILE\"";
+	unlink $file;
+	exit $?;
 }
 
 
@@ -282,7 +346,7 @@ to search for lyrics.
 
 getlyrics.pl --help | --man
 
-getlyrics.pl --I<scheme> I<arguments>
+getlyrics.pl [ --edit[=<editor>] ] --I<scheme> I<arguments>
 
 =head1 OPTIONS
 
@@ -292,9 +356,17 @@ it obtain this information. Some schemes requires arguments and if
 they do you shall specify them as command line arguments just after the
 B<-->I<scheme> part.
 
-If no scheme is given (ie. the first command line argument does not
-start with B<-->) or empty scheme (ie. the first command line argument
-is B<-->) B<--args> is assumed.
+If no scheme is given (ie. the first command line argument (or the
+second if first was B<--edit>) does not start with B<-->) or empty
+scheme (ie. the first command line argument is B<-->) B<--args> is
+assumed.
+
+If B<--edit> option was given instead of printing lyrics script will
+run an editor.  If lyrics were not in cache and script didn't manage
+to save them there it will save it in temporary location ($TEMP, $TMP
+or "/tmp") and delete it after editor exists.  As an editor script
+will try argument given to B<--edit> option, $VISUAL environment
+variable, $EDITOR environment variable or "vi" whatever is set.
 
 =over 8
 
