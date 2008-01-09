@@ -1,107 +1,114 @@
 /*
  * Removes C++ comments from a file.
- * $Id: cutcom.c,v 1.4 2006/10/06 17:28:04 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
+ * $Id: cutcom.c,v 1.5 2008/01/09 18:49:37 mina86 Exp $
+ * Copyright (c) 2005-2008 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
 
+#include <errno.h>
 #include <stdio.h>
-
-
-enum state {
-	S_TEXT,
-	S_STRING,
-	S_STRING_BS,
-	S_CHAR,
-	S_CHAR_BS,
-	S_SLASH,
-	S_LINE_COMM,
-	S_BLCK_COMM,
-	S_STAR
-};
+#include <string.h>
 
 
 struct state_function {
-	unsigned char ch, new_state, print, pad;
-	const char *pre_print;
+	const unsigned char ch, print;
+	const char pre_print, pad;
+	const struct state_function *const new_state;
 };
 
 
-static const struct state_function s_text_functions[] = {
-		{ '/' , S_SLASH    , 0, 0, 0   },
-		{ '"' , S_STRING   , 1, 0, 0   },
-		{ '\'', S_CHAR     , 1, 0, 0   },
-		{ 0   , S_TEXT     , 1, 0, 0   },
+static const struct state_function s_text[4];
+static const struct state_function s_string[3];
+static const struct state_function s_string_bs[1];
+static const struct state_function s_char[3];
+static const struct state_function s_char_bs[1];
+static const struct state_function s_slash[3];
+static const struct state_function s_line_comm[2];
+static const struct state_function s_block_comm[2];
+static const struct state_function s_star[2];
+
+
+static const struct state_function s_text[] = {
+	{ '/' , 0, 0  , 0, s_slash     },
+	{ '"' , 1, 0  , 0, s_string    },
+	{ '\'', 1, 0  , 0, s_char      },
+	{ 0   , 1, 0  , 0, s_text      },
 };
 
-static const struct state_function s_string_functions[] = {
-		{ '"' , S_TEXT     , 1, 0, 0   },
-		{ '\\', S_STRING_BS, 1, 0, 0   },
-		{ 0   , S_STRING   , 1, 0, 0   },
+static const struct state_function s_string[] = {
+	{ '"' , 1, 0  , 0, s_text      },
+	{ '\\', 1, 0  , 0, s_string_bs },
+	{ 0   , 1, 0  , 0, s_string    },
 };
 
-static const struct state_function s_string_bs_functions[] = {
-		{ 0   , S_STRING   , 1, 0, 0   },
-	};
-
-static const struct state_function s_char_functions[] = {
-		{ '"' , S_TEXT     , 1, 0, 0   },
-		{ '\\', S_CHAR_BS  , 1, 0, 0   },
-		{ 0   , S_STRING   , 1, 0, 0   },
+static const struct state_function s_string_bs[] = {
+	{ 0   , 1, 0  , 0, s_string    },
 };
 
-static const struct state_function s_char_bs_functions[] = {
-		{ 0   , S_CHAR     , 1, 0, 0   },
+static const struct state_function s_char[] = {
+	{ '"' , 1, 0  , 0, s_text      },
+	{ '\\', 1, 0  , 0, s_char_bs   },
+	{ 0   , 1, 0  , 0, s_string    },
 };
 
-static const struct state_function s_slash_functions[] = {
-		{ '/' , S_LINE_COMM, 0, 0, 0   },
-		{ '*' , S_BLCK_COMM, 0, 0, 0   },
-		{ 0   , S_TEXT     , 1, 0, "/" },
+static const struct state_function s_char_bs[] = {
+	{ 0   , 1, 0  , 0, s_char      },
 };
 
-static const struct state_function s_line_comm_functions[] = {
-		{ '\n', S_TEXT     , 1, 0, 0   },
-		{ 0   , S_LINE_COMM, 0, 0, 0   },
+static const struct state_function s_slash[] = {
+	{ '/' , 0, 0  , 0, s_line_comm },
+	{ '*' , 0, 0  , 0, s_block_comm },
+	{ 0   , 1, '/', 0, s_text      },
 };
 
-static const struct state_function s_block_comm_functions[] = {
-		{ '*' , S_STAR     , 0, 0, 0   },
-		{ 0   , S_BLCK_COMM, 0, 0, 0   },
+static const struct state_function s_line_comm[] = {
+	{ '\n', 1, 0  , 0, s_text      },
+	{ 0   , 0, 0  , 0, s_line_comm },
 };
 
-static const struct state_function s_star_functions[] = {
-		{ '/' , S_TEXT     , 0, 0, 0   },
-		{ 0   , S_BLCK_COMM, 0, 0, 0   },
+static const struct state_function s_block_comm[] = {
+	{ '*' , 0, 0  , 0, s_star      },
+	{ 0   , 0, 0  , 0, s_block_comm },
 };
 
-
-static const struct state_function *const states[] = {
-	s_text_functions,
-	s_string_functions,
-	s_string_bs_functions,
-	s_char_functions,
-	s_char_bs_functions,
-	s_slash_functions,
-	s_line_comm_functions,
-	s_block_comm_functions,
-	s_star_functions,
+static const struct state_function s_star[] = {
+	{ '/' , 0, 0  , 0, s_text      },
+	{ 0   , 0, 0  , 0, s_block_comm },
 };
 
 
-int main(void) {
-	int ch, state = 0;
+int main(int argc, char **argv) {
+	int i;
 
-	while ((ch = getchar())!=EOF) {
-		const struct state_function *func = states[state];
-		while (func->ch && func->ch!=ch) ++func;
-		if (func->pre_print) {
-			fputs(func->pre_print, stdout);
+	if (argc==1) {
+		argv[1] = (char*)"-";
+		argc = 2;
+	}
+
+	for (i = 1; i < argc; ++i) {
+		const struct state_function *state = s_text;
+		FILE *fp;
+		int ch;
+
+		if (argv[i][0]=='-' && argv[i][1]==0) {
+			fp = stdin;
+		} else if (!(fp = fopen(argv[i], "r"))) {
+			fprintf(stderr, "%s: %s: %s\n", argv[0], argv[i],
+			        strerror(errno));
+			continue;
 		}
-		if (func->print) {
-			putchar(ch);
+
+		while ((ch = getc(fp))!=EOF) {
+			const struct state_function *func = state;
+			while (func->ch && func->ch!=ch) ++func;
+			if (func->pre_print) putchar(func->pre_print);
+			if (func->print) putchar(ch);
+			state = func->new_state;
 		}
-		state = func->new_state;
+
+		if (fp!=stdin) {
+			fclose(fp);
+		}
 	}
 
 	return 0;
