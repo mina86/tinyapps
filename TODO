@@ -1,9 +1,5 @@
 Tiny Applications Collection TODO List
 
-* cdiff
-  - add support for more modes
-  - allow running as a wrapper
-
 * cutcom
   - add command line comments style configruation options
   - add support for more comment types
@@ -16,14 +12,14 @@ Tiny Applications Collection TODO List
   - Different config for transient, sticky, etc windows
   - Refresh windows when background changed doesn't seem to work ;/
 
-* installkernel
-  - support other bootloaders
-
 * load
   - make more platform independent
 
 * mp3rip
   - id3 tag support (option to read ID3 tag from a file)
+
+* mpd-show
+  - handle resize event
 
 * rot13
   - add switch to changeing the value chars should be rotated by
