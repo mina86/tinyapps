@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## installkernel - Script for installing Linux kernel.
-## $Id: installkernel,v 1.35 2007/08/07 12:49:58 mina86 Exp $
-## Copyright (c) 2004-2006 by Michal Nazarewicz (mina86/AT/mina86.com)
+## $Id: installkernel,v 1.36 2008/01/09 18:51:52 mina86 Exp $
+## Copyright (c) 2004-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ trap "" USR1 USR2
 
 
 ##
-## Some nice functions
+## Converts string to integer
 ##
 toInt () {
 	expr 0$(expr "X$1" : 'X[[:space:]]*\([0-9]*\)') + 0 2>/dev/null || true
@@ -40,48 +40,32 @@ toInt () {
 
 
 ##
-## Version
+## Version & lockfile
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
-	echo 'installkernel  v0.14.2  (c) 2004-2006 by Micha³ Nazarewicz'
-	echo '$Id: installkernel,v 1.35 2007/08/07 12:49:58 mina86 Exp $'
+	echo 'installkernel  v0.15.0  (c) 2004-2007 by Micha³ Nazarewicz'
+	echo '$Id: installkernel,v 1.36 2008/01/09 18:51:52 mina86 Exp $'
 	echo
 
 	# Lockfile check
-	if [ -f /tmp/installkernel-lockfile ]; then
-		echo "$ARG0: lockfile exists"
-		PID="$(toInt "`cat /tmp/installkernel-lockfile`")"
-		if [ $PID -ne 0 ] && kill -0 $PID >/dev/null 2>&1; then
-			echo "$ARG0: make sure only one instance of installkernel is running"
-			echo "$ARG0: or remove /tmp/installkernel-lockfile if that is the case"
-			exit 4
-		fi
-		unset PID
-		echo "$ARG0: looks like invalid termination; removing lockfile"
+	IK_LOCK=/tmp/installkernel-lockfile
+	if [ -d /var/lock ] && [ -w /var/lock ]; then
+		IK_LOCK=/var/lock/installkernel-lck
 	fi
 
-	# write lockfile
-	printf "%d" $$ >|/tmp/installkernel-lockfile
-
-	# ps check
-	if PS="$(ps -C "$ARG0" 2>/dev/null)" && \
-		[ $(printf %s "$PS" | wc -l) -gt 2 ]; then
-		echo "$ARG0: seems like another instance of installkernel is running"
-		printf "%s: abort with Ctrl-C or wait 5 seconds for script to continue" "$ARG0"
-		I=0
-		while [ $I -lt 5 ]; do
-			if ! sleep 1; then
-				echo
-				rm -f /tmp/installkernel-lockfile
-				exit 4
-			else
-				I=$(($I + 1))
-				printf .
-			fi
-		done
-		unset I
+	ERR=
+	ln -s $$ "$IK_LOCK" >/dev/null 2>&1 || ERR=y
+	PID=`readlink "$IK_LOCK"`
+	if [ -n "$ERR" ] || [ $PID -ne $$ ]; then
+		cat <<EOF
+$ARG0: seems like another instance of installkernel is running
+$ARG0: with pid $PID, make sure there is only one instance and
+$ARG0: remove $IK_LOCK if that is the case.
+EOF
+		exit 4
 	fi
-	unset PS
+	unset ERR PID
+	export IK_LOCK
 fi
 
 
@@ -92,73 +76,68 @@ usage () {
 	cat<<END
 usage: installkernel [<options>] [<switches>]
                      [<version> [<image> [<systemmap> [<prefix>]]]]
-<options> are:
-  -h --help             Displays this screen and exits
-  -V --version          Displays vesion and exits
+<options>   are:
+  -h --help            Display this screen and exits
+  -V --version         Display vesion and exits
 
-  -a --arch=<arch>      Sets the ARCH variable                        [auto]
-     --bootdir=<dir>    Installs images to <dir>                      [/boot]
-     --cd=<dir>         Changes directory to <dir>
-     --cd               Synonym of --cd=/usr/src/linux
+  -a --arch=<arch>     Set ARCH variable to <arch> or \$ARCH if '-'     [auto]
+     --bootdir=<dir>   Same as <prefix>
+     --cd[=<dir>]      Change directory to <dir> (/usr/src/linux if ommited)
 
-     --su               Tries to became root (implies --user=<current-user>)
-  -u --user=<user>      Runs everything not requiring SU privilages as <user>
-  -nu --no-user         Synonym of  --user=
-     --nice=<nice>      Adjust priority by <nice> (but never lower)
-     --nice=!<nice>     Set pririty to <nice>     (but never lower)   [10]
-     --no-nice          Synonym of  --nice=0
+     --su              Trt to became root (implies --user=<current-user>)
+  -u --user=<user>     Runs everything not requiring SU privilages as <user>
+  -nu --no-user        Synonym of  --user=
+     --nice=<nice>     Adjust priority by <nice> (but never lower)
+     --nice=!<nice>    Set pririty to <nice>     (but never lower)        [10]
+     --no-nice         Synonym of  --nice=0
 
-  -L --log=<file>       Logs everything to <file> not to stdout
-  -L --log              Logs to automaticly choosen file
-  -nL --no-log          Cancels previous --log options
+  -L --log[=<file>]    Log to <file> (automaticaly chosen file if ommited)
+  -nL --no-log         Cancel previous --log option
 
-<switches> are:
-     --dry-run          Only displays what would be done              [no]
-     --print-commands   Prints commands (like --dry-run)              [no]
-  -v --verbose          Becomes a lot more verbose                    [no]
-  -vv                   Becomes even more verbose                     [no]
-     --color            Uses colors                                   [auto]
+<switches>  are:
+     --dry-run         Only display what would be done                    [no]
+     --print-commands  Print commands                                     [no]
+  -v --verbose         Become more verbose                                [no]
+  -vv                  Become even more verbose                           [no]
+     --color           Use colors                                       [auto]
 
-     --run-hooks        Runs all hooks                                [yes]
-     --run-pre-hooks    Runs all pre-* hooks                          [yes]
-     --run-post-hooks   Runs all post-* hooks                         [yes]
-     --run-<hook>       Runs <hook>'s scripts                         [yes]
-     --run-<event>      Synonym of  --run-pre-<event> --run-post-<hook>
+  -r<hook>
+     --run-<hook>      Run given hook, event or set of hooks             [yes]
 
-  -c --clean            Runs 'make clean' before compilation          [no]
-  -C --config           Runs 'make (x|g|menu|)config' to configure    [no]
-  -C --config=<cfg>     Specifies a type of config to run             [auto]
-  -d --make-dep         Runs 'make dep'                               [auto]
+  -c --clean           Run 'make clean' before compilation                [no]
+  -C --config          Run 'make (x|g|menu|)config' to configure          [no]
+  -C --config=<cfg>    Specify a type of config to run                  [auto]
+  -d --make-dep        Run 'make dep'                                     [**]
 
-  -O --overwrite        Overwrites the kernel image                   [no]
+  -O --overwrite       Overwrite the kernel image                         [no]
 
-  -A --all              Synonym of all of the below
+  -A --all             Synonym of all of the below
 
-  -i --compile-image    Runs 'make bzImage' to compile image          [no]
-  -I --install-image    Copies kernel to /boot and updates symlinks   [*]
-     --tidy-image       Removes old images                            [no]
-     --image            Synonym of the three above
+  -i --compile-image   Run 'make bzImage' to compile image                [no]
+  -I --install-image   Copy kernel to bootdir and update symlinks          [*]
+  -t --tidy-image      Remove old images                                  [no]
+     --image           Synonym of the three above
 
-  -m --compile-modules  Runs 'make modules'                           [no]
-  -M --install-modules  Runs 'make modules_install'                   [no]
-     --tidy-modules     Removes old modules                           [no]
-     --modules          Synonym of the three above
+  -m --compile-modules Run 'make modules'                                 [no]
+  -M --install-modules Run 'make modules_install'                         [no]
+  -T --tidy-modules    Remove old modules                                 [no]
+     --modules         Synonym of the three above
 
-     --compile          Synonym of  --compile-image --compile-modules
-     --install          Synonym of  --install-image --install-modules
-     --tidy             Synonym of  --tidy-image --tidy-modules
+     --compile         Synonym of  --compile-image --compile-modules
+     --install         Synonym of  --install-image --install-modules
+     --tidy            Synonym of  --tidy-image --tidy-modules
 
-  -l --update-loader    Runs 'lilo' to update boot loader  entry      [*]
+  -l --update-loader   Update boot loader entry                            [*]
 
-<version>   kernel version (default: reads from include/linux/version.h)
-<image>     path to kernel image (default: arch/\$ARCH/boot/bzImage)
-<systemmap> path to System.map file (default: System.map)
-<prefix>    directory where to install the kernal image               [/boot]
+[*]  yes if only <version> <image> <systemmap> and <bootdir> where given.
+[**] yes if compiling image and <version> was given and it's 2.4.x.
 
-[*] yes if only <version> <image> <systemmap> and <bootdir> where given.
+Negated by prefixing switch with 'no-' (long option) or 'n' (short option).
 
-See 'man 8 installkernel' for further infoormation.
-
+<version>   kernel version                                              [auto]
+<image>     path to kernel image                     [arch/\$ARCH/boot/bzImage]
+<systemmap> path to System.map file                               [System.map]
+<prefix>    directory where to install the kernal image                [/boot]
 END
 }
 
@@ -193,10 +172,11 @@ sig_handler () {
 for E in HUP INT QUIT ILL ABRT FPE SEGV PIPE ALRM TERM TSTP; do
 	trap "sig_handler $E" $E
 done
+unset E
 
 exit_function () {
 	__EC=$?
-	rm -f /tmp/installkernel-$$ /tmp/installkernel-lockfile
+	rm -f -- "$IK_LOCK"
 	if [ "X$LOG_AUTO" = Xstarted ]; then
 		date +'---- END ---- installkernel log file --- %y/%m/%d %H:%M:%S ---'
 	fi
@@ -218,6 +198,7 @@ if [ -z "$COLUMNS" ]; then
 	if [ $COLS -gt 30 ]; then
 		export COLUMNS=$COLS
 	fi
+	unset COLS
 fi
 
 header () {
@@ -236,7 +217,7 @@ header () {
 
 	date +"$__STR [%y/%m/%d %H:%M:%S] ==="
 	if [ -n "$USE_ANSI" ]; then printf '\33[0m'; fi
-	return 0
+	unset __TITLE __STR __LOOP
 }
 
 
@@ -248,8 +229,8 @@ run () {
 	__SILENT=
 	__DUMMY=
 	__FORCE=
-	__INPUT=/dev/stdin
-	__OUTPUT=/dev/stdout
+	__INPUT=
+	__OUTPUT=
 
 	# Arguments
 	while expr "X$1" : X- >/dev/null 2>&1; do
@@ -271,8 +252,8 @@ run () {
 	if [ -n "$DRY_RUN$PRINT_COMMANDS" ] && [ -z "$__SILENT" ]; then
 		if [ $__AS ]; then __MSG="[as $__AS] "; else __MSG=""; fi
 		__END=""
-		if [ "$__INPUT"  != /dev/stdin  ]; then __END="<$__INPUT "; fi
-		if [ "$__OUTPUT" != /dev/stdout ]; then __END="$__END>$__OUTPUT"; fi
+		if [ -n "$__INPUT"  ]; then __END="<$__INPUT "; fi
+		if [ -n "$__OUTPUT" ]; then __END="$__END>$__OUTPUT"; fi
 		msg '36' RUN "$__MSG`printf "'%s' " "$@"`$__END"
 	fi
 
@@ -286,42 +267,49 @@ run () {
 		return $?
 	fi
 
-	# Run not as
-	if [ -z "$__AS" ] || [ "X$__AS" = "X$USER" ]; then
-		"$@" <"$__INPUT" >"$__OUTPUT"
-		return $?
+	# Run as
+	if [ -n "$__AS" ] && [ "X$__AS" != "X$USER" ]; then
+		__ARGS=
+		while [ $# -ne 0 ]; do
+			__ARGS="$__ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
+			shift
+		done
+		set -- su "$__AS" -c "$__ARGS"
+		unset __ARGS
 	fi
 
-	# Run as
-	__ARGS=
-	while [ $# -ne 0 ]; do
-		__ARGS="$__ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
-		shift
-	done
-
-	su "$__AS" -c "$__ARGS" <"$__INPUT" >"$__OUTPUT"
-	return $?
+	# Run
+	if   [ -z "$__INPUT$__OUTPUT" ]; then "$@"
+	elif [ -z "$__INPUT"          ]; then "$@"             |>"$__OUTPUT"
+	elif [ -z "$__OUTPUT"         ]; then "$@" <"$__INPUT"
+	else                                  "$@" <"$__INPUT" |>"$__OUTPUT"
+	fi
 }
 
 
 ##
-## Runs /etc/installekrnel.d/$1/* scripts
+## Runs /etc/installekrnel.d/hook-handler scripts
 ##
-run_scripts () {
-	__DIR=$1; shift
-	if eval [ -z \"\$RUN_`echo $__DIR | tr $LOWER_CHARS $UPPER_CHARS`\" ]
-	then return 0; fi
+if [ -x /etc/installkernel.d/hook-handler ]; then
+	run_hook () {
+		case "$RUN_HOOKS" in
+		(*:"$1":*)
+			__HOOK=$1
+			shift
+			run "$@" /etc/installkernel.d/hook-handler "$__HOOK"
+			unset __HOOK
+		esac
+	}
+else
+	run_hook () {
+		true
+	}
+fi
 
-	for __SCRIPT in /etc/installkernel.d/global/* /etc/installkernel.d/$__DIR/*; do
-		if [ -x "$__SCRIPT" ]; then
-			run "$@" "$__SCRIPT" $__DIR
-		fi
-	done
-}
 
 
 ##
-## Prints header, run_scripts and run
+## Prints header, run_hook and run on condition
 ##
 r () {
 	if [ "X$1" = X-u ]; then __USR=-u; shift; else __USR=; fi
@@ -329,9 +317,10 @@ r () {
 	__NAME=`echo $1 | tr $UPPER_CHARS $LOWER_CHARS`
 	header "$2"
 	shift 2
-	run_scripts pre-$__NAME $__USR
+	run_hook pre-$__NAME $__USR
 	run $__USR "$@"
-	run_scripts post-$__NAME $__USR
+	run_hook post-$__NAME $__USR
+	unset __NAME __USR
 }
 
 
@@ -341,11 +330,11 @@ r () {
 update_ver () {
 	if [ -n "$VER" ]; then return 0; fi
 	run -ud make -f- $MAKEV installkernel-print-version '<<EOF ... EOF'
-	VER=$(run -usf make -f- $MAKEV installkernel-print-version <<EOF
+	VER=$(run -usf make -f- $MAKEV installkernel-print-version 3>&1 >/dev/null <<EOF
 include Makefile
 installkernel-print-version:
 	@VER=\$\${KERNELVERSION:-\$\$KERNELRELEASE}; \
-	echo "\$\${VER:?no version information found}"
+	echo "\$\${VER:?no version information found}" >&3
 EOF
 );
 	msg '37;1' VER "$VER"
@@ -355,19 +344,71 @@ EOF
 ##
 ## Set hooks
 ##
+# set_run_hooks <value> [ <prefix> [ <hook> ] ]
 set_run_hooks () {
-	for EVENT in CLEAN CONFIG MAKE_DEP UPDATE_LOADER \
-		COMPILE_IMAGE INSTALL_IMAGE TIDY_IMAGE \
-		COMPILE_MODULES INSTALL_MODULES TIDY_MODULES; do
-		if [ -n "$2" ]
-		then eval export RUN_$2$EVENT=$1
-		else eval export RUN_PRE_$EVENT=$1 RUN_POST_$EVENT=$1
-		fi
-	done
-	if [ -n "$2" ]
-	then eval export RUN_${2%_}=$1
-	else eval export RUN_PRE=$1 RUN_POST=$1
+	if [ X"$3" = Xhooks ] || [ -z "$3" ]; then set -- "$1" "$2"; fi
+	if [ $# -eq 2 ] && [ -z "$2" ]; then set -- "$1"; fi
+	if [ $# -eq 1 ] && [ -z "$1" ]; then set --; fi
+
+	# Remove all
+	if [ $# -eq 0 ]; then
+		RUN_HOOKS=:
+		export RUN_HOOKS
+		return 0
 	fi
+
+	# Add all
+	if [ $# -eq 1 ]; then
+		RUN_HOOKS=:
+		set --      clean config make-dep update-loader compile-image
+		set -- "$@" install-image tidy-image  compile-modules
+		set -- "$@" install-modules tidy-modules work
+		while [ $# -gt 0 ]; do
+			RUN_HOOKS="${RUN_HOOKS}pre-$1:post-$1:"
+			shift
+		done
+		export RUN_HOOKS
+		return 0
+	fi
+
+	# Prepare arguments for later processing
+	if [ $# -eq 2 ]; then
+		__PRE="$2"
+		set -- "$1"
+		for __EV in clean config make-dep update-loader compile-image \
+			install-image tidy-image  compile-modules install-modules \
+			tidy-modules work; do
+			set -- "$1" "$__PRE-$__EV"
+		done
+		unset __EV
+	elif [ -n "$2" ]; then
+		set -- "$1" "$2-$3"
+	else
+		set -- "$1" "pre-$3" "post-$3"
+	fi
+
+	if [ -n "$1" ]; then
+		# Add
+		shift
+		while [ $# -gt 0 ]; do
+			case "$RUN_HOOKS" in
+			(*:$1:*) ;;
+			(*) RUN_HOOKS="$RUN_HOOKS$1:"
+			esac
+			shift
+		done
+	else
+		# Remove
+		shift
+		while [ $# -gt 0 ]; do
+			case "$RUN_HOOKS" in
+			(*:$1:*) RUN_HOOKS=${RUN_HOOKS%:$1:*}:${RUN_HOOKS#*:$1:}
+			esac
+			shift
+		done
+	fi
+
+	export RUN_HOOKS
 }
 
 
@@ -385,7 +426,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 
 	export CLEAN= COMPILE_IMAGE= COMPILE_MODULES= INSTALL_IMAGE=
 	export INSTALL_MODULES= UPDATE_LOADER= TIDY_IMAGE= TIDY_MODULES=
-	export CONFIG= CONFIG_TYPE=auto MAKE_DEP=auto OVERWRITE_IMAGE=
+	export CONFIG= MAKE_DEP=auto OVERWRITE_IMAGE=
 
 	set_run_hooks y
 
@@ -410,8 +451,10 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		(--cd)             CD=/usr/src/linux; ;;
 
 		(--config=no)      CONFIG=; ;;
-		(--config=auto)    CONFIG=y; CONFIG_TYPE=auto; ;;
-		(--config=*config) CONFIG=y; CONFIG_TYPE="${ARG#--config=}"; ;;
+		(--no-config)      CONFIG=; ;;
+		(--config)         [ -n "$CONFIG" ] || CONFIG=auto; ;;
+		(--config=auto)    CONFIG=auto; ;;
+		(--config=*config) CONFIG="${ARG#--config=}"; ;;
 		(--config=*)       error 1 invalid config type: "${ARG#--config=}"; ;;
 
 		(--su)          SU=y; RUNAS="$USER"; ;;
@@ -422,10 +465,13 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		(--no-nice)     NICE=0; ;;
 
 		(--log=*)       LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#--log=}"; ;;
-		(-L*)           LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#-L}";     ;;
+		(-L?*)          LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#-L}";     ;;
 		(--log)         LOG_AUTO=y; USE_ANSI=; ;;
 		(-L)            LOG_AUTO=y; USE_ANSI=; ;;
 		(-nL|--no-log)  LOG_AUTO=;  LOG_FILE=; ;;
+
+		(-r*)    VALUE=y; PARAM="--run-${ARG#-r}"; ;;
+		(-nr*)   VALUE= ; PARAM="--run-${ARG#-nr}"; ;;
 
 		(-n?)    VALUE= : PARAM="-${ARG#-n}"; ;;
 		(--no-*) VALUE= ; PARAM="--${ARG#--no-}"; ;;
@@ -457,20 +503,19 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		(--color)          USE_ANSI=$VALUE; ;;
 
 		(-c|--clean)           CLEAN=$VALUE          ; ;;
-		(-C|--config)          CONFIG=$VALUE         ; ;;
 		(-d|--make-dep)        MAKE_DEP=$VALUE       ; ;;
 
 		(-O|--overwrite)       OVERWRITE_IMAGE=$VALUE; ;;
 
 		(-i|--compile-image)   COMPILE_IMAGE=$VALUE  ; ;;
 		(-I|--install-image)   INSTALL_IMAGE=$VALUE  ; ;;
-		(--tidy-image)         TIDY_IMAGE=$VALUE     ; ;;
+		(-t|--tidy-image)      TIDY_IMAGE=$VALUE     ; ;;
 		(--image)              COMPILE_IMAGE=$VALUE  ;
                                INSTALL_IMAGE=$VALUE  ; TIDY_IMAGE=$VALUE;;
 
 		(-m|--compile-modules) COMPILE_MODULES=$VALUE; ;;
 		(-M|--install-modules) INSTALL_MODULES=$VALUE; ;;
-		(-t|--tidy-modules)    TIDY_MODULES=$VALUE   ; ;;
+		(-T|--tidy-modules)    TIDY_MODULES=$VALUE   ; ;;
 		(--modules)            COMPILE_MODULES=$VALUE;
                                INSTALL_MODULES=$VALUE; TIDY_MODULES=$VALUE;;
 
@@ -496,30 +541,15 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		## Hooks
 		if [ -z "$HOOK" ]; then continue; fi
 
-		if   expr "X$HOOK" : Xpre-  >/dev/null 2>&1
-		then PRE='PRE_' ; HOOK="${HOOK#pre-}"
-		elif expr "X$HOOK" : Xpost- >/dev/null 2>&1
-		then PRE='POST_'; HOOK="${HOOK#post-}"
-		else PRE=; fi
+		case "$HOOK" in
+			(pre-)  PRE='pre' ; HOOK="${HOOK#pre-}" ;;
+			(post-) PRE='post'; HOOK="${HOOK#post-}";;
+			(*)     PRE=
+		esac
 
 		case "$HOOK" in
-		(hooks) set_run_hooks "$VALUE" "$PRE"; ;;
-
-		(clean|config|make-dep|update-loader|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules)
-			EVENT=`echo $HOOK | tr $LOWER_CHARS $UPPER_CHARS`
-			if [ -n "$PRE" ]
-			then eval RUN_$PRE$EVENT=$VALUE
-			else eval RUN_PRE_$EVENT=$VALUE RUN_POST_$EVENT=$VALUE
-			fi
-			;;
-
-		(pre|post)
-			if [ -n "$PRE" ]; then
-				error 1 event $HOOK cannot have pre-/post- prefix
-			fi
-			EVENT=`echo $HOOK | tr $LOWER_CHARS $UPPER_CHARS`
-			eval RUN_$EVENT=$VALUE
-			;;
+		(hooks|clean|config|make-dep|update-loader|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules|work)
+			set_run_hooks "$VALUE" "$PRE" "$HOOK" ;;
 
 		(*) error 1 unknown event: "$HOOK"; ;;
 		esac
@@ -530,6 +560,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		INSTALL_IMAGE=y
 		UPDATE_LOADER=y
 	fi
+	unset ARG PARAM HOOK VALUE
 
 
 	##
@@ -549,6 +580,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		if [ -n "$DRY_RUN" ]; then FMT="$FMT [dry run]"; fi
 		date "$FMT"
 		LOG_AUTO=started
+		unset LOG_FILE
 	fi
 
 	header Starting
@@ -596,6 +628,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	if [ -n "$CD" ]; then
 		run -f cd "$CD"
 	fi
+	unset CD
 
 
 	##
@@ -611,54 +644,60 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 			case "$0" in
 				(/*)  ARGS="$0"; ;;
 				(*/*) ARGS="$PWD/$0"; ;;
-				(*)   ARGS=$(which "$0"); ;;
+				(*)   ARGS=$(which "$0" 2>/dev/null); ;;
 			esac
-			ARGS="'$(echo "$ARGS" | sed -e "s/'/'\\\\''/")'"
+			set -- "${SHELL-sh}" "$ARGS" "$@"
+			ARGS=
 			while [ $# -ne 0 ]; do
 				ARGS="$ARGS '$(echo "$1" | sed -e "s/'/'\\\\''/")'"
 				shift
 			done
-			exec su -c "sh $ARGS"
+			exec su -c "$ARGS"
 			exit $?
 		fi
 	fi
+	unset SU
 else
 	if [ -n "$VERBOSE" ]; then V=v; VOPT=-v; fi
 	if [ -n "$REALLY_VERBOSE" ]; then MAKEV='v=1'; fi
 fi
 
+unset VERBOSE REALLY_VERBOSE
 
-run_scripts pre
+run_hook pre-work
 
 
 ##
 ## Make dep?
 ##
-if [ -n "$COMPILE_IMAGE" ] && [ "X$MAKE_DEP" = Xauto ]; then
-	update_ver
-	if expr "X$VER" : 'X2\.4\.' >/dev/null 2>&1
-	then MAKE_DEP=y; else MAKE_DEP=; fi
-elif [ "X$MAKE_DEP" = Xauto ]; then
+if [ "X$MAKE_DEP" = Xauto ]; then
 	MAKE_DEP=
+	if [ -n "$COMPILE_IMAGE" ]; then
+		case "$VER" in (2.4.*)
+			MAKE_DEP=y
+		esac
+	fi
 fi
 
 
 ##
 ## Check config type
 ##
-if [ -n "$CONFIG" ] && [ "X$CONFIG_TYPE" = Xauto ]; then
+if [ "X$CONFIG" = Xauto ]; then
 	if [ -n "$DISPLAY" ]; then
-		if   which qtconfig   >/dev/null 2>&1; then CONFIG_TYPE=xconfig
-		elif which gtk-config >/dev/null 2>&1; then CONFIG_TYPE=gconfig
+		if   [ -n "`which qtconfig   2>/dev/null`" ]; then
+			CONFIG=xconfig
+		elif [ -n "`which gtk-config 2>/dev/null`" ]; then
+			CONFIG=gconfig
 		fi
 	fi
 
-	if [ "X$CONFIG_TYPE" = Xauto ]; then
-		CONFIG_TYPE=config
+	if [ "X$CONFIG" = Xauto ]; then
+		CONFIG=config
 		for DIR in /usr/lib /usr/local/lib /lib; do
 			for LIB in curses.a curses.so ncurses.a ncurses.so; do
 				if [ -f "$DIR/lib$LIB" ] || [ -f "${DIR}64/lib$LIB" ]; then
-					CONFIG_TYPE=menuconfig
+					CONFIG=menuconfig
 					break 2
 				fi
 			done
@@ -671,7 +710,7 @@ fi
 ## make *
 ##
 r -u CLEAN           'Cleaning source tree'   make $MAKEV clean
-r -u CONFIG          'Configuring the kernel' make $MAKEV "$CONFIG_TYPE"
+r -u CONFIG          'Configuring the kernel' make $MAKEV "$CONFIG"
 r -u MAKE_DEP        'Updating dependencies'  make $MAKEV dep
 r -u COMPILE_IMAGE   'Compiling bzImage'      make $MAKEV bzImage
 r -u COMPILE_MODULES 'Compiling modules'      make $MAKEV modules
@@ -683,7 +722,7 @@ r    INSTALL_MODULES 'Installing modules'     make $MAKEV modules_install
 ##
 if [ -n "$TIDY_IMAGE" ]; then
 	header Removing old image
-	run_scripts pre-tidy-image
+	run_hook pre-tidy-image
 
 	if [ -z "$OVERWRITE_IMAGE" ]; then T='~'; else T=; fi
 
@@ -697,7 +736,7 @@ if [ -n "$TIDY_IMAGE" ]; then
 		fi
 	done
 
-	run_scripts post-tidy-image
+	run_hook post-tidy-image
 fi
 
 
@@ -706,7 +745,7 @@ fi
 ##
 if [ -n "$TIDY_MODULES" ]; then
 	header Removing old modules
-	run_scripts pre-tidy-modules
+	run_hook pre-tidy-modules
 
 	update_ver
 
@@ -738,7 +777,7 @@ if [ -n "$TIDY_MODULES" ]; then
 		fi
 	fi
 
-	run_scripts post-tidy-modules
+	run_hook post-tidy-modules
 fi
 
 
@@ -747,12 +786,14 @@ fi
 ##
 if [ -n "$INSTALL_IMAGE" ]; then
 	header "Installing kernel image"
-	run_scripts pre-install-image
+	run_hook pre-install-image
 
 	update_ver
-	if [ ! -s .version ]; then BUILD=1; else
+	if [ -s .version ]; then
 		run -ud cat .version
 		BUILD=$(printf %d $(run -usf cat .version))
+	else
+		BUILD=1
 	fi
 	msg '37;1' BUILD "$BUILD"
 	FVER="$VER-#$BUILD"
@@ -800,16 +841,23 @@ if [ -n "$INSTALL_IMAGE" ]; then
 		fi
 	done
 
-	run_scripts post-install-image
+	run_hook post-install-image
 fi
-
 
 
 ##
 ## Running LILO
 ##
- r UPDATE_LOADER   'Updating bootloader'           lilo $VOPT
+if [ -n "$UPDATE_LOADER" ]; then
+	header 'Updating boot loader'
+	run_hook pre-update-loader
+	if [ -x /etc/installkernel.d/update-loader ]; then
+		run /etc/installkernel.d/update-loader
+	else
+		run lilo $VOPT
+	fi
+	run_hook post-update-loader
+fi
 
 
-
-run_scripts post
+run_hook post-work

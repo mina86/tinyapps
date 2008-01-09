@@ -1,4 +1,10 @@
 #! /usr/bin/perl -w
+##
+## tv - Script for viewing TV program.
+## $Id: tv,v 1.4 2008/01/09 18:51:52 mina86 Exp $
+## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
+## Licensed under the Academic Free License version 2.1.
+##
 
 use strict;
 use warnings;

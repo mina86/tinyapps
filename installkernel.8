@@ -1,9 +1,9 @@
-.TH installkernel 8 "19 April, 2006" "version 0.14.2" "Linux System Administration"
+.TH installkernel 8 "2 November, 2007" "version 0.15.0" "Linux System Administration"
 
 \"
 \" installkernel man page
-\" $Id: installkernel.8,v 1.11 2006/12/18 19:36:01 mina86 Exp $
-\" Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
+\" $Id: installkernel.8,v 1.12 2008/01/09 18:51:52 mina86 Exp $
+\" Copyright (c) 2005-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
 \"
 
 .SH NAME
@@ -17,26 +17,18 @@
 
 .SH DESCRIPTION
 
-\fBinstallkernel\fP is a shell script ment to automate process of
-compiling and installing the Linux kernel and it's modules.  It can
-automatically compile and install kernel image and modules, run lilo
-and remove old images and modules.  When additional scripts are added
-it can also automatically install modules which are not part of Linux
-or perform some other tasks specific for local machine.
+\fBinstallkernel\fP is a shell script that automates Linux kernel
+installation process.  It can automatically compile and install kernel
+image and modules, update boot loader and remove old files.  When
+additional scripts are added it can also automatically install modules
+which are not part of Linux or perform some other tasks specific for
+local machine.
 
 .PP
-It is written in standard compilant way.  It was tested on \fBash\fP
-as well as \fBbash\fP and is believed to run on any POSIX compatible
-shell, therefore, it can be used also on embeded systems, which are
-unlikely to contain "heavy" bash but rather a lite shell.
+It is written in standard compilant way and is believed to run on any
+POSIX compatible shell, therefore, it can be used on embeded systems.
 
 .SH ARGUMENTS
-
-The scripts takes 4 kinds of arguments.  Options, switches, actions
-and something strange. ;) Switches are options which may be toggled on
-or off.  Actions can be specified several times and instruct
-\fBinstallkernel\fP script to perform various steps.  Those steps are
-taken in the order actions are given in the command line.
 
 .PP
 If you use short option which requires an argument (eg. \fB\-a\fP) the
@@ -140,7 +132,7 @@ arguments are given) the \fB\-\-bootdir\fP option.
 
 .TP
 \fB\-\-dry\-run\fP
-only prints what would be done.  This implies
+Only prints what would be done.  This implies
 \fB\-\-print\-commands\fP.  \fBWARNING\fP In some cases it DO modify
 the source tree.  The default is \fBno\fP.
 
@@ -151,7 +143,7 @@ The default is \fBno\fP.
 
 .TP
 \fB\-v \-\-verbose\fP
-Becomes a lot more verbose.  When turning on implies
+Becomes more verbose.  When turning on implies
 \fB\-\-print\-commands\fP but when disabling does not disable
 \fB\-\-print\-commands\fP. The default is \fBno\fP.
 
@@ -169,27 +161,12 @@ so if you use \fB>\fP to log messages use \fB\-\-no\-color\fP option
 to be sure.
 
 .TP
-\fB\-\-run\-hooks\fP
-Runs all hooks.  The default is \fByes\fP.  See HOOKS section below.
-
-.TP
-\fB\-\-run\-pre\-hooks\fP
-Runs all pre\-* hooks.  The default is \fByes\fP.  See HOOKS section
-below.
-
-.TP
-\fB\-\-run\-post\-hooks\fP
-Runs all post\-* hooks.  The default is \fByes\fP.  See HOOKS section
-below.
-
-.TP
-\fB\-\-run\-\fIhook\fP
-Runs \fIhook\fP.  The default is \fByes\fP.  See HOOKS section below.
-
-.TP
-\fB\-\-run\-\fIevent\fP
-Runs pre\-\fIevent\fP and post\-\fIevent\fP hooks.  The default is
-\fByes\fP.  See HOOKS section below.
+\fB\-r\fIhook\fB \-\-run\-\fIhook\fP
+If \fIhook\Fp is a\ name of a\ hook runs this hook, if it is a\ name
+of an event runs pre-\fIhook\fP and post-\fIhook\fP if it is
+"\fBpre-hook\fP" or "\fBpost-hook\fP" runs all pre- or post-hooks, if
+it is "\fBhooks\fP" runs all hooks.  See HOOKS section below for more
+details.
 
 .TP
 \fB\-c \-\-clean\fP
@@ -214,8 +191,8 @@ other cases \fBconfig\fP will be used.
 .TP
 \fB\-d \-\-make\-dep\fP
 Runs \fBmake dep\fP.  The default is to run it if
-\fB\-\-compile\-image\fP is on and compiling the Linux 2.4.x (\fBmake
-dep\fP is unnecessary in Linux 2.6.x).
+\fB\-\-compile\-image\fP is on and compiling Linux 2.4.x, however this
+is enabled only if \fIversion\fP was given as an argument.
 
 .TP
 \fB\-A \-\-all\fP
@@ -236,7 +213,7 @@ arguments are given, and thye are: \fIversion\fP \fIimage\fP
 \fIsystemmap\fP \fIprefix\fP, otherwise it is \fBno\fP.
 
 .TP
-\fB\-\-tidy\-image\fP
+\fB\-t \-\-tidy\-image\fP
 Removes really old kernel images from the \fB/boot\fP directory (or
 any other directory given with \fB\-\-bootdir\fP of \fIprefix\fP
 options).  The default is \fBno\fP.
@@ -256,7 +233,7 @@ Runs \fBmake modules_install\fP to install kernel modules.  The
 default is \fBno\fP.
 
 .TP
-\fB\-\-tidy\-modules\fP
+\fB\-T \-\-tidy\-modules\fP
 Removes old kernel modules from \fB/lib/modules\fP directory.  The
 default is \fBno\fP.
 
@@ -282,20 +259,17 @@ modules for only one kernel.
 
 .TP
 \fB\-l \-\-update\-loader\fP
-Updates the loader program.  At the moment this is done by running
-\fBlilo\fP.  By default it is \fByes\fP if exactly 4 arguments are
-given, and thye are: \fIversion\fP \fIimage\fP \fIsystemmap\fP
-\fIprefix\fP, otherwise it is \fBno\fP.
-
-.TP
-\fB\-\-lilo\fP
-Deprecated synonym of \fB\-\-update\-loader\fP.
+Updates the boot loader.  If \fB/etc/installkernel.d/update-loader\fP
+file exists and is executable it will be run otherwise \fBlilo\fP will
+be run.  By default it is \fByes\fP if exactly 4 arguments are given,
+and thye are: \fIversion\fP \fIimage\fP \fIsystemmap\fP \fIprefix\fP,
+otherwise it is \fBno\fP.
 
 .PP
-Passing one of the switches as an argument will turn it \fBon\fP
-unless it is prefixed with \fBno\-\fP (if long form is used) or
-\fBn\fP (if short form is used).  If a switch is synonym of several
-other switches then all those switches will be turned on or off.
+Meaning of a\ switch may be negated by prefixing it with \fBno\-\fP
+(if long form is used) or \fBn\fP (if short form is used).  If it is
+synonym of several other switches then all those switches will be
+turned on or off.
 
 .SH EXIT CODE
 
@@ -312,7 +286,7 @@ Invalid arguments where given.
 .TP
 \fB2\fP
 Some other errors detected by the script.  At the moment, this
-includes the situation when kernel version could not be\ determined.
+includes the situation when kernel version could not be determined.
 
 .TP
 \fB3\fP
@@ -332,45 +306,36 @@ The script recieved on of the signals: \fBSIGHUP\fP, \fBSIGINT\fP,
 \fBSIGTSTP\fP.
 
 .PP
-Moreover, if during execution any command fileds, \fBinstallkernel\fP
+Moreover, if during execution any command fails, \fBinstallkernel\fP
 will exit with it's exit code, therefore all the above exit codes can
 have two meanings.
 
 .SH HOOKS
 
 Hooks were provided to allow executing of user customizable code which
-sometimes is necessary for a particular machine.  For example one could
-write a script which automatically installs nVidia drivers after the
-kernel modules are installed.  Someone else could write a short script
-which reboots the machine after the new kernel is installed or could
-kill some resource consuming daemons just before compilation to run
-them again after compilation is done.  There are many aspects in which
-hooks may be handy.
+may be necessary for a particular machine.  For example one could
+write a script which automatically installs graphic card drivers after
+the kernel modules are installed.  Someone else could write a short
+script which reboots the machine after the new kernel is installed or
+could kill some resource consuming daemons just before compilation to
+run them again after compilation is done.  There are many aspects in
+which hooks may be handy.
 
 .PP
 There are events and hooks.  Events are: \fBclean\fP, \fBconfig\fP,
 \fBmake\-dep\fP, \fBcompile\-image\fP, \fBcompile\-modules\fP,
 \fBinstall\-modules\fP, \fBtidy\-image\fP, \fBtidy\-modules\fP,
-\fBinstall\-image\fP and \fBupdate\-loader\fP.  As you can see each
-event corresponds to each step of the \fBinstallkernel\fP script.
+\fBinstall\-image\fP and \fBupdate\-loader\fP and \fBwork\fP where
+each event corresponds to each step of the \fBinstallkernel\fP script
+plus the \fBwork\fP event correspond to whole work done by the script
+(the old \fBpre\fP and \fBpost\fP hooks are no longer supported).
 Each event has a \fBpre\-\fP and \fBpost\-\fP hook.  So for example
-there are \fBpre\-clean\fP and \fBpost\-clean\fP hooks.  There are
-also \fBpre\fP and \fBpost\fP hooks which are executed at the very
-begining and at the very end of the \fBinstallkernel\fP script.
+there are \fBpre\-clean\fP and \fBpost\-clean\fP hooks.
 
 .PP
-When a hook is executed all executable scripts from
-\fB/etc/installkernel.d/global/\fP and
-\fB/etc/installkernel.d/\fIhook\-name\fP/\fR directories are run with
-the hook name as the first argument (in the future more arguments may
-be defined).  For example if there is an executable file \fBfoo\fP in
-\fB/etc/installkernel.d/global/\fP and \fBbar\fP in
-\fB/etc/installkernel.d/pre/\fP then when \fBpre\fP hook is executed
-both, \fBfoo\fP and \fBbar\fP, scripts will be run but when
-a \fBpre\-clean\fP hook is executed only \fBfoo\fP will be executed.
-To understand it better create some scripts in subdirectories of
-\fB/etc/installkernel.d/\fP directory and run \fBinstallkernel\fP with
-\fB\-\-dry\-run\fP option.
+When a hook is executed \fB/etc/installkernel.d/hook-handler\fP is run
+with first argument being hook name (in the future more arguments may
+be defined).
 
 .SH LILO CONFIG
 
@@ -394,7 +359,7 @@ image = /boot/bzImage
     read-only
 .PP
 
-For more details you should consult lilo.conf(5) man page.
+For more details consult lilo.conf(5) man page.
 
 .SH EXAMPLES
 

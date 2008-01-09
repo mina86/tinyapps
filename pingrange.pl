@@ -1,9 +1,9 @@
 #!/usr/bin/perl
 ##
 ## Pings specified range of IP addresses
-## $Id: pingrange.pl,v 1.2 2006/10/06 13:54:01 mina86 Exp $
-## Copyright (C) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
-## Copyright (C) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
+## $Id: pingrange.pl,v 1.3 2008/01/09 18:51:52 mina86 Exp $
+## Copyright (c) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
+## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

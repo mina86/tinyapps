@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## Truncates pwd to specified number of characters
-## $Id: tpwd,v 1.5 2007/08/09 07:53:08 mina86 Exp $
-## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
+## $Id: tpwd,v 1.6 2008/01/09 18:51:52 mina86 Exp $
+## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ##
 ## This software is OSI Certified Open Source Software.
 ## OSI Certified is a certification mark of the Open Source Initiative.

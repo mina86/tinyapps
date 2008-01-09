@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## Generates a random password (or some other key)
-## $Id: genpass.sh,v 1.3 2007/08/07 12:27:50 mina86 Exp $
-## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
+## $Id: genpass.sh,v 1.4 2008/01/09 18:51:52 mina86 Exp $
+## Copyright (c) 2005,2007 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

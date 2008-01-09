@@ -1,11 +1,11 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.17 2007/08/07 13:41:15 mina86 Exp $
-## Copyright (c) 2003-2005 by Michal Nazarewicz (mina86/AT/mina86.com)
+## $Id: quotes.txt,v 1.18 2008/01/09 18:51:52 mina86 Exp $
+## Copyright (c) 2003-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License v. 2.1.
 ##
 ## To create a fortune compatible file use:
-##     egrep -v ^\# quotes.txt >qutoes
+##     grep -v \# quotes.txt >qutoes
 ##
 %
  I have always found that mercy bears richer fruits than strict justice.
