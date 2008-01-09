@@ -1,7 +1,7 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.33 2007/08/10 09:41:17 mina86 Exp $
-## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
+## $Id: Makefile,v 1.34 2008/01/09 18:26:19 mina86 Exp $
+## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
 
@@ -125,53 +125,53 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
 ##
 %.o: %.c
 	@echo '  CC     $@'
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	$(Q)exec $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 %.o: %.cpp
 	@echo '  CXX    $@'
-	$(Q)$(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
+	$(Q)exec $(CXX) $(CXXFLAGS) $(CPPFLAGS) -c -o $@ $<
 
 %: %.o
 	@echo '  LD     $@'
-	$(Q)$(CC) $(LDFLAGS) -o $@ $<
+	$(Q)exec $(CC) $(LDFLAGS) -o $@ $<
 
 %: %.c
 	@echo '  CC     $@.o'
-	$(Q)$(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@.o $<
+	$(Q)exec $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@.o $<
 	@echo '  LD     $@'
-	$(Q)$(CC) $(LDFLAGS) -o $@ $@.o
-	$(Q)rm -f -- $@.o
+	$(Q)exec $(CC) $(LDFLAGS) -o $@ $@.o
+	$(Q)exec rm -f -- $@.o
 
 %: %.sh
 
 FvwmTransFocus: FvwmTransFocus.o
 	@echo '  LD     $@'
-	$(Q)$(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
+	$(Q)exec $(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
 
 drun: null
 	@echo '  LN     $@'
-	$(Q)rm -f -- drun
-	$(Q)ln -s -- null drun
+	$(Q)exec rm -f -- drun
+	$(Q)exec ln -s -- null drun
 
 mpd-show: mpd-show.o libmpdclient.o
 	@echo '  LD     $@'
-	$(Q)$(CC) $(LDFLAGS) $^ -o $@
+	$(Q)exec $(CC) $(LDFLAGS) $^ -o $@
 
 mpd-state: mpd-state.o libmpdclient.o
 	@echo '  LD     $@'
-	$(Q)$(CC) $(LDFLAGS) $^ -o $@
+	$(Q)exec $(CC) $(LDFLAGS) $^ -o $@
 
 quotes: quotes.txt
 	@echo '  GEN    $@'
-	$(Q)egrep -v ^\# $< >$@
+	$(Q)exec egrep -v ^\# $< >$@
 
 the-book-of-mozilla: the-book-of-mozilla.txt
 	@echo '  GEN    $@'
-	$(Q)sed -e '/^#/d' -e '/^%/c%' $< >$@
+	$(Q)exec sed -e '/^#/d' -e 's/^%.*/%/' $< >$@
 
 installkernel.8.gz: installkernel.8
 	@echo '  GZIP   $@'
-	$(Q)gzip -9 <$< >$@
+	$(Q)exec gzip -9 <$< >$@
 
 umountiso: mountiso
 	@echo '  LNK    $@'
@@ -179,7 +179,7 @@ umountiso: mountiso
 
 xgetclass: xgetclass.o
 	@echo '  LD     $@'
-	$(Q)$(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
+	$(Q)exec $(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
 
 
 
@@ -191,16 +191,16 @@ xgetclass: xgetclass.o
 ifeq ("$(shell which install >/dev/null 2>&1 && echo yes)", "yes")
   define install
 	@echo '  INST   $(notdir $5)'
-	$(Q)$(RT)install -D -o $1 -g $2 -m $3 $5 $(DEST_DIR)$4/$(notdir $5)
-	$(Q)$(NT)install -D             -m $3 $5 $(DEST_DIR)$4/$(notdir $5)
+	$(Q)$(RT)exec install -D -o $1 -g $2 -m $3 $5 $(DEST_DIR)$4/$(notdir $5)
+	$(Q)$(NT)exec install -D             -m $3 $5 $(DEST_DIR)$4/$(notdir $5)
   endef
  else
   define install
 	@echo '  INST   $(notdir $5)'
-	$(Q)mkdir -p -m 0755 -- $(DEST_DIR)$4
-	$(Q)cp -f -- $5    $(DEST_DIR)$4/$(notdir $5)
+	$(Q)exec mkdir -p -m 0755 -- $(DEST_DIR)$4
+	$(Q)exec cp -f -- $5    $(DEST_DIR)$4/$(notdir $5)
 	$(Q)$(RT)chown $1:$2 -- $(DEST_DIR)$4/$(notdir $5) 2>/dev/null || true
-	$(Q)chmod $3    -- $(DEST_DIR)$4/$(notdir $5)
+	$(Q)exec chmod $3    -- $(DEST_DIR)$4/$(notdir $5)
   endef
 endif
 
@@ -234,14 +234,11 @@ install-mountiso: mountiso umountiso
 install-mpd-state: mpd-state
 	$(call install,root,bin,0755,/usr/local/bin,$<)
 	$(call install,root,bin,0755,/usr/local/bin,$(addprefix $<,-wrapper.sh))
-	@echo '  LNK    state-save'
-	$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/state-save
-	@echo '  LNK    state-restore'
-	$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/state-restore
-	@echo '  LNK    state-sync'
-	$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/state-sync
-	@echo '  LNK    state-amend'
-	$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/state-amend
+	$(Q)for lnk in state-save state-restore state-sync state-amend; do \
+		echo "  LNK    $$lnk" \
+		$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/$$lnk \
+	done
+
 
 install-show: show
 	$(call install,root,bin,0755,/usr/local/sbin,$<)
@@ -322,13 +319,13 @@ uninstall-xgetclass: xgetclass
 ##
 clean:
 	@echo '  CLEAN  compiled files'
-	$(Q)rm -f -- $(shell cat .cvsignore)
+	$(Q)exec rm -f -- $(shell cat .cvsignore)
 	@echo '  CLEAN  temporary files'
-	$(Q)rm -f -- *.o *~ 2>/dev/null
+	$(Q)exec rm -f -- *.o *~ 2>/dev/null
 	@echo '  CLEAN  package release'
-	$(Q)rm -rf -- package tinyapps*/
+	$(Q)exec rm -rf -- package tinyapps*/
 	@echo '  CLEAN  empty files and directories'
-	$(Q)find -maxdepth 1 -empty -exec rm -rf {} \;
+	$(Q)exec find -maxdepth 1 -empty -exec rm -rf {} \;
 
 distclean: clean
 
@@ -346,36 +343,36 @@ ifneq ($(EUID), 0)
 endif
 
 	@echo '  RM     state-save state-restore state-sync state-amend'
-	$(Q)rm -f -- '$(DEST_DIR)/usr/local/bin/state-save'		\
-	             '$(DEST_DIR)/usr/local/bin/state-restore'	\
-	             '$(DEST_DIR)/usr/local/bin/state-sync'		\
-	             '$(DEST_DIR)/usr/local/bin/state-amend'
+	$(Q)exec rm -f -- '$(DEST_DIR)/usr/local/bin/state-save'		\
+	                  '$(DEST_DIR)/usr/local/bin/state-restore'	\
+	                  '$(DEST_DIR)/usr/local/bin/state-sync'		\
+	                  '$(DEST_DIR)/usr/local/bin/state-amend'
 #	@echo '  RM     umountiso'
 #	$(Q)rm -f -- '$(DEST_DIR)/bin/umountiso'
 
 	@echo '  GEN    usr/doc/tinyapps-$(RELEASE)'
-	$(Q)mkdir -p -- '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)'
-	$(Q)cp -- LICENSE LICENSE.AFL README TODO ChangeLog '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
-	$(Q)cp -- LICENSE.gpl '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/LICENSE.GPL'
+	$(Q)exec mkdir -p -- '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)'
+	$(Q)exec cp -- LICENSE LICENSE.AFL README TODO ChangeLog '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
+	$(Q)exec cp -- LICENSE.gpl '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/LICENSE.GPL'
 
 	@echo '  GEN    install/doinst.sh'
-	$(Q)mkdir -p -- '$(DEST_DIR)/install'
+	$(Q)exec mkdir -p -- '$(DEST_DIR)/install'
 	$(Q)echo 'cd usr/local/bin' >'$(DEST_DIR)/install/doinst.sh'
 	$(Q)echo 'for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $$FILE; done' >>'$(DEST_DIR)/install/doinst.sh'
 #	$(Q)echo 'ln -fs mountiso umountiso; chown root:root mountiso; chmod u+s mountiso' >>'$(DEST_DIR)/install/doinst.sh'
-	$(Q)chmod 755 -- '$(DEST_DIR)/install/doinst.sh'
+	$(Q)exec chmod 755 -- '$(DEST_DIR)/install/doinst.sh'
 	@echo '  CP     slack-desc'
-	$(Q)cp -- slack-desc '$(DEST_DIR)/install'
+	$(Q)exec cp -- slack-desc '$(DEST_DIR)/install'
 
 	@echo '  TAR    tinyapps.tar'
-	$(Q)$(RT)tar c -C '$(DEST_DIR)' --format=v7 install usr >tinyapps.tar
-	$(Q)$(NR)tar c -C '$(DEST_DIR)' --owner=root --group=root --format=v7 install usr >tinyapps.tar
+	$(Q)$(RT)exec tar c -C '$(DEST_DIR)' --format=v7 install usr >tinyapps.tar
+	$(Q)$(NR)exec tar c -C '$(DEST_DIR)' --owner=root --group=root --format=v7 install usr >tinyapps.tar
 	@echo '  GZIP   tinyapps-$(RELEASE).tgz'
-	$(Q)gzip -9 <'tinyapps.tar' >'tinyapps-$(RELEASE).tgz'
-	$(Q)rm -f -- tinyapps.tar
+	$(Q)exec gzip -9 <'tinyapps.tar' >'tinyapps-$(RELEASE).tgz'
+	$(Q)exec rm -f -- tinyapps.tar
 
 	@echo '  RM     package'
-	$(Q)rm -rf -- '$(DEST_DIR)'
+	$(Q)exec rm -rf -- '$(DEST_DIR)'
 
 
 
@@ -384,14 +381,14 @@ endif
 ##
 release: distclean
 	@echo '  CP     *'
-	$(Q)mkdir -p -- 'tinyapps-$(RELEASE)'
+	$(Q)exec mkdir -p -- 'tinyapps-$(RELEASE)'
 	$(Q)for FILE in *; do [ "X$$FILE" != XCVS ] && \
 		[ "X$$FILE" != 'Xtinyapps-$(RELEASE)' ] && \
 		cp -Rf -- "$$FILE" 'tinyapps-$(RELEASE)'; done
-	$(Q)echo '$(RELEASE)' >'tinyapps-$(RELEASE)/.release'
+	$(Q)exec echo '$(RELEASE)' >'tinyapps-$(RELEASE)/.release'
 
 	@echo '  TARBZ  tinyapps-$(RELEASE).tar.bz2'
-	$(Q)tar c 'tinyapps-$(RELEASE)' | bzip2 -9 >'tinyapps-$(RELEASE).tar.bz2'
+	$(Q)exec tar c 'tinyapps-$(RELEASE)' | bzip2 -9 >'tinyapps-$(RELEASE).tar.bz2'
 
 	@echo '  RM     tinyapps-$(RELEASE)'
-	$(Q)rm -rf -- 'tinyapps-$(RELEASE)'
+	$(Q)exec rm -rf -- 'tinyapps-$(RELEASE)'

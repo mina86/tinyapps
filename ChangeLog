@@ -1,3 +1,7 @@
+2008-01-09  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* Makefile: + executes commands using 'exec' (less forks)
+
 2007-08-21  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* getlyrics.pl: + added --edit option
