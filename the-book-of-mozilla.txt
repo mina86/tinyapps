@@ -1,12 +1,12 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotations from The Book of Mozilla.
-## $Id: the-book-of-mozilla.txt,v 1.4 2007/01/31 18:58:48 mina86 Exp $
+## $Id: the-book-of-mozilla.txt,v 1.5 2008/01/09 18:47:02 mina86 Exp $
 ## By Michal Nazarewicz (mina86/AT/mina86.com)
 ## Released to Public Domain
 ##
 ## To create a fortune compatible file use:
-##     sed -e '/^#/d' -e '/^%/c%' the-book-of-mozilla.txt \
-##     >the-book-of-mozilla
+##     sed -e '/^#/d' -e 's/^%.*/%/' the-book-of-mozilla.txt \
+##         >the-book-of-mozilla
 ##
 % Official
 And the beast shall come forth surrounded by a roiling cloud of
