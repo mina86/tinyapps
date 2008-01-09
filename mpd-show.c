@@ -1,7 +1,7 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.15 2006/10/06 10:23:46 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
+ * $Id: mpd-show.c,v 1.16 2008/01/09 18:50:58 mina86 Exp $
+ * Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,20 +19,27 @@
  */
 
 
-#define HAVE_SIGNAL_H
-
+#define _POSIX_C_SOURCE 2
+#define _BSD_SOURCE
 
 #include <unistd.h>
+#include <sys/time.h>
 #include <sys/types.h>
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#ifdef HAVE_SIGNAL_H
 #include <signal.h>
-#endif
 
 #include "libmpdclient.h"
 
+
+#if __STDC_VERSION__ < 199901L
+#  if defined __GNUC__
+#    define inline   __inline__
+#  else
+#    define inline
+#  endif
+#endif
 
 
 /********** Defaults **********/
@@ -51,14 +58,15 @@
 
 /******************** Error messages ********************/
 static const char *program_name = "mpd-show";
-#define ERR(msg, ...) fprintf(stderr, "%s: " msg "\n", program_name, __VA_ARGS__)
+#define ERR(fmt, arg) fprintf(stderr, "%s: " fmt "\n", program_name, arg);
 
 
 
 /******************** Types ********************/
 struct config {
-	char *host, *password;
-	char *format, *buffer;
+	const char *host, *password;
+	const char *format;
+	char *buffer;
 	long port;
 	unsigned columns, background;
 };
@@ -78,26 +86,25 @@ struct state {
 
 
 /******************** Functions ********************/
-void parse_arguments(int argc, char **argv, struct config *config);
+static void parse_arguments(int argc, char **argv, struct config *config);
 
-mpd_Connection *connect_to_mpd(struct config *config);
-void fill_name_with_error(mpd_Connection *conn, struct name *name);
+static mpd_Connection *connect_to_mpd(struct config *config);
+static void fill_name_with_error(mpd_Connection *conn, struct name *name);
 
-void zero_state(struct state *state);
-int get_song(mpd_Connection *conn, struct config *config, struct state *state,
-             struct name *name);
+static void zero_state(struct state *state);
+static int get_song(mpd_Connection *conn, struct config *config,
+                    struct state *state, struct name *name);
 
-void redisplay(struct config *config, struct name *name, struct state *state);
-void loop_redisplay(struct config *config, struct name *name,
-                    struct state *state, unsigned time);
+static void redisplay(struct config *config, struct name *name,
+                      struct state *state);
+static void loop_redisplay(struct config *config, struct name *name,
+                           struct state *state, unsigned time);
 
 
-#ifdef HAVE_SIGNAL_H
-static int signum = 0;
-void signal_handler(int sig);
-void signal_resize (int sig);
-#else
-#define signum 0
+static volatile sig_atomic_t signum = 0;
+static void signal_handler(int sig);
+#ifdef SIGWINCH
+static void signal_resize (int sig);
 #endif
 
 
@@ -130,10 +137,14 @@ int main(int argc, char **argv) {
 
 
 	/* Catch signals */
-#ifdef HAVE_SIGNAL_H
+#ifdef SIGWINCH
 	signal(SIGWINCH, signal_resize );
+#endif
+#ifdef SIGHUP
 	signal(SIGHUP  , signal_handler);
+#endif
 	signal(SIGINT  , signal_handler);
+#ifdef SIGQUIT
 	signal(SIGQUIT , signal_handler);
 #endif
 
@@ -175,29 +186,31 @@ int main(int argc, char **argv) {
 
 
 /******************** Usage ********************/
-void usage() {
+static void usage(void) {
 	printf("mpd-show   (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)\n" \
-		   "$Id: mpd-show.c,v 1.15 2006/10/06 10:23:46 mina86 Exp $\n"
-		   "\n"															\
-		   "usage: %s [ <options> ] [ <host> [ <port> ]]\n"				\
-		   "<options> are:\n"											\
-		   " -b      run in background mode (does not fork into background)\n" \
-		   " -B      run in background mode and fork into background\n" \
-		   " -c<col> assume terminal is <col>-character wide; defaults to COLUMNS or %d\n" \
-		   " -f<fmt> use <fmt> for displaying song (for syntax see mpc(1)); supports\n" \
-		   "         following tags: album, artist, comment, composer, date, dir, disc,\n" \
-		   "         file, filenoext, genre, name, path, pathnoext, time, title and track.\n" \
-		   "<host>   host name MPD is running with optional password and '@' character\n" \
-		   "         at the beginning; defaults to MPD_HOST or '" DEFAULT_HOST "'\n" \
-		   "<port>   port MPD is listening; defaults to MPD_PORT or %d\n",
-		   program_name, DEFAULT_COLUMNS, DEFAULT_PORT);
+	       "$Id: mpd-show.c,v 1.16 2008/01/09 18:50:58 mina86 Exp $\n"
+	       "\n" \
+	       "usage: %s [ <options> ] [ <host> [ <port> ]]\n" \
+	       "<options> are:\n" \
+	       " -b      run in background mode (does not fork into background)\n" \
+	       " -B      run in background mode and fork into background\n" \
+	       " -c<col> assume terminal is <col>-character wide; defaults to $COLUMNS or %d\n" \
+	       " -f<fmt> use <fmt> for displaying song (for syntax see mpc(1)); supports\n",
+	       program_name, DEFAULT_COLUMNS);
+	printf("         following tags: album, artist, comment, composer, date, dir, disc,\n" \
+	       "         file, filenoext, genre, name, path, pathnoext, time, title and track.\n" \
+	       "<host>   host name MPD is running with optional password and '@' character\n" \
+	       "         at the beginning; defaults to MPD_HOST or '" DEFAULT_HOST "'\n" \
+	       "<port>   port MPD is listening; defaults to MPD_PORT or %d\n",
+	       DEFAULT_PORT);
 }
 
 
 
 /******************** Parse arguments ********************/
-void parse_arguments(int argc, char **argv, struct config *config) {
-	char *hostarg = 0, *portarg = 0, *end;
+static void parse_arguments(int argc, char **argv, struct config *config) {
+	const char *hostarg = 0, *portarg = 0;
+	char *end;
 	int opt;
 
 
@@ -220,7 +233,6 @@ void parse_arguments(int argc, char **argv, struct config *config) {
 
 
 	/* Get opts */
-	opterr = 0;
 	while ((opt = getopt(argc, argv, "-hbBc:f:"))!=-1) {
 		switch (opt) {
 		case 'h': usage(); exit(0);
@@ -228,16 +240,15 @@ void parse_arguments(int argc, char **argv, struct config *config) {
 		case 'B': config->background = 2; break;
 
 			/* Columns */
-		case 'c':
-			{
-				long c = strtol(optarg, &end, 0);
-				if (c<3 || *end) {
-					ERR("invalid terminal width: %s", optarg);
-					exit(1);
-				}
-				config->columns = c;
+		case 'c': {
+			long c = strtol(optarg, &end, 0);
+			if (c<3 || *end) {
+				ERR("invalid terminal width: %s", optarg);
+				exit(1);
 			}
+			config->columns = c;
 			break;
+		}
 
 			/* Format */
 		case 'f':
@@ -264,13 +275,13 @@ void parse_arguments(int argc, char **argv, struct config *config) {
 		hostarg = DEFAULT_HOST;
 	}
 
-	config->host = strchr(hostarg, '@');
-	if (!config->host) {
+	end = strchr(hostarg, '@');
+	if (!end) {
 		config->host = hostarg;
 		config->password = 0;
 	} else {
-		*config->host = 0;
-		++config->host;
+		*end = 0;
+		config->host = end + 1;
 		config->password = hostarg;
 	}
 
@@ -314,7 +325,7 @@ void parse_arguments(int argc, char **argv, struct config *config) {
 
 
 /******************** Connect to MPD ********************/
-mpd_Connection *connect_to_mpd(struct config *config) {
+static mpd_Connection *connect_to_mpd(struct config *config) {
 	mpd_Connection *conn = mpd_newConnection(config->host, config->port, 10);
 
 	/* Send password */
@@ -332,8 +343,8 @@ mpd_Connection *connect_to_mpd(struct config *config) {
 
 
 /******************** Append to name ********************/
-size_t append_to_name(struct name *name, size_t offset,
-                      const char *str, size_t len) {
+static size_t append_to_name(struct name *name, size_t offset,
+                             const char *str, size_t len) {
 	if (offset+len+1>=name->capacity) {
 		size_t cap = (offset + len + 1 + 128) & ~127;
 		char *tmp = name->buffer ? realloc(name->buffer, cap) : malloc(cap);
@@ -348,15 +359,15 @@ size_t append_to_name(struct name *name, size_t offset,
 	return offset + len;
 }
 
-inline size_t append_to_name_cstr(struct name *name, size_t offset,
-                                  const char *str) {
+static inline size_t append_to_name_cstr(struct name *name, size_t offset,
+                                         const char *str) {
 	return append_to_name(name, offset, str, strlen(str));
 }
 
 
 
 /******************** Fill name with error message ********************/
-void fill_name_with_error(mpd_Connection *conn, struct name *name) {
+static void fill_name_with_error(mpd_Connection *conn, struct name *name) {
 	if (conn->error) {
 		name->state  = '!';
 		name->len    = append_to_name_cstr(name, 0, conn->errorStr);
@@ -367,7 +378,7 @@ void fill_name_with_error(mpd_Connection *conn, struct name *name) {
 
 
 /******************** Formats song title ********************/
-const char *skip_formatting(const char *p) {
+static const char *skip_formatting(const char *p) {
 	unsigned stack = 0;
 	for (; *p; ++p) {
 		if (*p == '[') {
@@ -384,9 +395,9 @@ const char *skip_formatting(const char *p) {
 }
 
 
-size_t format_song_internal(const mpd_Song *song, const char *p,
-                            struct name *name, size_t offset,
-                            const char **last) {
+static size_t format_song_internal(const mpd_Song *song, const char *p,
+                                   struct name *name, size_t offset,
+                                   const char **last) {
 	static char _buffer[sizeof(int) * 3 + 3];
 	char found = 0, *temp;
 	size_t off = offset, len;
@@ -514,7 +525,8 @@ size_t format_song_internal(const mpd_Song *song, const char *p,
 }
 
 
-void format_song(struct config *config, struct name *name, mpd_Song *song) {
+static void format_song(struct config *config, struct name *name,
+                        mpd_Song *song) {
 	name->len    = format_song_internal(song, config->format, name, 0, 0);
 	name->scroll = 0;
 }
@@ -522,7 +534,7 @@ void format_song(struct config *config, struct name *name, mpd_Song *song) {
 
 
 /******************** Zerores state ********************/
-void zero_state(struct state *state) {
+static void zero_state(struct state *state) {
 	state->songid    = -2;
 	state->len       = 1;
 	state->pos       = state->opos = 0;
@@ -533,8 +545,8 @@ void zero_state(struct state *state) {
 
 
 /******************** Queries song from MPD ********************/
-int get_song(mpd_Connection *conn, struct config *config, struct state *state,
-             struct name *name) {
+static int get_song(mpd_Connection *conn, struct config *config,
+                    struct state *state, struct name *name) {
 	mpd_Status *status;
 	mpd_InfoEntity *info;
 
@@ -605,7 +617,8 @@ int get_song(mpd_Connection *conn, struct config *config, struct state *state,
 
 
 /******************** Displays title ********************/
-void redisplay(struct config *config, struct name *name, struct state *state){
+static void redisplay(struct config *config, struct name *name,
+                      struct state *state) {
 	static const char separator[] = "   * * *   ";
 	static const size_t sep_len = sizeof(separator) - 1;
 
@@ -669,12 +682,13 @@ void redisplay(struct config *config, struct name *name, struct state *state){
 
 
 /******************** Redisplays and waits time seconds ********************/
-void loop_redisplay(struct config *config, struct name *name,
-                    struct state *state, unsigned time) {
+static void loop_redisplay(struct config *config, struct name *name,
+                           struct state *state, unsigned time) {
 	if (name->len > config->columns - 3) {
 		for (time *= 2; time && !signum; --time) {
+			struct timeval tv = { 0, 500000 };
 			redisplay(config, name, state);
-			usleep(500000);
+			select(0, 0, 0, 0, &tv);
 		}
 	} else{
 		if (state->redisplay || !state->len ||
@@ -689,17 +703,19 @@ void loop_redisplay(struct config *config, struct name *name,
 
 
 /******************** Signal handler ********************/
-#ifdef HAVE_SIGNAL_H
-void signal_handler(int sig) {
+static void signal_handler(int sig) {
 	if (signum) {
 		exit(1);
 	}
 	signum = sig;
+	signal(sig, signal_handler);
 }
 
 
 /********** Terminal have been resized **********/
-void signal_resize (int sig) {
-	sig = sig; /* supress warning */
+#ifdef SIGWINCH
+static void signal_resize (int sig) {
+	/* FIXME: TODO */
+	signal(sig, signal_handler);
 }
 #endif

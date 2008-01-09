@@ -1,8 +1,8 @@
 #!/bin/sh
 ##
 ## Pings specified host and runs specified program if no responding
-## $Id: check.sh,v 1.8 2007/08/08 22:02:02 mina86 Exp $
-## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
+## $Id: check.sh,v 1.9 2008/01/09 18:50:58 mina86 Exp $
+## Copyright (c) 2005-2008 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -30,8 +30,8 @@
 ## Version
 ##
 version () {
-	echo 'Check v0.2  (c) 2005 by Micha³ Nazarewicz'
-	echo '$Id: check.sh,v 1.8 2007/08/08 22:02:02 mina86 Exp $'
+	echo 'Check v0.2  (c) 2005,2006 by Micha³ Nazarewicz'
+	echo '$Id: check.sh,v 1.9 2008/01/09 18:50:58 mina86 Exp $'
 	echo
 }
 
@@ -116,27 +116,27 @@ CMD="check_ping www.google.com"
 ##
 while [ $# -ne 0 ]; do
 	case "$1" in
-	(-h|--help)      version; usage     ; exit 0; ;;
-	(-H|--long-help) version; usage long; exit 0; ;;
-	(-V|--version)   version;             exit 0; ;;
+	-h|--help)      version; usage     ; exit 0; ;;
+	-H|--long-help) version; usage long; exit 0; ;;
+	-V|--version)   version;             exit 0; ;;
 
-	(-q|--quiet)      CHECK_QUIET=yes  ; ;;
-	(-k|--keep-going) KEEPGOING=yes    ; ;;
-	(-T|--ignore-sig) CHECK_IGNORESIG=y; ;;
+	-q|--quiet)      CHECK_QUIET=yes  ; ;;
+	-k|--keep-going) KEEPGOING=yes    ; ;;
+	-T|--ignore-sig) CHECK_IGNORESIG=y; ;;
 
-	(-r|--retry)    RETRY="$2"; shift; ;;
-	(-i|--interval) SLEEP="$2"; shift; ;;
-	(-c|--count)    CMD="$2"  ; shift; ;;
-	(-t|--trap)     TRAP="$2" ; shift; ;;
+	-r|--retry)    RETRY="$2"; shift; ;;
+	-i|--interval) SLEEP="$2"; shift; ;;
+	-c|--count)    CMD="$2"  ; shift; ;;
+	-t|--trap)     TRAP="$2" ; shift; ;;
 
-	(-r*) RETRY="${1#-?}"; ;; (--retry=*)    RETRY="${1#-*=}"; ;;
-	(-i*) SLEEP="${1#-?}"; ;; (--interval=*) SLEEP="${1#-*=}"; ;;
-	(-c*) CMD="${1#-?}"  ; ;; (--check=*)    CMD="${1#-*=}"  ; ;;
-	(-t*) TRAP="${1#-?}" ; ;; (--trap=*)     TRAP="${1#-*=}" ; ;;
+	-r*) RETRY="${1#-?}"; ;; (--retry=*)    RETRY="${1#-*=}"; ;;
+	-i*) SLEEP="${1#-?}"; ;; (--interval=*) SLEEP="${1#-*=}"; ;;
+	-c*) CMD="${1#-?}"  ; ;; (--check=*)    CMD="${1#-*=}"  ; ;;
+	-t*) TRAP="${1#-?}" ; ;; (--trap=*)     TRAP="${1#-*=}" ; ;;
 
-	(--) shift; break; ;;
-	(-*) echo Unknown option: "$1"; exit 1; ;;
-	(*) break; ;;
+	--) shift; break; ;;
+	-*) echo Unknown option: "$1"; exit 1; ;;
+	*) break; ;;
 	esac
 	shift
 done

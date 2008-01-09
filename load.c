@@ -1,10 +1,12 @@
 /*
  * Shows CPU load and some other information.
- * $Id: load.c,v 1.4 2007/06/30 08:41:02 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
+ * $Id: load.c,v 1.5 2008/01/09 18:50:58 mina86 Exp $
+ * Copyright (c) 2005,2007 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
 
+
+#include <limits.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
@@ -12,37 +14,39 @@
 
 /**** Defines ****/
 #define BUFFER_SIZE 1024
-#define BUFFER_SIZE_STR "1024"
-char buffer[BUFFER_SIZE];
+static char buffer[BUFFER_SIZE];
+
+
+#ifdef ULLONG_MAX
+typedef unsigned long long bigint;
+#define FMT "llu"
+#else
+typedef unsigned long bigint;
+#define FMT "lu"
+#endif
 
 
 /**** Structire with all information ****/
 typedef struct {
 	struct {
-		unsigned long long usr, nice, sys, idle, load, total;
+		bigint usr, nice, sys, idle, load, total;
 	} cpu;
 	struct {
-		unsigned long long rec, send;
+		bigint rec, send;
 	} traf;
 	struct {
-		long total, free;
+		unsigned long total, free;
 	} mem;
 } State;
 
 
-/**** Compare 2 strings ****/
-int streq(const char *s1, const char *s2) {
-	while (*s1 && *s1++==*s2++);
-	return *s1 == *s2;
-}
-
-
 /**** Updates CPU load info ****/
-void update_cpu(State *state) {
+static void update_cpu(State *state) {
 	FILE *file = fopen("/proc/stat", "r");
-	if (file==NULL) return;
+	if (!file) return;
 
-	fscanf(file, "%*s %Ld %Ld %Ld %Ld", &state->cpu.usr, &state->cpu.nice,
+	fscanf(file, "%*s %" FMT " %" FMT " %" FMT " %" FMT ,
+	       &state->cpu.usr, &state->cpu.nice,
 	       &state->cpu.sys, &state->cpu.idle);
 	fclose(file);
 
@@ -52,13 +56,13 @@ void update_cpu(State *state) {
 
 
 /**** Updates traffic info ****/
-void update_traf(State *state) {
+static void update_traf(State *state) {
 	FILE *file = fopen("/proc/net/dev", "r");
-	if (file==NULL) return;
+	if (!file) return;
 
 	while (!feof(file)) {
 		fgets(buffer, BUFFER_SIZE, file);
-		if (sscanf(buffer, " eth0:%Ld %*d %*d %*d %*d %*d %*d %*d %Ld",
+		if (sscanf(buffer, " eth0:%" FMT " %*d %*d %*d %*d %*d %*d %*d %" FMT,
 		           &state->traf.rec, &state->traf.send)) {
 			break;
 		}
@@ -68,17 +72,18 @@ void update_traf(State *state) {
 
 
 /**** Updates memory info ****/
-void update_mem(State *state) {
+static void update_mem(State *state) {
 	FILE *file = fopen("/proc/meminfo", "r");
-	long flags = 0, val;
-	if (file==NULL) return;
+	unsigned long val;
+	int flags = 0;
+	if (!file) return;
 
 	while (!feof(file) && flags!=3) {
-		fscanf(file, "%" BUFFER_SIZE_STR "s %ld %*s", buffer, &val);
-		if (streq(buffer, "MemTotal:")) {
+		fgets(buffer, BUFFER_SIZE, file);
+		if (sscanf(buffer, " MemTotal: %lu", &val)==1) {;
 			flags |= 1;
 			state->mem.total = val;
-		} else if (streq(buffer, "MemFree:")) {
+		} else if (sscanf(buffer, " MemFree: %lu", &val)==1) {;
 			flags |= 2;
 			state->mem.free = val;
 		}
@@ -88,7 +93,7 @@ void update_mem(State *state) {
 
 
 /**** Calculates delta between two states ****/
-void make_delta(State *delta, const State *prev, const State *now) {
+static void make_delta(State *delta, const State *prev, const State *now) {
 	delta->cpu.usr   = now->cpu.usr   - prev->cpu.usr  ;
 	delta->cpu.nice  = now->cpu.nice  - prev->cpu.nice ;
 	delta->cpu.sys   = now->cpu.sys   - prev->cpu.sys  ;
@@ -103,11 +108,12 @@ void make_delta(State *delta, const State *prev, const State *now) {
 
 
 /**** Prints state ****/
-void print_state(const State *s) {
-	printf("%4Ld %4Ld %4Ld %4Ld   %4Ld %4Ld   %3d%%   %7ld %7ld   %7Ld %7Ld\n",
+static void print_state(const State *s) {
+	printf("%4" FMT " %4" FMT " %4" FMT " %4" FMT "   %4" FMT " %4" FMT
+	       "   %3d%%   %7ld %7ld   %7" FMT " %7" FMT "\n",
 	       s->cpu.usr, s->cpu.nice, s->cpu.sys, s->cpu.idle,
 	       s->cpu.load, s->cpu.total,
-	       (int)(s->cpu.total==0?0:100 * s->cpu.load/s->cpu.total),
+	       (int)(s->cpu.total ? 100 * s->cpu.load / s->cpu.total : 0),
 	       s->mem.free, s->mem.total,
 	       s->traf.rec, s->traf.send);
 }

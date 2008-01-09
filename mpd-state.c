@@ -1,8 +1,8 @@
 /*
  * Prints/restores MPD's state.
- * $Id: mpd-state.c,v 1.6 2007/06/30 08:41:02 mina86 Exp $
+ * $Id: mpd-state.c,v 1.7 2008/01/09 18:50:58 mina86 Exp $
  * Copyright (c) 2005 by Avuton Olrich (avuton/AT/gmail.com)
- * Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
+ * Copyright (c) 2005-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +19,9 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
+#define _POSIX_C_SOURCE 2
+#define _BSD_SOURCE
+
 #include "libmpdclient.h"
 
 #include <unistd.h>
@@ -27,8 +30,10 @@
 #include <stdlib.h>
 
 
-static const char *program_name = NULL;
-#define ERR(msg, ...) fprintf(stderr, "%s: " msg "\n", program_name, ##__VA_ARGS__)
+static const char *program_name = 0;
+#define ERR(msg, arg) fprintf(stderr, "%s: " msg "\n", program_name, arg)
+#define ERR2(msg, arg, arg2) fprintf(stderr, "%s: " msg "\n", \
+                                     program_name, arg, arg2)
 
 
 #define DEFAULT_HOST "localhost"
@@ -39,20 +44,21 @@ static const char *program_name = NULL;
 /********** Some global variables and stuff **********/
 static char opt_skip_state, opt_skip_playlist, opt_skip_outputs = 0,
 	opt_restore = 0, opt_add = 0;
-static mpd_Connection *conn = NULL;
-static char *hostarg = NULL, *portarg = NULL;
+static mpd_Connection *conn = 0;
+static char *hostarg = 0;
+static const char *portarg = 0;
 
 
 /********** Functions declaration **********/
-void usage();
-void parse_args(int argc, char **argv);
-void connect_to_mpd();
-void print_error_and_exit(int exit_code);
+static void usage(void);
+static void parse_args(int argc, char **argv);
+static void connect_to_mpd(void);
+static void print_error_and_exit(int exit_code);
 
-void print_status();
-void print_playlist();
-void print_outputs();
-void restore();
+static void print_status(void);
+static void print_playlist(void);
+static void print_outputs(void);
+static void restore(void);
 
 
 
@@ -77,7 +83,7 @@ int main(int argc, char **argv) {
 
 
 /********** Usage information **********/
-void usage() {
+static void usage(void) {
 	printf("mpd-state  0.12.1  (c) 2005 by Avuton Olrich & Michal Nazarewicz\n"
 	       "usage: %s [ -rasSpPoO ] [ <host> [ <port> ]]]\n"
 	       " -r      restere the state read from stdin (default is to\n"
@@ -100,11 +106,11 @@ void usage() {
 
 
 /********** Parse arguments **********/
-void parse_args(int argc, char **argv) {
+static void parse_args(int argc, char **argv) {
 	int opt;
 
 	program_name = strrchr(argv[0], '/');
-	program_name = program_name==NULL ? *argv : (program_name + 1);
+	program_name = program_name ? program_name + 1 : *argv;
 
 	if (argc>1 && !strcmp(argv[1], "--help")) {
 		usage();
@@ -128,8 +134,8 @@ void parse_args(int argc, char **argv) {
 		          opt_skip_state = opt_skip_playlist = 1; break;
 
 		case 1:
-			if (hostarg==NULL) { hostarg = optarg; break; }
-			if (portarg==NULL) { portarg = optarg; break; }
+			if (!hostarg) { hostarg = optarg; break; }
+			if (!portarg) { portarg = optarg; break; }
 			ERR("invalid argument: %s", optarg);
 			exit(1);
 
@@ -143,27 +149,33 @@ void parse_args(int argc, char **argv) {
 
 
 /********** Connects to MPD **********/
-void connect_to_mpd() {
+static void connect_to_mpd(void) {
+	const char *host, *password;
+	char *test;
 	long port;
-	char *host, *password = NULL, *test;
 
 	/* Host and password */
-	if (hostarg==NULL && (hostarg = getenv("MPD_HOST"))==NULL) {
-		hostarg = DEFAULT_HOST;
+	if (!hostarg && !(hostarg = getenv("MPD_HOST"))) {
+		hostarg = (char*)DEFAULT_HOST;
 	}
 
-	hostarg = strdup(hostarg);
-	host = strchr(hostarg, '@');
-	if (host==NULL) {
-		host = hostarg;
-	} else {
-		*host = 0;
-		++host;
+	{
+		size_t count = strlen(hostarg) + 1;
+		test = malloc(count);
+		hostarg = memcpy(test, hostarg, count);
+	}
+	test = strchr(hostarg, '@');
+	if (test) {
+		*test = 0;
+		host = test + 1;
 		password = hostarg;
+	} else {
+		host = hostarg;
+		password = 0;
 	}
 
 	/* Port */
-	if (portarg==NULL && (portarg = getenv("MPD_PORT"))==NULL) {
+	if (!portarg && !(portarg = getenv("MPD_PORT"))) {
 		portarg = DEFAULT_PORT;
 	}
 
@@ -176,7 +188,7 @@ void connect_to_mpd() {
 	/* Connect */
 	conn = mpd_newConnection(host, port, 10);
 	if (conn->error) {
-		ERR("could not connect to MPD (%s:%ld)", host, port);
+		ERR2("could not connect to MPD (%s:%ld)", host, port);
 		free(hostarg);
 		print_error_and_exit(2);
 	}
@@ -198,7 +210,7 @@ void connect_to_mpd() {
 
 
 /********** Restore state from stdin **********/
-void restore() {
+static void restore(void) {
 	int state = 0, seconds = MPD_PLAY_AT_BEGINNING, songnum = 0;
 	char buffer[LINELENGTH], *word, *str;
 
@@ -207,7 +219,7 @@ void restore() {
 
 	while (fgets(buffer, LINELENGTH, stdin)) {
 		word = strtok(buffer, ": \f\r\t\v\n");
-		str  = strtok(NULL, ": \f\r\t\v\n");
+		str  = strtok(0, ": \f\r\t\v\n");
 
 		if (!strcmp(word, "state")) {
 			if (!strcmp(word, "play")) state = MPD_STATUS_STATE_PLAY;
@@ -270,7 +282,7 @@ void restore() {
 
 
 /********** Prints MPD's status to stdout **********/
-void print_status() {
+static void print_status(void) {
 	mpd_Status *status;
 
 	mpd_sendStatusCommand(conn);
@@ -297,9 +309,10 @@ void print_status() {
 
 
 /********** Prints playlsit to stdout **********/
-void print_playlist() {
-	puts("playlist_begin");
+static void print_playlist(void) {
 	mpd_InfoEntity *entity;
+
+	puts("playlist_begin");
 
 	mpd_sendPlaylistInfoCommand(conn,-1);
 	while ((entity = mpd_getNextInfoEntity(conn))) {
@@ -318,9 +331,9 @@ void print_playlist() {
 
 
 /********** Prints outputs to stdout **********/
-void print_outputs() {
-	puts("outputs_begin");
+static void print_outputs(void) {
 	mpd_OutputEntity * output;
+	puts("outputs_begin");
 
 	mpd_sendOutputsCommand(conn);
 	while ((output = mpd_getNextOutput(conn))) {
@@ -338,7 +351,7 @@ void print_outputs() {
 
 
 /********** Prints error end exits if there is any **********/
-void print_error_and_exit(int error_code) {
+static void print_error_and_exit(int error_code) {
 	if (conn->error) {
 		ERR("error: %s", conn->errorStr);
 		exit(error_code);

@@ -1,7 +1,7 @@
 /*
  * FVWM module changing opacity depending on focus.
- * $Id: FvwmTransFocus.c,v 1.8 2007/06/30 08:41:02 mina86 Exp $
- * Copyright 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
+ * $Id: FvwmTransFocus.c,v 1.9 2008/01/09 18:50:58 mina86 Exp $
+ * Copyright 2005-2008 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Some code from transset by Matthew Hawn
  *
  * This program is free software; you can redistribute it and/or modify
@@ -62,7 +62,7 @@
 
 /********** Debug **********/
 #ifdef DEBUG
-#define debug(fmt, ...) fprintf(stderr, "%s: " fmt "\n", MyName, ##__VA_ARGS__)
+#define debug(fmt, ...) fprintf(stderr, "%s: " fmt "\n", MyName, __VA_ARGS__)
 #define debugs(string) fprintf(stderr, "%s: %s", MyName, (string))
 #else
 #define debug(fmt, ...)
@@ -87,6 +87,16 @@
 #define START_FLAG 0xffffffff
 
 
+#if __STDC_VERSION__ < 199901L
+#  if defined __GNUC__
+#    define inline   __inline__
+#  else
+#    define inline
+#  endif
+#endif
+
+
+
 
 /********** Typedefs **********/
 typedef struct {
@@ -105,7 +115,7 @@ static char *MyName;
 
 /********** Functions **********/
 static void send(const char *message);
-static unsigned long readLong();
+static inline unsigned long readLong(void);
 static void readLongs(char *buffer, int count);
 static void transSet(unsigned long int window, double value);
 static int ignoreWindow(unsigned long int window);
@@ -121,7 +131,7 @@ int main (int argc, char **argv) {
 
 	/* Get executable name */
 	MyName = strrchr(argv[0], '/');
-	MyName = MyName==NULL ? argv[0] : (MyName + 1);
+	MyName = MyName && MyName[1] ? MyName + 1 : *argv;
 	debugs("Starting");
 
 	/* Check args */
@@ -131,7 +141,7 @@ int main (int argc, char **argv) {
 	}
 
 	/* Open display */
-	display_name = XDisplayName(NULL);
+	display_name = XDisplayName(0);
 	if (!(display = XOpenDisplay(display_name))) {
 		fprintf(stderr, "%s: can't open display %s", MyName, display_name);
 		return 1;
@@ -169,14 +179,14 @@ int main (int argc, char **argv) {
 		unsigned long type, size;
 		unsigned long prev_id = 0;
 
-		while (readLong()!=START_FLAG);               /* Wait for START_FLAG */
-		type = readLong();                            /* Type */
-		size = readLong() - 4;                        /* Size */
+		while (readLong()!=START_FLAG);              /* Wait for START_FLAG */
+		type = readLong();                           /* Type */
+		size = readLong() - 4;                       /* Size */
 		if (size > sizeof buffer / sizeof *buffer) {
 			size = sizeof buffer / sizeof *buffer;
 		}
-		readLong();                                   /* Ignore Timestamp */
-		readLongs((char *)(&buffer), size);           /* Body */
+		readLong();                                  /* Ignore Timestamp */
+		readLongs((char *)(&buffer), size);          /* Body */
 
 		switch (type) {
 			/* M_FOCUS_CHANGE */
@@ -225,7 +235,7 @@ void send(const char *message) {
 
 
 /********** Reads a single unsigned long from FVWM **********/
-unsigned long readLong() {
+static inline unsigned long readLong(void) {
 	static unsigned long buf;
 	readLongs((char*)&buf, 1);
 	return buf;
@@ -269,7 +279,7 @@ void transSet(unsigned long int window, double value) {
 /* Checks whether the window should be ignored */
 static int ignoreWindow(unsigned long int window) {
 	XClassHint class = {0, 0};
-	unsigned long int ignore, *children = NULL;
+	unsigned long int ignore, *children = 0;
 	unsigned int num;
 
 	/* Root window or no window */

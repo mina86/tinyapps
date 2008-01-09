@@ -1,7 +1,7 @@
 /*
  * tuptime - Shows total and biggest uptime.
- * $Id: tuptime.c,v 1.7 2007/05/18 22:03:40 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
+ * $Id: tuptime.c,v 1.8 2008/01/09 18:50:58 mina86 Exp $
+ * Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,14 +63,14 @@
 
 
 /* Error messages stuff */
-char *program_name;   /* Name program was run with */
+static char *program_name;   /* Name program was run with */
 #define ERR(msg, arg) fprintf(stderr, "%s: " msg "\n", program_name, arg)
 #define ERRS(msg) ERR("%s", msg);
 
 
 /* Usage information */
-void usage() {
-	puts("tuptime  0.1  (c) 2005 Michal Nazarewicz\n"
+static void usage(void) {
+	puts("tuptime  0.1  (c) 2005,2006 Michal Nazarewicz\n"
 	     "usage: tuptime [ -h | [ -b<file> ] [ -u<file> ] -r ]\n"
 	     " -h        prints this screen\n"
 	     " -b<file>  path to 'buptime' file (default '" BUPTIME "')\n"
@@ -81,7 +81,7 @@ void usage() {
 
 
 /* Prints uptime */
-void print_uptime(const char *title, double uptime, double idle) {
+static void print_uptime(const char *title, double uptime, double idle) {
 	int d = uptime / 24 / 3600;
 	int h = (int)(uptime/3600) % 24;
 	int m = (int)(uptime/ 60 );

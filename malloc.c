@@ -1,7 +1,7 @@
 /*
  * Allocates specified amount of memory.
- * $Id: malloc.c,v 1.10 2007/08/09 07:13:27 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
+ * $Id: malloc.c,v 1.11 2008/01/09 18:50:58 mina86 Exp $
+ * Copyright (c) 2005,2007 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  */
 
@@ -15,42 +15,44 @@
 
 /********** Config **********/
 
-/* Comment the next line out if you don't compile for platform with
-   signal.h file. */
-#define HAVE_SIGNAL_H
 /* Comment the next line out if your platform doesn't have sbrk()
    function */
 #define HAVE_SBRK
 
 
+#if __STDC_VERSION__ < 199901L
+#  if defined __GNUC__
+#    define inline   __inline__
+#  else
+#    define inline
+#  endif
+#endif
+
+
+
 /********** Includes **********/
+#define _BSD_SOURCE
+#define _SVID_SOURCE
+#define _XOPEN_SOURCE 500
+
 #include <stdlib.h>
 #include <stdio.h>
-#ifdef HAVE_SIGNAL_H
-# include <signal.h>
-#endif
+#include <signal.h>
 #ifdef HAVE_SBRK
 # include <errno.h>
 # include <unistd.h>
 #endif
 
-
 /********** Variables **********/
-#ifdef HAVE_SIGNAL_H
-static volatile int signum = 0;
-#else
-#define signum 0
-#endif
+static volatile sig_atomic_t signum = 0;
 
 
 /********** Function declarations **********/
-long parse_arg(char *arg);
-void usage();
-#ifdef HAVE_SIGNAL_H
-void signal_handler(int sig);
-#endif
-int  alloc(int num);
-void progress(long allocated, long to_allocate);
+static long parse_arg(char *arg);
+static void usage(void);
+static void signal_handler(int sig);
+static inline int  alloc(int num);
+static void progress(long allocated, long to_allocate);
 
 
 
@@ -72,14 +74,12 @@ int main(int argc, char **argv) {
 		return 2;
 	}
 
-#ifdef HAVE_SIGNAL_H
 	/* Catch signals */
 	for (dot = 0; dot<32; signal(++dot, &signal_handler));
-#endif
 
 	/* Allocate */
 	dot = to_allocate>2048 ? to_allocate>>11 : 1;
-	setvbuf(stdout, NULL, _IONBF, 0);              /* unbuffered */
+	setvbuf(stdout, 0, _IONBF, 0);              /* unbuffered */
 
 	while (!signum && allocated<to_allocate && alloc(dot)) {
 		progress(allocated += dot, to_allocate);
@@ -94,7 +94,7 @@ int main(int argc, char **argv) {
 
 
 /********** Parses arg **********/
-long parse_arg(char *arg) {
+static long parse_arg(char *arg) {
 	double ret = strtod(arg, &arg);
 	switch (*arg) {
 	case 'K':               ++arg; break;
@@ -107,7 +107,7 @@ long parse_arg(char *arg) {
 
 
 /********** Usage **********/
-void usage() {
+static void usage(void) {
 	puts("usage: malloc <bytes>\n"
 		 " <bytes>  number of bytes to allocates;\n"
 		 "          can be fallowed by K (the default), M or G\n");
@@ -116,17 +116,16 @@ void usage() {
 
 
 
-#ifdef HAVE_SIGNAL_H
 /********** Signal handler **********/
-void signal_handler(int sig) {
+static void signal_handler(int sig) {
 	signum = sig;
+	signal(sig, signal_handler);
 }
-#endif
 
 
 
 /********** Allocates memory **********/
-int alloc(int num) {
+static inline int alloc(int num) {
 	char *ptr;
 #ifdef HAVE_SBRK
 	errno = 0;
@@ -134,7 +133,7 @@ int alloc(int num) {
 	if (errno) return 0;
 #else
 	ptr = malloc(num <<= 10);
-	if (ptr==NULL) return 0;
+	if (!ptr) return 0;
 #endif
 	do {
 		*ptr++ = --num;
@@ -145,7 +144,7 @@ int alloc(int num) {
 
 
 /********** Prints progress **********/
-void progress(long allocated, long to_allocate) {
+static void progress(long allocated, long to_allocate) {
 	/* Zi an Yi are unofficial; Yi is 2^80 so there is no way we will
 	   ever allocat that amout of memoty ;) therefore we don't need to
 	   check whether there are some units available */
@@ -181,4 +180,6 @@ void progress(long allocated, long to_allocate) {
 
 	/* Percentage */
 	printf(" (%5.1f%%)\r", allocated*100.0/to_allocate);
+
+	fflush(stdout);
 }

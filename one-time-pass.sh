@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Changes user's password to a random one
-## $Id: one-time-pass.sh,v 1.3 2006/09/28 15:06:19 mina86 Exp $
+## $Id: one-time-pass.sh,v 1.4 2008/01/09 18:50:58 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
@@ -20,10 +20,9 @@
 ##
 
 set -e
-ARG0="${0##*/}"
 
 if ! which genpass.sh >/dev/null 2>&1; then
-	printf "%s: genpass.sh required\n"
+	echo "`basename \"$0\"`: genpass.sh required"
 	exit 1
 fi
 

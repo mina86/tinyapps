@@ -1,7 +1,7 @@
 /*
  * mountiso - Mounts/unmounts ISO images
- * $Id: mountiso.c,v 1.4 2007/08/07 13:34:10 mina86 Exp $
- * Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
+ * $Id: mountiso.c,v 1.5 2008/01/09 18:50:58 mina86 Exp $
+ * Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -48,8 +48,17 @@
 #define MNT_OPTS    "loop,ro,nosuid,noexec,nodev"
 
 
+#if __STDC_VERSION__ < 199901L
+#  if defined __GNUC__
+#    define inline   __inline__
+#  else
+#    define inline
+#  endif
+#endif
+
+
 static int check_paths(int argc, char **argv, uid_t uid, int mount);
-static const char *mnt_opts(uid_t uid);
+static inline const char *mnt_opts(uid_t uid);
 
 
 int main(int argc, char **argv) {
@@ -98,7 +107,7 @@ int main(int argc, char **argv) {
 
 	/* Mount */
 #ifdef DEFAULT_DIR
-	argv[argc] = DEFAULT_DIR;
+	argv[argc] = (char*)DEFAULT_DIR;
 #endif
 	if (mount) {
 		execl(MOUNT, MOUNT, "-o", mnt_opts(uid), "--", argv[1], argv[2],
@@ -152,7 +161,7 @@ static int check_paths(int argc, char **argv, uid_t uid, int mount) {
 
 
 
-static const char *mnt_opts(uid_t uid) {
+static inline const char *mnt_opts(uid_t uid) {
 	static char buffer[sizeof(MNT_OPTS)+50];
 	sprintf(buffer, "%s,uid=%lu", MNT_OPTS, (unsigned long)uid);
 	return buffer;
