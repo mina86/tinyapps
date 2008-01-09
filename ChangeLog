@@ -2,6 +2,17 @@
 
 	* Makefile: + executes commands using 'exec' (less forks)
 
+	* cdiff.c: + supports more formats
+	+ may be run as a wrapper
+
+	* cutcom.c: + new state as a pointer to new state, not index
+
+	* FvwmTransFocus.c, check.sh, libmpdclient.c, libmpdclient.h,
+	load.c, malloc.c, mountiso.c, mpd-show.c, mpd-state.c,
+	one-time-pass.sh, timer.c, tuptime.c: + better standard compatibility
+	+ better portability
+	+ better usage of static and inline keywords (in case of C)
+
 2007-08-21  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* getlyrics.pl: + added --edit option
