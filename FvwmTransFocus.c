@@ -1,6 +1,6 @@
 /*
  * FVWM module changing opacity depending on focus.
- * $Id: FvwmTransFocus.c,v 1.9 2008/01/09 18:50:58 mina86 Exp $
+ * $Id: FvwmTransFocus.c,v 1.10 2008/02/07 19:28:38 mina86 Exp $
  * Copyright 2005-2008 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Some code from transset by Matthew Hawn
  *
@@ -125,9 +125,9 @@ static int ErrorHandler(Display *dsp, XErrorEvent *error);
 
 /********** Main **********/
 int main (int argc, char **argv) {
-	char *display_name;
+	char *display_name, set_mask_mesg[50];
+	unsigned long prev_id = 0;
 	double values[3];
-	char set_mask_mesg[50];
 
 	/* Get executable name */
 	MyName = strrchr(argv[0], '/');
@@ -175,9 +175,7 @@ int main (int argc, char **argv) {
 	/* Loop */
 	debugs("Loop begins");
 	for(;;){
-		unsigned long buffer[252];
-		unsigned long type, size;
-		unsigned long prev_id = 0;
+		unsigned long buffer[252], type, size;
 
 		while (readLong()!=START_FLAG);              /* Wait for START_FLAG */
 		type = readLong();                           /* Type */

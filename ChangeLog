@@ -1,3 +1,7 @@
+2008-02-07  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* FvwmTransFocus.c: + bug where prev_id value was not preserved fixed
+
 2008-01-09  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* Makefile: + executes commands using 'exec' (less forks)
