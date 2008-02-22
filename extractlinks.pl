@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 ##
 ## Extracts links from a HTML page
-## $Id: extractlinks.pl,v 1.5 2008/01/09 18:51:52 mina86 Exp $
+## $Id: extractlinks.pl,v 1.6 2008/02/22 00:08:51 mina86 Exp $
 ## Copyright (c) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -37,17 +37,19 @@ use LWP::UserAgent;
 use HTML::LinkExtor;
 
 
-my $VERSION = sprintf("%d.%02d", q$Revision: 1.5 $ =~ /(\d+)\.(\d+)/);
+my $VERSION = sprintf("%d.%02d", q$Revision: 1.6 $ =~ /(\d+)\.(\d+)/);
 
 
 my $url = '';
 my @tags = ();
 my $noabs = 0;
+my $base_uri;
 
 
 pod2usage() unless GetOptions(
     'tag|tags|t=s' => \@tags,
     'relative|r'   => \$noabs,
+    'base|b=s'     => \$base_uri,
     'help|h|?'     => sub { pod2usage(-verbose => 1); });
 @tags = split(/,/, join ',', @tags);
 
@@ -66,7 +68,7 @@ while (@ARGV) {
 
   if ($url eq '-') {
     $parser->parse( sub { <STDIN> } );
-    $base = URI::file->cwd;;
+    $base = defined $base_uri ? $base_uri : URI::file->cwd;
     @links = map { $_ = url($_, $base)->abs; } @links unless ($noabs);
 
   } else {
@@ -81,7 +83,7 @@ while (@ARGV) {
       print("\n");
       $error = 1;
     } elsif (!$noabs) {
-      $base = $res->base;
+      $base = defined $base_uri ? $base_uri : $res->base;
       @links = map { $_ = url($_, $base)->abs; } @links;
     }
   }
@@ -112,7 +114,7 @@ specified as absolute URL.
 
 =head1 SYNOPSIS
 
-extractlinks [ -t tags ] [ -r ] [ -- ] [ url ... ]
+extractlinks [ -t tags ] [ -r | -b base ] [ -- ] [ url ... ]
 
 =head1 OPTIONS
 
@@ -125,6 +127,11 @@ Displays help screen.
 =item B<-r --relative>
 
 Won't make links absolute.
+
+=item B<-b --base=>I<base>
+
+Uses I<base> as relative links base address instead of base address of
+input file.
 
 =item B<-t --tag=>I<tags>
 
