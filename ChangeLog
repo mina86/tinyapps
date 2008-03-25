@@ -1,3 +1,7 @@
+2008-03-06  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* the-book-of-mozilla.txt: + two quotes added
+
 2008-02-22  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* extractlinks.pl: + added -b option to specify base address

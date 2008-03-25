@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotations from The Book of Mozilla.
-## $Id: the-book-of-mozilla.txt,v 1.5 2008/01/09 18:47:02 mina86 Exp $
+## $Id: the-book-of-mozilla.txt,v 1.6 2008/03/25 14:16:16 mina86 Exp $
 ## By Michal Nazarewicz (mina86/AT/mina86.com)
 ## Released to Public Domain
 ##
@@ -33,6 +33,26 @@ world. The scribe ended the inspired parchments, letting the believers cry
 over that new view on Earth. Long after the thunder and the fire, came the
 sun and finally the long awaited rainbow...
 	from The Book of Mozilla, 8:23
+% Official
+And thus the Creator looked upon the beast reborn and saw that it was good.
+	from The Book of Mozilla, 8:20
+% Official
+Mammon slept. And the beast reborn spread over the earth and its numbers
+grew legion. And they proclaimed the times and sacrificed crops unto the
+fire, with the cunning of foxes. And they built a new world in their own
+image as promised by the sacred words, and spoke of the beast with their
+children. Mammon awoke, and lo! it was naught but a follower.
+	from The Book of Mozilla, 11:9
+	(10th Edition)
+% Unofficial (Flock Browser)
+And when the Beast had taken the quarter of the Earth under its rule,
+a quarter hundred Birds of Sulfur flew from the Depths. The birds crossed
+hundreds of mountain views and found twenty four wise men who came from the
+stars. And then it began, the believers dared to listen. Then, they took
+their pens and dared to create. Finally, they dared to share their deed
+with the whole of mankind. Spreading words of freedom and breaking the
+chains, the birds brought deliverance to everyone.
+	from The Book of Mozilla, 11:1
 % Unofficial
 And so the beast became agile. The unbelievers fell silent and the
 followers of Mammon were left behind. The beast had been improved and
