@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.34 2008/01/09 18:26:19 mina86 Exp $
+## $Id: Makefile,v 1.35 2008/04/17 21:39:01 mina86 Exp $
 ## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -84,9 +84,9 @@ help:
 ##
 ## List of all applications
 ##
-all: FvwmTransFocus cdiff cutcom drun infinite-logger				\
-     installkernel.8.gz load malloc mpd-show mpd-state null quotes	\
-     the-book-of-mozilla rot13 timer tuptime umountiso xgetclass
+all: FvwmTransFocus cdiff cutcom drun infinite-logger					\
+     installkernel.8.gz load malloc mpd-show mpd-state null quotes		\
+     the-book-of-mozilla rot13 timer tuptime umountiso xgetclass xrun
 
 
 install: install-FvwmTransFocus install-add install-ai					\
@@ -101,7 +101,7 @@ install: install-FvwmTransFocus install-add install-ai					\
          install-pingrange.pl install-rot13 install-settitle			\
          install-show install-splitlines.sh install-timer install-tpwd	\
          install-traf.sh install-tv install-virtman.sh					\
-         install-xcolor2rgb install-xgetclass
+         install-xcolor2rgb install-xgetclass install-xrun
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
@@ -117,7 +117,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-rot13 uninstall-settitle uninstall-show			\
            uninstall-splitlines.sh uninstall-timer uninstall-tpwd		\
            uninstall-traf.sh uninstall-tv uninstall-virtman.sh			\
-           uninstall-xcolor2rgb uninstall-xgetclass
+           uninstall-xcolor2rgb uninstall-xgetclass uninstall-xrun
 
 
 ##
@@ -148,10 +148,25 @@ FvwmTransFocus: FvwmTransFocus.o
 	@echo '  LD     $@'
 	$(Q)exec $(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
 
+xrun: null
+	@echo '  LN     $@'
+	$(Q)exec ln -sf -- $< $@
+
+brun: null
+	@echo '  LN     $@'
+	$(Q)exec ln -sf -- $< $@
+
+Brun: null
+	@echo '  LN     $@'
+	$(Q)exec ln -sf -- $< $@
+
 drun: null
 	@echo '  LN     $@'
-	$(Q)exec rm -f -- drun
-	$(Q)exec ln -s -- null drun
+	$(Q)exec ln -sf -- $< $@
+
+Drun: null
+	@echo '  LN     $@'
+	$(Q)exec ln -sf -- $< $@
 
 mpd-show: mpd-show.o libmpdclient.o
 	@echo '  LD     $@'
