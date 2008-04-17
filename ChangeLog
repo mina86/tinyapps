@@ -1,3 +1,13 @@
+2008-04-17  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* null.c: + removed configuration macros
+	+ daemonization also redirects stdin from /dev/null
+	+ daemonization also changes dir to root directory
+	+ when discardig data from stdin changes dir to root directory
+	+ nicer usage message added
+	+ when checking command name only first character is analyzed
+	+ error checking added
+
 2008-03-06  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* the-book-of-mozilla.txt: + two quotes added
