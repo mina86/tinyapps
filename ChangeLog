@@ -1,3 +1,9 @@
+2008-04-19  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* null.c: + -N switch for adjusting nice
+	+ now waits for 1 sec in case child will terminate
+	+ -w switch
+
 2008-04-17  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* null.c: + removed configuration macros
