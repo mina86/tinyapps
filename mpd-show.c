@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.16 2008/01/09 18:50:58 mina86 Exp $
+ * $Id: mpd-show.c,v 1.17 2008/04/20 15:39:21 mina86 Exp $
  * Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -188,7 +188,7 @@ int main(int argc, char **argv) {
 /******************** Usage ********************/
 static void usage(void) {
 	printf("mpd-show   (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)\n" \
-	       "$Id: mpd-show.c,v 1.16 2008/01/09 18:50:58 mina86 Exp $\n"
+	       "$Id: mpd-show.c,v 1.17 2008/04/20 15:39:21 mina86 Exp $\n"
 	       "\n" \
 	       "usage: %s [ <options> ] [ <host> [ <port> ]]\n" \
 	       "<options> are:\n" \
@@ -624,7 +624,7 @@ static void redisplay(struct config *config, struct name *name,
 
 	/* Aliases */
 	const size_t columns = config->columns;
-	char *const buffer = config->buffer + 0;
+	char *const buffer = config->buffer + 30;
 
 	/* Fill buffer with song name */
 	if (name->len <= columns - 3) {

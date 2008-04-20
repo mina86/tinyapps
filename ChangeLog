@@ -1,3 +1,7 @@
+2008-04-20  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* mpd-show.c: + fixed wwriting outside of buffer
+
 2008-04-19  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* null.c: + -N switch for adjusting nice
