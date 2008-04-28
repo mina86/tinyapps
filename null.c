@@ -1,6 +1,6 @@
 /*
  * Discards standard input.
- * $Id: null.c,v 1.10 2008/04/19 21:05:07 mina86 Exp $
+ * $Id: null.c,v 1.11 2008/04/28 19:18:35 mina86 Exp $
  * Copyright (c) 2005-2008 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -86,7 +86,7 @@ static void usage(FILE *out, char *cmd, int full) {
 	      "             default unless command name first letter maches one\n"
 	      "             of the [xBdD] (x means b)\n"
 	      "  -B         -b + print child's PID\n"
-	      "  -d         discard input and output and daemonization"
+	      "  -d         discard input and output and daemonization\n"
 	      "  -D         -d + print child's PID\n"
 #if !DISABLE_NICE
 	      "  -N<[adj>]  adjust nice by <adj> (10 by default)\n"
@@ -234,7 +234,7 @@ int main(int argc, char **argv) {
 #if !DISABLE_WAIT
 			if (doWait) wait_and_exit(argv0);
 #endif
-			wait_and_exit(argv0);
+			_exit(0);
 		}
 
 		/* Close all fds and stdin*/
