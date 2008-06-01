@@ -1,6 +1,6 @@
 /*
  * Discards standard input.
- * $Id: null.c,v 1.11 2008/04/28 19:18:35 mina86 Exp $
+ * $Id: null.c,v 1.12 2008/06/01 08:52:15 mina86 Exp $
  * Copyright (c) 2005-2008 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -94,6 +94,8 @@ static void usage(FILE *out, char *cmd, int full) {
 #if !DISABLE_WAIT
 	      "  -w         do not wait a second in case child exits\n"
 #endif
+	      "  -c<dir>    change directory to <dir>\n"
+	      "  -c         do not change directory when daemonizing\n"
 	      , out);
 }
 
@@ -107,6 +109,7 @@ static void wait_and_exit(char *argv0);
 
 /******** Main ********/
 int main(int argc, char **argv) {
+	const char *dir = 0;
 	char *argv0, *c;
 	int daemonize;
 #if !DISABLE_NICE
@@ -123,8 +126,8 @@ int main(int argc, char **argv) {
 	switch (*argv0) {
 	case 'n': daemonize = 0; break;
 	case 'B': daemonize = 2; break;
-	case 'd': daemonize = 3; break;
-	case 'D': daemonize = 4; break;
+	case 'd': daemonize = 3; dir = "/"; break;
+	case 'D': daemonize = 4; dir = "/"; break;
 	default:  daemonize = 1;
 	}
 
@@ -152,8 +155,8 @@ int main(int argc, char **argv) {
 			case 'n': daemonize = 0; break;
 			case 'b': daemonize = 1; break;
 			case 'B': daemonize = 2; break;
-			case 'd': daemonize = 3; break;
-			case 'D': daemonize = 4; break;
+			case 'd': daemonize = 3; dir = "/"; break;
+			case 'D': daemonize = 4; dir = "/"; break;
 
 #if !DISABLE_NICE
 			case 'N':
@@ -173,6 +176,15 @@ int main(int argc, char **argv) {
 #if !DISABLE_WAIT
 			case 'w': doWait = 0; break;
 #endif
+
+			case 'c':
+				if (argv[0][pos + 1]) {
+					dir = argv[0] + pos + 1;
+					pos += strlen(dir);
+				} else {
+					dir = 0;
+				}
+				break;
 
 			case 'h': usage(stdout, argv0, 1); return 0;
 			case '-': if (pos == 1 && !argv[0][2]) goto args_end;
@@ -218,12 +230,16 @@ int main(int argc, char **argv) {
 		}
 	}
 
+	/* Change dir */
+	if (dir) {
+		DIE(chdir(dir), dir);
+	}
+
 	/* Daemonize */
 	if (daemonize>2) {
 		pid_t pid;
 		int i;
 
-		DIE(chdir("/"), "chdir: /");
 		DIE(setsid() < 0, "setsid");
 
 		switch (pid = fork()) {

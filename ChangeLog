@@ -2,6 +2,8 @@
 
 	* arpping.c: New file
 
+	* null.c: + -c switch added (for chdir)
+
 2008-04-28  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* null.c: + fixed bug where -w was ignored when daemonizing
