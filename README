@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2007/08/07 13:47:56 $
+                     $Date: 2008/06/01 08:50:36 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and  other things  which  may be  useful  in everyday  life of  system
@@ -22,6 +22,10 @@ At the moment the collection includes:
  * ai-sid.pl - it's a joke as well.   An 8 line long AI which might by
    written    by   Sid    from   UserFriendly.     Fore    more   see:
    http://ars.userfriendly.org/cartoons/?id=20001014 ;
+
+ * arpping - tool which pings device with given IP using ARP protocol.
+   It may be used without IP address assigned to our machine,
+   ie. priori to calling DHCP client or such.
 
  * changelog.pl  -   application  providing  global   change  log  for
    administrators to  fill and  users to read.   For instance,  can be

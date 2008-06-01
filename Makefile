@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.35 2008/04/17 21:39:01 mina86 Exp $
+## $Id: Makefile,v 1.36 2008/06/01 08:50:36 mina86 Exp $
 ## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -84,39 +84,39 @@ help:
 ##
 ## List of all applications
 ##
-all: FvwmTransFocus cdiff cutcom drun infinite-logger					\
+all: FvwmTransFocus arpping cdiff cutcom drun infinite-logger			\
      installkernel.8.gz load malloc mpd-show mpd-state null quotes		\
      the-book-of-mozilla rot13 timer tuptime umountiso xgetclass xrun
 
 
-install: install-FvwmTransFocus install-add install-ai					\
+install: install-FvwmTransFocus install-add install-ai install-arpping	\
          install-changelog.pl install-cdiff install-cdiff.sed			\
          install-check.sh install-checkmail install-cpuload.sh			\
          install-cutcom install-drun install-extractlinks.pl			\
          install-fortune install-genpass.sh install-get_mks_vir_bases	\
          install-getlyrics.pl install-gz2bz install-inplace				\
          install-installkernel install-ivona.sh install-lesspipe		\
-         install-load install-malloc install-moz2elinks.pl				\
-         install-mp3rip install-mpd-state install-null					\
-         install-pingrange.pl install-rot13 install-settitle			\
-         install-show install-splitlines.sh install-timer install-tpwd	\
-         install-traf.sh install-tv install-virtman.sh					\
-         install-xcolor2rgb install-xgetclass install-xrun
+         install-load install-moz2elinks.pl install-mp3rip				\
+         install-mpd-state install-null install-pingrange.pl			\
+         install-rot13 install-settitle install-show					\
+         install-splitlines.sh install-timer install-tpwd				\
+         install-traf.sh install-virtman.sh install-xcolor2rgb			\
+         install-xgetclass install-xrun
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
-           uninstall-changelog.pl uninstall-cdiff uninstall-cdiff.sed	\
-           uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh	\
-           uninstall-cutcom uninstall-drun uninstall-extractlinks.pl	\
-           uninstall-fortune uninstall-genpass.sh						\
-           uninstall-get_mks_vir_bases uninstall-getlyrics.pl			\
-           uninstall-gz2bz uninstall-ivona.sh uninstall-inplace			\
-           uninstall-installkernel uninstall-lesspipe uninstall-load	\
-           uninstall-malloc uninstall-moz2elinks.pl uninstall-mp3rip	\
-           uninstall-mpd-state uninstall-null uninstall-pingrange.pl	\
-           uninstall-rot13 uninstall-settitle uninstall-show			\
-           uninstall-splitlines.sh uninstall-timer uninstall-tpwd		\
-           uninstall-traf.sh uninstall-tv uninstall-virtman.sh			\
+           uninstall-arpping uninstall-changelog.pl uninstall-cdiff		\
+           uninstall-cdiff.sed uninstall-check.sh uninstall-checkmail	\
+           uninstall-cpuload.sh uninstall-cutcom uninstall-drun			\
+           uninstall-extractlinks.pl uninstall-fortune					\
+           uninstall-genpass.sh uninstall-get_mks_vir_bases				\
+           uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh	\
+           uninstall-inplace uninstall-installkernel					\
+           uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl	\
+           uninstall-mp3rip uninstall-mpd-state uninstall-null			\
+           uninstall-pingrange.pl uninstall-rot13 uninstall-settitle	\
+           uninstall-show uninstall-splitlines.sh uninstall-timer		\
+           uninstall-tpwd uninstall-traf.sh uninstall-virtman.sh		\
            uninstall-xcolor2rgb uninstall-xgetclass uninstall-xrun
 
 
@@ -238,6 +238,9 @@ install-ai-pitr.pl: ai-pitr.pl
 install-ai-sid.pl: ai-sid.pl
 	$(call install,root,root,0755,/usr/local/games,$<)
 
+install-arpping: arpping
+	$(call install,root,bin,0755,/usr/local/sbin,$<)
+
 install-installkernel: installkernel installkernel.8.gz
 	$(call install,root,bin,0755,/usr/local/sbin,$<)
 	$(call install,root,root,0644,/usr/local/man/man8,$(addprefix $<,.8.gz))
@@ -296,6 +299,9 @@ uninstall-ai-pitr.pl:
 
 uninstall-ai-sid.pl:
 	$(call uninstall,/usr/local/games/ai-sid.pl)
+
+uninstall-arpping:
+	$(call uninstall,/usr/local/sbin/arpping)
 
 uninstall-installkernel:
 	$(call uninstall,/usr/local/sbin/installkernel)
