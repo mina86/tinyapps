@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## $Id: getlyrics.pl,v 1.14 2008/01/09 18:51:52 mina86 Exp $
+## $Id: getlyrics.pl,v 1.15 2008/07/25 12:19:00 mina86 Exp $
 ## Copyright (c) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -101,17 +101,23 @@ if ($src eq 'mpc') {
 		$port = $2;
 	}
 
-	eval {
-		require Audio::MPD;
-		$arg = new Audio::MPD($arg, $port);
-		return unless $arg;
+	eval { require Audio::MPD; } or
+		die "You are missing Audio::MPD module.\n";
 
-		$foo = $arg->get_title();
-		$foo =~ s#^.*/##;
-		$arg->close_connection();
-
-		1;
-	} or die "Could not connect to MPD.\n";
+	$arg = new Audio::MPD($arg, $port);
+	if ($arg) {
+		eval { # New API
+			my $song = $arg->song();
+			@foo = ( $song->artist(), $song->title() );
+			1;
+		} or eval { # Old API
+			$foo = $arg->get_title();
+			$foo =~ s#^.*/##;
+			$arg->close_connection();
+		}
+	} else {
+		die "Could not connect to MPD.\n";
+	}
 
 
 ##

@@ -2,6 +2,8 @@
 
 	* rand-files.pl: New file
 
+	* getlyrics.pl: + changed to mach new Audio::MPD API
+
 2008-06-01  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* arpping.c: New file
