@@ -1,3 +1,7 @@
+2008-07-25  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* rand-files.pl: New file
+
 2008-06-01  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* arpping.c: New file

@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.36 2008/06/01 08:50:36 mina86 Exp $
+## $Id: Makefile,v 1.37 2008/07/25 10:27:15 mina86 Exp $
 ## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -98,8 +98,8 @@ install: install-FvwmTransFocus install-add install-ai install-arpping	\
          install-installkernel install-ivona.sh install-lesspipe		\
          install-load install-moz2elinks.pl install-mp3rip				\
          install-mpd-state install-null install-pingrange.pl			\
-         install-rot13 install-settitle install-show					\
-         install-splitlines.sh install-timer install-tpwd				\
+         install-rot13 install-rand-files.pl install-settitle			\
+         install-show install-splitlines.sh install-timer install-tpwd	\
          install-traf.sh install-virtman.sh install-xcolor2rgb			\
          install-xgetclass install-xrun
 
@@ -114,10 +114,11 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-inplace uninstall-installkernel					\
            uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl	\
            uninstall-mp3rip uninstall-mpd-state uninstall-null			\
-           uninstall-pingrange.pl uninstall-rot13 uninstall-settitle	\
-           uninstall-show uninstall-splitlines.sh uninstall-timer		\
-           uninstall-tpwd uninstall-traf.sh uninstall-virtman.sh		\
-           uninstall-xcolor2rgb uninstall-xgetclass uninstall-xrun
+           uninstall-pingrange.pl uninstall-rot13						\
+           uninstall-rand-files.pl uninstall-settitle uninstall-show	\
+           uninstall-splitlines.sh uninstall-timer uninstall-tpwd		\
+           uninstall-traf.sh uninstall-virtman.sh uninstall-xcolor2rgb	\
+           uninstall-xgetclass uninstall-xrun
 
 
 ##
@@ -253,8 +254,8 @@ install-mpd-state: mpd-state
 	$(call install,root,bin,0755,/usr/local/bin,$<)
 	$(call install,root,bin,0755,/usr/local/bin,$(addprefix $<,-wrapper.sh))
 	$(Q)for lnk in state-save state-restore state-sync state-amend; do \
-		echo "  LNK    $$lnk" \
-		$(Q)ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/$$lnk \
+		echo "  LNK    $$lnk"; \
+		ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/$$lnk; \
 	done
 
 

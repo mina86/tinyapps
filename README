@@ -1,6 +1,6 @@
 
                      Tiny Applications Collection
-                     $Date: 2008/06/01 08:50:36 $
+                     $Date: 2008/07/25 10:27:15 $
 
 Tiny Applications Collection is a set of small programs, shell scripts
 and  other things  which  may be  useful  in everyday  life of  system
@@ -148,9 +148,14 @@ At the moment the collection includes:
 
  * quotes.txt - a collection of quotations (some are in Polish);
 
+ * rand-files.pl - looks for files with given extensions or matching
+   given regexpes and chooses a random set of them such that their
+   size is no greater then given limit.  Useful for choosing random
+   set of songs to copy to our portable player.
+
  * rot13 - performs an ROT13 'encryption' on stdin;
 
- * settitle -  Sets the title of  xterm, rxvt, Eterm,  aterm and other
+ * settitle -  sets the title of  xterm, rxvt, Eterm,  aterm and other
    xterm-compatible terminals;
 
  * show  - shows  colourised  (if  ccza is  available)  log file  with
