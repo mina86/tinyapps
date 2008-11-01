@@ -1,6 +1,6 @@
 /*
  * mountiso - Mounts/unmounts ISO images
- * $Id: mountiso.c,v 1.5 2008/01/09 18:50:58 mina86 Exp $
+ * $Id: mountiso.c,v 1.6 2008/11/01 17:28:33 mina86 Exp $
  * Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
  *
  * This program is free software; you can redistribute it and/or modify
@@ -30,6 +30,8 @@
  * # cp mountiso /usr/bin
  * # exit
  */
+
+#define _FILE_OFFSET_BITS 64 /* Large file support */
 
 #include <errno.h>
 #include <limits.h>
@@ -94,7 +96,7 @@ int main(int argc, char **argv) {
 
 		/* Became root */
 		if (setuid(0)) {
-			fprintf(stderr, "%s: setuid: %s", argv[0], strerror(errno));
+			fprintf(stderr, "%s: setuid: %s\n", argv[0], strerror(errno));
 			return 1;
 		}
 

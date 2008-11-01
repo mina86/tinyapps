@@ -1,3 +1,12 @@
+2008-11-01  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* mountiso.c: + added large file support
+
+	* Makefile: + mountiso mode changed to 4750 and owneship to
+	root:root (ie. fewer users can use it by default now)
+	+ removed cdif.sed, get_mks_vir_bases and ivona.sh from default
+	install target
+
 2008-07-25  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* rand-files.pl: New file

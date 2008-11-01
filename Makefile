@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.37 2008/07/25 10:27:15 mina86 Exp $
+## $Id: Makefile,v 1.38 2008/11/01 17:28:33 mina86 Exp $
 ## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -90,12 +90,11 @@ all: FvwmTransFocus arpping cdiff cutcom drun infinite-logger			\
 
 
 install: install-FvwmTransFocus install-add install-ai install-arpping	\
-         install-changelog.pl install-cdiff install-cdiff.sed			\
-         install-check.sh install-checkmail install-cpuload.sh			\
-         install-cutcom install-drun install-extractlinks.pl			\
-         install-fortune install-genpass.sh install-get_mks_vir_bases	\
-         install-getlyrics.pl install-gz2bz install-inplace				\
-         install-installkernel install-ivona.sh install-lesspipe		\
+         install-changelog.pl install-cdiff install-check.sh			\
+         install-checkmail install-cpuload.sh install-cutcom			\
+         install-drun install-extractlinks.pl install-fortune			\
+         install-genpass.sh install-getlyrics.pl install-gz2bz			\
+         install-inplace install-installkernel install-lesspipe			\
          install-load install-moz2elinks.pl install-mp3rip				\
          install-mpd-state install-null install-pingrange.pl			\
          install-rot13 install-rand-files.pl install-settitle			\
@@ -106,10 +105,9 @@ install: install-FvwmTransFocus install-add install-ai install-arpping	\
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-arpping uninstall-changelog.pl uninstall-cdiff		\
-           uninstall-cdiff.sed uninstall-check.sh uninstall-checkmail	\
-           uninstall-cpuload.sh uninstall-cutcom uninstall-drun			\
-           uninstall-extractlinks.pl uninstall-fortune					\
-           uninstall-genpass.sh uninstall-get_mks_vir_bases				\
+           uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh	\
+           uninstall-cutcom uninstall-drun uninstall-extractlinks.pl	\
+           uninstall-fortune uninstall-genpass.sh
            uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh	\
            uninstall-inplace uninstall-installkernel					\
            uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl	\
@@ -247,8 +245,8 @@ install-installkernel: installkernel installkernel.8.gz
 	$(call install,root,root,0644,/usr/local/man/man8,$(addprefix $<,.8.gz))
 
 install-mountiso: mountiso umountiso
-	$(call install,root,bin,4755,/usr/local/bin/,mountiso)
-	$(call install,root,bin,4755,/usr/local/bin/,umountiso)
+	$(call install,root,root,4750,/usr/local/bin/,mountiso)
+	$(call install,root,root,0750,/usr/local/bin/,umountiso)
 
 install-mpd-state: mpd-state
 	$(call install,root,bin,0755,/usr/local/bin,$<)
@@ -257,7 +255,6 @@ install-mpd-state: mpd-state
 		echo "  LNK    $$lnk"; \
 		ln -fs -- mpd-state-wrapper.sh $(DEST_DIR)/usr/local/bin/$$lnk; \
 	done
-
 
 install-show: show
 	$(call install,root,bin,0755,/usr/local/sbin,$<)
@@ -366,11 +363,11 @@ endif
 
 	@echo '  RM     state-save state-restore state-sync state-amend'
 	$(Q)exec rm -f -- '$(DEST_DIR)/usr/local/bin/state-save'		\
-	                  '$(DEST_DIR)/usr/local/bin/state-restore'	\
+	                  '$(DEST_DIR)/usr/local/bin/state-restore'		\
 	                  '$(DEST_DIR)/usr/local/bin/state-sync'		\
 	                  '$(DEST_DIR)/usr/local/bin/state-amend'
-#	@echo '  RM     umountiso'
-#	$(Q)rm -f -- '$(DEST_DIR)/bin/umountiso'
+	@echo '  RM     umountiso'
+	$(Q)rm -f -- '$(DEST_DIR)/bin/umountiso'
 
 	@echo '  GEN    usr/doc/tinyapps-$(RELEASE)'
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)'
@@ -381,14 +378,13 @@ endif
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/install'
 	$(Q)echo 'cd usr/local/bin' >'$(DEST_DIR)/install/doinst.sh'
 	$(Q)echo 'for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $$FILE; done' >>'$(DEST_DIR)/install/doinst.sh'
-#	$(Q)echo 'ln -fs mountiso umountiso; chown root:root mountiso; chmod u+s mountiso' >>'$(DEST_DIR)/install/doinst.sh'
+	$(Q)echo 'ln -fs mountiso umountiso; chown root:bin mountiso' >>'$(DEST_DIR)/install/doinst.sh'
 	$(Q)exec chmod 755 -- '$(DEST_DIR)/install/doinst.sh'
 	@echo '  CP     slack-desc'
 	$(Q)exec cp -- slack-desc '$(DEST_DIR)/install'
 
 	@echo '  TAR    tinyapps.tar'
-	$(Q)$(RT)exec tar c -C '$(DEST_DIR)' --format=v7 install usr >tinyapps.tar
-	$(Q)$(NR)exec tar c -C '$(DEST_DIR)' --owner=root --group=root --format=v7 install usr >tinyapps.tar
+	$(Q)exec tar c -C '$(DEST_DIR)' --owner=root --group=root --format=v7 install usr >tinyapps.tar
 	@echo '  GZIP   tinyapps-$(RELEASE).tgz'
 	$(Q)exec gzip -9 <'tinyapps.tar' >'tinyapps-$(RELEASE).tgz'
 	$(Q)exec rm -f -- tinyapps.tar
