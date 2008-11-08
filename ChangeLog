@@ -1,3 +1,9 @@
+2008-11-08  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* quotes.txt: + its "Oscar Wilde" not "Oscar Wide", dunno how this
+	typo show up in the first place
+	+ a few new quotes
+
 2008-11-01  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mountiso.c: + added large file support

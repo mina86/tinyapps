@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.18 2008/01/09 18:51:52 mina86 Exp $
+## $Id: quotes.txt,v 1.19 2008/11/08 11:50:27 mina86 Exp $
 ## Copyright (c) 2003-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License v. 2.1.
 ##
@@ -73,6 +73,10 @@ wrong, France will say I am a German and Germany will say I am a Jew.
  We can't solve problems by using the same kind of thinking we used when we
 created them.
 	-- Albert Einstein (1879-1955)
+%
+ When everyone is against you, it means that you are absolutely wrong--or
+absolutely right.
+	-- Albert Guinon (1863-1923)
 %
  Learn all you can from the mistakes of others.  You won't have time to
 make them all yourself.
@@ -270,6 +274,19 @@ wykonaniu ludzi ca³kiem ku temu nie maj±cych predyspozycji.
 	-- Zawisza Czarny
 	-- from Andrzej Sapkowski (1948-), Narrenturm
 %
+ - Brekk-rek - zaskrzecza³. - Bhrekk-rekekeks.
+ - Wypluj mu³ i powtórz, proszê.
+ - Bhrekekgreg-greg-greg.
+ - Robisz idiotê z siebie? Czy ze mnie?
+ - Kuaks-kwaaks.
+ - [...] Nie nabierzesz mnie.  Doskonale wiem, ¿e rozumiecie i umiecie
+mówiæ po ludzku.
+ Wodnik zamruga³ podwójnymi powiekami i otworzy³ usta, szerokie jak
+u ropuchy.
+ - Po ludzku... - zabulgota³, pluj±c wod± - Po ludzku owszem, tak.  Ale
+dlaczego mam gadaæ po niemiecku?
+	-- from Andrzej Sapkowski (1948-), Bo¿y bojownicy
+%
  Computers make it easier to do a lot of things, but most of the things
 they make it easier to do don't need to be done.
 	-- Andy A. Rooney (1919-)
@@ -278,7 +295,7 @@ they make it easier to do don't need to be done.
 	-- Antonio Jose de Sucre (1795-1830)  [last words]
 %
  Bardzo zaawansowana technologia niewiele ró¿ni siê od magii.
-	-- Arthur C. Clarke (1917-)
+	-- Sir Arthur Charles Clarke (1917-2008)
 %
  A bullet to his head won't bring back the dead, but it'll lift the spirit
 of my people!
@@ -455,6 +472,9 @@ show their absence.
 %
  Masochizm wynika z niewiedzy.
 	-- Edward Stachowski
+%
+ Genius may have its limitations, but stupidity is not thus handicapped.
+	-- Elbert Green Hubbard (1856-1915)
 %
  To sin by silence when we should protest makes cowards out of men.
 	-- Ella Wheeler Wilcox (1850-1919)
@@ -1110,59 +1130,59 @@ zdechn±æ.
 	-- Olavo Braz Martins dos Guimaraes Bilac (1865-1918)  [last words]
 %
  Experience is the name everyone gives to their mistakes.
-	-- Oscar Wide (1854-1900)
+	-- Oscar Wilde (1854-1900)
 %
  To get back my youth I would do anything in the world, except take
 exercise, get up early, or be respectable.
-	-- Oscar Wide (1854-1900)
+	-- Oscar Wilde (1854-1900)
 %
  The Only way to behave to a woman is to make love to her, if she is
 pretty, and to someone else, if she is plain.
-	-- Oscar Wide (1854-1900), The Importance of Being Earnest
+	-- Oscar Wilde (1854-1900), The Importance of Being Earnest
 %
  The only thing to do with good advice is pass it on.  It is never any use
 to oneself.
-	-- Oscar Wide (1854-1900), An Ideal Husband
+	-- Oscar Wilde (1854-1900), An Ideal Husband
 %
  Sooner or later we have all to pay for what we do.
-	-- Oscar Wide (1854-1900), An Ideal Husband
+	-- Oscar Wilde (1854-1900), An Ideal Husband
 %
  I love talking about nothing, father.  It is the only thing I know
 anything about.
-	-- Oscar Wide (1854-1900), An Ideal Husband
+	-- Oscar Wilde (1854-1900), An Ideal Husband
 %
  Women have a wonderful instinct about things.  They can discover
 everything except the obvious.
-	-- Oscar Wide (1854-1900), An Ideal Husband
+	-- Oscar Wilde (1854-1900), An Ideal Husband
 %
  My wallpaper and I are fighting a duel to the death.  One or the other of
 us has to go.
-	-- Oscar Wide (1854-1900)  [last words]
+	-- Oscar Wilde (1854-1900)  [last words]
 %
  A true friend stabs you in the front
-	-- Oscar Wide (1854-1900)  [attrib.]
+	-- Oscar Wilde (1854-1900)  [attrib.]
 %
  Always forgive your enemies; nothing annoys them so much.
-	-- Oscar Wide (1854-1900)  [attrib.]
+	-- Oscar Wilde (1854-1900)  [attrib.]
 %
  I have nothing to declare except my Genius.
-	-- Oscar Wide (1854-1900)  [attrib.]
+	-- Oscar Wilde (1854-1900)  [attrib.]
 %
  My own business bores me to death.  I prefer other people's.
-	-- Oscar Wide (1854-1900)  [attrib.]
+	-- Oscar Wilde (1854-1900)  [attrib.]
 %
  No man is rich enough to buy back his own past.
-	-- Oscar Wide (1854-1900)  [attrib.]
+	-- Oscar Wilde (1854-1900)  [attrib.]
 %
  The one duty we owe to history is to rewrite it.
-	-- Oscar Wide (1854-1900)  [attrib.]
+	-- Oscar Wilde (1854-1900)  [attrib.]
 %
  What a pity that in life we only get our lessons when they are of no use
 to us.
-	-- Oscar Wide (1854-1900)  [attrib.]
+	-- Oscar Wilde (1854-1900)  [attrib.]
 %
  Life is too important to be taken seriously.
-	-- Oscar Wide (1854-1900)  [attrib.]
+	-- Oscar Wilde (1854-1900)  [attrib.]
 %
  +       /*
  +        * The meaning of life, the universe, and everything. Plus
@@ -1364,6 +1384,10 @@ braku ci±¿enia nawet takie wyj¶cie nie jest mo¿liwe.
  Nikt nic nie czyta, a je¶li czyta, to nic nie rozumie, a je¶li nawet
 rozumie, to nic nie pamiêta.
 	-- from Stanis³aw Lem (1921-2006), Opowie¶ci o pilocie Pirxie
+%
+  Nie wiedzia³em, ¿e bêdê pisa³ wtedy ksi±¿ki.  Nie przysz³o mi do g³owy.
+To siê sta³o niechc±cy.
+	-- from Stanis³aw Lem (1921-2006)
 %
  Trzeba siê uczyæ, a nie chodziæ do szko³y.
 	-- Stanis³aw Lipiñski
@@ -1747,7 +1771,13 @@ at its end.
  The only man who kills like that is Bugs Moran.
 	-- Al Capone, on the Saint Valentine
 %
-A: Because it messes up the order in which people normally read text.
-Q: Why is it such a bad thing?
-A: Top-posting.
-Q: What is the most annoying thing on usenet and in e-mail?
+ A: Because it messes up the order in which people normally read text.
+ Q: Why is it such a bad thing?
+ A: Top-posting.
+ Q: What is the most annoying thing on usenet and in e-mail?
+%
+ Never assume malice when stupidity will suffice.
+%
+ Ja naprawdê chcia³bym zmieniæ ¶wiat, ale nie dali mi ¼ród³a.
+%
+ It's better to be a geek then an idiot.
