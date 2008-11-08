@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.38 2008/11/01 17:28:33 mina86 Exp $
+## $Id: Makefile,v 1.39 2008/11/08 23:45:57 mina86 Exp $
 ## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
 ##
@@ -371,7 +371,7 @@ endif
 
 	@echo '  GEN    usr/doc/tinyapps-$(RELEASE)'
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)'
-	$(Q)exec cp -- LICENSE LICENSE.AFL README TODO ChangeLog '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
+	$(Q)exec cp -- LICENSE LICENSE.AFL LICENSE.GPL3 README TODO ChangeLog '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
 	$(Q)exec cp -- LICENSE.gpl '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/LICENSE.GPL'
 
 	@echo '  GEN    install/doinst.sh'

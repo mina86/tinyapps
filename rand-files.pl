@@ -1,12 +1,12 @@
 #!/usr/bin/perl
 ##
 ## Chooses a random set of files from directories
-## $Id: rand-files.pl,v 1.1 2008/07/25 10:27:15 mina86 Exp $
+## $Id: rand-files.pl,v 1.2 2008/11/08 23:45:57 mina86 Exp $
 ## Copyright (c) 2008 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
-## the Free Software Foundation; either version 2 of the License, or
+## the Free Software Foundation; either version 3 of the License, or
 ## (at your option) any later version.
 ##
 ## This program is distributed in the hope that it will be useful,
@@ -15,8 +15,10 @@
 ## GNU General Public License for more details.
 ##
 ## You should have received a copy of the GNU General Public License
-## along with this program; if not, write to the Free Software
-## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+## along with this program; if not, see <http://www.gnu.org/licenses/>.
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
 ##
 
 use warnings;

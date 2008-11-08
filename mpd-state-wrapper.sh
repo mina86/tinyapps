@@ -1,9 +1,12 @@
 #!/bin/bash
 ##
 ## Wrapper for mpd-state to make it behave like state-utils.
-## $Id: mpd-state-wrapper.sh,v 1.4 2006/09/28 15:06:19 mina86 Exp $
+## $Id: mpd-state-wrapper.sh,v 1.5 2008/11/08 23:45:57 mina86 Exp $
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 2.1.
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
 ##
 
 #

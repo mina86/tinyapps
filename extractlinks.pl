@@ -1,7 +1,7 @@
 #!/usr/bin/perl -w
 ##
 ## Extracts links from a HTML page
-## $Id: extractlinks.pl,v 1.6 2008/02/22 00:08:51 mina86 Exp $
+## $Id: extractlinks.pl,v 1.7 2008/11/08 23:45:57 mina86 Exp $
 ## Copyright (c) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -18,6 +18,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
 ##
 
 #
@@ -37,7 +40,7 @@ use LWP::UserAgent;
 use HTML::LinkExtor;
 
 
-my $VERSION = sprintf("%d.%02d", q$Revision: 1.6 $ =~ /(\d+)\.(\d+)/);
+my $VERSION = sprintf("%d.%02d", q$Revision: 1.7 $ =~ /(\d+)\.(\d+)/);
 
 
 my $url = '';

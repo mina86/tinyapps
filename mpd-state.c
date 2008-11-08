@@ -1,6 +1,6 @@
 /*
  * Prints/restores MPD's state.
- * $Id: mpd-state.c,v 1.7 2008/01/09 18:50:58 mina86 Exp $
+ * $Id: mpd-state.c,v 1.8 2008/11/08 23:45:57 mina86 Exp $
  * Copyright (c) 2005 by Avuton Olrich (avuton/AT/gmail.com)
  * Copyright (c) 2005-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
@@ -17,6 +17,9 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+ *
+ * This is part of Tiny Applications Collection
+ *   -> http://tinyapps.sourceforge.net/
  */
 
 #define _POSIX_C_SOURCE 2

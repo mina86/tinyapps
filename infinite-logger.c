@@ -1,8 +1,11 @@
 /*
  * Logs to syslog all messages logged to syslog :]
- * $Id: infinite-logger.c,v 1.5 2008/01/09 18:51:52 mina86 Exp $
+ * $Id: infinite-logger.c,v 1.6 2008/11/08 23:45:57 mina86 Exp $
  * Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
+ *
+ * This is part of Tiny Applications Collection
+ *   -> http://tinyapps.sourceforge.net/
  */
 
 /*

@@ -1,8 +1,11 @@
 /*
  * Removes C++ comments from a file.
- * $Id: cutcom.c,v 1.5 2008/01/09 18:49:37 mina86 Exp $
+ * $Id: cutcom.c,v 1.6 2008/11/08 23:45:57 mina86 Exp $
  * Copyright (c) 2005-2008 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
+ *
+ * This is part of Tiny Applications Collection
+ *   -> http://tinyapps.sourceforge.net/
  */
 
 #include <errno.h>

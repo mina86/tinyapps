@@ -1,6 +1,6 @@
 /*
  * Address Conflict Detection implementation
- * $Id: arpping.c,v 1.2 2008/06/01 08:57:07 mina86 Exp $
+ * $Id: arpping.c,v 1.3 2008/11/08 23:45:57 mina86 Exp $
  * Copyright (c) 2008 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
  *
@@ -11,7 +11,10 @@
  * It is not fully compatibl with the draft since it ignores any other
  * probes of given address that someone may send but that's because
  * this tool is ment for something slightly different (it's a good
- * startiiiing point for full ACD implementation though).
+ * starting point for full ACD implementation though).
+ *
+ * This is part of Tiny Applications Collection
+ *   -> http://tinyapps.sourceforge.net/
  */
 
 #define _BSD_SOURCE 1

@@ -1,8 +1,11 @@
 /*
  * Allocates specified amount of memory.
- * $Id: malloc.c,v 1.11 2008/01/09 18:50:58 mina86 Exp $
+ * $Id: malloc.c,v 1.12 2008/11/08 23:45:57 mina86 Exp $
  * Copyright (c) 2005,2007 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 2.1.
+ *
+ * This is part of Tiny Applications Collection
+ *   -> http://tinyapps.sourceforge.net/
  */
 
 /*

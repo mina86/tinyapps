@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Rips audio tracks and encodes them to mp3
-## $Id: mp3rip,v 1.6 2008/01/09 18:51:52 mina86 Exp $
+## $Id: mp3rip,v 1.7 2008/11/08 23:45:57 mina86 Exp $
 ## Copyright (c) 2003-2005 by Tomekk (tomekk/AT/oswiecim.eu.org)
 ## Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -19,10 +19,13 @@
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 ##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
+##
 
 set -e
 echo 'mp3rip  v0.5  (c) Tomekk & mina86'
-echo '$Id: mp3rip,v 1.6 2008/01/09 18:51:52 mina86 Exp $'
+echo '$Id: mp3rip,v 1.7 2008/11/08 23:45:57 mina86 Exp $'
 echo
 
 LOWER_CHARS=abcdefghijklmnopqrstuvwxyz

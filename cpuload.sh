@@ -1,9 +1,12 @@
 #!/bin/sh
 ##
 ## Displays the CPU load.
-## $Id: cpuload.sh,v 1.8 2006/09/28 15:06:19 mina86 Exp $
+## $Id: cpuload.sh,v 1.9 2008/11/08 23:45:57 mina86 Exp $
 ## By Michal Nazareicz (mina86/AT/mina86.com)
 ## Released to Public Domain
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
 ##
 
 if [ "X$1" == X-h ] || [ "X$1" == "X--help" ]; then

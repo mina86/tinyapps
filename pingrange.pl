@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Pings specified range of IP addresses
-## $Id: pingrange.pl,v 1.3 2008/01/09 18:51:52 mina86 Exp $
+## $Id: pingrange.pl,v 1.4 2008/11/08 23:45:57 mina86 Exp $
 ## Copyright (c) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
 ## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
@@ -18,6 +18,9 @@
 ## You should have received a copy of the GNU General Public License
 ## along with this program; if not, write to the Free Software
 ## Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
 ##
 
 #

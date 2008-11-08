@@ -4,6 +4,11 @@
 	typo show up in the first place
 	+ a few new quotes
 
+	* LICENSE.GPL3: New file
+
+	+ changed license (from GPLv2 to GPLv3) of some of the files
+	+ updated comments of many files (added "This is part of TAC")
+
 2008-11-01  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mountiso.c: + added large file support
