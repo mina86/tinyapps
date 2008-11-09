@@ -1,8 +1,8 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.39 2008/11/08 23:45:57 mina86 Exp $
+## $Id: Makefile,v 1.40 2008/11/09 00:02:21 mina86 Exp $
 ## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
-## Licensed under the Academic Free License version 2.1.
+## Licensed under the Academic Free License version 3.0.
 ##
 
 
