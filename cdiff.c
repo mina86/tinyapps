@@ -1,6 +1,6 @@
 /*
  * Colorize (adds ANSI codes) output of diff.
- * $Id: cdiff.c,v 1.7 2008/11/09 00:02:21 mina86 Exp $
+ * $Id: cdiff.c,v 1.8 2009/03/10 08:23:44 mina86 Exp $
  * Copyright (c) 2005,2006 by Michal Nazareicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 3.0.
  *
@@ -65,8 +65,8 @@ int main(int argc, char **argv) {
 
 
 	static const struct rule unified_rules[] = {
-		{ "--- ", COLOR_FILE1   },
-		{ "+++ ", COLOR_FILE2   },
+		{ "+++ ", COLOR_FILE1   },
+		{ "--- ", COLOR_FILE2   },
 		{ "@@ " , COLOR_MISC    },
 		{ "+"   , COLOR_INS     },
 		{ "-"   , COLOR_DEL     },
