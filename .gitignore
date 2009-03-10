@@ -1,6 +1,10 @@
-a.out
-*.gz *.bz2 *.tar *.tgz
+*.bz2
+*.gz
+*.o
+*.tar
+*.tgz
 FvwmTransFocus
+a.out
 arpping
 cdiff
 core
@@ -16,8 +20,8 @@ mpd-state
 null
 quotes
 rot13
-timer
 the-book-of-mozilla
+timer
 tuptime
 umountiso
 xgetclass
