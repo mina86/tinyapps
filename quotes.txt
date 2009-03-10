@@ -1,6 +1,6 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## $Id: quotes.txt,v 1.21 2008/11/09 00:02:21 mina86 Exp $
+## $Id: quotes.txt,v 1.22 2009/03/10 08:27:39 mina86 Exp $
 ## Copyright (c) 2003-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 3.0.
 ##
@@ -378,6 +378,20 @@ grade a student who says that two-thirds times three is 1.9999999?
  Innego koñca ¶wiata nie bêdzie.
 	-- Czes³aw Mi³osz (1911-2004), Piosnka o koñcu ¶wiata
 %
+ Be kind whenever possible.  It is always possible.
+	-- 14th Dalai Lama (1935-)
+%
+ My religion is very simple. My religion is kindness.
+	-- 14th Dalai Lama (1935-)
+%
+ Open your arms to change, but don't let go of your values.
+	-- 14th Dalai Lama (1935-)
+%
+ This is my simple religion. There is no need for temples; no need for
+complicated philosophy. Our own brain, our own heart is our temple; the
+philosophy is kindness.
+	-- Dalai Lama
+%
  I may have invented control-alt-delete, but Bill Gates made it really
 famous.
 	-- David Bradley (1949-)
@@ -697,6 +711,9 @@ don't believe this to be a coincidence.
 %
  Dammit...  Don't you dare ask God to help me.
 	-- Joan Crawford (1904-1977)  [last words]
+%
+There's only one thing money won't buy, and that is poverty.
+	-- Joe E. Lewis (1902-1971)
 %
  He who hasn't hacked assembly language as a youth has no heart.  He who
 does as an adult has no brain.
@@ -1671,7 +1688,7 @@ doing it.
 %
  Stallman: God told me I programmed the best editor in the world!
  Torvalds: Well, God told *me* that I programmed the best OS in the world!
- Knuth: "Wait, wait - I never said that."
+ Knuth: Wait, wait - I never said that.
 %
  The world is going for shut down.  Please log off.
 %
