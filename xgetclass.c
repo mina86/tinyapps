@@ -1,8 +1,10 @@
 /*
  * Prints window's ClassHint
- * $Id: xgetclass.c,v 1.7 2008/11/09 00:02:21 mina86 Exp $
  * Copyright 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 3.0.
+ *
+ * This software is OSI Certified Open Source Software.
+ * OSI Certified is a certification mark of the Open Source Initiative.
  *
  * This is part of Tiny Applications Collection
  *   -> http://tinyapps.sourceforge.net/

@@ -1,8 +1,10 @@
 #!/bin/sh
 ##
 ## splitlines - Splits input, line-by-line, into several files
-## $Id: splitlines.sh,v 1.3 2008/11/08 23:45:57 mina86 Exp $
 ## Copyright (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
+##
+## This software is OSI Certified Open Source Software.
+## OSI Certified is a certification mark of the Open Source Initiative.
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

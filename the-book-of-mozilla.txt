@@ -1,15 +1,14 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotations from The Book of Mozilla.
-## $Id: the-book-of-mozilla.txt,v 1.7 2008/11/08 23:45:57 mina86 Exp $
 ## By Michal Nazarewicz (mina86/AT/mina86.com)
 ## Released to Public Domain
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
 ##
 ## To create a fortune compatible file use:
 ##     sed -e '/^#/d' -e 's/^%.*/%/' the-book-of-mozilla.txt \
 ##         >the-book-of-mozilla
-##
-## This is part of Tiny Applications Collection
-##   -> http://tinyapps.sourceforge.net/
 ##
 % Official
 And the beast shall come forth surrounded by a roiling cloud of

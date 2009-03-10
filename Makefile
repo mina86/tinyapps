@@ -1,8 +1,13 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.41 2009/03/10 08:25:19 mina86 Exp $
 ## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 3.0.
+##
+## This software is OSI Certified Open Source Software.
+## OSI Certified is a certification mark of the Open Source Initiative.
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
 ##
 
 

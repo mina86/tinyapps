@@ -1,8 +1,7 @@
 
                          Tiny Applications Collection
 
-   Copyright (c) 2005 Michal Nazarewicz (mina86/AT/mina86.com)
-   Licensed under the Academic Free License version 3.0.
+   Copyright (c) 2005-2009 Michal Nazarewicz (mina86/AT/mina86.com)
 
    This software is OSI Certified Open Source Software.
    OSI Certified is a certification mark of the Open Source Initiative.
@@ -11,7 +10,7 @@
    can have a different copyright  and be licensed under different license.
    For more information see the source code of an application.
 
-   You should have recieved a copy  of the Academic Free License as well as
-   all  other licenses  any  of  the applications  form  the collection  is
-   licensed under.  Each license  should be included in files LICENSE.<acc>
-   where <acc> is an abbreviated form of the license name.
+   You should have recieved a copy of each licence used by any of the
+   applications form the collection.  Each license should be included
+   in files LICENSE.<acc> where <acc> is an abbreviated form of the
+   license name.

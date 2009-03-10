@@ -1,7 +1,9 @@
 /*
  * Prints song MPD's curently playing.
- * $Id: mpd-show.c,v 1.18 2008/11/08 23:45:57 mina86 Exp $
  * Copyright (c) 2005,2006 by Michal Nazarewicz (mina86/AT/mina86.com)
+ *
+ * This software is OSI Certified Open Source Software.
+ * OSI Certified is a certification mark of the Open Source Initiative.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -19,6 +21,9 @@
  * This is part of Tiny Applications Collection
  *   -> http://tinyapps.sourceforge.net/
  */
+
+
+#define APP_VERSION "0.18"
 
 
 #define _POSIX_C_SOURCE 2
@@ -189,8 +194,7 @@ int main(int argc, char **argv) {
 
 /******************** Usage ********************/
 static void usage(void) {
-	printf("mpd-show   (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)\n" \
-	       "$Id: mpd-show.c,v 1.18 2008/11/08 23:45:57 mina86 Exp $\n"
+	printf("mpd-show  " APP_VERSION " (c) 2006 by Michal Nazarewicz (mina86/AT/mina86.com)\n" \
 	       "\n" \
 	       "usage: %s [ <options> ] [ <host> [ <port> ]]\n" \
 	       "<options> are:\n" \

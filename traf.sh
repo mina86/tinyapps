@@ -1,7 +1,6 @@
 #!/bin/bash
 ##
 ## Shows TX/RX over 1sec
-## $Id: traf.sh,v 1.8 2008/11/08 23:45:57 mina86 Exp $
 ## By Michal Nazareicz (mina86/AT/mina86.com)
 ##  & Stanislaw Klekot (dozzie/AT/irc.pl)
 ## Released to Public Domain

@@ -1,8 +1,10 @@
 #!/bin/sh
 ##
 ## virtman.sh - Adds virtual hosts to Apache configuration file
-## $Id: virtman.sh,v 1.3 2008/11/08 23:45:57 mina86 Exp $
 ## Copyright 2006 by Michal Nazarewicz (mina86/AT/mina86.com)
+##
+## This software is OSI Certified Open Source Software.
+## OSI Certified is a certification mark of the Open Source Initiative.
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by

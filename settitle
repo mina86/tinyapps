@@ -1,7 +1,6 @@
 #!/bin/sh
 ##
 ## Sets the title of xterm-compatible terminals.
-## $Id: settitle,v 1.4 2008/11/08 23:45:57 mina86 Exp $
 ## By Stanislaw Klekot (dozzie/AT/irc.pl)
 ## Released to Public Domain
 ##

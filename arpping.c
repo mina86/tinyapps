@@ -1,8 +1,10 @@
 /*
  * Address Conflict Detection implementation
- * $Id: arpping.c,v 1.4 2008/11/09 00:02:21 mina86 Exp $
  * Copyright (c) 2008 by Michal Nazarewicz (mina86/AT/mina86.com)
  * Licensed under the Academic Free License version 3.0.
+ *
+ * This software is OSI Certified Open Source Software.
+ * OSI Certified is a certification mark of the Open Source Initiative.
  *
  * Address Conflict Detection is described in
  * draft-cheshire-ipv4-acd-06.txt Internet-Draft which can be found at
