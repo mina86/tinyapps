@@ -1,6 +1,6 @@
 ##
 ## Tiny Aplication Collection Makefile
-## $Id: Makefile,v 1.40 2008/11/09 00:02:21 mina86 Exp $
+## $Id: Makefile,v 1.41 2009/03/10 08:25:19 mina86 Exp $
 ## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
 ## Licensed under the Academic Free License version 3.0.
 ##
@@ -107,7 +107,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-arpping uninstall-changelog.pl uninstall-cdiff		\
            uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh	\
            uninstall-cutcom uninstall-drun uninstall-extractlinks.pl	\
-           uninstall-fortune uninstall-genpass.sh
+           uninstall-fortune uninstall-genpass.sh						\
            uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh	\
            uninstall-inplace uninstall-installkernel					\
            uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl	\
