@@ -1,8 +1,8 @@
-.TH installkernel 8 "2 November, 2007" "version 0.15.0" "Linux System Administration"
+.TH installkernel 8 "4 April, 2009" "version 0.15.1" "Linux System Administration"
 
 \"
 \" installkernel man page
-\" Copyright (c) 2005-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
+\" Copyright (c) 2005-2009 by Michal Nazarewicz (mina86/AT/mina86.com)
 \"
 \" This is part of Tiny Applications Collection
 \"   -> http://tinyapps.sourceforge.net/
@@ -60,6 +60,18 @@ Specifies the directory where the kernel image will be installed.
 For more info see \fB<prefix>\fP.
 
 .TP
+\-\-kversion=\fIver\fR
+Specifies the kernel version.  For more info see \fB<version>\fP.
+
+.TP
+\-\-image=\fIimage\fR
+Specifies the kernel image.  For more info see \fB<image>\fP.
+
+.TP
+\-\-map=\fIsystemmap\fR
+Specifies the System map file.  For more info see \fB<systemmap>\fP.
+
+.TP
 \fB\-\-cd=\fIdir\fP
 The script will attempt to change directory to \fIdir\fP before doing
 anything.
@@ -115,16 +127,27 @@ that if \fBinstallkernel-log\fP exists then the output will be sent to
 \fBinstallkernel-log.2\fP and so on.
 
 .TP
+\fB\-\-\fR
+A\ modifier which changes the way arguments on command line are
+interpreted.  If an argument that does not start with a\ dash is found
+it is treated as a\ long option, if it is at least 3 character long,
+or a\ short option, if it is no more then 2 character long
+(effectively prefixing the argument with a\ dash or two dashes).  This
+option has been implemented to shorten options.
+
+.TP
 \fIversion\fP \fIimage\fP \fIsystemmap\fP
 Those are the version number, the path to the kernel image file and
 path to the kernel map file.  They are unnecessary as
 the script detects all this by itself but they are provided for
-compatibility with \fBmake install\fP.
+compatibility with \fBmake install\fP.  Those arguments overwrites and
+can be overwritten (depending on the order in which arguments are
+given) \fB\-\-kversion\fP, \fB\-\-image\fP and \fB-\-map\fP options.
 
 .TP
 \fIprefix\fP
 Specifies the place where the kernel image should be installed to.  By
-default it is \fB/boot\fP unless a \fBINSTALL_PATH\fP enviromental
+default it is \fB/boot\fP unless a \fBINSTALL_PATH\fP environmental
 variable is set in which case it's value is taken.  This argument
 overwrites and can be overwritten (depending on the order in which
 arguments are given) the \fB\-\-bootdir\fP option.
@@ -310,7 +333,7 @@ The script recieved on of the signals: \fBSIGHUP\fP, \fBSIGINT\fP,
 .PP
 Moreover, if during execution any command fails, \fBinstallkernel\fP
 will exit with it's exit code, therefore all the above exit codes can
-have two meanings.
+have a\ few meanings.
 
 .SH HOOKS
 

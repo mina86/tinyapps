@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## installkernel - Script for installing Linux kernel.
-## Copyright (c) 2004-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
+## Copyright 2004-2009 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This software is OSI Certified Open Source Software.
 ## OSI Certified is a certification mark of the Open Source Initiative.
@@ -47,7 +47,7 @@ toInt () {
 ## Version & lockfile
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
-	echo 'installkernel  v0.15.0  (c) 2004-2007 by Micha³ Nazarewicz'
+	echo 'installkernel  v0.15.1  (c) 2004-2009 by Micha³ Nazarewicz'
 	echo
 
 	# Lockfile check
@@ -84,6 +84,9 @@ usage: installkernel [<options>] [<switches>]
   -V --version         Display vesion and exits
 
   -a --arch=<arch>     Set ARCH variable to <arch> or \$ARCH if '-'     [auto]
+     --kversion=<ver>  Same as <version>
+     --image=<image>   Same as <image>
+     --map=<systemmap> Same as <systemmap>
      --bootdir=<dir>   Same as <prefix>
      --cd[=<dir>]      Change directory to <dir> (/usr/src/linux if ommited)
 
@@ -96,6 +99,11 @@ usage: installkernel [<options>] [<switches>]
 
   -L --log[=<file>]    Log to <file> (automaticaly chosen file if ommited)
   -nL --no-log         Cancel previous --log option
+
+     --                This option causes all options not starting with a
+                       dash to be interpreted as long (if at least 3-char
+                       long) or short (if no more then 2-char long) options
+
 
 <switches>  are:
      --dry-run         Only display what would be done                    [no]
@@ -133,7 +141,7 @@ usage: installkernel [<options>] [<switches>]
   -l --update-loader   Update boot loader entry                            [*]
 
 [*]  yes if only <version> <image> <systemmap> and <bootdir> where given.
-[**] yes if compiling image and <version> was given and it's 2.4.x.
+[**] yes if compiling image and <version> is 2.4.x.
 
 Negated by prefixing switch with 'no-' (long option) or 'n' (short option).
 
@@ -240,12 +248,12 @@ run () {
 		__ARG="${1#-}"; shift;
 		while [ -n "$__ARG" ]; do
 			case "$__ARG" in
-				(u*) __AS="$RUNAS"; ;;
-				(s*) __SILENT=yes ; ;;
-				(f*) __FORCE=yes  ; ;;
-				(d*) __DUMMY=yes  ; ;;
-				(i*) __INPUT="$1" ; shift; ;;
-				(o*) __OUTPUT="$1"; shift; ;;
+			u*) __AS="$RUNAS";;
+			s*) __SILENT=yes ;;
+			f*) __FORCE=yes  ;;
+			d*) __DUMMY=yes  ;;
+			i*) __INPUT="$1" ; shift;;
+			o*) __OUTPUT="$1"; shift;;
 			esac
 			__ARG="${__ARG#?}"
 		done
@@ -296,7 +304,7 @@ run () {
 if [ -x /etc/installkernel.d/hook-handler ]; then
 	run_hook () {
 		case "$RUN_HOOKS" in
-		(*:"$1":*)
+		*:"$1":*)
 			__HOOK=$1
 			shift
 			run "$@" /etc/installkernel.d/hook-handler "$__HOOK"
@@ -395,8 +403,8 @@ set_run_hooks () {
 		shift
 		while [ $# -gt 0 ]; do
 			case "$RUN_HOOKS" in
-			(*:$1:*) ;;
-			(*) RUN_HOOKS="$RUN_HOOKS$1:"
+			*:$1:*) ;;
+			*) RUN_HOOKS="$RUN_HOOKS$1:"
 			esac
 			shift
 		done
@@ -405,7 +413,7 @@ set_run_hooks () {
 		shift
 		while [ $# -gt 0 ]; do
 			case "$RUN_HOOKS" in
-			(*:$1:*) RUN_HOOKS=${RUN_HOOKS%:$1:*}:${RUN_HOOKS#*:$1:}
+			*:$1:*) RUN_HOOKS=${RUN_HOOKS%:$1:*}:${RUN_HOOKS#*:$1:}
 			esac
 			shift
 		done
@@ -421,7 +429,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	##
 	if [ -z "$INSTALL_PATH" ]; then export INSTALL_PATH=/boot; fi
 
-	SU=; LOG_AUTO=; LOG_FILE=; NICE=!10; __ARCH="$ARCH"
+	SU=; LOG_AUTO=; LOG_FILE=; NICE=!10; __ARCH="$ARCH"; DASHDASH=
 	export VER= BUILD= IMG_PATH= MAP_PATH= RUNAS= ARCH=
 
 	export DRY_RUN= PRINT_COMMANDS= VERBOSE= REALLY_VERBOSE=
@@ -442,46 +450,60 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	for ARG; do
 		PARAM=
 
+		# Dash dash at work?
+		if [ -n "$DASHDASH" ]; then
+			case "$ARG" in
+			-*)    :          ;;
+			?|??)  ARG=-$ARG  ;;
+			*)     ARG=--$ARG ;;
+			esac
+		fi
+
 		## Options
 		case "$ARG" in
-		(--help|-h) usage; exit 0; ;;
-		(--version|-V) exit 0; ;;
+		--help|-h) usage; exit 0;;
+		--version|-V) exit 0;;
 
-		(--arch=*)         ARCH="${ARG#--arch=}"; ;;
-		(-a*)              ARCH="${ARG#-a}";      ;;
-		(--bootdir=*)      INSTALL_PATH="${ARG#--bootdir=}"; ;;
-		(--cd=*)           CD="${ARG#--cd=}"; ;;
-		(--cd)             CD=/usr/src/linux; ;;
+		--arch=*)         ARCH="${ARG#--arch=}";;
+		-a*)              ARCH="${ARG#-a}";      ;;
+		--kversion=*)     VER="${ARG#--kversion=}";         ;;
+		--image=*)        IMG_PATH="${ARG#--image=}";       ;;
+		--map=*)          MAP_PATH="${ARG#--map=}";         ;;
+		--bootdir=*)      INSTALL_PATH="${ARG#--bootdir=}";;
+		--cd=*)           CD="${ARG#--cd=}";;
+		--cd)             CD=/usr/src/linux;;
 
-		(--config=no)      CONFIG=; ;;
-		(--no-config)      CONFIG=; ;;
-		(--config)         [ -n "$CONFIG" ] || CONFIG=auto; ;;
-		(--config=auto)    CONFIG=auto; ;;
-		(--config=*config) CONFIG="${ARG#--config=}"; ;;
-		(--config=*)       error 1 invalid config type: "${ARG#--config=}"; ;;
+		--config=no)      CONFIG=;;
+		--no-config)      CONFIG=;;
+		--config)         [ -n "$CONFIG" ] || CONFIG=auto;;
+		--config=auto)    CONFIG=auto;;
+		--config=*config) CONFIG="${ARG#--config=}";;
+		--config=*)       error 1 invalid config type: "${ARG#--config=}";;
 
-		(--su)          SU=y; RUNAS="$USER"; ;;
-		(--user=*)      RUNAS="${ARG#--user=}"; ;;
-		(-u*)           RUNAS="${ARG#-u}"; ;;
-		(-nu|--no-user) RUNAS=; ;;
-		(--nice=*)      NICE="${ARG#--nice=}"; ;;
-		(--no-nice)     NICE=0; ;;
+		--su)          SU=y; RUNAS="$USER";;
+		--user=*)      RUNAS="${ARG#--user=}";;
+		-u*)           RUNAS="${ARG#-u}";;
+		-nu|--no-user) RUNAS=;;
+		--nice=*)      NICE="${ARG#--nice=}";;
+		--no-nice)     NICE=0;;
 
-		(--log=*)       LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#--log=}"; ;;
-		(-L?*)          LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#-L}";     ;;
-		(--log)         LOG_AUTO=y; USE_ANSI=; ;;
-		(-L)            LOG_AUTO=y; USE_ANSI=; ;;
-		(-nL|--no-log)  LOG_AUTO=;  LOG_FILE=; ;;
+		--log=*)       LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#--log=}";;
+		-L?*)          LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#-L}";     ;;
+		--log)         LOG_AUTO=y; USE_ANSI=;;
+		-L)            LOG_AUTO=y; USE_ANSI=;;
+		-nL|--no-log)  LOG_AUTO=;  LOG_FILE=;;
 
-		(-r*)    VALUE=y; PARAM="--run-${ARG#-r}"; ;;
-		(-nr*)   VALUE= ; PARAM="--run-${ARG#-nr}"; ;;
+		--)            DASHDASH=y;;
 
-		(-n?)    VALUE= : PARAM="-${ARG#-n}"; ;;
-		(--no-*) VALUE= ; PARAM="--${ARG#--no-}"; ;;
-		(--*)    VALUE=y; PARAM="--${ARG#--}"; ;;
-		(-?)     VALUE=y; PARAM="$ARG"; ;;
+		-r*)    VALUE=y; PARAM="--run-${ARG#-r}";;
+		-nr*)   VALUE= ; PARAM="--run-${ARG#-nr}";;
 
-		(*)
+		-n?)    VALUE= : PARAM="-${ARG#-n}";;
+		--no-*) VALUE= ; PARAM="--${ARG#--no-}";;
+		--*)    VALUE=y; PARAM="--${ARG#--}";;
+		-?)     VALUE=y; PARAM="$ARG";;
+
+		*)
 			if   [ $ADD_ARGS -eq 0 ]; then VER="$ARG"
 			elif [ $ADD_ARGS -eq 1 ]; then IMG_PATH="$ARG"
 			elif [ $ADD_ARGS -eq 2 ]; then MAP_PATH="$ARG"
@@ -489,7 +511,6 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 			else error 1 unknown option: "$ARG"
 			fi
 			ADD_ARGS=$(( $ADD_ARGS + 1 ))
-		;;
 		esac
 
 
@@ -497,47 +518,47 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		if [ -z "$PARAM" ]; then continue; fi
 		HOOK=
 		case "$PARAM" in
-		(--dry-run)        DRY_RUN=$VALUE ; ;;
-		(-v|--verbose)     VERBOSE=$VALUE ;
-		                   if [ -n "$VALUE" ]; then PRINT_COMMANDS=y; fi; ;;
-		(-vv)              REALLY_VERBOSE=$VALUE;
-                   if [ -n "$VALUE" ]; then VERBOSE=y; PRINT_COMMANDS=y; fi; ;;
-		(--print-commands) PRINT_COMMANDS=$VALUE; ;;
-		(--color)          USE_ANSI=$VALUE; ;;
+		--dry-run)        DRY_RUN=$VALUE ;;
+		-v|--verbose)     VERBOSE=$VALUE ;
+		                  if [ -n "$VALUE" ]; then PRINT_COMMANDS=y; fi;;
+		-vv)              REALLY_VERBOSE=$VALUE;
+                   if [ -n "$VALUE" ]; then VERBOSE=y; PRINT_COMMANDS=y; fi;;
+		--print-commands) PRINT_COMMANDS=$VALUE;;
+		--color)          USE_ANSI=$VALUE;;
 
-		(-c|--clean)           CLEAN=$VALUE          ; ;;
-		(-d|--make-dep)        MAKE_DEP=$VALUE       ; ;;
+		-c|--clean)           CLEAN=$VALUE          ;;
+		-d|--make-dep)        MAKE_DEP=$VALUE       ;;
 
-		(-O|--overwrite)       OVERWRITE_IMAGE=$VALUE; ;;
+		-O|--overwrite)       OVERWRITE_IMAGE=$VALUE;;
 
-		(-i|--compile-image)   COMPILE_IMAGE=$VALUE  ; ;;
-		(-I|--install-image)   INSTALL_IMAGE=$VALUE  ; ;;
-		(-t|--tidy-image)      TIDY_IMAGE=$VALUE     ; ;;
-		(--image)              COMPILE_IMAGE=$VALUE  ;
-                               INSTALL_IMAGE=$VALUE  ; TIDY_IMAGE=$VALUE;;
+		-i|--compile-image)   COMPILE_IMAGE=$VALUE  ;;
+		-I|--install-image)   INSTALL_IMAGE=$VALUE  ;;
+		-t|--tidy-image)      TIDY_IMAGE=$VALUE     ;;
+		--image)              COMPILE_IMAGE=$VALUE  ;
+                              INSTALL_IMAGE=$VALUE  ; TIDY_IMAGE=$VALUE;;
 
-		(-m|--compile-modules) COMPILE_MODULES=$VALUE; ;;
-		(-M|--install-modules) INSTALL_MODULES=$VALUE; ;;
-		(-T|--tidy-modules)    TIDY_MODULES=$VALUE   ; ;;
-		(--modules)            COMPILE_MODULES=$VALUE;
-                               INSTALL_MODULES=$VALUE; TIDY_MODULES=$VALUE;;
+		-m|--compile-modules) COMPILE_MODULES=$VALUE;;
+		-M|--install-modules) INSTALL_MODULES=$VALUE;;
+		-T|--tidy-modules)    TIDY_MODULES=$VALUE   ;;
+		--modules)            COMPILE_MODULES=$VALUE;
+                              INSTALL_MODULES=$VALUE; TIDY_MODULES=$VALUE;;
 
-		(--compile) COMPILE_IMAGE=$VALUE; COMPILE_MODULES=$VALUE; ;;
-		(--install) INSTALL_IMAGE=$VALUE; INSTALL_MODULES=$VALUE; ;;
-		(--tidy)    TIDY_IMAGE=$VALUE   ; TIDY_MODULES=$VALUE   ; ;;
+		--compile) COMPILE_IMAGE=$VALUE; COMPILE_MODULES=$VALUE;;
+		--install) INSTALL_IMAGE=$VALUE; INSTALL_MODULES=$VALUE;;
+		--tidy)    TIDY_IMAGE=$VALUE   ; TIDY_MODULES=$VALUE   ;;
 
-		(-l|--lilo|--update-loader)       UPDATE_LOADER=$VALUE  ; ;;
+		-l|--lilo|--update-loader)       UPDATE_LOADER=$VALUE  ;;
 
-		(-A|--all)
+		-A|--all)
 			COMPILE_IMAGE=$VALUE  ; COMPILE_MODULES=$VALUE
 			INSTALL_IMAGE=$VALUE  ; INSTALL_MODULES=$VALUE
 			TIDY_IMAGE=$VALUE     ; TIDY_MODULES=$VALUE
 			UPDATE_LOADER=$VALUE
 			;;
 
-		(--run-*) HOOK="${PARAM#--run-}"; ;;
+		--run-*) HOOK="${PARAM#--run-}";;
 
-		(*) error 1 unknown option: "$ARG"; ;;
+		*) error 1 unknown option: "$ARG"
 		esac
 
 
@@ -545,16 +566,16 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		if [ -z "$HOOK" ]; then continue; fi
 
 		case "$HOOK" in
-			(pre-)  PRE='pre' ; HOOK="${HOOK#pre-}" ;;
-			(post-) PRE='post'; HOOK="${HOOK#post-}";;
-			(*)     PRE=
+		pre-)  PRE='pre' ; HOOK="${HOOK#pre-}" ;;
+		post-) PRE='post'; HOOK="${HOOK#post-}";;
+		*)     PRE=
 		esac
 
 		case "$HOOK" in
-		(hooks|clean|config|make-dep|update-loader|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules|work)
+		hooks|clean|config|make-dep|update-loader|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules|work)
 			set_run_hooks "$VALUE" "$PRE" "$HOOK" ;;
 
-		(*) error 1 unknown event: "$HOOK"; ;;
+		*) error 1 unknown event: "$HOOK";;
 		esac
 	done
 
@@ -645,9 +666,9 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 			echo Here you would be asked for root password.
 		else
 			case "$0" in
-				(/*)  ARGS="$0"; ;;
-				(*/*) ARGS="$PWD/$0"; ;;
-				(*)   ARGS=$(which "$0" 2>/dev/null); ;;
+			/*)  ARGS="$0";;
+			*/*) ARGS="$PWD/$0";;
+			*)   ARGS=$(which "$0" 2>/dev/null)
 			esac
 			set -- "${SHELL-sh}" "$ARGS" "$@"
 			ARGS=
@@ -655,7 +676,9 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 				ARGS="$ARGS '$(echo "$1" | sed -e "s/'/'\\\\''/")'"
 				shift
 			done
-			exec su -c "$ARGS"
+			# exec was here before but it caused the lock file to
+			# stall if user provided invalid password
+			su -c "$ARGS"
 			exit $?
 		fi
 	fi
@@ -676,7 +699,7 @@ run_hook pre-work
 if [ "X$MAKE_DEP" = Xauto ]; then
 	MAKE_DEP=
 	if [ -n "$COMPILE_IMAGE" ]; then
-		case "$VER" in (2.4.*)
+		case "$VER" in 2.4.*)
 			MAKE_DEP=y
 		esac
 	fi
