@@ -113,6 +113,15 @@ int main(int argc, char **argv) {
 	int i;
 
 
+	/* Not a TTY */
+	if (!isatty(1)) {
+		argv[0] = (char*)(argc > 1 ? "diff" : "cat");
+		execvp(argv[0], argv);
+		perror(argc > 1 ? "exec: diff" : "exec: cat");
+		return 1;
+	}
+
+
 	/* Run diff if we were run as a wrapper */
 	if (argc>1) {
 		int fds[2];

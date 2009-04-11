@@ -1,3 +1,7 @@
+2009-04-11  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	cdiff.c: + added isatty() checking (no colors if stdout is not a TTY)
+
 2008-11-08  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* quotes.txt: + its "Oscar Wilde" not "Oscar Wide", dunno how this
