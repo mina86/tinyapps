@@ -26,125 +26,166 @@
 use warnings;
 use strict;
 
-use File::Find;
 use Getopt::Long;
 use Pod::Usage;
 
 
-my ($left, $sep, $regexp, @match, @exts, @dirs) = ( 1000, "\n" );
+my ($left, $out_sep) = ( 1000, "\n" );
+my (@rules, @exts);
+
+
+# Adds single rule
+sub add_rule ($$) {
+	my ($result, $regexp) = @_;
+	if ($result eq 'exclude' || $result eq 'x') {
+		$result = 0;
+	} elsif ($result eq 'include' || $result eq 'i') {
+		$result = 1;
+	}
+
+	my $match = 1;
+	if ($regexp =~ /!(.*)$/) {
+		$match = 0;
+		$regexp = $1;
+	}
+
+	eval {
+		$SIG{'__WARN__'} = sub { die $_[0]; };
+		$result += 0;
+	};
+	die "$result: invalid rank (must be a number)\n" if $@;
+
+	eval {
+		$regexp = qr/$regexp/;
+	} or die "$regexp: invalid regexp\n";
+
+	push @rules, [ $result, $match, $regexp ];
+}
+
+
+# Ranks a file
+sub rank_file ($) {
+	for my $r (@rules) {
+		return $r->[0] if ($_[0] =~ $r->[2]) == $r->[1];
+	}
+	1;
+}
 
 
 # Parse options
 Getopt::Long::Configure(qw/bundling/);
 exit 1 unless GetOptions(
-	'zero|0'        => sub { $sep = "\0"; },
+	'zero|0'        => sub { $/ = $out_sep = "\0"; },
+	'zero-out|z'    => sub { $out_sep = "\0"; },
+	'zero-in|Z'     => sub { $/ = "\0"; },
+
 	'size|s=i'      => \$left,
-	'match|m=s'     => sub {
-		eval { qr/(?:${_[1]})/; } or die "$_[1]: invalid regexp\n";
-		push @match, '(?:' . $_[1] . ')';
-	},
+
 	'extension|e=s' => \@exts,
-	'<>'            => sub {
-		push @dirs, $_[0];
+	'exclude|x=s'   => sub { add_rule 0, $_[1]; },
+	'include|i=s'   => sub { add_rule 0, $_[1]; },
+	'rule|r=s'      => sub {
+		my @arr = split /,/, $_[1], 2;
+		add_rule $arr[0], $arr[1];
 	},
 
-	'help|h' => sub { pod2usage(-exitstatus => 0, -verbose => 1); },
-	'man'  => sub { pod2usage(-exitstatus => 0, -verbose => 2); }
+	'help|h'        => sub { pod2usage(-exitstatus => 0, -verbose => 1); },
+	'man'           => sub { pod2usage(-exitstatus => 0, -verbose => 2); }
 );
 
 
-# Validate command line arguments
-if (!@dirs) {
-	pod2usage(-exitstatus => 1, -verbose => 0);
-}
-
-
-# Interprete command line arguments
+# Interprete arguments
+@exts = ( 'ogg', 'mp3' ) unless @exts || @rules;
 if (@exts) {
-	$regexp = '';
-	for (@exts) {
-		$regexp .= "|\Q$_\E"
-	}
-	push @match, '(?:' . substr($regexp, 1) . ')$';
-} elsif (!@match) {
-	push @match, '(?:ogg|mp3)';
+	@exts = split(/,/, join(',', @exts));
+	my $regexp = '';
+	$regexp .= "|\Q$_\E" for (@exts);
+	$regexp = substr $regexp, 1;
+	unshift @rules, [ 0, 0, qr/(?:$regexp)$/ ];
 }
-
-$regexp = join '|', @match;
-undef @match;
 undef @exts;
 $left <<= 8;
 
 
 # Find source files
-my @files;
-File::Find::find {
-	'follow_fast' => 1,
-	'dangling_symlinks' => 0,
-	'no_chdir' => 1,
-	'wanted' => sub {
-		return unless -f _ && m/$regexp/o;
-		my @s = stat _;
-		my $s = $s[7];
-		$s += 4096 if $s & 4095;
-		$s >>= 12;
-		if ($s <= $left) {
-			push @files, [ $File::Find::name, $s ];
+my ($ranks_sum, @files) = ( 0 );
+while (<>) {
+	chomp;
+	my @stat = stat $_;
+	$stat[7] = ($stat[7] + 4095) >> 12;
+	if ($stat[7] > 0  && $stat[7] <= $left && -f _) {
+		my $rank = rank_file $_;
+		if (defined $rank && $rank > 0) {
+			push @files, [ $_, $stat[7], $rank ];
+			$ranks_sum += $rank;
 		}
-	},
-}, @dirs;
-undef @dirs;
+	}
+}
 @files = sort { $a->[1] <=> $b->[1] } @files;
-
 
 # Choose pool
 my @pool;
 
 while (@files) {
-	my $idx = int rand @files;
+	# Choose random index
+	my $idx = 0;
+	for ($_ = rand $ranks_sum; $idx < @files && $_ >= $files[$idx][2]; ++$idx) {
+		$_ -=  $files[$idx][2];
+	}
 
+	# Add it to the pool
 	push @pool, $files[$idx][0];
 	$left -= $files[$idx][1];
 
+	# Remove too big files
 	$_ = @files;
 	while ($_ && $files[$_ - 1][1] > $left) {
-		--$_;
+		$ranks_sum -= $files[--$_][2];
 	}
 	last unless $_;
-
 	$#files = $_ - 1;
+
+	# Remove $idx if it's still in the array
 	if ($idx < @files) {
+		$ranks_sum -= $files[$idx][2];
 		splice @files, $idx, 1;
 	}
 }
 
 
 # Exit
-print join $sep, @pool, '';
+print join $out_sep, @pool, '';
 exit !@pool;
 
 
 __END__
 =head1 NAME
 
-rand-mp3.pl  - Chooses random files from directiry trees
+rand-mp3.pl  - Chooses random files from standard input
 
 =head1 SYNOPSIS
 
-rsz.pl [ I<options> ] I<source-dir> [ I<source-dir> ... ]
+rsz.pl [ I<options> ]
 
 =head1 DESCRIPTION
 
-Script searches for files in given source directories (recursivly),
-choses random set of them such taht total sum of their size is no
-bigger then given number of megabytes and prints them to standard
-output.  The size of a files is rounded up to full 4KiB.
+Script reads file names from standard input (for example output of
+find command) and choses random set of them such that total sum of
+their size is no bigger then given number of megabytes and prints them
+to standard output.  The size of a files is rounded up to full 4KiB.
+
+Throught set of options you can rank files.  The higher the rank the
+bigger the probability that it will be chosen to be part of the output
+set.
 
 It's main use is probably copying a random set of music files to
 a portable MP3 player which has storage too small to hold all our
-music collection.  For that purpose you can use GNU xargs and mv:
+music collection.  For that purpose you can use GNU find, GNU xargs
+and mv:
 
-  ./rand-mp3.pl -0 | xargs -0 --no-run-if-empty mv -t/media/pen --
+  find /path/to/music -type f -print0 | \
+    ./rand-files.pl -0 | \
+    xargs -0 --no-run-if-empty mv -t /media/pen --
 
 =head1 OPTIONS
 
@@ -162,32 +203,50 @@ Prints long help message and exits.
 
 =item B<-0 --zero>
 
-Ends each printed file name with a NUL byte instead of new line
-character.
+Synonym of B<-z -Z> which see.
+
+=item B<-z --zero-out>
+
+When printing out file list end each file with a NUL byte instead of
+new line character.  This way output may be sent to GNU xargs run with
+B<-0> option.
+
+=item B<-Z --zero-in>
+
+When reading files from standard input assume file names are ended
+with a NUL byte and not new line character.  This way the script may
+read output of a GNU find command with B<-print0> action.
 
 =item B<-s --size>=I<size>
 
 Size in MiB not to exceed.  By default it is 1000.
 
-=item B<-m --match>=I<regexp>
-
-If a file matches this I<regexp> it will be added to a set of files to
-choose from.
-
 =item B<-e --extension>=I<ext>
 
 If a file has I<ext> (that is ends with a dot followed by I<ext>) it
 will be added to a set of files to choose from.  By default, if no
-B<-e> nor B<-m> option is given program searches for B<mp3> and B<ogg>
-files.
+B<-e>, B<-x>, B<-i> or B<-r> option is given program searches for
+B<mp3> and B<ogg> files.
 
-=item I<source-dir>
+File extension is checked prior to any other rules.  If file's
+extension does not match on of the extensions given on command line it
+won't be taken into consideration.
 
-Start of source directory tree to search for files.
+=item B<-x --exclude>=I<regexp>
 
-=item I<dest-dir>
+The same as B<--rule=0,>I<regexp> which see.
 
-A destination directory to copy files to.  B<WARNING!> Files in that
-directory will be deleted!
+=item B<-i --include>=I<regexp>
+
+The same as B<--rule=1,>I<regexp> which see.
+
+=item B<-r --rule>=I<rank>,I<regexp>
+
+Adds a rule for ranking files.  If file name matches I<regexp> it is
+assigned given I<rank> and no other rules will be taken into
+consideration (ie. first rule that matches wins).
+
+I<rank> may be any real number.  If it is less then or equal zero the
+image won't be added to the set of files to choose from
 
 =back

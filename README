@@ -31,8 +31,7 @@ At the moment the collection includes:
    used in /etc/profile to show all news;
 
  * cdiff (C and sed versions) -  adds ANSI codes to the output of diff
-   making it a bit more readable.  Both versions read input from stdin
-   and send colourised output to stdout;
+   making it a bit more readable.
 
  * check.sh  -  performs  a  defined checking  (whether  www.googl.com
    responds to pings by default) and runs specified command if failed.
@@ -147,10 +146,10 @@ At the moment the collection includes:
 
  * quotes.txt - a collection of quotations (some are in Polish);
 
- * rand-files.pl - looks for files with given extensions or matching
-   given regexpes and chooses a random set of them such that their
-   size is no greater then given limit.  Useful for choosing random
-   set of songs to copy to our portable player.
+ * rand-files.pl - chooses a random set of files, where each file may
+   have its own rank or probability, read from standard input such
+   that their size is no greater then given limit.  Useful for
+   choosing random set of songs to copy to our portable player.
 
  * rot13 - performs an ROT13 'encryption' on stdin;
 
