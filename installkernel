@@ -454,7 +454,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		if [ -n "$DASHDASH" ]; then
 			case "$ARG" in
 			-*)    :          ;;
-			?|??)  ARG=-$ARG  ;;
+			?|n?)  ARG=-$ARG  ;;
 			*)     ARG=--$ARG ;;
 			esac
 		fi

@@ -1,13 +1,16 @@
 2009-04-14  Michal Nazarewicz  <mina86/AT/mina86.com>
 
-	tpwd: + added --zsh option
+	* tpwd: + added --zsh option
 
-	genpass.sh: + increased portability
+	* genpass.sh: + increased portability
 	+ added sha1sum as an alternative if md5sum is missing
 
-	rand-files.pl: + partially rewritten
+	* rand-files.pl: + partially rewritten
 	+ added ranking
 	+ removed "find" functionality (TODO)
+
+	* installkernel: + fixed bug where "su" was interpreted as "-su"
+	when "--" was in effect
 
 2009-04-11  Michal Nazarewicz  <mina86/AT/mina86.com>
 
