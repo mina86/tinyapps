@@ -1,6 +1,8 @@
 2009-04-14  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	tpwd: + added --zsh option
+	genpass.sh: + increased portability
+	+ added sha1sum as an alternative if md5sum is missing
 
 2009-04-11  Michal Nazarewicz  <mina86/AT/mina86.com>
 

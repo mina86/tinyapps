@@ -53,15 +53,22 @@ else
 fi
 
 
+got_command () { test -n "`which \"$1\" 2>/dev/null`"; }
 
-if which uuencode >/dev/null 2>&1; then
+if got_command uuencode; then
 	gen_pass () {
-		printf %s $(uuencode -m pass | tail -n +2 | head -n 1)
+		printf %s `uuencode -m pass | tail -n +2 | head -n 1`
 	}
-elif which md5sum >/dev/null 2>&1; then
+elif got_command md5sum; then
 	gen_pass () {
 		P1=`head -c 32 | md5sum | cut -c1-32`
 		P2=`head -c 32 | md5sum | cut -c1-32`
+		printf %s "$P1" "$P2"
+	}
+elif got_command sha1sum; then
+	gen_pass () {
+		P1=`head -c 32 | sha1sum | cut -c1-32`
+		P2=`head -c 32 | sha1sum | cut -c1-32`
 		printf %s "$P1" "$P2"
 	}
 else
@@ -76,6 +83,6 @@ if [ "$LEN" -gt 0 ]; then
 	L=$LEN
 	while [ $L -gt 0 ]; do
 		gen_stream | gen_pass
-		L=$(( $L - 64 ))
+		L=`expr "$L" - 64`
 	done | cut -c 1-$LEN
 fi
