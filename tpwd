@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Truncates pwd to specified number of characters
-## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
+## Copyright (c) 2005-2009 by Michal Nazareicz (mina86/AT/mina86.com)
 ##
 ## This software is OSI Certified Open Source Software.
 ## OSI Certified is a certification mark of the Open Source Initiative.
@@ -24,35 +24,32 @@
 ##
 
 
-## Generic function
-if [ X"$1" = X--function ]; then
+case "$1" in
+--function)  ## Generic function
 cat <<EOF
-	tpwd () {
-		set -- \$? "\$@"
-		if [ X"\$2" != X-n ] || [ X"\${3#-}" != X"\$3" ] || [ \$# -gt 6 ] || \
-			[ -z "\$HOME" ]; then shift; "\$(which tpwd)" "\$@"; return; fi
-		set -- \$1 "\${3:-30}" "\${4-...}" "\$5" "\${6:-\$PWD}"
-		[ X"\$5" = X"\${5#\$HOME}" ] || \
-			set -- "\$1" "\${2:-30}" "\${3-...}" "\$4" "~\${5#\$HOME}"
+tpwd () {
+	set -- \$? "\$@"
+	if [ X"\$2" != X-n ] || [ X"\${3#-}" != X"\$3" ] || [ \$# -gt 6 ] || \
+		[ -z "\$HOME" ]; then shift; "\$(which tpwd)" "\$@"; return; fi
+	set -- \$1 "\${3:-30}" "\${4-...}" "\$5" "\${6:-\$PWD}"
+	[ X"\$5" = X"\${5#\$HOME}" ] || \
+		set -- "\$1" "\${2:-30}" "\${3-...}" "\$4" "~\${5#\$HOME}"
 
-		if [ \${#5} -le \$2 ] || [ \${4:-\${#3}} -ge \$2 ]
-		then printf %s "\$5"; return \$1; fi
-		printf %s "\$3"; set -- \$1 "\$(( \$2 - \${4:-\${#3}} ))" "\${5#?}"
-		while [ \${#3} -gt \$2 ]; do set -- \$1 "\$2" "\${3#?}"; done
-		printf %s "\$3"; return \$1
-	}
+	if [ \${#5} -le \$2 ] || [ \${4:-\${#3}} -ge \$2 ]
+	then printf %s "\$5"; return \$1; fi
+	printf %s "\$3"; set -- \$1 "\$(( \$2 - \${4:-\${#3}} ))" "\${5#?}"
+	while [ \${#3} -gt \$2 ]; do set -- \$1 "\$2" "\${3#?}"; done
+	printf %s "\$3"; return \$1
+}
 EOF
 	exit
-fi
-
-
-## Bash function
-if [ X"$1" = X--bash ]; then
+	;;
+--bash|--zsh) ## Bash/zsh function
 	cat <<EOF
 tpwd () {
-	local EC=\$? P="\$PWD" E="echo" ARGS=( \$@ )
+	local EC=\$? P="\$PWD" E=echo ARGS=( \$@ )
 	if [ X"\$1" = X-P ] || [ X"\$1" = X-L ]; then P="\$(pwd \$1)"; shift; fi
-	if [ X"\$1" = X-n ]; then E='printf %s'; shift; fi
+	if [ X"\$1" = X-n ]; then E='echo -n'; shift; fi
 	if [ \$# -gt 4 ] || [ X"\${1#-}" != X"\$1" ] || [ -z "\$HOME" ]
 	then "\$(which tpwd)" "\${ARGS[@]}"; return \$?; fi
 
@@ -65,7 +62,7 @@ tpwd () {
 }
 EOF
 	exit
-fi
+esac
 
 
 ## PWD
@@ -81,6 +78,7 @@ if [ $# -gt 4 ] || [ X"${1#-}" != X"$1" ]; then
 	cat <<EOF
 usage: tpwd [ -L | -P ] [ -n ] [<len> [<trunc> [<tlen> [<path>]]]]
        eval "\$(tpwd --bash)"      defines bash function
+       eval "\$(tpwd --zsh)"       defines zsh function
        eval "\$(tpwd --function)"  defines generic POSIX shell function
  -L       uses  'pwd -L'  instead of  \$PWD
  -P       uses  'pwd -P'  instead of  \$PWD

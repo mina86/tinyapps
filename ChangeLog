@@ -1,3 +1,7 @@
+2009-04-14  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	tpwd: + added --zsh option
+
 2009-04-11  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	cdiff.c: + added isatty() checking (no colors if stdout is not a TTY)
