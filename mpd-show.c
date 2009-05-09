@@ -25,7 +25,6 @@
 
 #define APP_VERSION "0.18"
 
-
 #define _POSIX_C_SOURCE 2
 #define _BSD_SOURCE
 
@@ -65,7 +64,11 @@
 
 /******************** Error messages ********************/
 static const char *program_name = "mpd-show";
-#define ERR(fmt, arg) fprintf(stderr, "%s: " fmt "\n", program_name, arg);
+#define DIE_IF(cond, fmt, arg) \
+	if (cond) { \
+		fprintf(stderr, "%s: " fmt "\n", program_name, arg); \
+		exit(1); \
+	} else (void)0
 
 
 
@@ -127,7 +130,6 @@ int main(int argc, char **argv) {
 	/* Parse arguments */
 	parse_arguments(argc, argv, &config);
 
-
 	/* Daemonize */
 	if (config.background==2) {
 		pid_t pid;
@@ -186,7 +188,7 @@ int main(int argc, char **argv) {
 
 	/* Return */
 	mpd_closeConnection(conn);
-	write(0, "\n", 1);
+	putchar('\n');
 	return signum;
 }
 
@@ -248,10 +250,7 @@ static void parse_arguments(int argc, char **argv, struct config *config) {
 			/* Columns */
 		case 'c': {
 			long c = strtol(optarg, &end, 0);
-			if (c<3 || *end) {
-				ERR("invalid terminal width: %s", optarg);
-				exit(1);
-			}
+			DIE_IF(c<3 || *end, "invalid terminal width: %s", optarg);
 			config->columns = c;
 			break;
 		}
@@ -265,13 +264,11 @@ static void parse_arguments(int argc, char **argv, struct config *config) {
 		case 1:
 			if (!hostarg) { hostarg = optarg; break; }
 			if (!portarg) { portarg = optarg; break; }
-			ERR("invalid argument: %s", optarg);
-			exit(1);
+			DIE_IF(1, "invalid argument: %s", optarg);
 
 			/* An error */
 		default:
-			ERR("invalid option: %c", optopt);
-			exit(1);
+			DIE_IF(1, "invalid option: %c", optopt);
 		}
 	}
 
@@ -297,10 +294,7 @@ static void parse_arguments(int argc, char **argv, struct config *config) {
 		config->port = DEFAULT_PORT;
 	} else {
 		config->port = strtol(portarg, &end, 10);
-		if (config->port<0 || *end) {
-			ERR("invalid port: %s", portarg);
-			exit(1);
-		}
+		DIE_IF(config->port<0 || *end, "invalid port: %s", portarg);
 	}
 
 
@@ -309,10 +303,7 @@ static void parse_arguments(int argc, char **argv, struct config *config) {
 		end = getenv("COLUMNS");
 		if (end) {
 			long c = strtol(end, &end, 0);
-			if (c<3 || *end) {
-				ERR("invalid terminal width: %s", getenv("COLUMNS"));
-				exit(1);
-			}
+			DIE_IF(c<3 || *end, "invalid terminal width: %s", getenv("COLUMNS"));
 			config->columns = c;
 		} else {
 			config->columns = DEFAULT_COLUMNS;
@@ -322,12 +313,9 @@ static void parse_arguments(int argc, char **argv, struct config *config) {
 
 	/* Buffer */
 	config->buffer = malloc(config->columns+64);
-	if (!config->buffer) {
-		ERR("not enought memory to allocate %d btyes", config->columns+64);
-		exit(1);
-	}
+	DIE_IF(!config->buffer,
+	       "not enought memory to allocate %d btyes", config->columns+64);
 }
-
 
 
 /******************** Connect to MPD ********************/
@@ -678,10 +666,12 @@ static void redisplay(struct config *config, struct name *name,
 	{
 		size_t split = state->len ? state->pos * columns / state->len : 0;
 		if (split>columns) split = columns;
-		write(0, buffer - (config->background ? 26 : 18),
-		      split + (config->background ? 26 : 18));
-		write(0, "\33[0;37m", 7);
-		write(0, buffer+split, columns-split+(config->background ? 2 :0));
+		fwrite(buffer - (config->background ? 26 : 18),
+		       split + (config->background ? 26 : 18), 1, stdout);
+		fputs("\33[0;37m", stdout);
+		fwrite(buffer + split, columns - split + (config->background ? 2 :0),
+		       1, stdout);
+		fflush(stdout);
 	}
 }
 

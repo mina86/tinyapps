@@ -2,6 +2,8 @@
 
 	* quotes.txt: + converted to UTF-8
 
+	* mpd-show.c: + uses fwrite() instead of write(), etc.
+
 2009-04-14  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* tpwd: + added --zsh option
