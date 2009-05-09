@@ -1,3 +1,7 @@
+2009-05-09  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* quotes.txt: + converted to UTF-8
+
 2009-04-14  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* tpwd: + added --zsh option
