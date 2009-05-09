@@ -343,7 +343,7 @@ uninstall-xgetclass: xgetclass
 ##
 clean:
 	@echo '  CLEAN  compiled files'
-	$(Q)exec rm -f -- $(shell cat .cvsignore)
+	$(Q)exec rm -f -- $(shell cat .gitignore)
 	@echo '  CLEAN  temporary files'
 	$(Q)exec rm -f -- *.o *~ 2>/dev/null
 	@echo '  CLEAN  package release'

@@ -3,6 +3,9 @@
 *.o
 *.tar
 *.tgz
+#*
+*#
+*~
 FvwmTransFocus
 a.out
 arpping
