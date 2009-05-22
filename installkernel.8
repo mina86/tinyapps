@@ -1,4 +1,4 @@
-.TH installkernel 8 "4 April, 2009" "version 0.15.1" "Linux System Administration"
+.TH installkernel 8 "4 April, 2009" "version 0.15.2" "Linux System Administration"
 
 \"
 \" installkernel man page
@@ -60,19 +60,19 @@ Specifies the directory where the kernel image will be installed.
 For more info see \fB<prefix>\fP.
 
 .TP
-\-\-kversion=\fIver\fR
+\fB\-\-kversion=\fIver\fP
 Specifies the kernel version.  For more info see \fB<version>\fP.
 
 .TP
-\-\-image=\fIimage\fR
+\fB\-\-image=\fIimage\fP
 Specifies the kernel image.  For more info see \fB<image>\fP.
 
 .TP
-\-\-map=\fIsystemmap\fR
+\fB\-\-map=\fIsystemmap\fP
 Specifies the System map file.  For more info see \fB<systemmap>\fP.
 
 .TP
-\fB\-\-cd=\fIdir\fP
+\fB\-\-cd[=\fIdir\fB]\fP
 The script will attempt to change directory to \fIdir\fP before doing
 anything.
 
@@ -81,6 +81,12 @@ anything.
 Synonym of \fB\-\-cd=/usr/src/linux\fP.  Useful for people who keep
 their kernel source code in \fI/usr/src/linux\fP.  Can save you from
 typing those extra characters. :)
+
+.TP
+\fB\-o\ \-\-out[=\fIdir\fB]\fP
+The script will set \fBKBUILD_OUTPUT\fP environmental variable
+resulting in kernel being built in \fIdir\fP or
+\fI/usr/src/linux-build\fP directory if argument was omitted.
 
 .TP
 \fB\-\-su\fP
@@ -103,7 +109,7 @@ everything as root and use \fB\-\-su\fP option (not recommended since
 you can build image as non-root user without any problems).
 
 .TP
-\fB\-\-nice=\fInice\fP
+\fB\-\-nice=[\fInice\fB]\fP
 If \fInice\fP is a number adds it to a nice value; if it is a number
 prefixed by an exclamation mark ("!") sets the nice value to given
 number.  The default is "!10".  Setting this to a big value (eg. 20)
@@ -115,19 +121,19 @@ noticeable.  Script will never lower the nice value.
 Synonym of \fB\-\-nice=0\fP.
 
 .TP
-\fB\-L \-\-log=\fIfile\fR
+\fB\-L \-\-log[=\fIfile\fB]\fP
 Writes all output to \fIfile\fP instead of standard output.  If
 \fIfile\fP exists output will be append to it.
 
 .TP
-\fB\-L \-\-log\fR
+\fB\-L \-\-log\fP
 Sort of synonym of \fB\-\-log=installkernel-log\fP.  The difference is
 that if \fBinstallkernel-log\fP exists then the output will be sent to
 \fBinstallkernel-log.1\fP.  If this file exists as well - to
 \fBinstallkernel-log.2\fP and so on.
 
 .TP
-\fB\-\-\fR
+\fB\-\-\fP
 A\ modifier which changes the way arguments on command line are
 interpreted.  If an argument that does not start with a\ dash is found
 it is treated as a\ long option, if it is at least 3 character long,
@@ -203,7 +209,7 @@ Runs \fBmake *config\fP at the beginning to configure the kernel.  The
 default is \fBno\fP.
 
 .TP
-\fB\-C \-\-config=\fItype\fR
+\fB\-C \-\-config[=\fItype\fB]\fP
 Specifies what type of config the script should run.  It implies
 \fB\-\-config\fP or if \fItype\fP is \fIno\fP \fB\-\-no\-config\fP.
 By default the script tries to guess what kind of config to run.  If
@@ -389,7 +395,7 @@ For more details consult lilo.conf(5) man page.
 .SH EXAMPLES
 
 .TP
-\fB$ installkernel \-\-su \-\-cd \-\-all \-\-nice=20\fP
+\fBinstallkernel \-\-su \-\-cd \-\-all \-\-nice=20\fP
 Does everything (compiles the kernel image and modules then installs
 them, removes old ones and finally updates loader).  At the beginning
 asks for root password so when super user privileges are required the

@@ -47,7 +47,7 @@ toInt () {
 ## Version & lockfile
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
-	echo 'installkernel  v0.15.1  (c) 2004-2009 by Micha³ Nazarewicz'
+	echo 'installkernel  v0.15.2  (c) 2004-2009 by Michal Nazarewicz'
 	echo
 
 	# Lockfile check
@@ -88,8 +88,9 @@ usage: installkernel [<options>] [<switches>]
      --image=<image>   Same as <image>
      --map=<systemmap> Same as <systemmap>
      --bootdir=<dir>   Same as <prefix>
-     --cd[=<dir>]      Change directory to <dir> (/usr/src/linux if ommited)
 
+     --cd[=<dir>]      Change directory to <dir> (/usr/src/linux if ommited)
+  -o --out[=<dir>]     Build kernel in <dir> (/usr/src/linux-build if ommited)
      --su              Trt to became root (implies --user=<current-user>)
   -u --user=<user>     Runs everything not requiring SU privilages as <user>
   -nu --no-user        Synonym of  --user=
@@ -469,9 +470,12 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		--kversion=*)     VER="${ARG#--kversion=}";         ;;
 		--image=*)        IMG_PATH="${ARG#--image=}";       ;;
 		--map=*)          MAP_PATH="${ARG#--map=}";         ;;
-		--bootdir=*)      INSTALL_PATH="${ARG#--bootdir=}";;
+		--bootdir=*)      INSTALL_PATH="${ARG#--bootdir=}"  ;;
 		--cd=*)           CD="${ARG#--cd=}";;
 		--cd)             CD=/usr/src/linux;;
+		-o|--out)         export KBUILD_OUTPUT=/usr/src/linux-build;;
+		-o?*)             export KBUILD_OUTPUT="${ARG#-o}"    ;;
+		--out=*)          export KBUILD_OUTPUT="${ARG#--out=}";;
 
 		--config=no)      CONFIG=;;
 		--no-config)      CONFIG=;;
@@ -612,7 +616,6 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	export INSIDE_INSTALLKERNEL=y
 	if [ -n "$VERBOSE" ]; then V=v; VOPT=-v; fi
 	if [ -n "$REALLY_VERBOSE" ]; then MAKEV='v=1'; fi
-	unset KBUILD_OUTPUT
 
 
 	##
@@ -824,8 +827,8 @@ if [ -n "$INSTALL_IMAGE" ]; then
 	msg '37;1' BUILD "$BUILD"
 	FVER="$VER-#$BUILD"
 
-	if [ -z "$IMG_PATH" ]; then IMG_PATH="arch/$ARCH/boot/bzImage"; fi
-	if [ -z "$MAP_PATH" ]; then MAP_PATH="System.map"; fi
+	if [ -z "$IMG_PATH" ]; then IMG_PATH=arch/$ARCH/boot/bzImage; fi
+	if [ -z "$MAP_PATH" ]; then MAP_PATH=System.map; fi
 
 	mkdir -p -m u=rwx,g=rx,o=rx "$INSTALL_PATH"
 
@@ -844,13 +847,13 @@ if [ -n "$INSTALL_IMAGE" ]; then
 	set --
 
 	msg '37;1' CP bzImage
-	run cp $VOPT -- "$IMG_PATH" "$INSTALL_PATH/bzImage-$FVER"
+	run cp $VOPT -- "${KBUILD_OUTPUT:-.}/$IMG_PATH" "$INSTALL_PATH/bzImage-$FVER"
 
 	msg '37;1' CP System.map
-	run cp $VOPT -- "$MAP_PATH" "$INSTALL_PATH/System.map-$FVER"
+	run cp $VOPT -- "${KBUILD_OUTPUT:-.}/$MAP_PATH" "$INSTALL_PATH/System.map-$FVER"
 
 	msg '37;1' CP .config
-	run cp $VOPT -- .config "$INSTALL_PATH/config-$FVER"
+	run cp $VOPT -- "${KBUILD_OUTPUT:-.}/.config" "$INSTALL_PATH/config-$FVER"
 
 	for FILE in bzImage System.map config; do
 		msg '37;1' READLNK "$FILE"

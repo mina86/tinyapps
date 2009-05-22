@@ -2,6 +2,8 @@
 
 	* lesspipe: + added lzma and xz support
 
+	* installkernel, installkernel.8: + added -o parameter
+
 2009-05-09  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* quotes.txt: + converted to UTF-8
