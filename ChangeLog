@@ -1,3 +1,7 @@
+2009-05-22  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* lesspipe: + added lzma and xz support
+
 2009-05-09  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* quotes.txt: + converted to UTF-8

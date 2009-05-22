@@ -276,61 +276,49 @@ if [ -d "$1" ]; then
 fi
 
 
-## Filter
-case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjklzxcvbnm)" in
+## Compressed?
+FILENAME="$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjklzxcvbnm)"
+DECOMPRESSOR=cat
+case "$FILENAME" in
+*.gz)          DECOMPRESSOR=gzip ; FILENAME=c${FILENAME%.*}    ;;
+*.tgz)         DECOMPRESSOR=gzip ; FILENAME=c${FILENAME%.*}.tar;;
+*.bz2)         DECOMPRESSOR=bzip2; FILENAME=c${FILENAME%.*}    ;;
+*.tbz)         DECOMPRESSOR=bzip2; FILENAME=c${FILENAME%.*}.tar;;
+*.xz)          DECOMPRESSOR=xz   ; FILENAME=c${FILENAME%.*}    ;;
+*.txz)         DECOMPRESSOR=xz   ; FILENAME=c${FILENAME%.*}.tar;;
+*.lzma)        DECOMPRESSOR=lzma ; FILENAME=c${FILENAME%.*}    ;;
+*)                                 FILENAME=u$FILENAME
+esac
 
-# Man pages
+if [ x"$DECOMPRESSOR" != xcat ]; then
+	run $DECOMPRESSOR || exit 0
+	DECOMPRESSOR="$DECOMPRESSOR -d"
+fi
+
+
+# Filter
+case "$FILENAME" in
 *.[1-9n]|*.man)
-	if run file && run nroff && file -L "$1" | grep -F roff >/dev/null
-	then nroff -S -mandoc "$1"; fi
+	if run nroff; then $DECOMPRESSOR <"$1" | nroff -S -mandoc -; fi
 	;;
-
-*.[1-9n].gz|*.man.gz)
-	if run file && run nroff && run gzip && \
-		gzip -d <"$1" | file - | grep -F roff >/dev/null
-	then gzip -d <"$1" | nroff -S -mandoc -; fi
+*.tar)
+	if run tar  ; then $DECOMPRESSOR <"$1" | tar tvv; fi
 	;;
-
-*.[1-9n].bz2|*.man.bz2)
-	if run file && run nroff && run bzip2 && \
-		bzip2 -d <"$1" | file - | grep -F roff >/dev/null
-	then bzip2 -d <"$1" | nroff -S -mandoc -; fi
-	;;
-
-
-# Tar archives
-*.tar)                                   tar tvv <"$1" ;;
-*.tgz)     run gzip  && gzip  -d <"$1" | tar tvv       ;;
-*.tar.gz)  run gzip  && gzip  -d <"$1" | tar tvv       ;;
-*.tar.z)   run gzip  && gzip  -d <"$1" | tar tvv       ;;
-*.tar.dz)  run gzip  && gzip  -d <"$1" | tar tvv       ;;
-*.tbz)     run bzip  && bzip  -d <"$1" | tar tvv       ;;
-*.tar.bz)  run bzip  && bzip  -d <"$1" | tar tvv       ;;
-*.tbz2)    run bzip2 && bzip2 -d <"$1" | tar tvv       ;;
-*.tar.bz2) run bzip2 && bzip2 -d <"$1" | tar tvv       ;;
-
-
-# Compressed files
-*.gz)  run gzip  -d <"$1" ;;
-*.z)   run gzip  -d <"$1" ;;
-*.dz)  run gzip  -d <"$1" ;;
-*.bz)  run bzip  -d <"$1" ;;
-*.bz2) run bzip2 -d <"$1" ;;
 
 
 # Other archives
-*.arj)       run unarj l "$1" ;;
-*.lha|*.lzh) run lha v "$1" ;;
-*.cab)       run cabextract -l "$1" ;;
+u*.arj)        run unarj l "$1" ;;
+u*.lha|u*.lzh) run lha v "$1" ;;
+u*.cab)        run cabextract -l "$1" ;;
 
-*.rar|*.r[0-9][0-9])
+u*.rar|u*.r[0-9][0-9])
 	if   run --   rar; then   rar v "$1"
 	elif run -- unrar; then unrar v "$1"
 	else echo "No rar or unrar available"
 	fi
 	;;
 
-*.jar|*.war|*.xpi|*.zip)
+u*.jar|u*.war|u*.xpi|u*.zip)
 	if   run --     unzip; then     unzip -v "$1"
 	elif run -- miniunzip; then miniunzip -l "$1"
 	elif run -- miniunz  ; then miniunz   -l "$1"
@@ -338,7 +326,7 @@ case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjk
 	fi
 	;;
 
-*.zoo)
+u*.zoo)
 	if   run --   zoo; then   zoo  v "$1"
 	elif run -- unzoo; then unzoo -l "$1"
 	else echo "No unzoo or zoo available"
@@ -347,16 +335,16 @@ case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjk
 
 
 ## CD Images
-*.iso) run isoinfo && iso_list "$1" ;;
+u*.iso) run isoinfo && iso_list "$1" ;;
 
-*.bin|*.raw)
+u*.bin|u*.raw)
 	if run file && run isoinfo && file "$1" | grep -F ISO\.9660 >/dev/null;
 	then iso_list "$1"; fi
 	;;
 
 
 ## Binary software packages
-*.deb|*.udeb)
+u*.deb|u*.udeb)
 	if run dpkg; then
 		echo "$1:"
 		dpkg --info "$1"
@@ -366,7 +354,7 @@ case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjk
 	fi
 	;;
 
-*.rpm)
+u*.rpm)
 	if run rpm; then
 		echo "$1:"
 		rpm -q -i -p "$1"
@@ -378,18 +366,18 @@ case "$(printf %s "$FILENAME" | tr QWERTYUIOPASDFGHJKLZXCVBNM qwertyuiopasdfghjk
 
 
 ## Documents, images, etc
-*.doc) run catdoc "$1" ;;
-*.dvi) run dvi2tty "$1" ;;
-*.ps)  run ps2ascii "$1" ;;
-*.pdf) run pdftotext "$1" - ;;
+u*.doc) run catdoc "$1" ;;
+u*.dvi) run dvi2tty "$1" ;;
+*.ps)   if run ps2ascii; then $DECOMPRESSOR <"$1" | run ps2ascii; fi ;;
+u*.pdf)  run pdftotext "$1" - ;;
 
-*.gif|*.jpeg|*.jpg|*.pcd|*.png|*.tga|*.tiff|*.tif)
+u*.gif|u*.jpeg|u*.jpg|u*.pcd|u*.png|u*.tga|u*.tiff|u*.tif)
 	run identify -verbose "$1"
 	;;
 
 
 ## If file was downloaded it needs to be cated
-*)
+u*)
 	if [ X"$3" != Xdownloaded ]; then
 		:
 	elif [ -z "$2" ]; then
