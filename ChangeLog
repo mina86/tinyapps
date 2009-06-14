@@ -1,3 +1,9 @@
+2009-06-14  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* gz2bz: + added possibility to save uncompressed files in
+	specified directory (think /tmp)
+	+ changed meaning of -K (is now --keep-gz, was --keep-both)
+
 2009-05-22  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* lesspipe: + added lzma and xz support

@@ -63,8 +63,10 @@ usage: gz2bz <options> [ [--] file ...]
  -b --bzip2-opts=<opts> Adds additional arguments to bzip2
 
  -k --keep              Keeps uncompressed file
-    --keep-gz           Keeps .gz file
- -K --keep-both         Alias of --keep --keep-gz
+ -k --keep=<dir>        Save uncompressed file in <dir>
+ -t --tmp               Same as --keep=/tmp
+ -K --keep-gz           Keeps .gz file
+    --keep-both         Alias of --keep --keep-gz
 EOF
 }
 
@@ -95,6 +97,7 @@ KEEP_GZIP=
 VERBOSE=
 VERB_OPTS=
 OVERWRITE=y
+TMP=
 
 
 ##
@@ -109,7 +112,7 @@ while [ $# -ne 0 ] && [ X"$1" != X-- ]; do
 	(-vv)            VERBOSE=y; VERB_OPTS=-vv;;
 	(-q|--quiet)     VERBOSE= ; VERB_OPTS=-q ;;
 
-	(-i|--interactive)  OVERWRITE= ;;
+	(-i|--interactive)  OVERWRITE=i;;
 	(--never-overwrite) OVERWRITE=n;;
 
 	(-[0-9])         BZ2_OPTS="$BZ2_OPTS $1"; ;;
@@ -129,9 +132,12 @@ while [ $# -ne 0 ] && [ X"$1" != X-- ]; do
 	(-b*)            BZIP2_OPTS="$BZIP2_OPTS ${1#-?}"       ; ;;
 	(--bzip2-opts=*) BZIP2_OPTS="$BZIP2_OPTS ${1#*=}"       ; ;;
 
-	(-k|--keep)      KEEP_UNCOMPRESSED=y             ; ;;
-	(--keep-gz)                           KEEP_GZIP=y; ;;
-	(-K|--keep-both) KEEP_UNCOMPRESSED=y; KEEP_GZIP=y; ;;
+	(-k|--keep)      KEEP_UNCOMPRESSED=y             ;;
+	(-k*)            KEEP_UNCOMPRESSED=y; TMP=${1#-?};;
+	(--keep=*)       KEEP_UNCOMPRESSED=y; TMP=${1#*=};;
+	(-t|--tmp)       KEEP_UNCOMPRESSED=y; TMP=/tmp   ;;
+	(-K|--keep-gz)                        KEEP_GZIP=y;;
+	(--keep-both)    KEEP_UNCOMPRESSED=y; KEEP_GZIP=y;;
 
 	(-*) echo "${0##*/}: Invalid argument: $1" >&2; exit 1; ;;
 	(*) break; ;;
@@ -166,8 +172,6 @@ unset GZIP GZIP_OPTS BZIP2 BZIP2_OPTS
 ## Ask whether to overwrite a file
 ##
 overwrite () {
-	[ X"$OVERWRITE" != Xy ] || return 0
-
 	while [ $# -gt 0 ]; do
 		if ! [ -e "$1" ]; then
 			shift
@@ -179,19 +183,20 @@ overwrite () {
 			return 1
 		fi
 
-		if [ X"$OVERWRITE" = Xn ]; then
-			msg -f "$1: exists; not overwriting"
-			return 1
-		fi
-
+		__OVERWRITE=$OVERWRITE
 		while :; do
-			printf '%s: %s: exists; overwrite? [Y/n]: ' "${0##*/}" "$1"
-			read __OVERWRITE || __OVERWRITE=n
-			[ -n "$__OVERWRITE" ] || __OVERWRITE=y
-			__OVERWRITE=$(echo "X$__OVERWRITE" | tr YESNO yesno)
-			if   [ "$__OVERWRITE" = Xn ] || [ "$__OVERWRITE" = Xno  ]; then return 1
-			elif [ "$__OVERWRITE" = Xy ] || [ "$__OVERWRITE" = Xyes ]; then break
-			fi
+			case "$__OVERWRITE" in
+			[yY]|[yY][eE][sS]|'')
+				break
+				;;
+			[nN]|[nN][oO])
+				msg -f "$1: exists; not overwriting"
+				return 1
+				;;
+			*)
+				printf '%s: %s: exists; overwrite? [Y/n]: ' "${0##*/}" "$1"
+				read __OVERWRITE || __OVERWRITE=n
+			esac
 		done
 
 		shift
@@ -218,31 +223,30 @@ for FILE; do
 	(*.gz)  OUTPUT="${FILE%.gz}" ;;
 	(*) msg -f "$FILE: invalid extension, skipping"; continue
 	esac
-
-	# Overwrite
-	if [ -z "$KEEP_UNCOMPRESSED" ]; then
-		overwrite "$OUTPUT.bz2" || continue
-	else
-		overwrite "$OUTPUT" "$OUTPUT.bz2" || continue
+	OUTPUT_BZ2=$OUTPUT.bz2
+	if [ -n "$TMP" ]; then
+		OUTPUT=$TMP/${OUTPUT##*/}
 	fi
 
 	OK=
 	## Convert
 	if [ -z "$KEEP_UNCOMPRESSED" ]; then
-		msg converting "$FILE" to "$OUTPUT.bz2"
-		if ! $GZ <"$FILE" | $BZ2 >"$OUTPUT.bz2"; then
-			rm -f -- "$OUTPUT.bz2"
+		overwrite "$OUTPUT_BZ2" || continue
+		msg converting "$FILE" to "$OUTPUT_BZ2"
+		if ! $GZ <"$FILE" | $BZ2 >"$OUTPUT_BZ2"; then
+			rm -f -- "$OUTPUT_BZ2"
 		else
 			OK=y
 		fi
 	else
+		overwrite "$OUTPUT" "$OUTPUT_BZ2" || continue
 		msg decompressing "$FILE" to "$OUTPUT"
 		if ! $GZ <"$FILE" >"$OUTPUT"; then
 			rm -f -- "$OUTPUT"
 		else
-			msg compressing "$OUTPUT" to "$OUTPUT.bz2"
-			if ! $BZ2 <"$OUTPUT" >"$OUTPUT.bz2"; then
-				rm -f -- "$OUTPUT.bz2"
+			msg compressing "$OUTPUT" to "$OUTPUT_BZ2"
+			if ! $BZ2 <"$OUTPUT" >"$OUTPUT_BZ2"; then
+				rm -f -- "$OUTPUT_BZ2"
 			else
 				OK=y
 			fi
