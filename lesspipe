@@ -376,8 +376,13 @@ u*.gif|u*.jpeg|u*.jpg|u*.pcd|u*.png|u*.tga|u*.tiff|u*.tif)
 	;;
 
 
+## Compressed file needs decompression
+c*)
+	$DECOMPRESSOR <"$1"
+	;;
+
 ## If file was downloaded it needs to be cated
-u*)
+*)
 	if [ X"$3" != Xdownloaded ]; then
 		:
 	elif [ -z "$2" ]; then
