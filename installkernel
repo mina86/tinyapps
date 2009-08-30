@@ -101,6 +101,8 @@ usage: installkernel [<options>] [<switches>]
   -L --log[=<file>]    Log to <file> (automaticaly chosen file if ommited)
   -nL --no-log         Cancel previous --log option
 
+  -j --jobs=<jobs>     Pass -j<jobs> to make                            [auto]
+
      --                This option causes all options not starting with a
                        dash to be interpreted as long (if at least 3-char
                        long) or short (if no more then 2-char long) options
@@ -208,7 +210,8 @@ trap exit_function 0
 if [ -z "$COLUMNS" ]; then
 	COLS=`toInt "$(stty -a | sed -ne 's/^.*columns[[:space:]][[:space:]]*\([0-9][0-9]*\).*$/\1/p')"`
 	if [ $COLS -gt 30 ]; then
-		export COLUMNS=$COLS
+		COLUMNS=$COLS
+		export COLUMNS
 	fi
 	unset COLS
 fi
@@ -428,17 +431,26 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	##
 	## Init default options
 	##
-	if [ -z "$INSTALL_PATH" ]; then export INSTALL_PATH=/boot; fi
+	if [ -z "$INSTALL_PATH" ]; then
+		INSTALL_PATH=/boot
+		export INSTALL_PATH
+	fi
 
 	SU=; LOG_AUTO=; LOG_FILE=; NICE=!10; __ARCH="$ARCH"; DASHDASH=
-	export VER= BUILD= IMG_PATH= MAP_PATH= RUNAS= ARCH=
+	VER=; BUILD=; IMG_PATH=; MAP_PATH=; RUNAS=; ARCH=; JOBS=auto
+	KBUILD_OUTPUT=
+	export VER BUILD IMG_PATH MAP_PATH RUNAS ARCH KBUILD_OUTPUT
 
-	export DRY_RUN= PRINT_COMMANDS= VERBOSE= REALLY_VERBOSE=
-	if [ -t 1 ]; then export USE_ANSI=y; else export USE_ANSI=; fi
+	DRY_RUN=; PRINT_COMMANDS=; VERBOSE=; REALLY_VERBOSE=;
+	if [ -t 1 ]; then USE_ANSI=y; else USE_ANSI=; fi
+	export DRY_RUN PRINT_COMMANDS VERBOSE USE_ANSI
 
-	export CLEAN= COMPILE_IMAGE= COMPILE_MODULES= INSTALL_IMAGE=
-	export INSTALL_MODULES= UPDATE_LOADER= TIDY_IMAGE= TIDY_MODULES=
-	export CONFIG= MAKE_DEP=auto OVERWRITE_IMAGE=
+	CLEAN=; COMPILE_IMAGE=; COMPILE_MODULES=; INSTALL_IMAGE=;
+	INSTALL_MODULES=; UPDATE_LOADER=; TIDY_IMAGE=; TIDY_MODULES=;
+	CONFIG=; MAKE_DEP=auto; OVERWRITE_IMAGE=; MAKE_FLAGS=;
+	export CLEAN COMPILE_IMAGE COMPILE_MODULES INSTALL_IMAGE
+	export INSTALL_MODULES UPDATE_LOADER TIDY_IMAGE TIDY_MODULES
+	export CONFIG MAKE_DEP OVERWRITE_IMAGE MAKE_FLAGS
 
 	set_run_hooks y
 
@@ -454,9 +466,9 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		# Dash dash at work?
 		if [ -n "$DASHDASH" ]; then
 			case "$ARG" in
-			-*)    :          ;;
-			?|n?)  ARG=-$ARG  ;;
-			*)     ARG=--$ARG ;;
+			-*)      :          ;;
+			?|n?|vv) ARG=-$ARG  ;;
+			*)       ARG=--$ARG ;;
 			esac
 		fi
 
@@ -473,9 +485,9 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		--bootdir=*)      INSTALL_PATH="${ARG#--bootdir=}"  ;;
 		--cd=*)           CD="${ARG#--cd=}";;
 		--cd)             CD=/usr/src/linux;;
-		-o|--out)         export KBUILD_OUTPUT=/usr/src/linux-build;;
-		-o?*)             export KBUILD_OUTPUT="${ARG#-o}"    ;;
-		--out=*)          export KBUILD_OUTPUT="${ARG#--out=}";;
+		-o|--out)         KBUILD_OUTPUT=/usr/src/linux-build;;
+		-o?*)             KBUILD_OUTPUT="${ARG#-o}"    ;;
+		--out=*)          KBUILD_OUTPUT="${ARG#--out=}";;
 
 		--config=no)      CONFIG=;;
 		--no-config)      CONFIG=;;
@@ -497,6 +509,8 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		-L)            LOG_AUTO=y; USE_ANSI=;;
 		-nL|--no-log)  LOG_AUTO=;  LOG_FILE=;;
 
+		-j?*|--jobs=*) JOBS=$ARG;;
+
 		--)            DASHDASH=y;;
 
 		-r*)    VALUE=y; PARAM="--run-${ARG#-r}";;
@@ -505,7 +519,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		-n?)    VALUE= : PARAM="-${ARG#-n}";;
 		--no-*) VALUE= ; PARAM="--${ARG#--no-}";;
 		--*)    VALUE=y; PARAM="--${ARG#--}";;
-		-?)     VALUE=y; PARAM="$ARG";;
+		-*)     VALUE=y; PARAM="$ARG";;
 
 		*)
 			if   [ $ADD_ARGS -eq 0 ]; then VER="$ARG"
@@ -588,7 +602,16 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		INSTALL_IMAGE=y
 		UPDATE_LOADER=y
 	fi
-	unset ARG PARAM HOOK VALUE
+
+	## --jobs
+	if [ x"$JOBS" = xauto ]; then
+		JOBS=$(grep -c ^processor /proc/cpuinfo)
+	fi
+	if [ -n "$JOBS" ] && [ "$JOBS" -gt 1 ] 2>/dev/null; then
+		MAKE_FLAGS="$MAKE_FLAGS -j$JOBS"
+	fi
+
+	unset ARG PARAM HOOK VALUE JOBS
 
 
 	##
@@ -613,10 +636,13 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 
 	header Starting
 
-	export INSIDE_INSTALLKERNEL=y
+	INSIDE_INSTALLKERNEL=y
+	export INSIDE_INSTALLKERNEL
+	if [ -n "$REALLY_VERBOSE" ]; then
+		VERBOSE=y
+		MAKE_FLAGS="$MAKE_FLAGS v=1"
+	fi
 	if [ -n "$VERBOSE" ]; then V=v; VOPT=-v; fi
-	if [ -n "$REALLY_VERBOSE" ]; then MAKEV='v=1'; fi
-
 
 	##
 	## Calculate nice
@@ -673,7 +699,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 			*/*) ARGS="$PWD/$0";;
 			*)   ARGS=$(which "$0" 2>/dev/null)
 			esac
-			set -- "${SHELL-sh}" "$ARGS" "$@"
+			set -- "/bin/sh" "$ARGS" "$@"
 			ARGS=
 			while [ $# -ne 0 ]; do
 				ARGS="$ARGS '$(echo "$1" | sed -e "s/'/'\\\\''/")'"
@@ -688,7 +714,6 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	unset SU
 else
 	if [ -n "$VERBOSE" ]; then V=v; VOPT=-v; fi
-	if [ -n "$REALLY_VERBOSE" ]; then MAKEV='v=1'; fi
 fi
 
 unset VERBOSE REALLY_VERBOSE
@@ -738,12 +763,12 @@ fi
 ##
 ## make *
 ##
-r -u CLEAN           'Cleaning source tree'   make $MAKEV clean
-r -u CONFIG          'Configuring the kernel' make $MAKEV "$CONFIG"
-r -u MAKE_DEP        'Updating dependencies'  make $MAKEV dep
-r -u COMPILE_IMAGE   'Compiling bzImage'      make $MAKEV bzImage
-r -u COMPILE_MODULES 'Compiling modules'      make $MAKEV modules
-r    INSTALL_MODULES 'Installing modules'     make $MAKEV modules_install
+r -u CLEAN           'Cleaning source tree'   make $MAKE_FLAGS clean
+r -u CONFIG          'Configuring the kernel' make $MAKE_FLAGS "$CONFIG"
+r -u MAKE_DEP        'Updating dependencies'  make $MAKE_FLAGS dep
+r -u COMPILE_IMAGE   'Compiling bzImage'      make $MAKE_FLAGS bzImage
+r -u COMPILE_MODULES 'Compiling modules'      make $MAKE_FLAGS modules
+r    INSTALL_MODULES 'Installing modules'     make $MAKE_FLAGS modules_install
 
 
 ##
@@ -818,9 +843,9 @@ if [ -n "$INSTALL_IMAGE" ]; then
 	run_hook pre-install-image
 
 	update_ver
-	if [ -s .version ]; then
-		run -ud cat .version
-		BUILD=$(printf %d $(run -usf cat .version))
+	if [ -s "${KBUILD_OUTPUT:-.}/.version" ]; then
+		run -ud cat "${KBUILD_OUTPUT:-.}/"
+		BUILD=$(printf %d $(run -usf cat "${KBUILD_OUTPUT:-.}/.version"))
 	else
 		BUILD=1
 	fi

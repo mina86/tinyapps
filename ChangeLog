@@ -1,3 +1,9 @@
+2009-08-30  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* installkernel: + added --jobs option
+	+ fixed incorrect .version being read when --out used
+	+ fixed bug with --su when SHELL pointed to zsh
+
 2009-06-24  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* lesspipe: + fixed bug where compressed files were not decompressed

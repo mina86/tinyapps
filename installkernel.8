@@ -61,15 +61,15 @@ For more info see \fB<prefix>\fP.
 
 .TP
 \fB\-\-kversion=\fIver\fP
-Specifies the kernel version.  For more info see \fB<version>\fP.
+Specifies the kernel version.  For more info see \fIversion\fP.
 
 .TP
 \fB\-\-image=\fIimage\fP
-Specifies the kernel image.  For more info see \fB<image>\fP.
+Specifies the kernel image.  For more info see \fIimage\fP.
 
 .TP
 \fB\-\-map=\fIsystemmap\fP
-Specifies the System map file.  For more info see \fB<systemmap>\fP.
+Specifies the System map file.  For more info see \fIsystemmap\fP.
 
 .TP
 \fB\-\-cd[=\fIdir\fB]\fP
@@ -87,6 +87,12 @@ typing those extra characters. :)
 The script will set \fBKBUILD_OUTPUT\fP environmental variable
 resulting in kernel being built in \fIdir\fP or
 \fI/usr/src/linux-build\fP directory if argument was omitted.
+
+Note that there is a\ known issue when using this option where script
+is unable to determine kernel version one is building.  As a
+workaround one shall use \fB\-\-kversion\fP option as well with full
+kernel version specified (ie. \fB\-\-kversion=2.6.30.5\fP or
+\fB\-\-kversion=2.6.30.5-myown\fP if you add additional tags).
 
 .TP
 \fB\-\-su\fP
@@ -133,6 +139,14 @@ that if \fBinstallkernel-log\fP exists then the output will be sent to
 \fBinstallkernel-log.2\fP and so on.
 
 .TP
+\fB\-j \-\-jobs=\fIjobs\fP
+Uses \fIjobs\fP processes when building kernel.  This option simply
+passes \fB\-j\fIjobs\fP option to \fBmake\fP command.  The default is
+\fBauto\fP which determines number of processors (or cores) by reading
+\fB/proc/cpuinfo\fI file and uses that number for \fB\j\fP option.  To
+use a\ single process use \fB\-j1\fP.
+
+.TP
 \fB\-\-\fP
 A\ modifier which changes the way arguments on command line are
 interpreted.  If an argument that does not start with a\ dash is found
@@ -143,12 +157,14 @@ option has been implemented to shorten options.
 
 .TP
 \fIversion\fP \fIimage\fP \fIsystemmap\fP
-Those are the version number, the path to the kernel image file and
-path to the kernel map file.  They are unnecessary as
-the script detects all this by itself but they are provided for
-compatibility with \fBmake install\fP.  Those arguments overwrites and
-can be overwritten (depending on the order in which arguments are
-given) \fB\-\-kversion\fP, \fB\-\-image\fP and \fB-\-map\fP options.
+Those are the version (what compiled kernel will raport as
+\fBuname -r\fP so it shall include any additional tags), the path to
+the kernel image file and path to the kernel map file.  In most cases
+they are unnecessary as the script detects all this by itself but they
+are provided for compatibility with \fBmake install\fP.  Those
+arguments overwrites and can be overwritten (depending on the order in
+which arguments are given) \fB\-\-kversion\fP, \fB\-\-image\fP and
+\fB-\-map\fP options.
 
 .TP
 \fIprefix\fP
