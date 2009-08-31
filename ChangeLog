@@ -1,3 +1,7 @@
+2009-08-31  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* installkernel: + fixed --jobs argument handling
+
 2009-08-30  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* installkernel: + added --jobs option

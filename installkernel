@@ -47,7 +47,7 @@ toInt () {
 ## Version & lockfile
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
-	echo 'installkernel  v0.15.2  (c) 2004-2009 by Michal Nazarewicz'
+	echo 'installkernel  v0.16.0  (c) 2004-2009 by Michal Nazarewicz'
 	echo
 
 	# Lockfile check
@@ -509,7 +509,8 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		-L)            LOG_AUTO=y; USE_ANSI=;;
 		-nL|--no-log)  LOG_AUTO=;  LOG_FILE=;;
 
-		-j?*|--jobs=*) JOBS=$ARG;;
+		-j?*)		JPBS=${ARG#-j};;
+		--jobs=*)	JOBS=${ARG#--jobs=};;
 
 		--)            DASHDASH=y;;
 
