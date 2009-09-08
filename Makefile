@@ -72,7 +72,7 @@ help:
 	@echo '  clean                removes all builds and temporary files'
 	@echo '  distclean            at the moment synonym of clean'
 	@echo '  install              installs all utilities'
-	@echo '  package              creates tinyapps.tgz binary package'
+	@echo '  package              creates tinyapps.txz binary package'
 	@echo '  release              prepares a release to publish'
 	@echo '  uninstall            uninstalls all utilities'
 	@echo
@@ -358,8 +358,6 @@ distclean: clean
 ##
 ## Make package
 ##
-tinyapps.tgz: package
-
 package: DEST_DIR = $(PWD)/package
 package: all install
 ifneq ($(EUID), 0)
@@ -377,24 +375,23 @@ endif
 	@echo '  GEN    usr/doc/tinyapps-$(RELEASE)'
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)'
 	$(Q)exec cp -- LICENSE LICENSE.AFL LICENSE.GPL3 README TODO ChangeLog '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
-	$(Q)exec cp -- LICENSE.gpl '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/LICENSE.GPL'
 
 	@echo '  GEN    install/doinst.sh'
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/install'
 	$(Q)echo 'cd usr/local/bin' >'$(DEST_DIR)/install/doinst.sh'
 	$(Q)echo 'for FILE in state-save state-restore state-sync state-amend; do ln -fs mpd-state-wrapper.sh $$FILE; done' >>'$(DEST_DIR)/install/doinst.sh'
-	$(Q)echo 'ln -fs mountiso umountiso; chown root:bin mountiso' >>'$(DEST_DIR)/install/doinst.sh'
+#	$(Q)echo 'ln -fs mountiso umountiso; chown root:bin mountiso' >>'$(DEST_DIR)/install/doinst.sh'
 	$(Q)exec chmod 755 -- '$(DEST_DIR)/install/doinst.sh'
 	@echo '  CP     slack-desc'
 	$(Q)exec cp -- slack-desc '$(DEST_DIR)/install'
 
-	@echo '  TAR    tinyapps.tar'
-	$(Q)exec tar c -C '$(DEST_DIR)' --owner=root --group=root --format=v7 install usr >tinyapps.tar
-	@echo '  GZIP   tinyapps-$(RELEASE).tgz'
-	$(Q)exec gzip -9 <'tinyapps.tar' >'tinyapps-$(RELEASE).tgz'
-	$(Q)exec rm -f -- tinyapps.tar
+	@echo '  PACK   tinyapps-$(RELEASE)-'"$${ARCH:-i486}"'-1mn.txz'
+	$(Q)TAR="`which tar-1.13 2>/dev/null`"; \
+		exec "$${TAR:-tar}" c -C '$(DEST_DIR)' \
+			--owner=root --group=root . | \
+		xz -9 > 'tinyapps-$(RELEASE)-'"$${ARCH:-i486}"'-1mn.txz'
 
-	@echo '  RM     package'
+	@echo '  CLEAN  package'
 	$(Q)exec rm -rf -- '$(DEST_DIR)'
 
 
