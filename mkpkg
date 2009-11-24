@@ -110,4 +110,4 @@ fi
 ##
 ## Make package
 ##
-makepkg "$PWD.tgz"
+makepkg "$@" "$PWD.txz"
