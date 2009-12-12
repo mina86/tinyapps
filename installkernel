@@ -121,6 +121,7 @@ usage: installkernel [<options>] [<switches>]
   -c --clean           Run 'make clean' before compilation                [no]
   -C --config          Run 'make (x|g|menu|)config' to configure          [no]
   -C --config=<cfg>    Specify a type of config to run                  [auto]
+     --*config         Synonym of --config=*config
   -d --make-dep        Run 'make dep'                                     [**]
 
   -O --overwrite       Overwrite the kernel image                         [no]
@@ -491,10 +492,12 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 
 		--config=no)      CONFIG=;;
 		--no-config)      CONFIG=;;
+		--noconfig)       CONFIG=;;
 		--config)         [ -n "$CONFIG" ] || CONFIG=auto;;
 		--config=auto)    CONFIG=auto;;
 		--config=*config) CONFIG="${ARG#--config=}";;
-		--config=*)       error 1 invalid config type: "${ARG#--config=}";;
+		--config=*)       CONFIG="${ARG#--config=}config";;
+		--*config)        CONFIG="${ARG#--}";;
 
 		--su)          SU=y; RUNAS="$USER";;
 		--user=*)      RUNAS="${ARG#--user=}";;

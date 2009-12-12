@@ -1,5 +1,9 @@
 2009-12-12  Michal Nazarewicz  <mina86/AT/mina86.com>
 
+	* installkernel: + --*config is now sysnonym of --config=*config
+
+2009-12-12  Michal Nazarewicz  <mina86/AT/mina86.com>
+
 	* Makefile: + fixed 'package' target
 
 2009-11-25  Michal Nazarewicz  <mina86/AT/mina86.com>
