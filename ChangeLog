@@ -1,6 +1,8 @@
 2010-01-03  Michal Nazarewicz  <mina86/AT/mina86.com>
 
-	* getlyrics.pl: + incorporated lyrics retrieving code code by Minio
+	* getlyrics.pl: + incorporated lyrics retrieving code by Minio
+
+	* splitlines.sh: + implemented *much* faster method of splitting
 
 2009-12-12  Michal Nazarewicz  <mina86/AT/mina86.com>
 

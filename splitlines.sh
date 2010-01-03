@@ -62,52 +62,64 @@ EOF
 set -e
 NUM=2
 FMT=out-%d
-BACKUP=
-APPEND=
+BACKUP=false
+APPEND=false
 
 while [ $# -ne 0 ]; do
 	case "$1" in
-	(-h|--help)    version; usage; exit; ;;
-	(-V|--version) version;        exit; ;;
+	(-h|--help)    version; usage; exit ;;
+	(-V|--version) version;        exit ;;
 
-	(-n)          NUM="$2"     ; shift; ;;
-	(-n*)         NUM="${1#-?}";        ;;
-	(--num=*)     NUM="${1#*=}";        ;;
-	(-f)          FMT="$2"     ; shift  ;;
-	(-f*)         FMT="${1#-?}";        ;;
-	(--format=*)  FMT="${1#*=}";        ;;
-	(-b|--backup) BACKUP=y; ;;
-	(-a|--append) APPEND=y; ;;
+	(-n)          NUM="$2"     ; shift ;;
+	(-n*)         NUM="${1#-?}";       ;;
+	(--num=*)     NUM="${1#*=}";       ;;
+	(-f)          FMT="$2"     ; shift ;;
+	(-f*)         FMT="${1#-?}";       ;;
+	(--format=*)  FMT="${1#*=}";       ;;
+	(-b|--backup) BACKUP=:; ;;
+	(-a|--append) APPEND=:; ;;
 
-	(--) break; ;;
-	(-*) printf "%s: %s\n" "${0##*/}" "invalid argument: '$1'" >&2; exit 1; ;;
-	(*)  break; ;;
+	(--) shift; break ;;
+	(-*) printf '%s: %s\n' "${0##*/}" "invalid argument: '$1'" >&2; exit 1 ;;
+	(*)  break ;;
 	esac
 	shift
 done
-
-if [ "X$1" = X-- ]; then
-	shift
-fi
 
 
 
 ##
 ## Prepare files
 ##
-if [ -z "$APPEND" ]; then
-	I=0
-	while [ $I -lt $NUM ]; do
-		NAME=$(printf "$FMT" $I)
-		if [ -e "$NAME" ]; then
-			if [ "$BACKUP" ]
-			then mv -- "$NAME" "$NAME~"
-			else rm -f -- "$NAME"
-			fi
-		fi
-		I=$(($I + 1))
-	done
+if $BACKUP; then
+	if $APPEND; then
+		backup () { if [ -e "$1" ]; then cp -- "$1" "$1~"; fi; }
+	else
+		backup () { if [ -e "$1" ]; then mv -- "$1" "$1~"; fi; }
+	fi
+else
+	backup () {
+		:
+	}
 fi
+unset BACKUP
+
+if $APPEND; then
+	MODE='>>'
+else
+	MODE='>|'
+fi
+unset APPEND
+
+I=0
+while [ $I -lt $NUM ]; do
+	NAME=$(printf "$FMT" $I)
+	backup "$NAME"
+	eval "exec $(($I + 3))$MODE\$NAME"
+	I=$(($I + 1))
+done
+
+unset FMT MODE NAME
 
 
 
@@ -116,6 +128,6 @@ fi
 ##
 I=0
 cat -- "$@" | while IFS= read LINE; do
-	printf "%s\n" "$LINE" >>$(printf "$FMT" $I)
+	printf %s\\n "$LINE" >&$(($I + 3))
 	I=$(( ($I + 1) % $NUM ))
 done
