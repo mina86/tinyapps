@@ -1,8 +1,9 @@
 #!/usr/bin/perl
 ##
 ## Get lyrics from Internet for specified song
-## Copyright (c) 2005 by Berislav Kovacki (beca/AT/sezampro.yu)
-## Copyright (c) 2005-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
+## Copyright (c) 2005-2010 by Michal Nazarewicz (mina86/AT/mina86.com)
+## Copyright (c) 2009      by Mirosław "Minio" Zalewski <miniopl@gmail.com>
+##                         http://minio.xt.pl (lyrics retrieving code)
 ##
 ## This software is OSI Certified Open Source Software.
 ## OSI Certified is a certification mark of the Open Source Initiative.
@@ -32,7 +33,13 @@ use strict;
 use warnings;
 
 use Pod::Usage;
+
 use LWP::UserAgent;
+use HTML::TreeBuilder;
+
+use encoding "utf8";
+use Encode;
+use Text::Unidecode;
 
 my $VERSION = '0.5';
 my $GLOBAL_CACHE = '/usr/share/lyrics/';
@@ -47,7 +54,7 @@ sub editFile ($$$);
 ## Parse args
 ##
 my ($edit, $editor) = ( 0, '' );
-if ($ARGV[0] =~ /^--edit(?:=(.*))?$/) {
+if (@ARGV && $ARGV[0] =~ /^--edit(?:=(.*))?$/) {
 	$edit = 1;
 	$editor = $1 ? $1 : '';
 	shift @ARGV;
@@ -203,10 +210,11 @@ if (defined($foo)) {
 	} else {
 		die "Cannot parse: $foo\n";
 	}
-} else {
-	$foo[0] =~ s/^\s+|\s+$//mg;
-	$foo[1] =~ s/^\s+|\s+$//mg;
 }
+
+$_ =~ s/\s+/ /mg for @foo;
+$_ =~ s/^ | $//g for @foo;
+$_ =~ s/--+/-/g  for @foo;
 
 
 ##
@@ -233,34 +241,169 @@ for ($LOCAL_CACHE  . '/' . lc($foo[0]) . '/' . lc($foo[1]),
 ##
 ## Download page
 ##
+
+sub sane_str($) {
+	my $string = shift;
+	$string = decode('UTF-8', $string) if utf8::is_utf8($string) != 1;
+	$string = unidecode($string);
+	$string =~ tr/ /-/;
+	$string =~ s/[,'\.]//gi;
+	$string;
+}
+
+
+sub get_page($) {
+	my $url = shift;
+
+	print STDERR $url . "\n";
+
+	my $ua = new LWP::UserAgent;
+	my $r = $ua->get($url);
+
+	if (!$r->is_success) {
+		if (int($r->code / 100) == 5) {
+			print STDERR $r->code, ", trying again in 5 s\n";
+			sleep 5;
+			$r = $ua->get($url);
+		}
+		if (!$r->is_success) {
+			print STDERR $r->code, ", aborting\n";
+		}
+	}
+
+	$r->is_success ? $r->content : undef;
+}
+
+
+my @sites = (
+	sub { # http://www.lyricsondemand.com/
+		my $artist = sane_str shift;
+		my $title  = sane_str shift;
+
+		my $f = substr($artist, ($artist =~ m/^the /i) ? 4 : 0, 1);
+		$artist =~ s/[ \(\)-]//g;
+		$title  =~ s/[ \(\)-]//g;
+
+		my $url = 'http://www.lyricsondemand.com/' . lc($f) . '/' .
+			lc($artist) . 'lyrics/' . lc($title) . 'lyrics.html';
+
+		my $content = get_page($url);
+		return unless $content;
+
+		my $text = HTML::TreeBuilder->new_from_content($content)->look_down(
+			"_tag", "font",
+			"face", "Verdana",
+			"size", "2",
+			)->as_HTML('<>&');
+
+		my @splitted = split(/<br \/>/i, $text);
+		$text = '';
+
+		foreach my $line (@splitted) {
+			$line =~ s:<.+?>::gi;
+			$line =~ s:^\s*::gi;
+			$text .= $line . "\n";
+		}
+		$text;
+	},
+
+	sub { # http://www.azlyrics.com/
+		my $artist = sane_str shift;
+		my $title  = sane_str shift;
+
+		$artist =~ s/[ \(\)-]//g;
+		$title  =~ s/[ \(\)-]//g;
+
+		my $url = 'http://www.azlyrics.com/lyrics/' . lc($artist) . '/' .
+			lc($title) . '.html';
+
+		my $content = get_page($url);
+		return unless $content;
+
+		my $text = HTML::TreeBuilder->new_from_content($content)->look_down(
+			"_tag", "font",
+			"face", "Verdana",
+			"size", "5",
+			)->look_down(
+			"_tag", "font",
+			"size", "2",
+			)->as_HTML('<>&');
+
+		my @splitted = split(/<br \/>/i, $text);
+		$text = '';
+
+		my $begin;
+		foreach my $line (@splitted) {
+			if ($line =~ m:<b>.+</b>:i) {
+				$begin = 1;
+				next;
+			}
+			if ($line =~ m:\[Thanks to:i) {
+				last;
+			}
+			if ($begin == 1) {
+				$line =~ s:^\s*::gi;
+				$text .= $line ."\n";
+			}
+		}
+		$text;
+	},
+
+	sub { # http://www.tekstowo.pl/
+		my ($artist, $title) = @_;
+		my $text;
+
+		# Tekstowo zamiast ń chce mieć podkreślnik. Z tego powodu nie
+		# mogę użyć sane_str, gdyż po nim ń byłoby nie do odróżnienia
+		# od zwykłęgo n, i nie wiadomo co wtedy powinno być zamieniane
+		# na podkreślnik. Niby można stworzyć funkcję która
+		# przyjmowałaby tekst przed transliteracją, wyszukiwała ń,
+		# i w tych miejscach zamieniała znak na podkreślnik w tekstach
+		# po transliteracji, ale przysporzyłoby to więcej roboty niż
+		# to warte. Dlatego dokonuję prostej transliteracji.
+		for my $str ($artist, $title) {
+			$str = decode('UTF-8', $str) if utf8::is_utf8($str) != 1;
+			$str =~ tr/ĄĆĘŁŃÓŚŻŹąćęłńóśćżź /ACEL_OSZZacel_oszz_/;
+			$str =~ s/[,'\.]//gi;
+		}
+
+		my $url = 'http://www.tekstowo.pl/piosenka,' . lc($artist) . ',' .
+			lc($title) . '.html';
+
+		my $content = get_page($url);
+		return unless $content;
+
+		# Tekstowo zwraca 200 OK nawet jeżeli nie znaleziono szukanego tekstu.
+		eval {
+			$text = HTML::TreeBuilder->new_from_content($content)->look_down(
+				"_tag", "div",
+				"id", "tex",
+				)->look_down(
+				"_tag", "div",
+				)->as_HTML('<>&');
+		};
+		return if $@;
+
+		$text = decode('ISO-8859-2', $text);
+		$text =~ s/<br \/>\s?/\n/gi;
+		$text =~ s:<.+?>::gi;
+		$text;
+	}
+);
+
+
+
 print STDERR "Getting lyrics for ${foo[0]} - ${foo[1]}\n";
-my $res = LWP::UserAgent->new()->post(
-	'http://www.lyrc.com.ar/en/tema1en.php', [
-		artist   => $foo[0],
-		songname => $foo[1]
-	]);
-die "unable to connect to www.lyrc.com.ar\n" unless ($res->is_success);
-$res = $res->content;
-die("No lyrics for ${foo[0]} - ${foo[1]} found\n") if ($res =~ /<form/i);
 
+my $res;
+for (@sites) {
+	$res = $_->(@foo);
+	last if defined $res;
+}
 
-##
-## HTML to text
-##
-$res =~ s/<head>.*<\/head>/ /igs;  # Remove HTML Heading
-$res =~ s/<scrip.*?script>/ /igs;  # Remove Script blocks
-$res =~ s/<a.*?\/a>/ /igs;         # Remove Links
-$res =~ s/&nbsp;/ /g;              # Replace &nbsp with spaces
-$res =~ s/\s+/ /g;                 # Squeeze blanks
-$res =~ s/<p[^>]*>/\n\n/gi;        # Replace paragraph tags with empty line
-# Replace some formating html tags witConverth new line marks
-$res =~ s/<(?:br|h[1-6]|li|d[td]||tr)[^>]*>/\n/gi;
-$res =~ s/(<[^>]*>)+//g;           # Remove HTML tags
-$res =~ s/\n\s*\n\s*/\n\n/g;       # Squeeze blank lines
-$res =~ s/^ +| +$//mg;             # Trim lines
-$res =~ s/^\s+|\s$//g;             # Trime whole code
-# Add 2 empty lines after song name and artist
-$res =~ s/^([^\n]+)\n+([^\n]+)\n+/$1\n$2\n\n\n/g;
+die "Could not find lyrics.\n" unless defined $res;
+
+$res =~ s/^\s+|\s+$//g;
 $res .= "\n";
 
 unless ($edit) {
@@ -349,8 +492,7 @@ getlyrics - Get lyrics from Internet for specified song
 =head1 DESCRIPTION
 
 The getlyrics utility retrieves lyrics from the Internet for the specified
-artist and song name. Internally, this utility uses http://www.lyrc.com.ar/
-to search for lyrics.
+artist and song name.
 
 =head1 SYNOPSIS
 
@@ -395,8 +537,6 @@ B<--man>).
 Script will run command given as arguments and parse it's output
 according to the rules described in PARSING STRING section of man page
 (see B<--man>).
-
-=item B<--file>
 
 =item B<--read>
 
