@@ -152,31 +152,11 @@ FvwmTransFocus: FvwmTransFocus.o
 	@echo '  LD     $@'
 	$(Q)exec $(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
 
-xrun: null
+xrun brun Brun drun Drun: null
 	@echo '  LN     $@'
 	$(Q)exec ln -sf -- $< $@
 
-brun: null
-	@echo '  LN     $@'
-	$(Q)exec ln -sf -- $< $@
-
-Brun: null
-	@echo '  LN     $@'
-	$(Q)exec ln -sf -- $< $@
-
-drun: null
-	@echo '  LN     $@'
-	$(Q)exec ln -sf -- $< $@
-
-Drun: null
-	@echo '  LN     $@'
-	$(Q)exec ln -sf -- $< $@
-
-mpd-show: mpd-show.o libmpdclient.o
-	@echo '  LD     $@'
-	$(Q)exec $(CC) $(LDFLAGS) $^ -o $@
-
-mpd-state: mpd-state.o libmpdclient.o
+mpd-%: mpd-%.o libmpdclient.o
 	@echo '  LD     $@'
 	$(Q)exec $(CC) $(LDFLAGS) $^ -o $@
 
