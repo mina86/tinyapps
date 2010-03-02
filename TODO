@@ -19,7 +19,8 @@ Tiny Applications Collection TODO List
   - id3 tag support (option to read ID3 tag from a file)
 
 * mpd-show
-  - handle resize event
+  - better UTF-8 handling (use wchar_t)
+  - better teminal configurations support (use ncurses?)
 
 * rot13
   - add switch to changeing the value chars should be rotated by

@@ -1,3 +1,8 @@
+2010-03-02  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* mpd-show.c: + SIGWINCH signal (thus resizing) handling added
+	+ some UTF-8 handling added (assumes terminal runs in UTF-8)
+
 2010-01-03  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* getlyrics.pl: + incorporated lyrics retrieving code by Minio
