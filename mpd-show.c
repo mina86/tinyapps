@@ -990,13 +990,9 @@ static void _out(wchar_t ch) {
 	char buf[MB_CUR_MAX];
 	int ret;
 
-retry:
 	ret = wctomb(buf, ch);
 	if (ret > 0) {
 		printf("%.*s", ret, buf);
-	} else if (ch != L'?') {
-		ch = L'?';
-		goto retry;
 	} else {
 		putchar('?');
 	}
@@ -1020,6 +1016,9 @@ static size_t appendUTF(size_t offset, const char *str, size_t len) {
 
 	/* http://en.wikipedia.org/wiki/UTF-8#Description */
 	/* Invalid sequences are simply ignored. */
+	/* This code does not check for 3- and 4-byte long sequences which
+	 * could be encoded using fewer bytes.  Those are treated as valid
+	 * characters even though they shouldn't be. */
 	while (len--) {
 		unsigned char ch = *str++;
 

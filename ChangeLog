@@ -4,6 +4,8 @@
 	+ added %Y% pseudo tag which works as if it was not empty but is empty
 	+ reverted to old non-hilighted color
 
+	* mpd-show.c: + small fixes in UTF-8 and wchar_t handling
+
 2010-03-02  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mpd-show.c: + SIGWINCH signal (thus resizing) handling added
