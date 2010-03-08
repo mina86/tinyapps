@@ -80,10 +80,9 @@ static void _die(int perr, const char *fmt, ...)
 #define DEFAULT_PORT    6600
 #define DEFAULT_COLUMNS 80
 #define DEFAULT_FORMAT \
-	"[[[%artist% <&%album%> ]|[%artist% - ]|[<%album%> ]]" \
+	"[[[%artist% <&%album%> ]|%artist% - |<%album%> ]" \
 	"&[[%track%. &%title%]|%title%]]"  \
-	"|[[%track%. &%title%]|%title%]"   \
-	"|%filenoext%"
+	"|[%track%. &%title%]|%title%|%filenoext%"
 
 
 /******************** Terminal **********************************************/
@@ -224,7 +223,7 @@ static void usage(void)
 	       " -f<fmt> uses <fmt> for displaying song (see mpc(1)); supports following tags:\n",
 	       argv0, DEFAULT_COLUMNS);
 	printf("         album, artist, comment, composer, date, dir, disc, file, filenoext,\n"
-	       "         genre, name, path, pathnoext, time, title and track.\n"
+	       "         genre, name, path, pathnoext, time, title, track and Y pseudo tag.\n"
 	       " <host>  host MPD is listening on optionally prefixed with '<password>@'\n"
 	       "                                  [$MPD_HOST or " DEFAULT_HOST "]\n"
 	       " <port>  port MPD is listening on [$MPD_PORT or %u]\n",
@@ -683,12 +682,35 @@ static void formatLine(void) {
 }
 
 
-static const wchar_t *skipFormatting(const wchar_t *p) {
-	unsigned stack = 0;
-	for (;; ++p) {
+static const wchar_t *skipBraces(const wchar_t *p) {
+	unsigned stack = 1;
+	for(;; ++p) {
 		switch (*p) {
 		case L'[':
 			++stack;
+			break;
+
+		case L']':
+			--stack;
+			if (!stack == 0) {
+				return p;
+			}
+			break;
+
+		case 0:
+			return p;
+		}
+	}
+}
+
+static const wchar_t *skipFormatting(const wchar_t *p) {
+	for (;; ++p) {
+		switch (*p) {
+		case L'[':
+			p = skipBraces(p);
+			if (!*p) {
+				return p;
+			}
 			break;
 
 		case L'#':
@@ -698,10 +720,6 @@ static const wchar_t *skipFormatting(const wchar_t *p) {
 			break;
 
 		case L']':
-			if (stack) {
-				--stack;
-				break;
-			}
 			++p;
 			/* FALL THROUGH */
 
@@ -733,7 +751,8 @@ static size_t doFormatTag(const wchar_t *p, size_t off, const wchar_t **last) {
 	((len == sizeof #str - 1) && !memcmp(L"" #str, name, sizeof #str - 1))
 
 	value = 0;
-	if      (EQ(artist  )) value = song->artist;
+	if (EQ(Y)) return off - 1; /* special case */
+	else if (EQ(artist  )) value = song->artist;
 	else if (EQ(title   )) value = song->title;
 	else if (EQ(album   )) value = song->album;
 	else if (EQ(track   )) value = song->track;
@@ -830,7 +849,7 @@ static size_t doFormat(const wchar_t *p, size_t offset, const wchar_t **last) {
 		case L'%': { /* Tag */
 			size_t o = doFormatTag(p + 1, off, &p);
 			found = found || o != off;
-			off = o;
+			off = o + 1 == off /* special case */ ? off : o;
 		}
 			break;
 
@@ -886,7 +905,7 @@ static void termDone(void) {
 		puts("\33[?25h");
 	}
 	/* Reset colors */
-	puts("\33[0m");
+	puts("\33[0m\n");
 }
 
 static void termInit(void) {
@@ -911,12 +930,12 @@ static void termBeginLine(void) {
 	} else if (hilightLeft) {
 		fputs("\33[37;1;44m", stdout);  /* hilighted */
 	} else {
-		termNormal();                   /* bold white */
+		termNormal();                   /* normal */
 	}
 }
 
 static void termNormal(void) {
-	fputs("\33[37;1;40m", stdout);      /* bold white */
+	fputs("\33[0m", stdout);            /* normal */
 }
 
 static void termEndLine(void) {

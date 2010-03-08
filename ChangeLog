@@ -1,3 +1,9 @@
+2010-03-08  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* mpd-show.c: + fixed bug with song formatting
+	+ added %Y% pseudo tag which works as if it was not empty but is empty
+	+ reverted to old non-hilighted color
+
 2010-03-02  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mpd-show.c: + SIGWINCH signal (thus resizing) handling added
