@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## gzip to bzip2 converter
-## Copyright (c) 2005-2007 by Michal Nazareicz (mina86/AT/mina86.com)
+## Copyright (c) 2005-2010 by Michal Nazareicz (mina86/AT/mina86.com)
 ##
 ## This software is OSI Certified Open Source Software.
 ## OSI Certified is a certification mark of the Open Source Initiative.
@@ -31,7 +31,7 @@ set -e
 ## Version
 ##
 version () {
-	echo 'gz2bz 0.7 (c) 2005-2007 by Michal Nazarewicz (mina86/AT/mina86.com)'
+	echo 'gz2bz 0.8 (c) 2005-2007 by Michal Nazarewicz (mina86/AT/mina86.com)'
 	echo
 }
 
@@ -41,32 +41,45 @@ version () {
 ##
 usage () {
 	cat <<EOF
-usage: gz2bz <options> [ [--] file ...]
+usage: <program> <options> [ [--] file ...]
+<program> is of the form <from>2<to> where <from> and <to> is one of:
+ z or Z                  Meaning compress compression (experimental)
+ gz or gzip              Meaning gzip compression
+ bz, bz2, bzip or bzip2  Meaning bzip2 compression
+ lz or lzma              Meaning lzma compression
+ xz                      Meaning xz compression
+ <other>                 -C or -D must be specified and it specifies extension
+                         of in/out file (experimental, tricky)
+
 <options> are:
- -h --help              Prints this help screen and exits
- -V --verson            Prints version information and exits
+ -h --help               Prints this help screen and exits
+ -V --verson             Prints version information and exits
 
- -v --verbose           Becomes more verbose
- -vv                    Becomes even more verbose
- -q --quiet             Supresses all noncritical messages
+ -v --verbose            Becomes more verbose
+ -vv                     Becomes even more verbose
+ -q --quiet              Supresses all noncritical messages
 
- -i --interactive       Prompt before overwrite
-    --never-overwrite   Never overwrite files
+ -i --interactive        Prompt before overwrite
+    --never-overwrite    Never overwrite files
 
- -1 .. -9               Set compression method
-    --fast              Alias of -1
-    --best              Alias of -9
+ -1 .. -9                Set compression method
+    --fast               Alias of -1
+    --best               Alias of -9
 
- -G --gzip=<gzip>       Uses <gzip> as gzip executable
- -g --gzip-opts=<opts>  Adds additional arguments to gzip
- -B --bzip2=<bzip2>     Uses <bzip2> as bzip2 executable
- -b --bzip2-opts=<opts> Adds additional arguments to bzip2
+ -C --compress=<tool>    Uses <tool> as compression executable
+ -c --comp-opts=<opts>   Adds additional arguments to compression tool
+ -D --decompress=<tool>  Uses <tool> as decompression executable
+ -d --decomp-opts=<opts> Adds additional arguments to decompression tool
 
- -k --keep              Keeps uncompressed file
- -k --keep=<dir>        Save uncompressed file in <dir>
- -t --tmp               Same as --keep=/tmp
- -K --keep-gz           Keeps .gz file
-    --keep-both         Alias of --keep --keep-gz
+ -k --keep               Keeps uncompressed file
+ -k --keep=<dir>         Save uncompressed file in <dir>
+ -t --tmp                Same as --keep=/tmp
+ -K --keep-orig          Keeps original file file
+    --keep-both          Alias of --keep --keep-orig
+
+example: gz2bz -9 *.gz
+         gz2xz -9 *.gz
+         bz2xz -t -9 *.tar.bz2; cd /tmp; cat *.tar | tar x
 EOF
 }
 
@@ -78,7 +91,7 @@ msg () {
 	if [ X"$1" = X-f ]; then
 		shift
 		echo "${0##*/}: $*" >&2
-	elif [ -n "$VERBOSE" ]; then
+	elif $VERBOSE; then
 		echo "${0##*/}: $*" >&2
 	fi
 }
@@ -88,13 +101,15 @@ msg () {
 ##
 ## Variables
 ##
-GZIP=auto
-BZIP2=auto
-GZ_OPTS=
-BZ2_OPTS=
-KEEP_UNCOMPRESSED=
-KEEP_GZIP=
-VERBOSE=
+false () { return 1; }
+
+COMPRESS=auto
+DECOMPRESS=auto
+COMPRESS_OPTS=
+DECOMPRESS_OPTS=
+KEEP_UNCOMPRESSED=false
+KEEP_ORIG=false
+VERBOSE=false
 VERB_OPTS=
 OVERWRITE=y
 TMP=
@@ -103,103 +118,132 @@ TMP=
 ##
 ## Parse args
 ##
-while [ $# -ne 0 ] && [ X"$1" != X-- ]; do
+while [ $# -ne 0 ]; do
 	case "$1" in
-	(-h|--help)    usage  ; exit; ;;
-	(-V|--version) version; exit; ;;
+	-h|--help)         usage  ; exit;;
+	-V|--version)      version; exit;;
 
-	(-v|--verbose)   VERBOSE=y; VERB_OPTS=-v ;;
-	(-vv)            VERBOSE=y; VERB_OPTS=-vv;;
-	(-q|--quiet)     VERBOSE= ; VERB_OPTS=-q ;;
+	-v|--verbose)      VERBOSE=:    ; VERB_OPTS=-v ;;
+	-vv)               VERBOSE=:    ; VERB_OPTS=-vv;;
+	-q|--quiet)        VERBOSE=false; VERB_OPTS=-q ;;
 
-	(-i|--interactive)  OVERWRITE=i;;
-	(--never-overwrite) OVERWRITE=n;;
+	-i|--interactive)  OVERWRITE=i;;
+	--never-overwrite) OVERWRITE=n;;
 
-	(-[0-9])         BZ2_OPTS="$BZ2_OPTS $1"; ;;
-	(--fast)         BZ2_OPTS="$BZ2_OPTS -1"; ;;
-	(--best)         BZ2_OPTS="$BZ2_OPTS -9"; ;;
+	-[0-9])            COMPRESS_OPTS="$COMPRESS_OPTS $1";;
+	--fast)            COMPRESS_OPTS="$COMPRESS_OPTS -1";;
+	--best)            COMPRESS_OPTS="$COMPRESS_OPTS -9";;
 
-	(-G)             GZIP="$2"                       ; shift; ;;
-	(-G*)            GZIP="${1#-?}"                         ; ;;
-	(--gzip=*)       GZIP="${1#*=}"                         ; ;;
-	(-g)             GZIP_OPTS="$GZIP_OPTS $2"       ; shift; ;;
-	(-g*)            GZIP_OPTS="$GZIP_OPTS ${1#-?}"         ; ;;
-	(--gzip-opts=*)  GZIP_OPTS="$GZIP_OPTS ${1#*=}"         ; ;;
-	(-B)             BZIP2="$2"                      ; shift; ;;
-	(-B*)            BZIP2="${1#-?}"                        ; ;;
-	(--bzip2=*)      BZIP2="${1#*=}"                        ; ;;
-	(-b)             BZIP2_OPTS="$BZIP2_OPTS $2"     ; shift; ;;
-	(-b*)            BZIP2_OPTS="$BZIP2_OPTS ${1#-?}"       ; ;;
-	(--bzip2-opts=*) BZIP2_OPTS="$BZIP2_OPTS ${1#*=}"       ; ;;
+	-[GD])             DECOMPRESS="$2"                           ; shift;;
+	-[GD]*)            DECOMPRESS="${1#-?}"                             ;;
+	--gzip=*|--decompress=*)
+	                   DECOMPRESS="${1#*=}"                             ;;
+	-[gd])             DECOMPRESS_OPTS="$DECOMPRESS_OPTS $2"     ; shift;;
+	-[gd]*)            DECOMPRESS_OPTS="$DECOMPRESS_OPTS ${1#-?}"       ;;
+	--gzip-opts=*|--decomp-opts=*)
+	                   DECOMPRESS_OPTS="$DECOMPRESS_OPTS ${1#*=}"       ;;
+	-[BC])             COMPRESS="$2"                             ; shift;;
+	-[BC]*)            COMPRESS="${1#-?}"                               ;;
+	--bzip2=*|--compress=*)
+	                   COMPRESS="${1#*=}"                               ;;
+	-[bc])             COMPRESS_OPTS="$COMPRESS_OPTS $2"         ; shift;;
+	-[bc]*)            COMPRESS_OPTS="$COMPRESS_OPTS ${1#-?}"           ;;
+	--bzip2-opts=*|--comp-opts=*)
+	                   COMPRESS_OPTS="$COMPRESS_OPTS ${1#*=}"           ;;
 
-	(-k|--keep)      KEEP_UNCOMPRESSED=y             ;;
-	(-k*)            KEEP_UNCOMPRESSED=y; TMP=${1#-?};;
-	(--keep=*)       KEEP_UNCOMPRESSED=y; TMP=${1#*=};;
-	(-t|--tmp)       KEEP_UNCOMPRESSED=y; TMP=/tmp   ;;
-	(-K|--keep-gz)                        KEEP_GZIP=y;;
-	(--keep-both)    KEEP_UNCOMPRESSED=y; KEEP_GZIP=y;;
+	-k|--keep)         KEEP_UNCOMPRESSED=:             ;;
+	-k*)               KEEP_UNCOMPRESSED=:; TMP=${1#-?};;
+	--keep=*)          KEEP_UNCOMPRESSED=:; TMP=${1#*=};;
+	-t|--tmp)          KEEP_UNCOMPRESSED=:; TMP=/tmp   ;;
+	-K|--keep-gz|--keep-orig)               KEEP_ORIG=:;;
+	--keep-both)       KEEP_UNCOMPRESSED=:; KEEP_ORIG=:;;
 
-	(-*) echo "${0##*/}: Invalid argument: $1" >&2; exit 1; ;;
-	(*) break; ;;
+	--) shift; break;;
+	-) break;;
+	-*) echo "${0##*/}: Invalid argument: $1" >&2; exit 1;;
+	*) break;;
 	esac
 	shift
 done
-[ X"$1" != X-- ] || shift
-GZIP_OPTS="$GZIP_OPTS $VERB_OPTS"
-BZIP2_OPTS="$BZIP2_OPTS $VERB_OPTS"
+DECOMPRESS_OPTS="$DECOMPRESS_OPTS $VERB_OPTS"
+COMPRESS_OPTS="$COMPRESS_OPTS $VERB_OPTS"
 unset VERB_OPTS
 
 
 ##
-## Find executables, etc
+## Find executables
 ##
 find_exec () {
-	if [ "X$3" = Xauto ]; then __SEARCH="$2"; else __SEARCH="$3"; fi
-	if ! __FOUND=$(which "$__SEARCH"); then
-		echo "${0##*/}: Could not find $2 executable:" >&2
-		exit 2
+	__var=$1
+	eval __command=\$$__var
+
+	case $__command in auto)
+		case $2 in -[CD])
+			msg -f "missing $2 option" >&2
+			exit 1
+		esac
+		__command=$2
+	esac
+
+	__found=`which "$__command"`
+	if [ -z "$__found" ]; then
+		msg -f "could not find $__command executable" >&2
+		exit 1
 	fi
-	eval $1=\"\$__FOUND \$4\"
+
+	shift 2
+	eval $__var=\"\$__found \$* \$${__var}_OPTS\"
+	unset ${__var}_OPTS __var __command __found
 }
 
-# find_exec VAR  def-exec opt-exec  opts
-find_exec   GZ   gzip     "$GZIP"   "$GZIP_OPTS -d"
-find_exec   BZ2  bzip2    "$BZIP2"  "$BZIP2_OPTS"
-unset GZIP GZIP_OPTS BZIP2 BZIP2_OPTS
+__prog=${0##*/}
+case "$__prog" in
+[zZ]2*)                    find_exec DECOMPRESS uncompress; IN_EXT='[Zz]';;
+gz2*|gzip2*)               find_exec DECOMPRESS gzip    -d; IN_EXT=gz    ;;
+bz2*|bz22*|bzip2*|bzip22*) find_exec DECOMPRESS bzip2   -d; IN_EXT=bz2   ;;
+lz2*|lzma2*)               find_exec DECOMPRESS lzma    -d; IN_EXT=lzma  ;;
+xz2*)                      find_exec DECOMPRESS xz      -d; IN_EXT=xz    ;;
+*)                         find_exec DECOMPRESS -D      -d; IN_EXT=      ;;
+esac
+
+case "$__prog" in
+*2[zZ])                    find_exec COMPRESS   compress  ; OUT_EXT='[Zz]';;
+*2gz|*2gzip)               find_exec COMPRESS   gzip      ; OUT_EXT=gz    ;;
+*2bz|*2bz2|*2bzip|*2bzip2) find_exec COMPRESS   bzip2     ; OUT_EXT=bz2   ;;
+*2lz|*2lzma)               find_exec COMPRESS   lzma      ; OUT_EXT=lzma  ;;
+*2xz)                      find_exec COMPRESS   xz        ; OUT_EXT=xz    ;;
+*)                         find_exec COMPRESS   -C        ; OUT_EXT=${0#**2};;
+esac
+unset __prog
 
 
 ##
 ## Ask whether to overwrite a file
 ##
 overwrite () {
-	while [ $# -gt 0 ]; do
-		if ! [ -e "$1" ]; then
-			shift
-			continue
-		fi
+	[ -e "$1" ] || return 0
 
-		if [ -d "$1" ]; then
-			msg -f "$1: is a directory"
+	if [ -d "$1" ]; then
+		msg -f "$1: is a directory"
+		return 1
+	fi
+
+	__overwrite=$OVERWRITE
+	while :; do
+		case "$__overwrite" in
+		[yY]|[yY][eE][sS]|'')
+			unset __overwrite
+			return 0
+			;;
+		[nN]|[nN][oO])
+			msg -f "$1: exists; not overwriting"
+			unset __overwrite
 			return 1
-		fi
-
-		__OVERWRITE=$OVERWRITE
-		while :; do
-			case "$__OVERWRITE" in
-			[yY]|[yY][eE][sS]|'')
-				break
-				;;
-			[nN]|[nN][oO])
-				msg -f "$1: exists; not overwriting"
-				return 1
-				;;
-			*)
-				printf '%s: %s: exists; overwrite? [Y/n]: ' "${0##*/}" "$1"
-				read __OVERWRITE || __OVERWRITE=n
-			esac
-		done
-
-		shift
+			;;
+		*)
+			printf '%s: %s: exists; overwrite? [Y/n]: ' "${0##*/}" "$1"
+			read __overwrite || __overwrite=n
+		esac
 	done
 }
 
@@ -210,53 +254,61 @@ overwrite () {
 ##
 [ $# -ne 0 ] || set -- -
 for FILE; do
-	## stdin
+	## standard input -> standard output
 	if [ X"$FILE" = X- ]; then
 		msg Converting stdin to stdout
-		$GZ | $BZ2 || true
+		$DECOMPRESS | $COMPRESS || msg -f "$FILE: failed"
 		continue
 	fi
 
 	## Get output file name
 	case "$FILE" in
-	(*.tgz) OUTPUT="${FILE%.tgz}.tar" ;;
-	(*.gz)  OUTPUT="${FILE%.gz}" ;;
-	(*) msg -f "$FILE: invalid extension, skipping"; continue
+	*.tgz) OUTPUT=${FILE%.tgz}.tar.gz  ;;
+	*.tbz) OUTPUT=${FILE%.tbz}.tar.bz2 ;;
+	*.txz) OUTPUT=${FILE%.txz}.tar.xz  ;;
+	*.tlz) OUTPUT=${FILE%.tlz}.tar.lzma;;
+	*)     OUTPUT=$FILE
 	esac
-	OUTPUT_BZ2=$OUTPUT.bz2
+
+	case "$OUTPUT" in
+	*.$IN_EXT)  OUTPUT="${OUTPUT%.$IN_EXT}" ;;
+	*)          msg -f "$FILE: invalid extension, skipping"; continue
+	esac
+
+	OUTPUT_COMPRESSED=$OUTPUT.$OUT_EXT
 	if [ -n "$TMP" ]; then
 		OUTPUT=$TMP/${OUTPUT##*/}
 	fi
 
-	OK=
 	## Convert
-	if [ -z "$KEEP_UNCOMPRESSED" ]; then
-		overwrite "$OUTPUT_BZ2" || continue
-		msg converting "$FILE" to "$OUTPUT_BZ2"
-		if ! $GZ <"$FILE" | $BZ2 >"$OUTPUT_BZ2"; then
-			rm -f -- "$OUTPUT_BZ2"
+	OK=false
+	overwrite "$OUTPUT_COMPRESSED" || continue
+	if $KEEP_UNCOMPRESSED; then
+		overwrite "$OUTPUT" || continue
+		msg decompressing "$FILE" to "$OUTPUT"
+		if $DECOMPRESS <"$FILE" >"$OUTPUT"; then
+			msg compressing "$OUTPUT" to "$OUTPUT_COMPRESSED"
+			if ! $COMPRESS <"$OUTPUT" >"$OUTPUT_COMPRESSED"; then
+				rm -f -- "$OUTPUT_COMPRESSED"
+			else
+				OK=:
+			fi
 		else
-			OK=y
+			rm -f -- "$OUTPUT"
 		fi
 	else
-		overwrite "$OUTPUT" "$OUTPUT_BZ2" || continue
-		msg decompressing "$FILE" to "$OUTPUT"
-		if ! $GZ <"$FILE" >"$OUTPUT"; then
-			rm -f -- "$OUTPUT"
+		msg converting "$FILE" to "$OUTPUT_COMPRESSED"
+		if $DECOMPRESS <"$FILE" | $COMPRESS >"$OUTPUT_COMPRESSED"; then
+			OK=:
 		else
-			msg compressing "$OUTPUT" to "$OUTPUT_BZ2"
-			if ! $BZ2 <"$OUTPUT" >"$OUTPUT_BZ2"; then
-				rm -f -- "$OUTPUT_BZ2"
-			else
-				OK=y
-			fi
+			rm -f -- "$OUTPUT_COMPRESSED"
 		fi
 	fi
 
 	## Finish
-	if [ -z "$OK" ]; then
+	if ! $OK; then
 		msg -f "$FILE: failed"
-	elif [ -z "$KEEP_GZIP" ]; then
+	elif ! $KEEP_ORIG; then
 		msg removing "$FILE"
 		rm -f -- "$FILE"
 	fi

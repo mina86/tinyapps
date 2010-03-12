@@ -225,6 +225,15 @@ install-ai-sid.pl: ai-sid.pl
 install-arpping: arpping
 	$(call install,root,bin,0755,/usr/local/sbin,$<)
 
+install-gz2bz: gz2bz
+	$(call install,root,bin,0755,/usr/local/bin,$<)
+	$(Q)for f in z gz bz xz lz; for t in z gz bz xz lz; do \
+		if [ $$f != $$t ] && [ $${f}2$$t != gz2bz ]; then
+			echo "  LNK    $${f}2$$t"; \
+			ln -fs -- gz2bz $(DEST_DIR)/usr/local/bin/$${f}2$$t; \
+		fi; \
+	done; done
+
 install-installkernel: installkernel installkernel.8.gz
 	$(call install,root,bin,0755,/usr/local/sbin,$<)
 	$(call install,root,root,0644,/usr/local/man/man8,$(addprefix $<,.8.gz))

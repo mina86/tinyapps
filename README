@@ -69,8 +69,10 @@ At the moment the collection includes:
  * getlyrics.pl - downloads  lyrics of a given song  from the Internet
    (http://www.lyrc.com.ar/ actually);
 
- * gz2bz  -  a shell  script  using gzip  and  bzip2  to convert  gzip
-   compressed files to bzip2 compressed files.
+ * gz2bz - a shell  script which allows converting between compression
+   formats.  It  started as gzip  -> bzip2 converter but  now supports
+   conversion  between compress,  gzip, bzip2,  xz, lzma  and anything
+   else you specify.
 
  * infinite-logger - loggs every logged message including the messages
    logget by itself :]

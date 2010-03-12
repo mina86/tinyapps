@@ -3,6 +3,9 @@
 	* ChangeLog: + spelling corrected
 	+ removed references to TODO file
 
+	* gz2bz: + added support for other archivers
+	* Makefile, README: + updated gz2bz
+
 2010-03-08  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mpd-show.c: + fixed bug with song formatting
