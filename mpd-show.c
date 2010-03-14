@@ -25,6 +25,8 @@
 
 #define APP_VERSION "0.19"
 
+#define HAVE_ICONV 1
+
 #define _POSIX_C_SOURCE 2
 #define _BSD_SOURCE
 
@@ -40,6 +42,11 @@
 #include <signal.h>
 #include <limits.h>
 #include <locale.h>
+
+#if HAVE_ICONV
+#  include <iconv.h>
+#  include <langinfo.h>
+#endif
 
 #include "libmpdclient.h"
 
@@ -868,7 +875,11 @@ static void _ensureCapacity(size_t capacity)
 {
 	size_t c = D.line_capacity;
 
-	die_on(capacity * 2 < capacity, "requested too much memory: %zu", capacity);
+	/* Check for overflow */
+	die_on(capacity * (size_t)2 < capacity
+	    || capacity * sizeof *D.line < capacity
+	    || capacity * (size_t)2 * sizeof *D.line < capacity,
+	       "requested too much memory: %zu", capacity);
 
 	if (!c) {
 		c = 32;
@@ -976,37 +987,178 @@ static void _die(int perr, const char *fmt, ...)
 
 /******************** Character encoding stuff ******************************/
 
-#ifndef __STDC_ISO_10646__
-#  error Unsupported wchar_t encoding, requires ISO 10646 (Unicode)
+#if HAVE_ICONV
+static iconv_t iconv_utf2wchar = (iconv_t)-1;
+static iconv_t iconv_str2wchar = (iconv_t)-1;
+static iconv_t iconv_wchar2str = (iconv_t)-1;
+
+static void initIconv(void);
+static int  iconvDo(iconv_t cd, char *in, size_t inleft, size_t chsize,
+                    void (*outFunc)(const char *buf, size_t len, void *data),
+                    void *data);
+#else
+#  ifndef __STDC_ISO_10646__
+#    error Unsupported wchar_t encoding, requires ISO 10646 (Unicode)
+#  endif
+#define initIconv() do ; while (0)
+#define iconvDo(cd, in, inleft, chsize, outFunc, data) 0
 #endif
 
 
 static void initCodesets(void) {
 	setlocale(LC_CTYPE, "");
+	initIconv();
 }
 
 
-static void _out(wchar_t ch) {
-	char buf[MB_CUR_MAX];
-	int ret;
 
-	ret = wctomb(buf, ch);
-	if (ret > 0) {
-		printf("%.*s", ret, buf);
-	} else {
-		putchar('?');
+
+#if HAVE_ICONV
+static void initIconv(void) {
+	static const char *const wchar_codes[] = {
+		"WCHAR_T//TRANSLIT", "WCHAR_T//IGNORE", "WCHAR_T", 0
+	};
+	static const char *const code_suffix[] = {
+		"//TRANSLIT", "//IGNORE", "", 0
+	};
+
+	const char *const *it;
+	const char *codeset;
+	char *buffer;
+	size_t len;
+
+	/*  UTF-8 -> wchar_t */
+	it = wchar_codes;
+	do {
+		iconv_utf2wchar = iconv_open(*it, "UTF-8");
+	} while (iconv_utf2wchar == (iconv_t)-1 && *++it);
+#ifndef __STDC_ISO_10646__
+	die_on(iconv_utf2wchar == (iconv_t)-1,
+	       "cannot handle UTF-8->wchar_t conversion; no iconv() support nor wchar_t uses unicode");
+#endif
+
+	/* Get current codeset */
+	codeset = nl_langinfo(CODESET);
+	if (unlikely(!codeset || !*codeset)) {
+		return;
 	}
+
+	/* multibyte -> wchar_t */
+	it = wchar_codes;
+	do {
+		iconv_str2wchar = iconv_open(*it, codeset);
+	} while (iconv_str2wchar == (iconv_t)-1 && *++it);
+
+	/* wchar_t -> multibyte */
+	len = strlen(codeset);
+	buffer = malloc(len + 11);
+	if (unlikely(!buffer)) {
+		iconv_wchar2str = iconv_open(codeset, "WCHAR_T");
+		return;
+	}
+
+	memcpy(buffer, codeset, len);
+
+	it = code_suffix;
+	do {
+		strcat(buffer + len, *it);
+		iconv_wchar2str = iconv_open(buffer, "WCHAR_T");
+	} while (iconv_wchar2str == (iconv_t)-1 && *++it);
+
+	free(buffer);
+}
+
+
+static int  iconvDo(iconv_t cd, char *in, size_t inleft, size_t chsize,
+                    void (*outFunc)(const char *buf, size_t len, void *data),
+                    void *data) {
+	char buffer[256];
+
+	if (cd == (iconv_t)-1) {
+		return 0;
+	}
+
+	inleft *= chsize;
+	iconv(cd, 0, 0, 0, 0);
+	for(;;) {
+		size_t outleft = sizeof buffer;
+		char *out = buffer;
+		size_t ret = iconv(cd, &in, &inleft, &out, &outleft);
+
+		if (likely(out != buffer)) {
+			outFunc(buffer, out - buffer, data);
+		}
+
+		if (!in) {
+			/* We are done */
+			break;
+		} else if (likely(ret != (size_t)-1)) {
+			/* The whole string has been converted now reset the
+			 * state */
+			in = 0;
+		} else if (unlikely(errno == EILSEQ)) {
+			/* Invalid sequence, skip character (should never
+			 * happen) */
+			in += chsize;
+			inleft -= chsize;
+		} else if (unlikely(errno == EINVAL)) {
+			/* Partial sequence at the end, break (should never
+			 * happen) */
+			break;
+		}
+	}
+
+	return 1;
+}
+#endif
+
+
+
+
+static void _outsIconvFunc(const char *buffer, size_t len, void *ignore) {
+	(void)ignore;
+	printf("%.*s", (int)len, buffer);
 }
 
 static void _outs(const wchar_t *str, size_t len) {
-	wctomb(NULL, 0);
-	for (; len; --len, ++str) {
-		_out(*str);
+	if (!iconvDo(iconv_wchar2str, (void *)str, len, sizeof *str,
+	             _outsIconvFunc, 0)) {
+		char buf[MB_CUR_MAX];
+		wctomb(NULL, 0);
+		for (; len; --len, ++str) {
+			int ret = wctomb(buf, *str);
+			if (ret > 0) {
+				printf("%.*s", ret, buf);
+			} else {
+				putchar('?');
+			}
+		}
 	}
 }
 
 
+static void appendIconvFunc(const char *buffer, size_t len, void *_off) {
+	size_t *offsetp = _off;
+
+	len /= sizeof *D.line;
+	ensureCapacity(*offsetp + len);
+	memcpy(D.line + *offsetp, buffer, len * sizeof *D.line);
+	*offsetp += len;
+}
+
+static size_t appendUTFFallback(size_t offset, const char *str, size_t len);
+
 static size_t appendUTF(size_t offset, const char *str, size_t len) {
+	size_t off = offset;
+
+	if (iconvDo(iconv_utf2wchar, (char *)str, len, 1, appendIconvFunc, &off)) {
+		return off;
+	}
+	return appendUTFFallback(offset, str, len);
+}
+
+static size_t appendUTFFallback(size_t offset, const char *str, size_t len) {
+#ifdef __STDC_ISO_10646__
 	uint_least32_t val = 0;
 	unsigned seq = 0;
 	wchar_t *out;
@@ -1049,22 +1201,39 @@ static size_t appendUTF(size_t offset, const char *str, size_t len) {
 	}
 
 	return out - D.line;
+#else
+	/* We should never be here */
+	die_on(1, "internall error (%d)", __LINE__);
+#endif
 }
 
 
+struct wbuffer {
+	size_t len;
+	size_t capacity;
+	wchar_t *buf;
+};
+
+static void
+wideFromMultiIconvFunc(const char *buffer, size_t len, void *_data);
+
 static const wchar_t *wideFromMulti(const char *str) {
-	size_t len, capacity, pos;
-	wchar_t *buf = NULL;
+	size_t len = strlen(str), pos;
+	struct wbuffer wb = { 0, 0, 0 };
 	mbstate_t ps;
 
-	pos = 0;
-	len = strlen(str);
+	if (iconvDo(iconv_str2wchar, (char *)str, len, 1,
+	            wideFromMultiIconvFunc, &wb)) {
+		goto done;
+	}
+
 	memset(&ps, 0, sizeof ps);
-	capacity = 16;
+	wb.capacity = 32;
+	pos = 0;
 	goto realloc;
 
 	for(;;) {
-		size_t ret = mbrtowc(buf + pos, str, len, &ps);
+		size_t ret = mbrtowc(wb.buf + wb.len, str, len, &ps);
 
 		if (ret == (size_t)-1) {
 			/* EILSEQ, try skipping single byte */
@@ -1074,15 +1243,47 @@ static const wchar_t *wideFromMulti(const char *str) {
 			/* Consumed ret bytes */
 			str += ret;
 			len -= ret;
-			if (++pos < capacity) continue;
+			if (++wb.len < wb.capacity) continue;
 
-			capacity *= 2;
+			wb.capacity *= 2;
 realloc:
-			buf = realloc(buf, capacity * sizeof *buf);
-			pdie_on(!buf, "malloc");
+			wb.buf = realloc(wb.buf, wb.capacity * sizeof *wb.buf);
+			pdie_on(!wb.buf, "malloc");
 		} else {
 			/* Got NUL */
-			return buf;
+			break;
 		}
 	}
+
+done:
+	if (wb.capacity == wb.len + 1) {
+		return wb.buf;
+	} else {
+		wchar_t *ret = realloc(wb.buf, (wb.len + 1) * sizeof *wb.buf);
+		return ret ? ret : wb.buf;
+	}
+}
+
+
+static void
+wideFromMultiIconvFunc(const char *buffer, size_t len, void *_data) {
+	struct wbuffer *wb = _data;
+
+	len /= sizeof *wb->buf;
+
+	if (wb->len + len + 1 < wb->capacity) {
+		size_t cap = wb->capacity ? wb->capacity : 16;
+		size_t total = wb->len + len + 1;
+		do {
+			cap *= 2;
+		} while (cap < total);
+
+		wb->capacity = cap;
+		wb->buf = realloc(wb->buf, cap * sizeof *wb->buf);
+		pdie_on(!wb->buf, "malloc");
+	}
+
+	memcpy(wb->buf, buffer, len * sizeof *wb->buf);
+	wb->len += len;
+	wb->buf[wb->len] = 0;
 }

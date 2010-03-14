@@ -21,7 +21,6 @@ Tiny Applications Collection TODO List
 * mpd-show
   - better teminal configurations support (use ncurses?)
   - handling of zero-width wide characters
-  - maybe use iconv() for conversion?
 
 * rot13
   - add switch to changeing the value chars should be rotated by

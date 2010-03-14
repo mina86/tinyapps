@@ -1,3 +1,7 @@
+2010-03-14  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* mpd-show: + added iconv support
+
 2010-03-12  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* ChangeLog: + spelling corrected
