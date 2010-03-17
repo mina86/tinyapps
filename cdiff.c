@@ -13,23 +13,95 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include <limits.h>
 
 
-#if __STDC_VERSION__ < 199901L
-#  if defined __GNUC__
-#    define restrict   __restrict__
-#  else
-#    define restrict
-#  endif
-#endif
 
-
-static int match(const char *restrict pattern, const char *restrict str);
-
+/******************** Main ***************************************************/
+static void not_tty(char **argv);
+static int  run_diff(char **argv);
+static void loop(void);
 
 int main(int argc, char **argv) {
+	/* If not TTY either run diff or pass in->out through (cat) */
+	if (!isatty(1)) {
+		not_tty(argv);
+		return 1;
+	}
+
+	/* If arguments given run diff and prepare pipe */
+	if (argc > 1) {
+		int ret = run_diff(argv);
+		if (ret) {
+			return ret;
+		}
+	}
+
+	/* Colourise output */
+	loop();
+	return 0;
+}
+
+
+
+/******************** Handle no TTY case *************************************/
+static void not_tty(char **argv) {
+	argv[0] = (char *)(argv[1] ? "diff" : "cat");
+	execvp(argv[0], argv);
+	perror(argv[1] ? "exec: diff" : "exec: cat");
+}
+
+
+
+/******************** Run diff and set up pipe *******************************/
+static int run_diff(char **argv) {
+	int fds[2];
+
+	if (pipe(fds) < 0) {
+		perror("pipe");
+		return 1;
+	}
+
+	switch (fork()) {
+	case -1:
+		perror("fork");
+		return 1;
+
+	case 0:
+		close(fds[0]);
+		if (dup2(fds[1], 1) < 0) {
+			perror("dup2");
+			return 1;
+		}
+		argv[0] = (char *)"diff";
+		execvp("diff", argv);
+		perror("exec: diff");
+		return 1;
+
+	default:
+		close(fds[1]);
+		if (dup2(fds[0], 0) < 0) {
+			perror("dup2");
+			return 1;
+		}
+	}
+
+	return 0;
+}
+
+
+
+/******************** Main loop; main part of the app ************************/
+struct pattern {
+	const char *pattern;
+	unsigned idx;
+};
+
+static unsigned find(const struct pattern *patterns, const char *str);
+
+
+static void loop(void) {
 	enum color_number {
+		COLOR_DEFAULT, /* must be zero */
 		COLOR_INS,
 		COLOR_DEL,
 		COLOR_CHANGE,
@@ -38,15 +110,15 @@ int main(int argc, char **argv) {
 		COLOR_FILE2,
 		COLOR_POS1,
 		COLOR_POS2,
-		COLOR_MISC,
-		COLOR_DEFAULT
+		COLOR_MISC
 	};
 
 
 	static const struct color {
-		const char *const name;
-		const char *value;
+		const char name[8];
+		const char value[8];
 	} colors[] = {
+		{ "default", "0;37" },
 		{ "ins" ,    "1;32" },
 		{ "del" ,    "1;31" },
 		{ "change",  "1;33" },
@@ -56,27 +128,20 @@ int main(int argc, char **argv) {
 		{ "pos1",    "0;32" },
 		{ "pos2",    "0;31" },
 		{ "misc",    "0;35" },
-		{ "default", "0;37" },
 	};
 
 
-	struct rule {
-		const char *const pattern;
-		enum color_number idx;
-	};
-
-
-	static const struct rule unified_rules[] = {
+	static const struct pattern unified_ruleset[] = {
 		{ "+++ ", COLOR_FILE1   },
 		{ "--- ", COLOR_FILE2   },
 		{ "@@ " , COLOR_MISC    },
 		{ "+"   , COLOR_INS     },
 		{ "-"   , COLOR_DEL     },
 		{ " "   , COLOR_EQUAL   },
-		{ ""    , COLOR_DEFAULT },
+		{ 0     , COLOR_DEFAULT },
 	};
 
-	static const struct rule contex_rules[] = {
+	static const struct pattern contex_ruleset[] = {
 		{ "*** [^0-9]", COLOR_FILE1   },
 		{ "--- [^0-9]", COLOR_FILE2   },
 		{ "*** "      , COLOR_POS1    },
@@ -90,7 +155,7 @@ int main(int argc, char **argv) {
 		{ ""          , COLOR_DEFAULT },
 	};
 
-	static const struct rule normal_rules[] = {
+	static const struct pattern normal_ruleset[] = {
 		{ "[0-9]", COLOR_MISC   },
 		{ "---"  , COLOR_MISC   },
 		{ "> "   , COLOR_INS    },
@@ -98,119 +163,107 @@ int main(int argc, char **argv) {
 		{ ""     , COLOR_DEFAULT },
 	};
 
-
-	static const struct {
-		const char *const pattern;
-		const struct rule *const rules;
-	} modes[] = {
-		{ "-", unified_rules },
-		{ "*", contex_rules  },
-		{ "" , normal_rules  },
+	static const struct pattern *rulesets[] = {
+		0, /* must be at index zero */
+		unified_ruleset,
+		contex_ruleset,
+		normal_ruleset
 	};
 
-	const struct rule *rules;
-	char buf[1024];
-	int i;
+
+	static const struct pattern modes[] = {
+		{ "-",     1 },
+		{ "*",     2 },
+		{ "[0-9]", 3 },
+		{ 0,       0 } /* side note: 0 == COLOR_DEFAULT */
+	};
 
 
-	/* Not a TTY */
-	if (!isatty(1)) {
-		argv[0] = (char*)(argc > 1 ? "diff" : "cat");
-		execvp(argv[0], argv);
-		perror(argc > 1 ? "exec: diff" : "exec: cat");
-		return 1;
+	const struct pattern *ruleset = 0;
+	char buf[4096];
+
+
+	while (fgets(buf, sizeof buf, stdin)) {
+		unsigned idx;
+
+		do {
+			idx = find(ruleset ? ruleset : modes, buf);
+		} while (!ruleset && (ruleset = rulesets[idx]));
+
+		printf("\x1b[%sm%s", colors[idx].value, buf);
 	}
-
-
-	/* Run diff if we were run as a wrapper */
-	if (argc>1) {
-		int fds[2];
-
-		if (pipe(fds)==-1) {
-			perror("pipe");
-			return 1;
-		}
-
-		switch (fork()) {
-		case -1:
-			perror("fork");
-			return 1;
-
-		case 0:
-			close(fds[0]);
-			if (dup2(fds[1], 1)==-1) {
-				perror("dup2");
-				return 1;
-			}
-			argv[0] = (char*)"diff";
-			execvp("diff", argv);
-			perror("exec: diff");
-			return 1;
-
-		default:
-			close(fds[1]);
-			if (dup2(fds[0], 0)==-1) {
-				perror("dup2");
-				return 1;
-			}
-		}
-	}
-
-
-	/* Decide the type of diff */
-	if (!fgets(buf, sizeof buf, stdin)) {
-		return 0;
-	}
-
-	for (i = 0; !match(modes[i].pattern, buf); ++i);
-	rules = modes[i].rules;
-
-	/* Main loop */
-	do {
-		for (i = 0; !match(rules[i].pattern, buf); ++i);
-		printf("\x1b[%sm%s", colors[rules[i].idx].value, buf);
-	} while (fgets(buf, sizeof buf, stdin));
 
 
 	puts("\x1b[0m");
-	return 0;
 }
 
 
 
+/******************** String matching ****************************************/
+static int match(const char *pattern, const char *str);
+static const char *match_group(const char *pat, char ch);
 
-static int match(const char *restrict pat, const char *restrict str) {
-	if (!pat || !str) {
-		return 0;
+
+static unsigned find(const struct pattern *patterns, const char *str) {
+	while (!match(patterns->pattern, str)) {
+		++patterns;
+	}
+	return patterns->idx;
+}
+
+
+static int match(const char *pat, const char *str) {
+	if (!pat) {
+		return 1;
 	}
 
 	for (; *pat && *str; ++str, ++pat) {
-		const char ch = *str;
-		int found = 0, expect = 1;
+		switch (*pat) {
+		case '?':
+			break;
 
-		if (*pat=='?') {
-			continue;
-		} else if (*pat!='[') {
-			if (*(*pat=='\\' ? ++pat : pat) != ch) return 0;
-			continue;
+		case '[':
+			pat = match_group(pat, *str);
+			if (!pat) return 0;
+			break;
+
+		default:
+			if (*pat != *str) return 0;
 		}
-
-		if (*++pat=='^') {
-			expect = 0;
-			++pat;
-		}
-
-		for (; *pat && *pat!=']'; ++pat) {
-			if (*pat=='\\' && !*++pat) return 0;
-			if (pat[1]!='-') {
-				found |= ch == *pat;
-			} else {
-				const char from = *pat, to = *(pat += 2);
-				found |= from>to ? (ch<=to||from<=ch) : (from<=ch&&ch<=to);
-			}
-		}
-
-		if (found!=expect || !*pat) return 0;
 	}
 	return 1;
 }
+
+
+static const char *match_group(const char *pat, char ch) {
+	int ok = 0;
+
+	++pat;
+	if (*pat == '^') {
+		ok = 1;
+		++pat;
+	}
+
+	do {
+		if (pat[1] != '-') {
+			if (ch != *pat) continue;
+		} else {
+			const char from = *pat;
+			const char to = *(pat += 2);
+
+			if (from > to ? (to < ch   && ch < from)
+			              : (ch < from || to < ch  )) continue;
+		}
+
+		/* Found */
+		while (*++pat != ']') {
+			/* nop */
+		}
+		ok = ok ^ 1;
+		break;
+
+	} while (*++pat != ']');
+
+	return ok ? pat : 0;
+}
+
