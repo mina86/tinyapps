@@ -1,11 +1,15 @@
+2010-03-21  Michal Nazarewicz  <mina86/AT/mina86.com>
+
+	* mpd-show.c: + fixed progress stopping at the end of the title bug
+
 2010-03-17  Michal Nazarewicz  <mina86/AT/mina86.com>
 
-	* cdiff: + better handling of recursive diff
+	* cdiff.c: + better handling of recursive diff
 	+ code refactored
 
 2010-03-14  Michal Nazarewicz  <mina86/AT/mina86.com>
 
-	* mpd-show: + added iconv support
+	* mpd-show.c: + added iconv support
 
 2010-03-12  Michal Nazarewicz  <mina86/AT/mina86.com>
 

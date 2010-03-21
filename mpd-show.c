@@ -594,6 +594,7 @@ static void output(void) {
 	}
 
 	if (hilightLeft && hilightLeft < cols) {
+		printf("%*s", (int)hilightLeft, "");
 		termNormal();
 	}
 
