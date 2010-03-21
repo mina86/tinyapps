@@ -504,6 +504,8 @@ static void output(void);
 
 
 static void display(unsigned secs) {
+	static int first_time = 1;
+
 	do {
 		int doDisplay = 0;
 
@@ -514,7 +516,8 @@ static void display(unsigned secs) {
 
 #define CHANGED(field) (D.cur.field != D.old.field)
 
-		if (CHANGED(error) || CHANGED(songid)) {
+		if (first_time || CHANGED(error) || CHANGED(songid)) {
+			first_time = 0;
 			formatLine();
 			doDisplay = 1;
 		}
@@ -680,10 +683,10 @@ static size_t doFormat(const wchar_t *p, size_t offset, const wchar_t **last)
 
 static void formatLine(void) {
 	if (unlikely(D.cur.error)) {
-		appendUTF(1, "[", 1);
-		D.line_len = appendUTF(appendUTFStr(1, D.conn->errorStr), "]", 1);
+		appendW(0, L"[", 1);
+		D.line_len = appendW(appendUTFStr(1, D.conn->errorStr), L"]", 1);
 	} else if (unlikely(!D.info)) {
-		D.line_len = appendUTFStr(1, "[no song]");
+		D.line_len = appendW(0, L"[no song]", 10);
 	} else {
 		D.line_len = doFormat(D.format, 0, 0);
 	}

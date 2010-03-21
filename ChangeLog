@@ -1,6 +1,7 @@
 2010-03-21  Michal Nazarewicz  <mina86/AT/mina86.com>
 
 	* mpd-show.c: + fixed progress stopping at the end of the title bug
+	+ fixed errors being displayed incorrectly
 
 2010-03-17  Michal Nazarewicz  <mina86/AT/mina86.com>
 
