@@ -1,0 +1,81 @@
+#!/usr/bin/perl
+##
+## Prints out error message according to name or number
+## Copyright (c) 2010 by Michal Nazarewicz (mina86/AT/mina86.com)
+##
+## This software is OSI Certified Open Source Software.
+## OSI Certified is a certification mark of the Open Source Initiative.
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, see <http://www.gnu.org/licenses/>.
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
+##
+
+use warnings;
+use strict;
+
+use POSIX qw(strerror);
+use FileHandle;
+use IPC::Open2;
+
+
+unless (@ARGV) {
+	print "usage: errno <error> [ ... ]\n  where <error> is either an errno number or EFOO symbol.\n  Requires gcc to work.\n";
+	exit 0;
+}
+
+
+my (%names, %nums);
+
+open2(*IN, *OUT, "gcc -E -dM -") or die "gcc: $!\n";
+
+print OUT "#include <errno.h>\n";
+close OUT;
+
+while (<IN>) {
+	if (/^#define\s+(E[A-Z0-9]+)\s+(\d+)\s*$/) {
+		my $n = int $2;
+		$nums{$1} = $n;
+		$names{$n} = $1 unless exists $names{$n};
+	}
+}
+close IN;
+
+
+for (@ARGV) {
+	my ($name, $num, $err);
+
+	if (/^-?\d+$/) {
+		$num = abs $_;
+		$name = $names{$num} // 'unknown';
+	} elsif (/^E[A-Z0-9]+$/i) {
+		$name = uc $_;
+		$num = $nums{$name};
+		if (!defined $num) {
+			print STDERR "$name: no such error\n";
+			next;
+		}
+	} else {
+		print STDERR "$_: ignoring\n";
+		next;
+	}
+
+	$err = strerror($num);
+	if ($err) {
+		print "$num: $name: $err\n";
+	} else {
+		print STDERR "$num: $name: no such error\n";
+	}
+}

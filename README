@@ -53,6 +53,9 @@ At the moment the collection includes:
    (hence  the  name).   Helpful  when  running  X  applications  from
    a terminal.
 
+ * errno  - a  tool for  converting  between errno  error numbers  and
+   symbolic names which also prints error message.
+
  * extractlinks.pl  - extracts links  from a  HTML page.   Useful, for
    example, when downloading an Internet gallery;
 
