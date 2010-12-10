@@ -11,11 +11,11 @@
  */
 
 /*
- * This may be used to try to free some memory, eg. if there are many
- * unfreed buffers or something.  It may help if your PC is running
- * slow however it is not certain and many would disagree.
+ * This may be used to try to free some memory allocated for I/O
+ * buffers (which could lead to some flushes as well), as well as it
+ * can be used for testing the system performance when lots of memory
+ * is consumed.
  */
-
 
 
 /********** Config **********/
@@ -23,16 +23,6 @@
 /* Comment the next line out if your platform doesn't have sbrk()
    function */
 #define HAVE_SBRK
-
-
-#if __STDC_VERSION__ < 199901L
-#  if defined __GNUC__
-#    define inline   __inline__
-#  else
-#    define inline
-#  endif
-#endif
-
 
 
 /********** Includes **********/
@@ -43,82 +33,94 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <signal.h>
+#include <string.h>
 #ifdef HAVE_SBRK
 # include <errno.h>
 # include <unistd.h>
 #endif
+
 
 /********** Variables **********/
 static volatile sig_atomic_t signum = 0;
 
 
 /********** Function declarations **********/
-static long parse_arg(char *arg);
+static unsigned long parse_arg(char *arg);
 static void usage(void);
+static void handle_all(void (*handler)(int signum));
 static void signal_handler(int sig);
-static inline int  alloc(int num);
-static void progress(long allocated, long to_allocate);
+static int  alloc(unsigned long num);
+static void progress(unsigned long allocated, unsigned long to_allocate);
 
+static unsigned long min(unsigned long x, unsigned long y) {
+	return x < y ? x : y;
+}
 
 
 /********** Main **********/
 int main(int argc, char **argv) {
-	long to_allocate, allocated = 0;
-	int dot;
+	unsigned long to_allocate, allocated = 0, dot = 1024;
 
-	/* Invalid number of arguments */
-	if (argc!=2) {
+	switch (argc) {
+	case 3:
+		if (!strcmp(argv[1], "-w")) {
+			++argv;
+			/* FALL THROUGH */
+	case 2:
+			to_allocate = parse_arg(argv[1]);
+			if (to_allocate) {
+				break;
+			}
+		}
+	default:
 		usage();
 		return 2;
 	}
 
-	/* Parse arguments */
-	to_allocate = parse_arg(argv[1]);
-	if (to_allocate<0) {
-		usage();
-		return 2;
+	handle_all(signal_handler);
+
+	if (to_allocate < dot) {
+		dot = 4;
 	}
 
-	/* Catch signals */
-	for (dot = 0; dot<32; signal(++dot, &signal_handler));
-
-	/* Allocate */
-	dot = to_allocate>2048 ? to_allocate>>11 : 1;
-	setvbuf(stdout, 0, _IONBF, 0);              /* unbuffered */
-
-	while (!signum && allocated<to_allocate && alloc(dot)) {
-		progress(allocated += dot, to_allocate);
+	progress(0, to_allocate);
+	while (!signum &&
+	       allocated < to_allocate &&
+	       alloc(min(dot, to_allocate - allocated))) {
+		allocated += min(dot, to_allocate - allocated);
+		progress(allocated, to_allocate);
 	}
-
-	/* Return */
-	progress(allocated, to_allocate);
 	putchar('\n');
+
+	handle_all(SIG_DFL);
+
+	if (argc == 3) {
+		char buffer[1024];
+		while (fgets(buffer, sizeof buffer, stdin) && !strchr(buffer, '\n'))
+			/* nop */;
+	}
+
 	return signum ? -signum : (allocated < to_allocate ? 1 : 0);
 }
 
 
-
-/********** Parses arg **********/
-static long parse_arg(char *arg) {
+/********** Command line arguments **********/
+static unsigned long parse_arg(char *arg) {
 	double ret = strtod(arg, &arg);
 	switch (*arg) {
 	case 'K':               ++arg; break;
 	case 'M': ret *= 1<<10; ++arg; break;
 	case 'G': ret *= 1<<20; ++arg; break;
 	}
-	return *arg ? -1 : ret;
+	return *arg ? 0 : ret;
 }
 
-
-
-/********** Usage **********/
 static void usage(void) {
-	puts("usage: malloc <bytes>\n"
-		 " <bytes>  number of bytes to allocates;\n"
-		 "          can be fallowed by K (the default), M or G\n");
+	puts("usage: malloc [ -w ] <bytes>\n"
+	     " -w       wait for new line after allocating\n"
+	     " <bytes>  number of bytes to allocates;\n"
+	     "          can be fallowed by K (the default), M or G\n");
 }
-
-
 
 
 /********** Signal handler **********/
@@ -127,18 +129,38 @@ static void signal_handler(int sig) {
 	signal(sig, signal_handler);
 }
 
+static void handle_all(void (*handler)(int signum)) {
+	int i = 31;
+	do {
+		switch (i) {
+		case SIGCONT: /* Continue if stopped */
+		case SIGSTOP: /* Stop process */
+		case SIGTSTP: /* Stop typed at tty */
+		case SIGTTIN: /* tty input for background process */
+		case SIGTTOU: /* tty output for background process */
+			break;
+
+		default:
+			signal(i, handler);
+		}
+	} while (--i);
+}
 
 
 /********** Allocates memory **********/
-static inline int alloc(int num) {
+static int alloc(unsigned long num) {
 	char *ptr;
 #ifdef HAVE_SBRK
 	errno = 0;
 	ptr = sbrk(num <<= 10);
-	if (errno) return 0;
+	if (errno) {
+		return 0;
+	}
 #else
 	ptr = malloc(num <<= 10);
-	if (!ptr) return 0;
+	if (!ptr) {
+		return 0;
+	}
 #endif
 	do {
 		*ptr++ = --num;
@@ -147,44 +169,53 @@ static inline int alloc(int num) {
 }
 
 
-
 /********** Prints progress **********/
-static void progress(long allocated, long to_allocate) {
+static void progress(unsigned long allocated, unsigned long to_allocate) {
 	/* Zi an Yi are unofficial; Yi is 2^80 so there is no way we will
 	   ever allocat that amout of memoty ;) therefore we don't need to
 	   check whether there are some units available */
 	static const char *const units = "KMGTPEZY";
 
 	static char dots[] = "=============================="
-		"==============================";
+		"==============================>";
 
-	long size = allocated;
-	int i;
+	static unsigned long old_size = ~0UL, old = ~0UL;
+	static unsigned old_unit = ~0U;
 
-	/* Print dots */
-	i = allocated * 50 / to_allocate;
-	if (i==0) {
-		i = 1;
-	}
-	if (allocated!=to_allocate) {
-		dots[i-1] = '>';
-	}
-	dots[i] = 0;
-	printf("\r   [%-50s]  ", dots);
-	dots[i-1] = dots[i] = '=';
+	unsigned long size = allocated;
+	unsigned i;
 
 	/* Format size in a friendly way */
 	for (i = 0; size > 102400; size >>= 10) {
 		++i;
 	}
-	if (size<1024) {
-		printf("%5ld %ciB", size, units[i]);
+	if (old_size == size && old_unit == i) {
+		return;
+	}
+
+	old_size = size;
+	old_unit = i;
+
+	if (size < 1024) {
+		printf("\r%5lu %ciB", size, units[i]);
 	} else {
-		printf("%5.1f %ciB", size/1024.0, units[i+1]);
+		printf("\r%3lu.%lu %ciB", size / 1024, size * 10 / 1024 % 10,
+			   units[i + 1]);
 	}
 
 	/* Percentage */
-	printf(" (%5.1f%%)\r", allocated*100.0/to_allocate);
+	printf(" (%3lu%%)", allocated * 100 / to_allocate);
 
+	/* Slider */
+	if ((allocated * 100 / to_allocate) != old * 100 / to_allocate) {
+		old = allocated;
+
+		i = allocated * 50 / to_allocate;
+		dots[i] = '>';
+		printf("  [%-50.*s]", i + (allocated != to_allocate), dots);
+		dots[i] = '=';
+	}
+
+	putchar('\r');
 	fflush(stdout);
 }
