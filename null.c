@@ -82,7 +82,7 @@
 /******** Usage ********/
 static void usage(FILE *out, char *cmd, int full) {
 	fprintf(out, "usage: %s [<switches>] [--] <program> <args>\n"
-	             "       <program> <args> | null", cmd);
+	             "       <program> <args> | null\n", cmd);
 	if (!full) return;
 	fputs("<switches> are:\n"
 	      "  -n         discard output only (runs in foreground)\n"
