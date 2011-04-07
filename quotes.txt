@@ -87,11 +87,11 @@ absolutely right.
 make them all yourself.
 	-- Alfred P. Sheinwold (1912-1997)
 %
- I would not fear a pack of lions led by a sheep, but I would always fear a
-flock of sheep led by a lion.
+ I would not fear a pack of lions led by a sheep, but I would always fear
+a flock of sheep led by a lion.
 	-- Alexander the Great (356BC-323BC)
 %
- Wait a minute...
+ Wait a minute…
 	-- Pope Alexander VI (1431-1503)  [last words]
 %
  Well, this is certainly a pleasant surprise.
@@ -112,12 +112,12 @@ już zostało kiedyś opisane.
 	-- from Andrzej Sapkowski (1948-), Ziarno Prawdy
 %
  Tam za moment zacznie się rzeź.  A za moment plus moment zjawią się
-pierwsi ranni.  Wszyscy wiedzą, co mają robić, każdy zna swoje obowiązki i
-swoje miejsce.  Jeśli każdy będzie przestrzegał, czego powinien
+pierwsi ranni.  Wszyscy wiedzą, co mają robić, każdy zna swoje obowiązki
+i swoje miejsce.  Jeśli każdy będzie przestrzegał, czego powinien
 przestrzegać, nic nie może pójść źle.  Tam jakieś sto tysięcy ludzi zacznie
 za chwilę kaleczyć się wzajemnie.  Na bardzo wyszukane sposoby.  Nas,
-wliczając dwa pozostałe szpitale, jest dwanaścioro lekarzy.  Za nic w
-świecie nie zdołamy pomóc wszystkim potrzebującym.  Nawet znikomemu
+wliczając dwa pozostałe szpitale, jest dwanaścioro lekarzy.  Za nic
+w świecie nie zdołamy pomóc wszystkim potrzebującym.  Nawet znikomemu
 procentowi potrzebujących.  Nikt nawet tego nie oczekuje.  Ale my będziemy
 leczyć.  Bo to jest, przepraszam za banał, racja naszego istnienia.
 Pomagać potrzebującym.  Pomożemy więc banalnie tylu, ilu zdołamy pomóc.
@@ -141,8 +141,8 @@ goście nagle zaczęli sinieć i umierać.
 	-- Geralt
 	-- from Andrzej Sapkowski (1948-), Pani Jeziora
 %
- Od pietnastu lat piszę, pies z kulawą nogą się tym nie zainteresował, a
-teraz podobno jakiś k...a film nakręcili.
+ Od pietnastu lat piszę, pies z kulawą nogą się tym nie zainteresował,
+a teraz podobno jakiś k…a film nakręcili.
 	-- Andrzej Sapkowski (1948-)
 %
  Na wojence bywa różnie,
@@ -153,23 +153,23 @@ teraz podobno jakiś k...a film nakręcili.
 	-- from Andrzej Sapkowski (1948-), Wieża Jaskółki
 %
  Zabójstwo jest zawsze zabójstwem, bez względu na motywy i okoliczności.
-Przeto ci, którzy zabijają lub przygotowują zabójstwo, to przestępcy i
-zbrodniarze, bez względu na to, kim są: królami, książętami, marszałkami,
+Przeto ci, którzy zabijają lub przygotowują zabójstwo, to przestępcy
+i zbrodniarze, bez względu na to, kim są: królami, książętami, marszałkami,
 sędziami.  Nikt z tych, którzy obmyślają i zadają przemoc, nie ma prawa
-uważać się za lepszego od zwykłego zbrodniarza.  Bo wszelka przemoc z
-natury swojej nieuchronnie wiedzie do zbrodni.
+uważać się za lepszego od zwykłego zbrodniarza.  Bo wszelka przemoc
+z natury swojej nieuchronnie wiedzie do zbrodni.
 	-- Nicodemus de Boot, Medytacie o życiu, szczęściu i pomyślności
 	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
- Wówczas rzekła wróżka do wiedźmina: "Taką ci dam radę: obuj żelazne buty,
-weź do ręki kostur żelazny.  Idź w żelaznych butach na koniec świata, a
-drogę przed sobą kosturem macaj, łzami skrapiaj.  Idź przez ogień i wodę,
+ Wówczas rzekła wróżka do wiedźmina: „Taką ci dam radę: obuj żelazne buty,
+weź do ręki kostur żelazny.  Idź w żelaznych butach na koniec świata,
+a drogę przed sobą kosturem macaj, łzami skrapiaj.  Idź przez ogień i wodę,
 nie ustawaj, wstecz się nie oglądaj.  A gdy już od wiatru i żaru wyschną
 twe oczy tak, że już ni jedna łza z nich wypłynąć nie zdoła, wówczas na
-końcu świata odnajdziesz to, czego szukasz i to, co kochasz.  Być może." I
-wiedźmin poszedł przez ogień i wodę, wstecz się nie oglądał.  Ale nie wziął
-ni butów żelaznych, ni kostura.  Wziął tylko swój miecz wiedźmiński.  Nie
-posłuchał słów wróżki.  I dobrze zrobił, bo to była zła wróżka.
+końcu świata odnajdziesz to, czego szukasz i to, co kochasz.  Być może.”
+I wiedźmin poszedł przez ogień i wodę, wstecz się nie oglądał.  Ale nie
+wziął ni butów żelaznych, ni kostura.  Wziął tylko swój miecz wiedźmiński.
+Nie posłuchał słów wróżki.  I dobrze zrobił, bo to była zła wróżka.
 	-- Flourens Delannoy, Bajki i klechdy
 	-- from Andrzej Sapkowski (1948-), Chrzest Ognia
 %
@@ -196,7 +196,7 @@ natura temu prawu podlega, cała ziemia i wszystko, co na tej ziemi żyje!
 A czery i magia są temu prawu przeciwne! Przeklęci więc są czarownicy
 i bliski jest dzień gniewu, w którym ogień z niebios zniszczy ich plugawą
 wyspę! Runą wówczas mury Loxii, Aretuzy i Garstangu, za którymi właśnie
-zbierają się ci poganie, by swe knowania obmyślać! Runą te mury...
+zbierają się ci poganie, by swe knowania obmyślać! Runą te mury…
  -I trza będzie, psia mać, od nowa stawiać.
 	-- from Andrzej Sapkowski (1948-), Czar Pogardy
 %
@@ -213,8 +213,8 @@ słodka i ma kształt.  Spróbujcie zdefiniować kształt gruszki.
 wydarzy, zanim przyniosą.
 	-- from Andrzej Sapkowski (1948-), Pani Jeziora
 %
- (...) jak rzekła młodziutka Cerro do króla Vridanka na ich pierwszecj
-schadzce: "Niebrzydka rzecz, ale czy ma jakieś zastosowanie praktyczne?"
+ […] jak rzekła młodziutka Cerro do króla Vridanka na ich pierwszecj
+schadzce: „Niebrzydka rzecz, ale czy ma jakieś zastosowanie praktyczne?”
 	-- Yarpen Zigrin
 	-- from Andrzej Sapkowski (1948-), Pani Jeziora
 %
@@ -225,20 +225,20 @@ schadzce: "Niebrzydka rzecz, ale czy ma jakieś zastosowanie praktyczne?"
  -Ha! Kim byli? Jak się nazywali? Co potrafili?
  -Wolnego, wolnego, dziewczyno.  Nie znam odpowiedzi na te pytania.  Czy to
 takie ważne?
- -Pewnie, że ważne! Chciałabym wiedzieć...  kim tacy szermierze są.
-I gdzie tacy są.
+ -Pewnie, że ważne! Chciałabym wiedzieć…  kim tacy szermierze są.  I gdzie
+tacy są.
  -Gdzie są, to ja wiem.
  -Ha! Więc gdzie?
  -Na cmentarzach.
 	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
- Nic, tylko byście się chędożyli, w kółko, bez wyboru, z kim popadło i
-gdzie popadło.  A waszym kobietom wystarczy byle siąść na męskich portkach,
-by im brzuch urósł...  Czegoś tak pokraśniała, myślałby kto: maczek polny?
-Chciałaś rozumieć, tak czy nie? To i masz szczerą prawdę i wierną historię
-świata, którym włada ten, kto sprawniej rozłupuje innym czaszki i w
-szybszym tempie nadmuchuje baby.  A z wami, ludźmi, trudno konkurować,
-zarówno w mordowaniu, jak i w chędożeniu...
+ Nic, tylko byście się chędożyli, w kółko, bez wyboru, z kim popadło
+i gdzie popadło.  A waszym kobietom wystarczy byle siąść na męskich
+portkach, by im brzuch urósł…  Czegoś tak pokraśniała, myślałby kto: maczek
+polny?  Chciałaś rozumieć, tak czy nie? To i masz szczerą prawdę i wierną
+historię świata, którym włada ten, kto sprawniej rozłupuje innym czaszki
+i w szybszym tempie nadmuchuje baby.  A z wami, ludźmi, trudno konkurować,
+zarówno w mordowaniu, jak i w chędożeniu…
 	-- Yarpen Zigrin
 	-- from Andrzej Sapkowski (1948-), Krew Elfów
 %
@@ -274,8 +274,8 @@ kochała jego.  Coś takiego musiało skończyć się nieszczęściem.
 	-- Flourens Delannoy, Bajki i klechdy
 	-- from Andrzej Sapkowski (1948-), Wierza Jaskółki
 %
- A ja myślę, że całe zło tego świata bierze się z myślenia.  Zwłaszcza w
-wykonaniu ludzi całkiem ku temu nie mających predyspozycji.
+ A ja myślę, że całe zło tego świata bierze się z myślenia.  Zwłaszcza
+w wykonaniu ludzi całkiem ku temu nie mających predyspozycji.
 	-- Zawisza Czarny
 	-- from Andrzej Sapkowski (1948-), Narrenturm
 %
@@ -284,11 +284,11 @@ wykonaniu ludzi całkiem ku temu nie mających predyspozycji.
  - Bhrekekgreg-greg-greg.
  - Robisz idiotę z siebie? Czy ze mnie?
  - Kuaks-kwaaks.
- - [...] Nie nabierzesz mnie.  Doskonale wiem, że rozumiecie i umiecie
+ - […] Nie nabierzesz mnie.  Doskonale wiem, że rozumiecie i umiecie
 mówić po ludzku.
  Wodnik zamrugał podwójnymi powiekami i otworzył usta, szerokie jak
 u ropuchy.
- - Po ludzku... - zabulgotał, plując wodą - Po ludzku owszem, tak.  Ale
+ - Po ludzku… - zabulgotał, plując wodą - Po ludzku owszem, tak.  Ale
 dlaczego mam gadać po niemiecku?
 	-- from Andrzej Sapkowski (1948-), Boży bojownicy
 %
@@ -321,7 +321,7 @@ ones in movies.
 	-- Bill Bulko
 %
  I'll be in Hell before you start breakfast!
-	-- "Black Jack" Ketchum  [last words]
+	-- “Black Jack” Ketchum  [last words]
 %
  The real problem is not whether machines think but whether men do.
 	-- Burrhus Frederic Skinner (1904-1990)
@@ -337,7 +337,7 @@ in Australia.
  Why not? After all, it belongs to Him!
 	-- Sir Charles Spencer Chaplin (1889-1977)  [last words]
 %
- There is no such thing as "trusted users".
+ There is no such thing as “trusted users”.
 	-- +Chiron+ on alt.os.linux.slackware
 %
  Trust no one.
@@ -358,10 +358,10 @@ and get a new one every six months.
 	-- Clifford Stoll
 %
  Many subjects aren't fun.  I wonder how the fun-to-learn teacher handles
-the Holocaust, Rape of Nanking, or American slavery...
+the Holocaust, Rape of Nanking, or American slavery…
 	-- Clifford Stoll
 %
- The authority of the calculator dulls our critical sense...  how do you
+ The authority of the calculator dulls our critical sense…  how do you
 grade a student who says that two-thirds times three is 1.9999999?
 	-- Clifford Stoll
 %
@@ -444,9 +444,9 @@ something in the small and to see something in the large.
 been sorted with the help of a computer.
 	-- Donald Ervin Knuth (1938-)
 %
- The most important thing in the programming language is the name.  A
-language will not succeed without a good name.  I have recently invented a
-very good name and now I am looking for a suitable language.
+ The most important thing in the programming language is the name.
+A language will not succeed without a good name.  I have recently invented
+a very good name and now I am looking for a suitable language.
 	-- Donald Ervin Knuth (1938-)  [attrib.]
 %
  An algorithm must be seen to be believed.
@@ -487,7 +487,7 @@ show their absence.
 	-- Edsger Wybe Dijkstra (1930-2002)
 %
  Such is life.
-	-- Edward "Ned" Kelly (1854[?]-1880)  [last words]
+	-- Edward “Ned” Kelly (1854[?]-1880)  [last words]
 %
  Masochizm wynika z niewiedzy.
 	-- Edward Stachowski
@@ -532,7 +532,7 @@ stronie.
  I have a terrible headache.
 	-- Franklin Delano Roosevelt (1882-1945)  [last words]
 %
- The Earth is suffocating...  Swear to make them cut me open, so that
+ The Earth is suffocating…  Swear to make them cut me open, so that
 I won't be buried alive.
 	-- Frederic Chopin (1810-1849)  [last words]
 %
@@ -543,7 +543,7 @@ I won't be buried alive.
 	-- George Bernard Shaw (1856-1950)
 %
  I want to die peacefully in my sleep, like my grandfather did, not
-screaming like the passengers who were in his car...
+screaming like the passengers who were in his car…
 	-- George Burns
 %
  Now I shall go to sleep.  Goodnight.
@@ -598,7 +598,7 @@ smyczy.
 	-- Hans Krailsheimer
 %
  That was a great game of golf, fellers.
-	-- Harry Lillis "Bing" Crosby (1903-1977)  [last words]
+	-- Harry Lillis “Bing” Crosby (1903-1977)  [last words]
 %
  Take my wife.  Please.
 	-- Henny Youngman (1906-1998)
@@ -615,28 +615,28 @@ monotony?
 whenever you go.
 	-- Henny Youngman (1906-1998)
 %
- Getting on a plane, I told the ticket lady, "Send one of my bags to New
-York, send one to Los Angeles, and send one to Miami." She said, "We can't
-do that!" I told her, "You did it last week!"
+ Getting on a plane, I told the ticket lady, “Send one of my bags to New
+York, send one to Los Angeles, and send one to Miami.” She said, “We can't
+do that!” I told her, “You did it last week!”
 	-- Henny Youngman (1906-1998)
 %
- The patient says "Doctor, it hurts when I do this." "Then don't do that!"
+ The patient says “Doctor, it hurts when I do this.” “Then don't do that!”
 	-- Henny Youngman (1906-1998)
 %
- I asked a Jewish man "Do you know where Michigan Avenue is?" He said
-"Yes", and walked away.
+ I asked a Jewish man “Do you know where Michigan Avenue is?” He said
+“Yes”, and walked away.
 	-- Henny Youngman (1906-1998)
 %
  If my mother knew I did this for a living, she'd kill me.  She thinks I'm
 selling dope.
 	-- Henny Youngman (1906-1998)
 %
- A woman says to a man, "I haven't seen you around here." "Yes, I just got
-out of jail for killing my wife." "So you're single."
+ A woman says to a man, “I haven't seen you around here.” “Yes, I just got
+out of jail for killing my wife.” “So you're single.”
 	-- Henny Youngman (1906-1998)
 %
- My wife loves to shop at Bloomingdale's.  I bring her mail there twice a
-week.
+ My wife loves to shop at Bloomingdale's.  I bring her mail there twice
+a week.
 	-- Henny Youngman (1906-1998)
 %
  Die, my dear doctor, that's the last thing I shall do!
@@ -689,7 +689,7 @@ and the pessimist fears this is true.
 me, without hurrying.
 	-- Jean Maurice Eugene Clement Cocteau (1889-1963)  [last words]
 %
- Dziwne jest to życie...  Jesteśmy małymi dziećmi, a nazajutrz mamy 50 lat,
+ Dziwne jest to życie…  Jesteśmy małymi dziećmi, a nazajutrz mamy 50 lat,
 a całe dzieciństwo możemy zamknąć w małym zardzewiałym pudełeczku.
 	-- Dominique Bretodeau
 	-- from Jean-Pierre Jeunet (1953-)
@@ -703,7 +703,7 @@ odbędzie.
  Hardware: the parts of a computer that can be kicked.
 	-- Jeff Pesis
 %
- Just 100 more lines of code...
+ Just 100 more lines of code…
 	-- Dwayne Duncan
 	-- from Jeffrey T. Darlington, General Protection Fault
 %
@@ -711,7 +711,7 @@ odbędzie.
 don't believe this to be a coincidence.
 	-- Jeremy S. Anderson
 %
- Dammit...  Don't you dare ask God to help me.
+ Dammit…  Don't you dare ask God to help me.
 	-- Joan Crawford (1904-1977)  [last words]
 %
 There's only one thing money won't buy, and that is poverty.
@@ -756,12 +756,12 @@ few who are rich.
 %
  Wielu spośród żyjących zasługuje na śmierć.  A niejeden z tych, którzy
 umierają, zasługują na życie.  Czy możesz ich nim obdarzyć? Nie bądź więc
-tak pochopny w ferowaniu wyroków śmierci.  Nawet bowiem najmądrzejszy z
-Mędrców nie wszystko wie.
+tak pochopny w ferowaniu wyroków śmierci.  Nawet bowiem najmądrzejszy
+z Mędrców nie wszystko wie.
 	-- Gandalf
 	-- from John Ronald Reuel Tolkien (1892-1973), Władca Pierścieni
 %
- Chcieliśmy dobrze, a wyszło jak zawsze...
+ Chcieliśmy dobrze, a wyszło jak zawsze…
 	-- Joseph Stalin (1879-1953)  [attrib.]
 %
  Veni, vidi, vici.
@@ -852,14 +852,14 @@ of course match nothing.   :-)
  short changed;               /* so triple your money back! */
 	-- Larry Wall (1954-) in cons.c from the perl source code
 %
- echo "Congratulations.  You aren't running Eunice."
+ echo “Congratulations.  You aren't running Eunice.”
 	-- Larry Wall (1954-) in Configure from the perl distribution
 %
  echo $package has manual pages available in source form.
- echo "However, you don't have nroff, so they're probably useless to you."
+ echo “However, you don't have nroff, so they're probably useless to you.”
 	-- Larry Wall (1954-) in Configure from the perl distribution
 %
- echo "Your stdio isn't very std."
+ echo “Your stdio isn't very std.”
 	-- Larry Wall (1954-) in Configure from the perl distribution
 %
  I don't know if it's what you want, but it's what you get.  :-)
@@ -885,7 +885,7 @@ or a bad reason.  In this case it's a good reason.  :-)
 	-- Larry Wall (1954-)
 %
  There are probably better ways to do that, but it would make the parser
-more complex.  I do, occasionally, struggle feebly against complexity...  :-)
+more complex.  I do, occasionally, struggle feebly against complexity…  :-)
 	-- Larry Wall (1954-)
 %
  Odd that we think definitions are definitive.   :-)
@@ -899,7 +899,7 @@ after all.
 	-- Larry Wall (1954-)
 %
  I'm reminded of the day my daughter came in, looked over my shoulder at
-some Perl 4 code, and said, "What is that, swearing?"
+some Perl 4 code, and said, “What is that, swearing?”
 	-- Larry Wall (1954-)
 %
  Don't let it end like this.  Tell them I said something.
@@ -942,13 +942,25 @@ jakie ludzie prości i mądrzy wiedzieli od zawsze.
 w różnych doktrynach.
 	-- Leszek Kołakowski (1927-)
 %
+ “Where shall I begin, your Majesty?” he asked.
+ “Begin at the beginning,” the King said, gravely, “and go on till you come
+to the end: then stop.”
+	-- from Lewis Carrol (Charles Lutwidge Dodgson, 183-1898),
+		Alice's Adventures in Wonderland
+%
  Kotki mają ten bardzo niedogodny zwyczaj (zauważyła pewnego razu Alicja),
 że cokolwiek im powiesz, one zawsze mruczą.  Gdyby mruczały tylko zamiast
-"tak", a miauczały zamiast "nie", lub według jakiejś podobnej
+„tak”, a miauczały zamiast „nie”, lub według jakiejś podobnej
 zasady -powiedziała Alicja, -wtedy można byłoby prowadzić rozmowę.  Lecz
 jak możesz rozmawiać z kimś, kto zawsze mówi to samo?
 	-- from Lewis Carroll (Charles Lutwidge Dodgson, 183-1898),
 		Through the Looking Glass
+%
+ “Where shall I begin, your Majesty?” he asked.
+ “Begin at the beginning,” the King said, gravely, “and go on till you come
+to the end: then stop.”
+	-- from Lewis Carroll (Charles Lutwidge Dodgson, 183-1898),
+		“Alice's Adventures in Wonderland”
 %
  Dijkstra probably hates me.
 	-- Linus Benedict Torvalds (1969-) in kernel/sched.c v1.1.42
@@ -971,9 +983,9 @@ children.
  Talk is cheap.  Show me the code.
 	-- Linus Benedict Torvalds (1969-)
 %
- I still maintain the point that designing a monolithic kernel in 1991 is a
-fundamental error.  Be thankful you are not my student.  You would not get
-a high grade for such a design :-)
+ I still maintain the point that designing a monolithic kernel in 1991 is
+a fundamental error.  Be thankful you are not my student.  You would not
+get a high grade for such a design :-)
 	-- Andrew Tanenbaum (wrote Minix) to Linus Torvalds
 %
  Your job is being a professor and researcher: That's one hell of a good
@@ -982,8 +994,8 @@ excuse for some of the brain-damages of Minix.
 %
  Note that nobody reads every post in linux-kernel.  In fact, nobody who
 expects to have time left over to actually do any real kernel work will
-read even half.  Except Alan Cox, but he's actually not human, but about a
-thousand gnomes working in under-ground caves in Swansea.  None of the
+read even half.  Except Alan Cox, but he's actually not human, but about
+a thousand gnomes working in under-ground caves in Swansea.  None of the
 individual gnomes read all the postings either, they just work together
 really well.
 	-- Linus Benedict Torvalds (1969-)
@@ -1066,8 +1078,8 @@ of our friends.
 %
  Waving away a cloud of smoke, I look up, and am blinded by a bright, white
 light.  It's God.  No, not Richard Stallman, or Linus Torvalds, but God.
-In a booming voice, He says: "This is a sign.  Use Linux, the free UNIX
-system for the 386."
+In a booming voice, He says: “This is a sign.  Use Linux, the free UNIX
+system for the 386.”
 	-- Matt Welsh
 %
  Take a look to the sky just before you die.
@@ -1108,8 +1120,8 @@ rest of your life.
  Kiedy nie będę mógł programować, nadejdzie czas na śmierć.
 	-- Michał Pawel Nazarewicz (1986-)
 %
- Bateryjki!...  Wszystko bateryjki!...  Zdaje im się, że robią, co chcą, a
-robią tylko, co im każe system, tak ślepy jak one...
+ Bateryjki!…  Wszystko bateryjki!…  Zdaje im się, że robią, co chcą,
+a robią tylko, co im każe system, tak ślepy jak one…
 	-- Michał Pawel Nazarewicz (1986-)
 %
  A niechaj narodowie wżdy postroni znają, że Polacy nie gęsi, iż swój język
@@ -1135,8 +1147,8 @@ mają.
 the 'Net, but are delighted if those same hours are spent reading books?
 	-- Nicholas Negroponte (1943-)
 %
- Prawdziwy chomik musi w życiu zrobić trzy rzeczy: najeść się, wyspać się i
-zdechnąć.
+ Prawdziwy chomik musi w życiu zrobić trzy rzeczy: najeść się, wyspać się
+i zdechnąć.
 	-- NiTa
 %
  If the code and the comments disagree, then both are probably wrong.
@@ -1330,7 +1342,7 @@ men.  Let's play that over again, too.  Who decides?
 Never underestimate the power of human stupidity.
 	-- Robert Anson Heinlein (1907-1988)
 %
- One man's "magic" is another man's engineering.  "Supernatural" is a null
+ One man's “magic” is another man's engineering.  “Supernatural” is a null
 word.
 	-- Robert Anson Heinlein (1907-1988)
 %
@@ -1343,7 +1355,7 @@ word.
  Being right too soon is socially unacceptable.
 	-- Robert Anson Heinlein (1907-1988)  [attrib.]
 %
- ... one of the main causes of the fall of the Roman Empire was that,
+ … one of the main causes of the fall of the Roman Empire was that,
 lacking zero, they had no way to indicate successful termination of
 their C programs.
 	-- Robert Firth
@@ -1373,16 +1385,16 @@ cancer with a pointy stick.
  I'm going to live forever, or die trying!
 	-- Spider Robinson (1948-)  [attrib.]
 %
- (...) pewne zjawiska w najmniejszej skali zachodzą sposobem jakby
+ […] pewne zjawiska w najmniejszej skali zachodzą sposobem jakby
 kredytowym.  Mezony, te cząsteczki elementarne, naruszają czasem prawa
 zachowania, lecz czynią to tak niesłychanie szybko, że go nie naruszają
 prawie.  To, co zakazane prawami fizyki, czynią błyskawicznie, jak gdyby
-nigdy nic, i zaraz potem znowu poddają się tym prawom.  (...) a co, jeśliby
+nigdy nic, i zaraz potem znowu poddają się tym prawom.  […] a co, jeśliby
 Kosmos w skali największej zrobił to samo? Jeżeli mezony mogą tak się
 zachować w ułamku sekundy tak drobnym, że cała sekunda jest przy nim
 wiecznością, Kosmos, ze względu na swe rozmiary, musiałby się w ów zakazany
 sposób zachować odpowiednio dłużej.  Na przykład przez piętnaście miliardów
-lat...
+lat…
 	-- from Stanisław Lem (1921-2006), Dzienniki Gwiazdowe
 %
  Dopóki nie skorzystałem z Internetu, nie wiedziałem, że na świecie jest
@@ -1393,8 +1405,8 @@ tylu idiotów
 impossible.
 	-- Stanisław Lem (1921-2006)
 %
- (...) była to wielka i niezmiernie pracowita, na wiele stron maszynopisu
-rozłożona brednia (...)
+ […] była to wielka i niezmiernie pracowita, na wiele stron maszynopisu
+rozłożona brednia […]
 	-- Stanisław Lem (1921-2006)
 %
  Im bardziej zaawansowane technicznie (doskonalsze!) medium, tym bardziej
@@ -1437,8 +1449,8 @@ them.  By the time you get it built, they'll want something new.
 	-- Steve Jobs (1955-)  [attrib.]
 %
  You know, we don't grow most of the food we eat.  We wear clothes other
-people make.  We speak a language that other people developed.  We use a
-mathematics that other people evolved...  I mean, we're constantly taking
+people make.  We speak a language that other people developed.  We use
+a mathematics that other people evolved…  I mean, we're constantly taking
 things.  It's a wonderful, ecstatic feeling to create something that puts
 it back in the pool of human experience and knowledge.
 	-- Steve Jobs (1955-)  [attrib.]
@@ -1453,8 +1465,8 @@ it back in the pool of human experience and knowledge.
 feet, what happen if you strap toast on the back of a cat and drop it?
 	-- Steven Wright (1955-)
 %
- Every so often, I like to go to the window, look up, and smile for a
-satellite picture.
+ Every so often, I like to go to the window, look up, and smile for
+a satellite picture.
 	-- Steven Wright (1955-)
 %
  When he gets older, I'd tell him he used to have a brother, but he didn't
@@ -1470,7 +1482,7 @@ forgotten this before.
 	-- Steven Wright (1955-)
 %
  Someone sent me a postcard picture of the earth.  On the back it said,
-"Wish you were here."
+“Wish you were here.”
 	-- Steven Wright (1955-)
 %
  It's a good thing we have gravity or else when birds died they'd just stay
@@ -1483,7 +1495,7 @@ right up there.  Hunters would be all confused.
  Everywhere is walking distance if you have the time.
 	-- Steven Wright (1955-)
 %
- Why is "abbreviated" such a long word?
+ Why is “abbreviated” such a long word?
 	-- Steven Wright (1955-)
 %
  I think it's wrong that the game Monopoly is made by only one company.
@@ -1560,9 +1572,9 @@ last.
 that men will begin to think like computers.
 	-- Sydney J. Harris (1917-1986)
 %
- Anyone who slaps a 'this page is best viewed with Browser X' label on a
-Web page appears to be yearning for the bad old days, before the Web, when
-you had very little chance of reading a document written on another
+ Anyone who slaps a 'this page is best viewed with Browser X' label on
+a Web page appears to be yearning for the bad old days, before the Web,
+when you had very little chance of reading a document written on another
 computer, another word processor, or another network.
 	-- Sir Timothy John Berners-Lee (1955-)
 %
@@ -1663,7 +1675,7 @@ time and the Epoch.
 matched up the letters.
 	-- Overheard at the NASA Control Room
 %
- If we built this large wooden badger...
+ If we built this large wooden badger…
 	-- Overheard at the NASA Control Room
 %
  How many times did I tell those Italian guys that pasta makes a bad tether?!
@@ -1755,8 +1767,8 @@ wierzyć.
 mówią, ale mało kto je widział.
 %
  Człowiek jest jedynym stworzeniem, które za nędzną opłatę pomaszeruje, by
-morodować nieznanych sobie ludzi, którzy mu nic złego ne uczynili i z
-którymi nie ma żadnych sporów.
+morodować nieznanych sobie ludzi, którzy mu nic złego ne uczynili
+i z którymi nie ma żadnych sporów.
 %
  Na początku był chaos i tak już zostało.
 %
@@ -1791,7 +1803,7 @@ at its end.
 		Valentine's Day Massacre.
 
  Only Capone kills like that.
-	-- George "Bugs" Moran, on the Saint Valentine's Day Massacre
+	-- George “Bugs” Moran, on the Saint Valentine's Day Massacre
 
  The only man who kills like that is Bugs Moran.
 	-- Al Capone, on the Saint Valentine
