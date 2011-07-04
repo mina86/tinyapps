@@ -190,7 +190,12 @@ static void loop(void) {
 			idx = find(ruleset ? ruleset : modes, buf);
 		} while (!ruleset && (ruleset = rulesets[idx]));
 
-		printf("\x1b[%sm%s", colors[idx].value, buf);
+		printf("\x1b[%sm", colors[idx].value);
+
+		do {
+			fputs(buf, stdout);
+		} while (!strchr(buf, '\n') &&
+		         fgets(buf, sizeof buf, stdin));
 	}
 
 
