@@ -185,6 +185,7 @@ static void loop(void) {
 
 	while (fgets(buf, sizeof buf, stdin)) {
 		unsigned idx;
+		char *ch;
 
 		do {
 			idx = find(ruleset ? ruleset : modes, buf);
@@ -193,13 +194,14 @@ static void loop(void) {
 		printf("\x1b[%sm", colors[idx].value);
 
 		do {
+			ch = strchr(buf, '\n');
+			if (ch) {
+				*ch = '\0';
+			}
 			fputs(buf, stdout);
-		} while (!strchr(buf, '\n') &&
-		         fgets(buf, sizeof buf, stdin));
+		} while (!ch && fgets(buf, sizeof buf, stdin));
+		puts("\x1b[0m");
 	}
-
-
-	puts("\x1b[0m");
 }
 
 
