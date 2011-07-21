@@ -63,7 +63,8 @@ At the moment the collection includes:
    depending  on focus.   When  window looses  focus  it becomes  more
    transparent which looks "neet";
 
- * genpass.sh - generates a random 64-character long password;
+ * genpass - generates  a  random  strong  password.  Shell  and  Perl
+   versions present;
 
  * get_mks_vir_bases -  downlaods MKS-Vir virus  database.  Simplified
    version  of mksupdate  shell script  (from mks_vir  antivirus).  It
