@@ -1128,9 +1128,9 @@ static void _outs(const wchar_t *str, size_t len) {
 	if (!iconvDo(iconv_wchar2str, (void *)str, len, sizeof *str,
 	             _outsIconvFunc, 0)) {
 		char buf[MB_CUR_MAX];
-		wctomb(NULL, 0);
+		int ret = wctomb(NULL, 0);
 		for (; len; --len, ++str) {
-			int ret = wctomb(buf, *str);
+			ret = wctomb(buf, *str);
 			if (ret > 0) {
 				printf("%.*s", ret, buf);
 			} else {
