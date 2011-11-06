@@ -536,6 +536,14 @@ stronie.
 I won't be buried alive.
 	-- Frederic Chopin (1810-1849)  [last words]
 %
+ The easiest way to stop piracy is not by putting antipiracy technology to
+work.  It’s by giving those people a service that’s better than what
+they’re receiving from the pirates.  For example, Russia.  You say, oh,
+we’re going to enter Russia, people say, you’re doomed, they’ll pirate
+everything in Russia.  Russia now outside of Germany is our largest
+continental European market.
+	-- Gabe Newell, Valve CEO
+%
  A jednak się kręci!
 	-- Galileo Galilei (1564-1642)
 %
@@ -684,6 +692,11 @@ and the pessimist fears this is true.
 %
  They have computers, and they may have other weapons of mass destruction.
 	-- Janet Reno (1938-)
+%
+ Pirates are underserved customers. When you think about it that way, you
+think, 'Oh my gosh, I can do some interesting things and make some
+interesting money off of it.'
+	-- Jason Holtman, Valve's Director
 %
  Since the day of my birth, my death began its walk.  It is walking towards
 me, without hurrying.
