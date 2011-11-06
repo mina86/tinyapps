@@ -61,6 +61,7 @@
 #  define HAVE_RESIZE 1
 #else
 #  define HAVE_RESIZE 0
+#  warn No SIGWINCH support.
 #endif
 
 
