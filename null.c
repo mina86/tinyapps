@@ -52,7 +52,7 @@
 
 /******** Config ********/
 #define DISABLE_NICE 0 /* Set to 1 to disable -N feature. */
-#define DISABLE_WAIT 0 /* Set to 0 to disable waiting. */
+#define DISABLE_WAIT 0 /* Set to 1 to disable waiting. */
 
 
 /******** Includes ********/
@@ -69,9 +69,7 @@
 #include <fcntl.h>
 #include <stdio.h>
 #include <string.h>
-#if !DISABLE_NICE
-#  include <stdlib.h>
-#endif
+#include <stdlib.h>
 #if !DISABLE_WAIT
 #  include <sys/types.h>
 #  include <sys/wait.h>
@@ -105,23 +103,17 @@ static void usage(FILE *out, char *cmd, int full) {
 
 
 #if DISABLE_WAIT
-#  define wait_and_exit(argv0) _exit(0)
+#  define wait_and_exit(argv0, do_wait) _exit(0)
 #else
-static void wait_and_exit(char *argv0);
+static void wait_and_exit(char *argv0, int do_wait);
 #endif
 
 
 /******** Main ********/
 int main(int argc, char **argv) {
+	int daemonize, nice_adj = 0, do_wait = 1;
 	const char *dir = 0;
 	char *argv0, *c;
-	int daemonize;
-#if !DISABLE_NICE
-	int nice_adj = 0;
-#endif
-#if !DISABLE_WAIT
-	int doWait = 1;
-#endif
 
 	/* Parse command name */
 	for (c = argv0 = *argv; *c; ++c) {
@@ -140,7 +132,12 @@ int main(int argc, char **argv) {
 	if (argc < 2) {
 		if (!daemonize) {
 			char buf[4096];
-			chdir("/");
+			if (chdir("/")) {
+				/*
+				 * Silence warn_unused_result, if we fail, we
+				 * still want to go on with our lives.
+				 */
+			}
 			while (read(0, buf, sizeof buf) > 0);
 		} else {
 			usage(stdout, argv0, 1);
@@ -178,7 +175,7 @@ int main(int argc, char **argv) {
 #endif
 
 #if !DISABLE_WAIT
-			case 'w': doWait = 0; break;
+			case 'w': do_wait = 0; break;
 #endif
 
 			case 'c':
@@ -197,7 +194,7 @@ int main(int argc, char **argv) {
 		} while (argv[0][++pos]);
 	}
 
- args_end:
+args_end:
 	if (argc == 1) {
 		usage(stderr, argv0, 0);
 		return 1;
@@ -209,14 +206,14 @@ int main(int argc, char **argv) {
 		return 1; \
 	} else (void)0
 
-#if !DISABLE_NICE
 	/* Nice */
 	if (nice_adj) {
 		errno = 0;
-		nice(nice_adj);
+		if (nice(nice_adj)) {
+			/* Silence useless warn_unused_result */
+		}
 		DIE(errno, "nice");
 	}
-#endif
 
 	/* Fork into background */
 	if (daemonize) {
@@ -226,11 +223,8 @@ int main(int argc, char **argv) {
 		case -1: DIE(1, "fork");
 		case  0: break;
 		default:
-			if (daemonize==2) printf("%d\n", (int)pid);
-#if !DISABLE_WAIT
-			if (doWait) wait_and_exit(daemonize < 3 ? argv0 : 0);
-#endif
-			_exit(0);
+			if (daemonize == 2) printf("%d\n", (int)pid);
+			wait_and_exit(daemonize < 3 ? argv0 : 0, do_wait);
 		}
 	}
 
@@ -240,7 +234,7 @@ int main(int argc, char **argv) {
 	}
 
 	/* Daemonize */
-	if (daemonize>2) {
+	if (daemonize > 2) {
 		pid_t pid;
 		int i;
 
@@ -250,14 +244,11 @@ int main(int argc, char **argv) {
 		case -1: DIE(1, "fork");
 		case  0: break;
 		default:
-			if (daemonize==4) printf("%d\n", (int)pid);
-#if !DISABLE_WAIT
-			if (doWait) wait_and_exit(argv0);
-#endif
-			_exit(0);
+			if (daemonize == 4) printf("%d\n", (int)pid);
+			wait_and_exit(argv0, do_wait);
 		}
 
-		/* Close all fds and stdin*/
+		/* Close all fds */
 		DIE(close(0) < 0, "close: stdin");
 		DIE(open("/dev/null", O_RDONLY) < 0, "open: /dev/null");
 		for (i = sysconf(_SC_OPEN_MAX); i > 3; close(--i)) /* nop */;
@@ -279,11 +270,22 @@ int main(int argc, char **argv) {
 
 /******** Wait for child for a while and exit ********/
 #if !DISABLE_WAIT
-static void sig_dummy(int sig) { (void)sig; }
 
-static void wait_and_exit(char *argv0) {
+#ifndef WCOREDUMP
+#  define WCOREDUMP(status) 0
+#endif
+
+static void sig_dummy(int sig) {
+	(void)sig;
+}
+
+static void wait_and_exit(char *argv0, int do_wait) {
 	struct sigaction sa;
 	int status;
+
+	if (!do_wait) {
+		_exit(0);
+	}
 
 	sa.sa_handler = sig_dummy;
 	sa.sa_flags = SA_NOMASK;
@@ -302,18 +304,14 @@ static void wait_and_exit(char *argv0) {
 		_exit(WEXITSTATUS(status));
 	} else if (WIFSIGNALED(status)) {
 		if (argv0) {
-#ifdef WCOREDUMP
 			fprintf(stderr, "%s: child recieved signal: %d%s\n", argv0,
 			        WTERMSIG(status),
 			        WCOREDUMP(status) ? " [core dumped]" : "");
-#else
-			fprintf("%s: child recieved signal: %d\n", argv0,
-			        WTERMSIG(status));
-#endif
 		}
 		_exit(2);
 	}
 
 	_exit(0);
 }
+
 #endif
