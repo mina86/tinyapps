@@ -110,7 +110,6 @@ static void initCodesets(void);
 
 static int  done(void);
 static int  error(void) __attribute__((pure));
-static unsigned columns(void) __attribute__((pure));
 
 
 int main(int argc, char **argv) {
@@ -154,13 +153,8 @@ struct {
 		int len;
 		unsigned hilightPos;
 		unsigned scroll;
-#if HAVE_RESIZE
 		unsigned columns;
-#endif
 	} cur, old;
-#if !HAVE_RESIZE
-	unsigned columns;
-#endif
 
 	const wchar_t *format;
 
@@ -174,9 +168,7 @@ struct {
 	unsigned short background;
 
 	volatile sig_atomic_t gotSignal;
-#if HAVE_RESIZE
 	volatile sig_atomic_t width;
-#endif
 } D;
 
 static int  done(void) {
@@ -185,22 +177,6 @@ static int  done(void) {
 
 static int  error(void) {
 	return !!(D.conn->error);
-}
-
-static unsigned columns(void) {
-#if HAVE_RESIZE
-	return D.cur.columns;
-#else
-	return D.columns;
-#endif
-}
-
-static void setColumns(unsigned c) {
-#if HAVE_RESIZE
-	D.cur.columns = c;
-#else
-	D.columns = c;
-#endif
 }
 
 
@@ -263,7 +239,7 @@ static void parseArguments(int argc, char **argv) {
 			unsigned long c = strtoul(optarg, &end, 0);
 			die_on(c < 3 || c > UINT_MAX || *end,
 				   "invalid terminal width: %s", optarg);
-			setColumns(c);
+			D.cur.columns = c;
 			break;
 		}
 
@@ -328,26 +304,24 @@ static void parseArguments(int argc, char **argv) {
 
 	/* Columns */
 #if HAVE_RESIZE
-	if (!columns()) {
+	if (!D.cur.columns) {
 		handleResize(SIGWINCH);
-		setColumns(D.width);
+		D.cur.columns = D.width;
 	}
 #endif
-	if (!columns()) {
+	if (!D.cur.columns) {
 		end = getenv("COLUMNS");
 		if (end) {
 			unsigned long c = strtoul(end, &end, 0);
 			if (c >= 3 && c <= UINT_MAX && !*end) {
-				setColumns(c);
+				D.cur.columns = c;
 			}
 		}
 	}
-	if (!columns()) {
-		setColumns(DEFAULT_COLUMNS);
+	if (!D.cur.columns) {
+		D.cur.columns = DEFAULT_COLUMNS;
 	}
-#if HAVE_RESIZE
 	D.width = D.cur.columns;
-#endif
 }
 
 
@@ -504,9 +478,7 @@ static void display(unsigned secs) {
 		int doDisplay = 0;
 
 		D.cur.error   = D.conn->error;
-#if HAVE_RESIZE
 		D.cur.columns = D.width;
-#endif
 
 #define CHANGED(field) (D.cur.field != D.old.field)
 
@@ -516,9 +488,7 @@ static void display(unsigned secs) {
 			doDisplay = 1;
 		}
 
-#if HAVE_RESIZE
 		doDisplay = doDisplay || CHANGED(columns);
-#endif
 		if (doDisplay || CHANGED(pos) || CHANGED(len)) {
 			calculateHilightPos();
 			doDisplay = doDisplay || CHANGED(hilightPos);
@@ -541,7 +511,7 @@ static void display(unsigned secs) {
 static void calculateHilightPos(void) {
 	if (!D.cur.error) {
 		D.cur.hilightPos = D.cur.len
-			? (wchar_t)D.cur.pos * columns() / D.cur.len
+			? (wchar_t)D.cur.pos * D.cur.columns / D.cur.len
 			: (unsigned)0;
 	}
 }
@@ -556,7 +526,7 @@ static void outputScrolled(unsigned cols);
 
 
 static void output(void) {
-	unsigned cols = columns();
+	unsigned cols = D.cur.columns;
 	wchar_t tmp;
 
 	hilightLeft = D.cur.error ? 0 : D.cur.hilightPos;
