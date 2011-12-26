@@ -1,6 +1,6 @@
 /*
  * Prints song MPD's curently playing.
- * Copyright (c) 2005-2010 by Michal Nazarewicz (mina86/AT/mina86.com)
+ * Copyright 2005-2011 by Michal Nazarewicz (mina86/AT/mina86.com)
  *
  * This software is OSI Certified Open Source Software.
  * OSI Certified is a certification mark of the Open Source Initiative.
@@ -66,12 +66,7 @@
 
 
 /******************** Misc **************************************************/
-#if __GNUC__ > 2
-#  define likely(x)    (__builtin_expect(!!(x), 1))
-#  define unlikely(x)  (__builtin_expect(!!(x), 0))
-#else
-#  define likely(x)    (!!(x))
-#  define unlikely(x)  (!!(x))
+#if __GNUC__ <= 2
 #  define __attribute__(x)
 #endif
 
@@ -113,10 +108,8 @@ static void display(unsigned secs);
 
 static void initCodesets(void);
 
-static int  _done(void);
-static int  _error(void) __attribute__((pure));
-#define done() unlikely(_done())
-#define error() unlikely(_error())
+static int  done(void);
+static int  error(void) __attribute__((pure));
 static unsigned columns(void) __attribute__((pure));
 
 
@@ -186,11 +179,11 @@ struct {
 #endif
 } D;
 
-static int  _done(void) {
+static int  done(void) {
 	return D.gotSignal;
 }
 
-static int  _error(void) {
+static int  error(void) {
 	return !!(D.conn->error);
 }
 
@@ -220,7 +213,7 @@ static const wchar_t *wideFromMulti(const char *str) __attribute__((nonnull));
 static void usage(void) __attribute__((noreturn));
 static void usage(void)
 {
-	printf("mpd-show  " APP_VERSION " (c) 2005-2010 by Michal Nazarewicz (mina86/AT/mina86.com)\n"
+	printf("mpd-show  " APP_VERSION " (c) 2005-2011 by Michal Nazarewicz (mina86/AT/mina86.com)\n"
 	       "usage: %s [ <options> ] [ <host>[:<port> | <port> ]]\n"
 	       " -b -B   runs in background mode; -B also forks into background\n"
 	       " -c<col> assumes <col>-char wide term [$COLUMNS or %d]"
@@ -571,7 +564,7 @@ static void output(void) {
 	termBeginLine();
 
 	/* State */
-	if (unlikely(D.cur.error)) {
+	if (D.cur.error) {
 		tmp = '!';
 	} else {
 		switch (D.cur.state) {
@@ -582,12 +575,12 @@ static void output(void) {
 		}
 	}
 	outs(&tmp, 1);
-	if (unlikely(!--cols)) {
+	if (!--cols) {
 		goto end;
 	}
 
 	outs((const wchar_t[]){L' '}, 1);
-	if (unlikely(!--cols || cols == 1)) {
+	if (!--cols || cols == 1) {
 		goto end;
 	}
 
@@ -683,10 +676,10 @@ static size_t doFormat(const wchar_t *p, size_t offset, const wchar_t **last)
 
 
 static void formatLine(void) {
-	if (unlikely(D.cur.error)) {
+	if (D.cur.error) {
 		appendW(0, L"[", 1);
 		D.line_len = appendW(appendUTFStr(1, D.conn->errorStr), L"]", 1);
-	} else if (unlikely(!D.info)) {
+	} else if (!D.info) {
 		D.line_len = appendW(0, L"[no song]", 10);
 	} else {
 		D.line_len = doFormat(D.format, 0, 0);
@@ -941,7 +934,7 @@ static void termBeginLine(void) {
 	}
 
 	/* Set color */
-	if (unlikely(D.cur.error)) {
+	if (D.cur.error) {
 		fputs("\33[30;1m", stdout);     /* dark grey */
 	} else if (hilightLeft) {
 		fputs("\33[37;1;44m", stdout);  /* hilighted */
@@ -1044,7 +1037,7 @@ static void initIconv(void) {
 
 	/* Get current codeset */
 	codeset = nl_langinfo(CODESET);
-	if (unlikely(!codeset || !*codeset)) {
+	if (!codeset || !*codeset) {
 		return;
 	}
 
@@ -1057,7 +1050,7 @@ static void initIconv(void) {
 	/* wchar_t -> multibyte */
 	len = strlen(codeset);
 	buffer = malloc(len + 11);
-	if (unlikely(!buffer)) {
+	if (!buffer) {
 		iconv_wchar2str = iconv_open(codeset, "WCHAR_T");
 		return;
 	}
@@ -1090,23 +1083,23 @@ static int  iconvDo(iconv_t cd, char *in, size_t inleft, size_t chsize,
 		char *out = buffer;
 		size_t ret = iconv(cd, &in, &inleft, &out, &outleft);
 
-		if (likely(out != buffer)) {
+		if (out != buffer) {
 			outFunc(buffer, out - buffer, data);
 		}
 
 		if (!in) {
 			/* We are done */
 			break;
-		} else if (likely(ret != (size_t)-1)) {
+		} else if (ret != (size_t)-1) {
 			/* The whole string has been converted now reset the
 			 * state */
 			in = 0;
-		} else if (unlikely(errno == EILSEQ)) {
+		} else if (errno == EILSEQ) {
 			/* Invalid sequence, skip character (should never
 			 * happen) */
 			in += chsize;
 			inleft -= chsize;
-		} else if (unlikely(errno == EINVAL)) {
+		} else if (errno == EINVAL) {
 			/* Partial sequence at the end, break (should never
 			 * happen) */
 			break;
@@ -1179,19 +1172,19 @@ static size_t appendUTFFallback(size_t offset, const char *str, size_t len) {
 	while (len--) {
 		unsigned char ch = *str++;
 
-		if (unlikely(!ch)) {
+		if (!ch) {
 			seq = 0;
-		} else if (likely(ch < 0x80)) {
+		} else if (ch < 0x80) {
 			seq = 0;
 			*out++ = ch;
 		} else if ((ch & 0xC0) == 0x80) {
-			if (unlikely(!seq)) continue;
+			if (!seq) continue;
 			val = (val << 6) | (ch & 0x3f);
 			if (!--seq && (val < 0xD800 || val > 0xDFFF)
 			           && val <= (uint_least32_t)WCHAR_MAX - WCHAR_MIN) {
 				*out = val;
 			}
-		} else if (unlikely(ch == 0xC0 || ch == 0xC1 || ch >= 0xF5)) {
+		} else if (ch == 0xC0 || ch == 0xC1 || ch >= 0xF5) {
 			seq = 0;
 		} else if ((ch & 0xE0) == 0xC0) {
 			seq = 1;
