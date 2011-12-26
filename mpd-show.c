@@ -659,10 +659,7 @@ static void outs(const wchar_t *str, size_t len) {
 
 
 /******************** Formatting line ***************************************/
-static void _ensureCapacity(size_t capacity);
-#define ensureCapacity(capacity) do { \
-		if (D.line_capacity < (capacity)) _ensureCapacity(capacity); \
-	} while (0)
+static void ensureCapacity(size_t capacity);
 
 static size_t appendUTF(size_t offset, const char *str, size_t len)
 	__attribute__((nonnull));
@@ -869,9 +866,13 @@ static size_t doFormat(const wchar_t *p, size_t offset, const wchar_t **last) {
 }
 
 
-static void _ensureCapacity(size_t capacity)
+static void ensureCapacity(size_t capacity)
 {
 	size_t c = D.line_capacity;
+
+	if (c >= capacity) {
+		return;
+	}
 
 	/* Check for overflow */
 	die_on(capacity * (size_t)2 < capacity
