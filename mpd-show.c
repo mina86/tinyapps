@@ -750,7 +750,8 @@ static size_t doFormatTag(const wchar_t *p, size_t off, const wchar_t **last) {
 	}
 
 #define EQ(str) \
-	((len == sizeof #str - 1) && !memcmp(L"" #str, name, sizeof #str - 1))
+	((len == sizeof #str - 1) && \
+	 !memcmp(L"" #str, name, (sizeof #str - 1) * sizeof *name))
 
 	value = 0;
 	if (EQ(Y)) return off - 1; /* special case */
