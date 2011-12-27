@@ -401,6 +401,8 @@ static void disconnectFromMPD(void) {
 		mpd_freeInfoEntity(D.info);
 		D.info = 0;
 	}
+	D.cur.songid = -1;
+	D.old.songid = -1;
 }
 
 
