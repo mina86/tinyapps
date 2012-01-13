@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## installkernel - Script for installing Linux kernel.
-## Copyright 2004-2011 by Michal Nazarewicz (mina86/AT/mina86.com)
+## Copyright 2004-2012 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This software is OSI Certified Open Source Software.
 ## OSI Certified is a certification mark of the Open Source Initiative.
@@ -47,7 +47,7 @@ toInt () {
 ## Version & lockfile
 ##
 if [ -z "$INSIDE_INSTALLKERNEL" ]; then
-	echo 'installkernel  v0.16.0  (c) 2004-2009 by Michal Nazarewicz'
+	echo 'installkernel  v17.0  (c) 2004-2012 by Michal Nazarewicz'
 	echo
 
 	# Lockfile check
@@ -98,9 +98,6 @@ usage: installkernel [<options>] [<switches>]
      --nice=!<nice>    Set pririty to <nice>     (but never lower)        [10]
      --no-nice         Synonym of  --nice=0
 
-  -L --log[=<file>]    Log to <file> (automaticaly chosen file if ommited)
-  -nL --no-log         Cancel previous --log option
-
   -j --jobs=<jobs>     Pass -j<jobs> to make                            [auto]
 
      --                This option causes all options not starting with a
@@ -141,8 +138,6 @@ usage: installkernel [<options>] [<switches>]
      --compile         Synonym of  --compile-image --compile-modules
      --install         Synonym of  --install-image --install-modules
      --tidy            Synonym of  --tidy-image --tidy-modules
-
-  -l --update-loader   Update boot loader entry                            [*]
 
 [*]  yes if only <version> <image> <systemmap> and <bootdir> where given.
 [**] yes if compiling image and <version> is 2.4.x.
@@ -192,9 +187,6 @@ unset E
 exit_function () {
 	__EC=$?
 	rm -f -- "$IK_LOCK"
-	if [ "X$LOG_AUTO" = Xstarted ]; then
-		date +'---- END ---- installkernel log file --- %y/%m/%d %H:%M:%S ---'
-	fi
 	if [ $__EC -ne 0 ] && [ "X$INSTALLKERNEL_EXITED" != "X$__EC" ]; then
 		msg 31 ERR "Comand's exit code: $__EC"
 		error $__EC "Comand's exit code: $__EC"
@@ -375,7 +367,7 @@ set_run_hooks () {
 	# Add all
 	if [ $# -eq 1 ]; then
 		RUN_HOOKS=:
-		set --      clean config make-dep update-loader compile-image
+		set --      clean config make-dep compile-image
 		set -- "$@" install-image tidy-image  compile-modules
 		set -- "$@" install-modules tidy-modules work
 		while [ $# -gt 0 ]; do
@@ -390,7 +382,7 @@ set_run_hooks () {
 	if [ $# -eq 2 ]; then
 		__PRE="$2"
 		set -- "$1"
-		for __EV in clean config make-dep update-loader compile-image \
+		for __EV in clean config make-dep compile-image \
 			install-image tidy-image  compile-modules install-modules \
 			tidy-modules work; do
 			set -- "$1" "$__PRE-$__EV"
@@ -436,7 +428,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		export INSTALL_PATH
 	fi
 
-	SU=; LOG_AUTO=; LOG_FILE=; NICE=!10; __ARCH="$ARCH"; DASHDASH=
+	SU=; NICE=!10; __ARCH="$ARCH"; DASHDASH=
 	VER=; BUILD=; IMG_PATH=; MAP_PATH=; RUNAS=; ARCH=; JOBS=auto
 	KBUILD_OUTPUT=
 	export VER BUILD IMG_PATH MAP_PATH RUNAS ARCH KBUILD_OUTPUT
@@ -505,14 +497,8 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		--nice=*)      NICE="${ARG#--nice=}";;
 		--no-nice)     NICE=0;;
 
-		--log=*)       LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#--log=}";;
-		-L?*)          LOG_AUTO=;  USE_ANSI=; LOG_FILE="${ARG#-L}";     ;;
-		--log)         LOG_AUTO=y; USE_ANSI=;;
-		-L)            LOG_AUTO=y; USE_ANSI=;;
-		-nL|--no-log)  LOG_AUTO=;  LOG_FILE=;;
-
-		-j?*)		JPBS=${ARG#-j};;
-		--jobs=*)	JOBS=${ARG#--jobs=};;
+		-j?*)          JOBS=${ARG#-j};;
+		--jobs=*)      JOBS=${ARG#--jobs=};;
 
 		--)            DASHDASH=y;;
 
@@ -568,8 +554,6 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		--install) INSTALL_IMAGE=$VALUE; INSTALL_MODULES=$VALUE;;
 		--tidy)    TIDY_IMAGE=$VALUE   ; TIDY_MODULES=$VALUE   ;;
 
-		-l|--lilo|--update-loader)       UPDATE_LOADER=$VALUE  ;;
-
 		-A|--all)
 			COMPILE_IMAGE=$VALUE  ; COMPILE_MODULES=$VALUE
 			INSTALL_IMAGE=$VALUE  ; INSTALL_MODULES=$VALUE
@@ -593,7 +577,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		esac
 
 		case "$HOOK" in
-		hooks|clean|config|make-dep|update-loader|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules|work)
+		hooks|clean|config|make-dep|compile-image|install-image|tidy-image|compile-modules|install-modules|tidy-modules|work)
 			set_run_hooks "$VALUE" "$PRE" "$HOOK" ;;
 
 		*) error 1 unknown event: "$HOOK";;
@@ -618,25 +602,8 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 
 
 	##
-	## Print header and start logging
+	## Print header
 	##
-	if [ -n "$LOG_FILE" ] || [ -n "$LOG_AUTO" ]; then
-		if [ -n "$LOG_AUTO" ]; then LOG_FILE=installkernel-log; fi
-		if [ -n "$LOG_AUTO" ] && [ -f "$LOG_FILE" ]; then
-			I=1
-			while [ -f "$LOG_FILE.$I" ]; do I=$(( $I + 1 )); done
-			LOG_FILE="$LOG_FILE.$I"
-		fi
-		echo "${0##*/}: logging output to '$LOG_FILE'"
-		exec >>"$LOG_FILE"
-		exec 2>&1
-		FMT='+--- START --- installkernel log file --- %y/%m/%d %H:%M:%S ---'
-		if [ -n "$DRY_RUN" ]; then FMT="$FMT [dry run]"; fi
-		date "$FMT"
-		LOG_AUTO=started
-		unset LOG_FILE
-	fi
-
 	header Starting
 
 	INSIDE_INSTALLKERNEL=y
@@ -896,21 +863,6 @@ if [ -n "$INSTALL_IMAGE" ]; then
 	done
 
 	run_hook post-install-image
-fi
-
-
-##
-## Running LILO
-##
-if [ -n "$UPDATE_LOADER" ]; then
-	header 'Updating boot loader'
-	run_hook pre-update-loader
-	if [ -x /etc/installkernel.d/update-loader ]; then
-		run /etc/installkernel.d/update-loader
-	else
-		run lilo $VOPT
-	fi
-	run_hook post-update-loader
 fi
 
 

@@ -1,8 +1,8 @@
-.TH installkernel 8 "4 April, 2009" "version 0.15.2" "Linux System Administration"
+.TH installkernel 8 "13 January, 2012" "version 17.0" "Linux System Administration"
 
 \"
 \" installkernel man page
-\" Copyright (c) 2005-2009 by Michal Nazarewicz (mina86/AT/mina86.com)
+\" Copyright (c) 2005-2012 by Michal Nazarewicz (mina86/AT/mina86.com)
 \"
 \" This is part of Tiny Applications Collection
 \"   -> http://tinyapps.sourceforge.net/
@@ -21,10 +21,9 @@
 
 \fBinstallkernel\fP is a shell script that automates Linux kernel
 installation process.  It can automatically compile and install kernel
-image and modules, update boot loader and remove old files.  When
-additional scripts are added it can also automatically install modules
-which are not part of Linux or perform some other tasks specific for
-local machine.
+image and modules and remove old files.  When additional scripts are
+added it can also automatically install modules which are not part of
+Linux or perform some other tasks specific for local machine.
 
 .PP
 It is written in standard compilant way and is believed to run on any
@@ -125,18 +124,6 @@ noticeable.  Script will never lower the nice value.
 .TP
 \fB\-\-no\-nice\fP
 Synonym of \fB\-\-nice=0\fP.
-
-.TP
-\fB\-L \-\-log[=\fIfile\fB]\fP
-Writes all output to \fIfile\fP instead of standard output.  If
-\fIfile\fP exists output will be append to it.
-
-.TP
-\fB\-L \-\-log\fP
-Sort of synonym of \fB\-\-log=installkernel-log\fP.  The difference is
-that if \fBinstallkernel-log\fP exists then the output will be sent to
-\fBinstallkernel-log.1\fP.  If this file exists as well - to
-\fBinstallkernel-log.2\fP and so on.
 
 .TP
 \fB\-j \-\-jobs=\fIjobs\fP
@@ -243,7 +230,7 @@ is enabled only if \fIversion\fP was given as an argument.
 
 .TP
 \fB\-A \-\-all\fP
-Synonym of \fB\-\-compile \-\-install \-\-tidy \-\-update-loader\fP.
+Synonym of \fB\-\-compile \-\-install \-\-tidy\fP.
 
 .TP
 \fB\-i \-\-compile\-image\fP
@@ -303,14 +290,6 @@ Synonym of \fB\-\-tidy\-image \-\-tidy\-modules\fP.  You should not
 use any of the \fB\-\-tidy\fP switches if you do not use corresponding
 \fB\-\-install\fP switch as it may leave you with only one kernel or
 modules for only one kernel.
-
-.TP
-\fB\-l \-\-update\-loader\fP
-Updates the boot loader.  If \fB/etc/installkernel.d/update-loader\fP
-file exists and is executable it will be run otherwise \fBlilo\fP will
-be run.  By default it is \fByes\fP if exactly 4 arguments are given,
-and thye are: \fIversion\fP \fIimage\fP \fIsystemmap\fP \fIprefix\fP,
-otherwise it is \fBno\fP.
 
 .PP
 Meaning of a\ switch may be negated by prefixing it with \fBno\-\fP
@@ -372,12 +351,12 @@ which hooks may be handy.
 There are events and hooks.  Events are: \fBclean\fP, \fBconfig\fP,
 \fBmake\-dep\fP, \fBcompile\-image\fP, \fBcompile\-modules\fP,
 \fBinstall\-modules\fP, \fBtidy\-image\fP, \fBtidy\-modules\fP,
-\fBinstall\-image\fP and \fBupdate\-loader\fP and \fBwork\fP where
-each event corresponds to each step of the \fBinstallkernel\fP script
-plus the \fBwork\fP event correspond to whole work done by the script
-(the old \fBpre\fP and \fBpost\fP hooks are no longer supported).
-Each event has a \fBpre\-\fP and \fBpost\-\fP hook.  So for example
-there are \fBpre\-clean\fP and \fBpost\-clean\fP hooks.
+\fBinstall\-image\fP and \fBwork\fP where each event corresponds to
+each step of the \fBinstallkernel\fP script plus the \fBwork\fP event
+correspond to whole work done by the script (the old \fBpre\fP and
+\fBpost\fP hooks are no longer supported).  Each event has
+a \fBpre\-\fP and \fBpost\-\fP hook.  So for example there are
+\fBpre\-clean\fP and \fBpost\-clean\fP hooks.
 
 .PP
 When a hook is executed \fB/etc/installkernel.d/hook-handler\fP is run
@@ -408,16 +387,34 @@ image = /boot/bzImage
 
 For more details consult lilo.conf(5) man page.
 
+.SH AUTOMATIC LILO UPDATING
+
+In the past, installkernel had an \fB\-\-update\-loader\fP option
+which would call lilo to update its configuration.  This has been
+since removed and users who need it are urged to use
+\fBpost\-install\-image\fP hook.  All that is needed is to create an
+executable file under \fB/etc/installkernel.d/hook\-handler\fP with
+the following content:
+
+.nf
+#! /bin/sh
+
+case "$1" in post-install-image)
+	lilo
+esac
+.PP
+
+This will cause lilo to be run every time kernel image is installed.
+
 .SH EXAMPLES
 
 .TP
 \fBinstallkernel \-\-su \-\-cd \-\-all \-\-nice=20\fP
 Does everything (compiles the kernel image and modules then installs
-them, removes old ones and finally updates loader).  At the beginning
-asks for root password so when super user privileges are required the
-script will use them however everything else will be run as a user who
-run the script.  The script will also change the directory to
-\fB/usr/src/linux\fP for you.
+them and removes old ones).  At the beginning asks for root password
+so when super user privileges are required the script will use them
+however everything else will be run as a user who run the script.  The
+script will also change the directory to \fB/usr/src/linux\fP for you.
 
 .TP
 \fBinstallkernel \-\-su \-\-no\-user \-\-cd \-\-all\fP
@@ -429,15 +426,14 @@ build process).
 Will compile, install and tidy the kernel modules only.
 
 .TP
-\fBinstallkernel \-\-all \-\-su \-\-cd \-\-log && /sbin/reboot\fP
+\fBinstallkernel \-\-all \-\-su \-\-cd 2>&1 | tee -a installkernel-log && /sbin/reboot\fP
 Something for lazy sysadmins.  This will do everything to get a new
 kernel image work and if everything went OK system will reboot.  All
-messages will be logged to \fBinstallkernel-log\fP (or any of
-\fBinstallkernel-log.#\fP, see description of \-\-log option) file for
-future analyze.  \fBBeware\fP, however, that it's not very wise to get
-system automatically reboot without sysadmin.  You should rather
-reboot the system when you get back the next day ;).  You may however
-replace \fB&& /sbin/reboot\fP with \fB; /sbin/halt\fP to run a nightly
+messages will be logged to \fBinstallkernel\-log\fP file for future
+analyse.  \fBBeware\fP that it's not very wise to get system
+automatically reboot without sysadmin.  You should rather reboot the
+system when you get back the next day.  You may however replace
+\fB&& /sbin/reboot\fP with \fB; /sbin/halt\fP to run a nightly
 compilation.  Note that you have to have \fBreboot\fP and \fBhalt\fP
 properly configured for a non\-root user to be able to run.
 
