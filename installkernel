@@ -800,38 +800,36 @@ fi
 ##
 ## Removing old modules
 ##
+read_version_from_link() {
+	msg '37;1' READLNK "$1"
+	run -d readlink "$INSTALL_PATH/$1"
+	set -- "$(readlink "$INSTALL_PATH/$1" 2>/dev/null)"
+	if [ -z "$1" ]; then
+		set -- ${1#*-}
+		set -- ${1%-\#*}
+	fi
+	echo "$1"
+}
+
 if [ -n "$TIDY_MODULES" ]; then
 	header Removing old modules
 	run_hook pre-tidy-modules
 
 	update_ver
 
-	msg '37;1' READLNK bzImage
-	run -d readlink "$INSTALL_PATH/bzImage"
-	if OVER="`readlink "$INSTALL_PATH/bzImage"` 2>/dev/null"; then
-		OVER=${OVER#bzImage-}
-		OVER=`printf "%s" "$OVER" | sed -e 's/-#[0-9][0-9]*$//'`
+	OVER=$(read_version_from_link bzImage)
+	OOVER=$(read_version_from_link bzImage~)
+
+	if [ -n "$OVERWRITE_IMAGE" ]; then
+		_=$OVER
+		OVER=$OOVER
+		OOVER=$_
 	fi
 
-	msg '37;1' READLNK bzImage~
-	run -d readlink "$INSTALL_PATH/bzImage~"
-	if OOVER="`readlink "$INSTALL_PATH/bzImage"` 2>/dev/null"; then
-		OOVER=${OVER#bzImage-}
-		OOVER=`printf "%s" "$OOVER" | sed -e 's/-#[0-9][0-9]*$//'`
-	fi
-
-	if [ -z "$OVERWRITE_IMAGE" ]; then
-		if [ -n "$OOVER" ] && [ "X$OOVER" != "X$VER" ] && \
-			[ "X$OOVER" != "X$OVER" ] && [ -d "/lib/modules/$OOVER" ]; then
-			msg '37;1' RMDIR "/lib/modules/$OOVER"
-			run rm -rf$V -- "/lib/modules/$OOVER"
-		fi
-	else
-		if [ -n "$OVER" ] && [ "X$OVER" != "X$VER" ] && \
-			[ "X$OOVER" != "X$OVER" ] && [ -d "/lib/modules/$OVER" ]; then
-			msg '37;1' RMDIR "/lib/modules/$OVER"
-			run rm -rf$V -- "/lib/modules/$OVER"
-		fi
+	if [ -n "$OOVER" ] && [ "X$OOVER" != "X$VER" ] && \
+		[ "X$OOVER" != "X$OVER" ] && [ -d "/lib/modules/$OOVER" ]; then
+		msg '37;1' RMDIR "/lib/modules/$OOVER"
+		run rm -r$V -- "/lib/modules/$OOVER"
 	fi
 
 	run_hook post-tidy-modules
