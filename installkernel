@@ -885,13 +885,12 @@ if [ -n "$INSTALL_IMAGE" ]; then
 		msg '37;1' READLNK "$FILE"
 		run -d readlink "$INSTALL_PATH/$FILE" || true
 		LNK=$(readlink "$INSTALL_PATH/$FILE" || true)
-		if [ "X$LNK" = "X$FILE-$FVER" ]; then
-			msg '37;1' LNK "$FILE~"
-			run rm -f$V -- "$INSTALL_PATH/$FILE~"
-			run ln -s$V -- "$FILE-$FVER~" "$INSTALL_PATH/$FILE~"
-		else
+
+		if [ "X$LNK" != "X$FILE-$FVER" ]; then
 			msg '37;1' LNK "$FILE"
-			run mv -f$V -- "$INSTALL_PATH/$FILE" "$INSTALL_PATH/$FILE~" || true
+			if [ -z "$OVERWRITE_IMAGE" ]; then
+				run mv -f$V -- "$INSTALL_PATH/$FILE" "$INSTALL_PATH/$FILE~" || true
+			fi
 			run ln -fs$V -- "$FILE-$FVER" "$INSTALL_PATH/$FILE"
 		fi
 	done
