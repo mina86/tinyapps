@@ -177,9 +177,6 @@ At the moment the collection includes:
    wget - it's enough to split file  with urls to 2 or 3 files and run
    2/3 instances of wget in the background.
 
- * the-book-of-mozilla.txt - a collection  of quotations from The Book
-   of Mozilla (most are unofficial);
-
  * timer - a text-mode timer counting with accuracy to 0.01 s;
 
  * tpwd -  truncates PWD  to specified number  of characters.   May be

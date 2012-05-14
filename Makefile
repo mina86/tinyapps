@@ -91,7 +91,7 @@ help:
 ##
 all: FvwmTransFocus arpping cdiff cutcom drun infinite-logger			\
      installkernel.8.gz load malloc mpd-show mpd-state null quotes		\
-     the-book-of-mozilla rot13 timer tuptime umountiso xgetclass xrun
+     rot13 timer tuptime umountiso xgetclass xrun
 
 
 install: install-FvwmTransFocus install-add install-ai install-arpping	\
@@ -163,10 +163,6 @@ mpd-%: mpd-%.o libmpdclient.o
 quotes: quotes.txt
 	@echo '  GEN    $@'
 	$(Q)exec egrep -v ^\# $< >$@
-
-the-book-of-mozilla: the-book-of-mozilla.txt
-	@echo '  GEN    $@'
-	$(Q)exec sed -e '/^#/d' -e 's/^%.*/%/' $< >$@
 
 installkernel.8.gz: installkernel.8
 	@echo '  GZIP   $@'
@@ -253,12 +249,9 @@ install-mpd-state: mpd-state
 install-show: show
 	$(call install,root,bin,0755,/usr/local/sbin,$<)
 
-install-fortune: install-quotes install-the-book-of-mozilla
+install-fortune: install-quotes
 
 install-quotes: quotes
-	$(call install,root,root,0644,/usr/share/games/fortunes,$<)
-
-install-the-book-of-mozilla: the-book-of-mozilla
 	$(call install,root,root,0644,/usr/share/games/fortunes,$<)
 
 install-xgetclass: xgetclass
@@ -314,13 +307,10 @@ uninstall-mpd-state:
 uninstall-show:
 	$(call uninstall,/usr/local/sbin/show)
 
-uninstall-fortune: uninstall-quotes uninstall-the-book-of-mozilla
+uninstall-fortune: uninstall-quotes
 
 uninstall-quotes:
 	$(call uninstall,/usr/share/games/fortunes/quotes)
-
-uninstall-the-book-of-mozilla:
-	$(call uninstall,/usr/share/games/fortunes/the-book-of-mozilla)
 
 uninstall-xgetclass: xgetclass
 	$(call install,root,root,0755,/usr/X11/bin,$<)
