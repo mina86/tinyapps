@@ -94,34 +94,33 @@ all: FvwmTransFocus arpping cdiff cutcom drun infinite-logger			\
      rot13 timer tuptime umountiso xgetclass xrun
 
 
-install: install-FvwmTransFocus install-add install-ai install-arpping	\
+install: install-FvwmTransFocus install-add install-ai install-arpping		\
          install-changelog.pl install-cdiff install-check.sh			\
          install-checkmail install-cpuload.sh install-cutcom			\
          install-drun install-extractlinks.pl install-fortune			\
          install-genpass.sh install-getlyrics.pl install-gz2bz			\
          install-inplace install-installkernel install-lesspipe			\
-         install-load install-moz2elinks.pl install-mp3rip				\
+         install-load install-moz2elinks.pl install-mp3rip			\
          install-mpd-state install-null install-pingrange.pl			\
          install-rot13 install-rand-files.pl install-settitle			\
-         install-show install-splitlines.sh install-timer install-tpwd	\
-         install-traf.sh install-virtman.sh install-xcolor2rgb			\
-         install-xgetclass install-xrun
+         install-show install-timer install-tpwd install-traf.sh		\
+         install-virtman.sh install-xcolor2rgb install-xgetclass install-xrun
 
 
 uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-arpping uninstall-changelog.pl uninstall-cdiff		\
-           uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh	\
-           uninstall-cutcom uninstall-drun uninstall-extractlinks.pl	\
-           uninstall-fortune uninstall-genpass.sh						\
-           uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh	\
-           uninstall-inplace uninstall-installkernel					\
-           uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl	\
+           uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh		\
+           uninstall-cutcom uninstall-drun uninstall-extractlinks.pl		\
+           uninstall-fortune uninstall-genpass.sh				\
+           uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh		\
+           uninstall-inplace uninstall-installkernel				\
+           uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl		\
            uninstall-mp3rip uninstall-mpd-state uninstall-null			\
-           uninstall-pingrange.pl uninstall-rot13						\
-           uninstall-rand-files.pl uninstall-settitle uninstall-show	\
-           uninstall-splitlines.sh uninstall-timer uninstall-tpwd		\
-           uninstall-traf.sh uninstall-virtman.sh uninstall-xcolor2rgb	\
-           uninstall-xgetclass uninstall-xrun
+           uninstall-pingrange.pl uninstall-rot13				\
+           uninstall-rand-files.pl uninstall-settitle uninstall-show		\
+           uninstall-timer uninstall-tpwd uninstall-traf.sh			\
+           uninstall-virtman.sh uninstall-xcolor2rgb uninstall-xgetclass	\
+           uninstall-xrun
 
 
 ##

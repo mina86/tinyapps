@@ -170,13 +170,6 @@ At the moment the collection includes:
  * SlackBuild.gen  -  generates a  SlackBuild  template.   It was  not
    really debugged yet but I believe that it'll work quit good;
 
- * splitlines.sh -  Splits input, line-by-line, into  several files so
-   that the 1st line goes to the 1st file, the 2nd to the 2nd file and
-   so on till it wraps and n+1st line goes to 1st file.  I use it when
-   I want  to download a lot of  small files using a  few instances of
-   wget - it's enough to split file  with urls to 2 or 3 files and run
-   2/3 instances of wget in the background.
-
  * timer - a text-mode timer counting with accuracy to 0.01 s;
 
  * tpwd -  truncates PWD  to specified number  of characters.   May be
