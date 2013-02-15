@@ -26,14 +26,6 @@ CXXFLAGS    += -O0 -g -pipe
 CPPFLAGS    += -DDEBUG
 endif
 CPPFLAGS    += -Wall
-X11_INC_DIR  = $(shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
-                       /opt/X11R6 /usr /usr/local/include; do [ -f		\
-                       "$$DIR/include/X11/X.h" ] && echo				\
-                       "$$DIR/include" && break; done)
-X11_LIB_DIR  = $(shell for DIR in /usr/X11R6 /usr/local/X11R6 /X11R6	\
-                       /opt/X11R6 /usr /usr/local/include; do  for LIB	\
-                       in lib64 lib; do [ -f "$$DIR/$$LIB/libX11.so" ]	\
-                       && echo "$$DIR/lib" && break; done; done)
 
 ifndef      RELEASE
 RELEASE     := $(shell if [ -f .release ]; \
@@ -149,7 +141,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
 
 FvwmTransFocus: FvwmTransFocus.o
 	@echo '  LD     $@'
-	$(Q)exec $(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
+	$(Q)exec $(CC) $(LDFLAGS) `pkg-config --libs xorg-server` -o $@ $< -lX11
 
 xrun brun Brun drun Drun: null
 	@echo '  LN     $@'
@@ -173,7 +165,7 @@ umountiso: mountiso
 
 xgetclass: xgetclass.o
 	@echo '  LD     $@'
-	$(Q)exec $(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
+	$(Q)exec $(CC) $(LDFLAGS) `pkg-config --libs xorg-server` -o $@ $< -lX11
 
 genpass: genpass.pl
 	@echo '  CP     $@'
