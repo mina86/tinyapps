@@ -63,6 +63,7 @@ my %modifiers = (
 		'bytes' => [ 1, 2 ],
 		'encode' => \&encode32,
 		'characters' => undef,
+		# result is all upper case plus some lower case
 		'transform' => [ '0123456789', 'abcdefghij' ],
 	},
 	'al' => 'alpha',
@@ -86,12 +87,12 @@ my %modifiers = (
 	'g' => 'guard',
 	'G' => 'noguard',
 
-	'strength'   => { 'suffix' => '1aA' },
-	'nostrength' => { 'suffix' => '' },
+	'strength'   => { 'strength' => 1 },
+	'nostrength' => { 'strength' => 0 },
 	's' => 'strength',
 	'S' => 'nostrength',
 
-	'clear'   => { 'prefix' => '', 'suffix' => '' },
+	'clear'   => { 'prefix' => '', 'strength' => 0 },
 	'c'       => 'clear',
     );
 
@@ -126,7 +127,7 @@ if (!defined $length) {
 	$length = int((10 + $bytes->[0] - 1) / $bytes->[0]) * $bytes->[1];
 }
 
-$bytes = int(($length + $bytes->[1] - 1) / $bytes->[1]) * $bytes->[0];
+$bytes = int(($length + $bytes->[1] + 2) / $bytes->[1]) * $bytes->[0];
 
 
 $_ = $O{'encode'}(randomBytes $bytes, $O{'characters'});
@@ -137,7 +138,30 @@ if (defined $O{'transform'}) {
 		$_ = $O{'transform'}($_);
 	}
 }
-print $O{'prefix'}, substr($_, 0, $length), $O{'suffix'}, "\n";
+
+my $excess = substr $_, $length;
+$_ = $O{'prefix'} . substr $_, 0, $length;
+
+if ($O{'strength'}) {
+	my $i = 0;
+	if (m/[A-Z]/) {
+		$_ .= substr $excess, $i++, 1;
+	} else {
+		$_ .= chr(ord('A') + int rand 26);
+	}
+	if (m/[a-z]/) {
+		$_ .= substr $excess, $i++, 1;
+	} else {
+		$_ .= chr(ord('a') + int rand 26);
+	}
+	if (!m/[0-9]/) {
+		$_ .= substr $excess, $i++, 1;
+	} else {
+		$_ .= chr(ord('0') + int rand 10);
+	}
+}
+
+print $_, "\n";
 
 
 ## Helper functions
@@ -147,7 +171,7 @@ sub transform($$$) {
 		if (length $from != length $to) {
 			die "internal (<<$from>> <<$to>>)\n";
 		}
-		$str =~ tr/$from/$to/;
+		eval "\$str =~ tr[$from][$to], 1" or die $@;
 	}
 	$str;
 }
@@ -160,7 +184,6 @@ sub genRandomBytes($);
 sub randomBytes($) {
 	my $bytes = $_[0];
 	my $data =
-	    readRandomBytes($bytes, '/dev/urandom') //
 	    readRandomBytes($bytes, '/dev/urandom') //
 	    genRandomBytes($bytes);
 	substr $data, 0, $bytes;
@@ -203,13 +226,15 @@ sub encode16($;$) {
 sub encode32($;$) {
 	my ($bytes, $chars) = @_;
 	require MIME::Base32;
-	transform MIME::Base32::encode_base32($bytes), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', $chars;
+	MIME::Base32->import('RFC');
+	transform MIME::Base32::encode($bytes), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', $chars;
 }
 
 sub encode64($;$) {
 	my ($bytes, $chars) = @_;
 	require MIME::Base64;
-	transform MIME::Base64::encode_base64($bytes), '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/', $chars;
+	MIME::Base32->import('RFC');
+	transform MIME::Base64::encode($bytes), '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/', $chars;
 }
 
 sub encode85($;$) {
