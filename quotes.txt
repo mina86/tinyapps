@@ -567,6 +567,19 @@ wszystkie popełnić.
  Counting in binary is just like counting in decimal if you are all thumbs.
 	-- Glaser and Way
 %
+ Those types are not “abstract”; they are as real as int and float.
+	-- Malcolm Douglas McIlroy (1932-)
+%
+ As a programmer, it is your job to put yourself out of business. What you
+do today can be automated tomorrow.
+	-- Malcolm Douglas McIlroy (1932-)
+%
+ Keep it simple, make it general, and make it intelligible.
+	-- Malcolm Douglas McIlroy (1932-)
+%
+ The real hero of programming is the one who writes negative code.
+	-- Malcolm Douglas McIlroy (1932-)
+%
  Do you spend time with your family? Good.  Because a man who doesn't spend
 time with his family can never be a real man.
 	-- Marlon Brando (1924-2004) as Don Vito Corleone

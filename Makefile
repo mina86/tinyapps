@@ -98,7 +98,7 @@ install: install-FvwmTransFocus install-add install-ai install-arpping		\
          install-changelog.pl install-cdiff install-check.sh			\
          install-checkmail install-cpuload.sh install-cutcom			\
          install-drun install-extractlinks.pl install-fortune			\
-         install-genpass.sh install-getlyrics.pl install-gz2bz			\
+         install-genpass install-getlyrics.pl install-gz2bz			\
          install-inplace install-installkernel install-lesspipe			\
          install-load install-moz2elinks.pl install-mp3rip			\
          install-mpd-state install-null install-pingrange.pl			\
@@ -111,7 +111,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-arpping uninstall-changelog.pl uninstall-cdiff		\
            uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh		\
            uninstall-cutcom uninstall-drun uninstall-extractlinks.pl		\
-           uninstall-fortune uninstall-genpass.sh				\
+           uninstall-fortune uninstall-genpass					\
            uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh		\
            uninstall-inplace uninstall-installkernel				\
            uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl		\
@@ -175,6 +175,9 @@ xgetclass: xgetclass.o
 	@echo '  LD     $@'
 	$(Q)exec $(CC) $(LDFLAGS) "-L$(X11_LIB_DIR)" -lX11 -o $@ $<
 
+genpass: genpass.pl
+	@echo '  CP     $@'
+	$(Q)cp -- $^ $@
 
 
 ##
