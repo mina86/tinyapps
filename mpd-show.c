@@ -1190,8 +1190,8 @@ static void
 wideFromMultiIconvFunc(const char *buffer, size_t len, void *_data);
 
 static const wchar_t *wideFromMulti(const char *str) {
-	size_t len = strlen(str), pos;
 	struct wbuffer wb = { 0, 0, 0 };
+	size_t len = strlen(str);
 	mbstate_t ps;
 
 	if (iconvDo(iconv_str2wchar, (char *)str, len, 1,
@@ -1201,7 +1201,6 @@ static const wchar_t *wideFromMulti(const char *str) {
 
 	memset(&ps, 0, sizeof ps);
 	wb.capacity = 32;
-	pos = 0;
 	goto realloc;
 
 	for(;;) {
