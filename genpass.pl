@@ -1,7 +1,7 @@
 #!/usr/bin/perl
 ##
 ## Generates a random password (or some other key)
-## Copyright (c) 2005,2007,2011 by Michal Nazarewicz (mina86/AT/mina86.com)
+## Copyright (c) 2005,2007,2011,2013 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
 ## This software is OSI Certified Open Source Software.
 ## OSI Certified is a certification mark of the Open Source Initiative.
@@ -95,6 +95,43 @@ my %modifiers = (
 	'clear'   => { 'prefix' => '', 'strength' => 0 },
 	'c'       => 'clear',
     );
+
+# Help
+if (@ARGV == 1 && $ARGV[0] =~ /^(?:(?:--)?help|-h)$/) {
+	print <<'END';
+usage: $0 [ <options> ... ] [ <length> ]
+Choosing characters set:
+    hex          Use lower case hexadecimal characters in the password.
+    HEX          Use upper case hexadecimal characters in the password.
+    al alpha     Use only upper case letters and first 8 lower case letters.
+    b64          Use characters used in base64 encoding (letters, digits,
+                 plus and slash).
+  * a85          Use characters used in Ascii85 encoding (letters, digits
+                 and additional 23 printable characters).
+
+Additional options:
+  * g guard      Add "/!" at the beginning of generated password.
+                 Slash prevents accidental pasting of the password
+                 into IRC clients, and exclamation mark prevents
+                 accidental pasting of the password on shell command
+                 line.  This prefix is not counted towards password length.
+    G noguard    Do not add "/!" at the beginning of generated password.
+
+  * s strength   Ensure password has one upper case letter, one lower
+                 case letter, and one digit.  This option causees
+                 those characters to be added regardless of chosen
+                 characters sets.  This suffix is added to the password and
+                 is not counted towards its length as specified by <length>.
+    S nostrength Disable the above behaviour.
+
+    c clear      Synonym of "noguard nostrength".
+
+<length> specifies desired password length.  The default is to choose
+a length such that the password has at least 80 bits of entropy.
+
+* indicates default option.
+END
+}
 
 # Parse arguments
 my ($length, %O);
