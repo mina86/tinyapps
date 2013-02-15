@@ -217,8 +217,8 @@ install-arpping: arpping
 
 install-gz2bz: gz2bz
 	$(call install,root,bin,0755,/usr/local/bin,$<)
-	$(Q)for f in z gz bz xz lz; for t in z gz bz xz lz; do \
-		if [ $$f != $$t ] && [ $${f}2$$t != gz2bz ]; then
+	$(Q)for f in z gz bz xz lz; do for t in z gz bz xz lz; do \
+		if [ $$f != $$t ] && [ $${f}2$$t != gz2bz ]; then \
 			echo "  LNK    $${f}2$$t"; \
 			ln -fs -- gz2bz $(DEST_DIR)/usr/local/bin/$${f}2$$t; \
 		fi; \
@@ -347,7 +347,7 @@ endif
 
 	@echo '  GEN    usr/doc/tinyapps-$(RELEASE)'
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)'
-	$(Q)exec cp -- LICENSE LICENSE.AFL LICENSE.GPL3 README TODO ChangeLog '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
+	$(Q)exec cp -- LICENSE LICENSE.AFL LICENSE.GPL3 README TODO '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
 
 	@echo '  GEN    install/doinst.sh'
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/install'
@@ -358,11 +358,11 @@ endif
 	@echo '  CP     slack-desc'
 	$(Q)exec cp -- slack-desc '$(DEST_DIR)/install'
 
-	@echo '  PACK   tinyapps-$(RELEASE)-'"$${ARCH:-i486}"'-1mn.txz'
+	@echo '  PACK   tinyapps-$(RELEASE)-'"$${ARCH:-$$(uname -m)}"'-1mn.txz'
 	$(Q)TAR="`which tar-1.13 2>/dev/null`"; \
 		exec "$${TAR:-tar}" c -C '$(DEST_DIR)' \
 			--owner=root --group=root . | \
-		xz -9 > 'tinyapps-$(RELEASE)-'"$${ARCH:-i486}"'-1mn.txz'
+		xz -9 > 'tinyapps-$(RELEASE)-'"$${ARCH:-$$(uname -m)}"'-1mn.txz'
 
 	@echo '  CLEAN  package'
 	$(Q)exec rm -rf -- '$(DEST_DIR)'
