@@ -48,12 +48,24 @@ typedef struct {
 /**** Updates CPU load info ****/
 static void update_cpu(State *state) {
 	FILE *file = fopen("/proc/stat", "r");
+	int i;
 	if (!file) return;
 
-	fscanf(file, "%*s %" FMT " %" FMT " %" FMT " %" FMT ,
-	       &state->cpu.usr, &state->cpu.nice,
-	       &state->cpu.sys, &state->cpu.idle);
+	i = fscanf(file, "%*s %" FMT " %" FMT " %" FMT " %" FMT ,
+	           &state->cpu.usr, &state->cpu.nice,
+	           &state->cpu.sys, &state->cpu.idle);
 	fclose(file);
+
+	switch (i) {
+	case 0:
+		state->cpu.usr = 0;
+	case 1:
+		state->cpu.nice = 0;
+	case 2:
+		state->cpu.sys = 0;
+	case 3:
+		state->cpu.idle = 0;
+	}
 
 	state->cpu.load  = state->cpu.usr + state->cpu.sys + state->cpu.nice;
 	state->cpu.total = state->cpu.load + state->cpu.idle;
@@ -65,8 +77,7 @@ static void update_traf(State *state) {
 	FILE *file = fopen("/proc/net/dev", "r");
 	if (!file) return;
 
-	while (!feof(file)) {
-		fgets(buffer, BUFFER_SIZE, file);
+	while (fgets(buffer, BUFFER_SIZE, file)) {
 		if (sscanf(buffer, " eth0:%" FMT " %*d %*d %*d %*d %*d %*d %*d %" FMT,
 		           &state->traf.rec, &state->traf.send)) {
 			break;
@@ -83,8 +94,7 @@ static void update_mem(State *state) {
 	int flags = 0;
 	if (!file) return;
 
-	while (!feof(file) && flags!=3) {
-		fgets(buffer, BUFFER_SIZE, file);
+	while (fgets(buffer, BUFFER_SIZE, file) && flags!=3) {
 		if (sscanf(buffer, " MemTotal: %lu", &val)==1) {;
 			flags |= 1;
 			state->mem.total = val;
