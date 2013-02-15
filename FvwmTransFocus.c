@@ -53,6 +53,7 @@
  */
 
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -225,14 +226,32 @@ int main (int argc, char **argv) {
 
 
 /******** Sends message to FVWM *********/
+int _write(int fd, const void *data, size_t size) {
+	while (size > 0) {
+		ssize_t ret = write(fd, data, size);
+		if (ret > 0) {
+			size -= ret;
+		} else if (ret < 0 && errno == EINTR) {
+			/* nop */
+		} else {
+			return -1;
+		}
+	}
+	return 0;
+}
+
 void send(const char *message) {
 	unsigned long l = 0;
-	write(fvout, &l, sizeof(l));
+	if (_write(fvout, &l, sizeof(l)))
+		return;
 	l = strlen(message);
-	write(fvout, &l, sizeof(l));
-	write(fvout, message, l);
+	if (_write(fvout, &l, sizeof(l)))
+		return;
+	if (_write(fvout, message, l))
+		return;
 	l = 1;
-	write(fvout, &l, sizeof(l));
+	if (_write(fvout, &l, sizeof(l)))
+		return;
 }
 
 
