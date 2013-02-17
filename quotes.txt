@@ -1,10 +1,7 @@
 ##                                      -*- Mode: text; fill-column: 75 -*-
 ## Quotation Collection.
-## Copyright (c) 2003-2007 by Michal Nazarewicz (mina86/AT/mina86.com)
-## Licensed under the Academic Free License version 3.0.
-##
-## This software is OSI Certified Open Source Software.
-## OSI Certified is a certification mark of the Open Source Initiative.
+## Copyright (c) 2003-2013 by Michal Nazarewicz (mina86/AT/mina86.com)
+## Licensed under a Creative Commons Attribution 3.0 Unported License.
 ##
 ## This is part of Tiny Applications Collection
 ##   -> http://tinyapps.sourceforge.net/
