@@ -11,8 +11,8 @@ cdiff
 core
 cutcom
 drun
+genpass
 infinite-logger
-installkernel-log*
 load
 malloc
 mountiso
@@ -21,7 +21,6 @@ mpd-state
 null
 quotes
 rot13
-the-book-of-mozilla
 timer
 tuptime
 umountiso
