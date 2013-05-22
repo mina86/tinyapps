@@ -33,68 +33,38 @@ use warnings;
 use strict;
 
 ## Forward declarations
-sub encode16($;$);
-sub encode32($;$);
-sub encode64($;$);
-sub encode85($;$);
-
+sub buildChars($);
 sub randomBytes($);
-
+sub encode($$);
 sub transform($$$);
-
 
 ## Modifiers
 my %modifiers = (
-	'hex' => {
-		'bytes' => [ 1, 2 ],
-		'encode' => \&encode16,
-		'characters' => undef,
-		'transform' => undef,
-	},
-
-	'HEX' => {
-		'bytes' => [ 1, 2 ],
-		'encode' => \&encode16,
-		'characters' => undef,
-		'transform' => \&uc,
-	},
-
-	'alpha' => {
-		'bytes' => [ 1, 2 ],
-		'encode' => \&encode32,
-		'characters' => undef,
-		# result is all upper case plus some lower case
-		'transform' => [ '0123456789', 'abcdefghij' ],
-	},
-	'al' => 'alpha',
-
-	'b64' => {
-		'bytes' => [ 3, 4 ],
-		'encode' => \&encode64,
-		'characters' => undef,
-		'transform' => undef,
-	},
-
-	'a85' => {
-		'bytes' => [ 4, 5 ],
-		'encode' => \&encode85,
-		'characters' => undef,
-		'transform' => undef,
-	},
+	'hex'   => '0123456789abcdef',
+	'HEX'   => '0123456789ABCDEF',
+	'alpha' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ',
+	'al'    => '--alpha',
+	'alnum' => 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789',
+	'lower' => 'abcdefghijklmnopqrstuvwxyz',
+	'lw'    => '--lower',
+	'upper' => 'ABCDEFGHIJKLMNOPQRSTUVWXYZ',
+	'up'    => '--upper',
+	'b64'   => '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/',
+	'all'   => join('', map chr, 33..126),
 
 	'guard'      => { 'prefix' => '/!' },
 	'noguard'    => { 'prefix' => '' },
-	'g' => 'guard',
-	'G' => 'noguard',
+	'g' => '--guard',
+	'G' => '--noguard',
 
 	'strength'   => { 'strength' => 1 },
 	'nostrength' => { 'strength' => 0 },
-	's' => 'strength',
-	'S' => 'nostrength',
+	's' => '--strength',
+	'S' => '--nostrength',
 
 	'clear'   => { 'prefix' => '', 'strength' => 0 },
-	'c'       => 'clear',
-    );
+	'c'       => '--clear',
+);
 
 # Help
 if (@ARGV == 1 && $ARGV[0] =~ /^(?:(?:--)?help|-h)$/) {
@@ -103,11 +73,14 @@ usage: $0 [ <options> ... ] [ <length> ]
 Choosing characters set:
     hex          Use lower case hexadecimal characters in the password.
     HEX          Use upper case hexadecimal characters in the password.
-    al alpha     Use only upper case letters and first 8 lower case letters.
-    b64          Use characters used in base64 encoding (letters, digits,
+    al alpha     Use lower and upper case letters.
+    lw lower     Use lower case letters.
+    up upper     Use upper case letters.
+  * b64          Use characters used in base64 encoding (letters, digits,
                  plus and slash).
-  * a85          Use characters used in Ascii85 encoding (letters, digits
-                 and additional 23 printable characters).
+    all          Use all printable ASCII characters (codes from 33 to 126
+                 inclusively).
+    ch:<spec>    Custom character list.
 
 Additional options:
   * g guard      Add "/!" at the beginning of generated password.
@@ -134,65 +107,60 @@ END
 }
 
 # Parse arguments
-my ($length, %O);
-unshift @ARGV, qw(a85 guard strength);
+my ($chars, $length, %O, $excess);
+unshift @ARGV, qw(b64 guard strength);
 
 do {
 	$_ = shift @ARGV;
 
 	if (/^\d+$/ && $_ != 0) {
 		$length = int $_;
-	} elsif (!exists $modifiers{$_} || /^-/) {
+	} elsif (/^ch:/) {
+		$chars = buildChars substr $_, 3;
+	} elsif (!exists $modifiers{$_}) {
 		die "$_: unknown modifier\n";
 	} elsif ('HASH' eq ref $modifiers{$_}) {
 		my $modifier = $modifiers{$_};
 		for (keys %$modifier) {
 			$O{$_} = $modifier->{$_};
 		}
-		undef $_;
-	} elsif ('ARRAY' eq ref $modifiers{$_}) {
-		unshift @ARGV, @{ $modifiers{$_} };
+	} elsif ($modifiers{$_} =~ /^--/) {
+		unshift @ARGV, substr $modifiers{$_}, 2;
 	} else {
-		unshift @ARGV, $modifiers{$_};
+		$chars = $modifiers{$_};
 	}
 } while (@ARGV);
 
-## Do the work
-my $bytes = $O{'bytes'};
-
-if (!defined $length) {
-	$length = int((10 + $bytes->[0] - 1) / $bytes->[0]) * $bytes->[1];
+# Do the work
+if (defined $length) {
+	$_ = randomBytes $O{'length'} + 3;  # TODO
+} else {
+	$_ = randomBytes 13;
 }
 
-$bytes = int(($length + $bytes->[1] + 2) / $bytes->[1]) * $bytes->[0];
+$_ = encode $_, $chars;
 
-
-$_ = $O{'encode'}(randomBytes $bytes, $O{'characters'});
-if (defined $O{'transform'}) {
-	if ('ARRAY' eq ref $O{'transform'}) {
-		$_ = transform $_, $O{'transform'}[0], $O{'transform'}[1];
-	} else {
-		$_ = $O{'transform'}($_);
-	}
+if (defined $length) {
+	$excess = substr $_, $length;
+	$_ = $O{'prefix'} . substr $_, 0, $length;
+} else {
+	$excess = substr $_, -3;
+	$_ = $O{'prefix'} . substr $_, 0, -3;
 }
-
-my $excess = substr $_, $length;
-$_ = $O{'prefix'} . substr $_, 0, $length;
 
 if ($O{'strength'}) {
-	my $i = 0;
 	if (m/[A-Z]/) {
-		$_ .= substr $excess, $i++, 1;
+		$_ .= substr $excess, 0, 1;
 	} else {
 		$_ .= chr(ord('A') + int rand 26);
 	}
 	if (m/[a-z]/) {
-		$_ .= substr $excess, $i++, 1;
+		$_ .= substr $excess, 1, 1;
 	} else {
 		$_ .= chr(ord('a') + int rand 26);
 	}
-	if (!m/[0-9]/) {
-		$_ .= substr $excess, $i++, 1;
+	if (m/[0-9]/) {
+		$_ .= substr $excess, 2, 1;
 	} else {
 		$_ .= chr(ord('0') + int rand 10);
 	}
@@ -201,18 +169,42 @@ if ($O{'strength'}) {
 print $_, "\n";
 
 
-## Helper functions
-sub transform($$$) {
-	my ($str, $from, $to) = @_;
-	if (defined $to) {
-		if (length $from != length $to) {
-			die "internal (<<$from>> <<$to>>)\n";
+## Generate chars
+sub buildChars($) {
+	my (@chars, $prev, $range, $ch);
+	for $ch (unpack 'C*', $_[0]) {
+		if (defined $range) {
+			pop @chars;
+			if ($prev < $ch) {
+				push @chars, $prev..$ch;
+			} else {
+				die sprintf("%c-%c: invalid character range\n",
+				            $prev, $ch);
+			}
+			undef $prev;
+			undef $range;
+		} elsif (defined $prev && $ch == ord '-') {
+			$range = 1;
+		} else {
+			push @chars, $ch;
+			$prev = $ch;
 		}
-		eval "\$str =~ tr[$from][$to], 1" or die $@;
 	}
-	$str;
+	my $chars = '';
+	undef $prev;
+	for $ch (sort @chars) {
+		if (!defined $prev || $prev != $ch) {
+			$chars .= chr $ch;
+		}
+		$prev = $ch;
+	}
+	if (!length $chars) {
+		die "empty character specification\n";
+	} elsif (length $chars == 1) {
+		die "$chars: only one character specified\n";
+	}
+	$chars;
 }
-
 
 ## Read random data
 sub readRandomBytes($$);
@@ -254,42 +246,45 @@ sub genRandomBytes($) {
 	$data;
 }
 
-## Encoders
-sub encode16($;$) {
-	my ($bytes, $chars) = @_;
-	transform unpack('h*', $bytes), '0123456789abcdef', $chars;
-}
-
-sub encode32($;$) {
-	my ($bytes, $chars) = @_;
-	require MIME::Base32;
-	MIME::Base32->import('RFC');
-	transform MIME::Base32::encode($bytes), 'ABCDEFGHIJKLMNOPQRSTUVWXYZ234567', $chars;
-}
-
-sub encode64($;$) {
-	my ($bytes, $chars) = @_;
-	require MIME::Base64;
-	MIME::Base32->import('RFC');
-	transform MIME::Base64::encode($bytes), '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/', $chars;
-}
-
-sub encode85($;$) {
-	my ($bytes, $chars) = @_;
-	$chars = $chars // '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ!#$%&()*+-;<=>?@^_/{|}~';
-
-	my ($ret, $len) = ('', length $bytes);
-	while ($len >= 4) {
-		my ($num, $i) = (0, 4);
-		do {
-			$num = ($num << 8) | ord(substr($bytes, --$len));
-		} while (--$i);
-
-		$i = 5;
-		do {
-			$ret .= substr $chars, ($num % 85), 1;
-			$num = int($num / 85);
-		} while (--$i);
+## Encoder
+sub transform($$$) {
+	my ($str, $from, $to) = @_;
+	if ($from ne $to) {
+		if (length $from != length $to) {
+			die "internal (<<$from>> <<$to>>)\n";
+		}
+		eval "\$str =~ tr[$from][$to], 1" or die $@;
 	}
-	$ret;
+	$str;
+}
+
+sub encode($$) {
+	my ($bytes, $chars) = @_;
+	if (length $chars == 16) {
+		transform unpack('h*', $bytes), '0123456789abcdef', $chars;
+	} elsif (length $chars == 64) {
+		require MIME::Base64;
+		MIME::Base32->import('RFC');
+		my $str = MIME::Base64::encode($bytes);
+		chomp $str;
+		$str =~ s/=+$//;
+		transform $str, '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ+/', $chars;
+	} else {
+		my $ret = '';
+		my $group_size = length $chars;
+		my ($val, $ent) = (0, 0);
+		for my $ch (unpack 'C*', $bytes) {
+			$val = ($val * 256) | $ch;
+			$ent = ($ent * 256) | 255;
+			while ($ent >= $group_size) {
+				$ret .= substr $chars, $val % $group_size, 1;
+				$ent = int $ent / $group_size;
+				$val = int $val / $group_size;
+			}
+		}
+		if ($ent > 0) {
+			$ret .= substr $chars, $val, 1;
+		}
+		return $ret;
+	}
 }
