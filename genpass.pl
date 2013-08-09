@@ -23,12 +23,6 @@
 ##   -> http://tinyapps.sourceforge.net/
 ##
 
-##
-## You can specify number of characters password should have as
-## a parameter, eg.;
-##     ./getnpass 100
-##
-
 use warnings;
 use strict;
 
