@@ -133,7 +133,7 @@ do {
 
 # Do the work
 if (defined $length) {
-	$_ = randomBytes $O{'length'} + 3;  # TODO
+	$_ = randomBytes $length + 3;  # TODO
 } else {
 	$_ = randomBytes 13;
 }
