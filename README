@@ -185,10 +185,6 @@ At the moment the collection includes:
    uptimes)  and biggest  uptime.   Might be  used  as replacement  to
    standard uptime utility;
 
- * tv - Perl script showing  TV programme.  It gets data from tv.o2.pl
-   so it's usable for Poles mostly  but in the future it is planned to
-   provide plugins allowing to download data from other sites.
-
  * virtman.sh -  adds virtual hosts to Apache  configuration for given
    user.  May be added to  some kind of adduser script for automagical
    addition of virtual hosts.
