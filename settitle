@@ -9,7 +9,17 @@
 ##
 
 if [ $# = 0 ]; then
-  echo -ne "\e]2;rxvt\007"
+	title=$TERM
 else
-  echo -ne "\e]2;$*\007"
+	title=$*
+fi
+
+tput=$(which tpute 2>/dev/null)
+if [ -n "$tput" ]; then
+	if tput tsl; then
+		printf '%s' "$title"
+		tput fsl
+	fi
+else
+	printf '\33]2;%s\7' "$title"
 fi
