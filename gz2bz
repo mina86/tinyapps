@@ -24,7 +24,7 @@
 ##
 
 
-set -e
+set -eu
 
 
 ##
@@ -91,7 +91,7 @@ msg () {
 	if [ X"$1" = X-f ]; then
 		shift
 		echo "${0##*/}: $*" >&2
-	elif $VERBOSE; then
+	elif $verbose; then
 		echo "${0##*/}: $*" >&2
 	fi
 }
@@ -103,16 +103,16 @@ msg () {
 ##
 false () { return 1; }
 
-COMPRESS=auto
-DECOMPRESS=auto
-COMPRESS_OPTS=
-DECOMPRESS_OPTS=
-KEEP_UNCOMPRESSED=false
-KEEP_ORIG=false
-VERBOSE=false
-VERB_OPTS=
-OVERWRITE=y
-TMP=
+compress=auto
+decompress=auto
+compress_opts=
+decompress_opts=
+keep_uncompressed=false
+keep_orig=false
+verbose=false
+verb_opts=
+overwrite=y
+tmp=
 
 
 ##
@@ -123,40 +123,40 @@ while [ $# -ne 0 ]; do
 	-h|--help)         usage  ; exit;;
 	-V|--version)      version; exit;;
 
-	-v|--verbose)      VERBOSE=:    ; VERB_OPTS=-v ;;
-	-vv)               VERBOSE=:    ; VERB_OPTS=-vv;;
-	-q|--quiet)        VERBOSE=false; VERB_OPTS=-q ;;
+	-v|--verbose)      verbose=:    ; verb_opts=-v ;;
+	-vv)               verbose=:    ; verb_opts=-vv;;
+	-q|--quiet)        verbose=false; verb_opts=-q ;;
 
-	-i|--interactive)  OVERWRITE=i;;
-	--never-overwrite) OVERWRITE=n;;
+	-i|--interactive)  overwrite=i;;
+	--never-overwrite) overwrite=n;;
 
-	-[0-9])            COMPRESS_OPTS="$COMPRESS_OPTS $1";;
-	--fast)            COMPRESS_OPTS="$COMPRESS_OPTS -1";;
-	--best)            COMPRESS_OPTS="$COMPRESS_OPTS -9";;
+	-[0-9])            compress_opts="$compress_opts $1";;
+	--fast)            compress_opts="$compress_opts -1";;
+	--best)            compress_opts="$compress_opts -9";;
 
-	-[GD])             DECOMPRESS="$2"                           ; shift;;
-	-[GD]*)            DECOMPRESS="${1#-?}"                             ;;
+	-[GD])             decompress="$2"                           ; shift;;
+	-[GD]*)            decompress="${1#-?}"                             ;;
 	--gzip=*|--decompress=*)
-	                   DECOMPRESS="${1#*=}"                             ;;
-	-[gd])             DECOMPRESS_OPTS="$DECOMPRESS_OPTS $2"     ; shift;;
-	-[gd]*)            DECOMPRESS_OPTS="$DECOMPRESS_OPTS ${1#-?}"       ;;
+	                   decompress="${1#*=}"                             ;;
+	-[gd])             decompress_opts="$decompress_opts $2"     ; shift;;
+	-[gd]*)            decompress_opts="$decompress_opts ${1#-?}"       ;;
 	--gzip-opts=*|--decomp-opts=*)
-	                   DECOMPRESS_OPTS="$DECOMPRESS_OPTS ${1#*=}"       ;;
-	-[BC])             COMPRESS="$2"                             ; shift;;
-	-[BC]*)            COMPRESS="${1#-?}"                               ;;
+	                   decompress_opts="$decompress_opts ${1#*=}"       ;;
+	-[BC])             compress="$2"                             ; shift;;
+	-[BC]*)            compress="${1#-?}"                               ;;
 	--bzip2=*|--compress=*)
-	                   COMPRESS="${1#*=}"                               ;;
-	-[bc])             COMPRESS_OPTS="$COMPRESS_OPTS $2"         ; shift;;
-	-[bc]*)            COMPRESS_OPTS="$COMPRESS_OPTS ${1#-?}"           ;;
+	                   compress="${1#*=}"                               ;;
+	-[bc])             compress_opts="$compress_opts $2"         ; shift;;
+	-[bc]*)            compress_opts="$compress_opts ${1#-?}"           ;;
 	--bzip2-opts=*|--comp-opts=*)
-	                   COMPRESS_OPTS="$COMPRESS_OPTS ${1#*=}"           ;;
+	                   compress_opts="$compress_opts ${1#*=}"           ;;
 
-	-k|--keep)         KEEP_UNCOMPRESSED=:             ;;
-	-k*)               KEEP_UNCOMPRESSED=:; TMP=${1#-?};;
-	--keep=*)          KEEP_UNCOMPRESSED=:; TMP=${1#*=};;
-	-t|--tmp)          KEEP_UNCOMPRESSED=:; TMP=/tmp   ;;
-	-K|--keep-gz|--keep-orig)               KEEP_ORIG=:;;
-	--keep-both)       KEEP_UNCOMPRESSED=:; KEEP_ORIG=:;;
+	-k|--keep)         keep_uncompressed=:             ;;
+	-k*)               keep_uncompressed=:; tmp=${1#-?};;
+	--keep=*)          keep_uncompressed=:; tmp=${1#*=};;
+	-t|--tmp)          keep_uncompressed=:; tmp=/tmp   ;;
+	-K|--keep-gz|--keep-orig)               keep_orig=:;;
+	--keep-both)       keep_uncompressed=:; keep_orig=:;;
 
 	--) shift; break;;
 	-) break;;
@@ -165,9 +165,9 @@ while [ $# -ne 0 ]; do
 	esac
 	shift
 done
-DECOMPRESS_OPTS="$DECOMPRESS_OPTS $VERB_OPTS"
-COMPRESS_OPTS="$COMPRESS_OPTS $VERB_OPTS"
-unset VERB_OPTS
+decompress_opts="$decompress_opts $verb_opts"
+compress_opts="$compress_opts $verb_opts"
+unset verb_opts
 
 
 ##
@@ -192,27 +192,27 @@ find_exec () {
 	fi
 
 	shift 2
-	eval $__var=\"\$__found \$* \$${__var}_OPTS\"
-	unset ${__var}_OPTS __var __command __found
+	eval $__var=\"\$__found \$* \$${__var}_opts\"
+	unset ${__var}_opts __var __command __found
 }
 
 __prog=${0##*/}
 case "$__prog" in
-[zZ]2*)                    find_exec DECOMPRESS uncompress; IN_EXT='[Zz]';;
-gz2*|gzip2*)               find_exec DECOMPRESS gzip    -d; IN_EXT=gz    ;;
-bz2*|bz22*|bzip2*|bzip22*) find_exec DECOMPRESS bzip2   -d; IN_EXT=bz2   ;;
-lz2*|lzma2*)               find_exec DECOMPRESS lzma    -d; IN_EXT=lzma  ;;
-xz2*)                      find_exec DECOMPRESS xz      -d; IN_EXT=xz    ;;
-*)                         find_exec DECOMPRESS -D      -d; IN_EXT=      ;;
+[zZ]2*)                    find_exec decompress uncompress; in_ext='[Zz]';;
+gz2*|gzip2*)               find_exec decompress gzip    -d; in_ext=gz    ;;
+bz2*|bz22*|bzip2*|bzip22*) find_exec decompress bzip2   -d; in_ext=bz2   ;;
+lz2*|lzma2*)               find_exec decompress lzma    -d; in_ext=lzma  ;;
+xz2*)                      find_exec decompress xz      -d; in_ext=xz    ;;
+*)                         find_exec decompress -D      -d; in_ext=      ;;
 esac
 
 case "$__prog" in
-*2[zZ])                    find_exec COMPRESS   compress  ; OUT_EXT='[Zz]';;
-*2gz|*2gzip)               find_exec COMPRESS   gzip      ; OUT_EXT=gz    ;;
-*2bz|*2bz2|*2bzip|*2bzip2) find_exec COMPRESS   bzip2     ; OUT_EXT=bz2   ;;
-*2lz|*2lzma)               find_exec COMPRESS   lzma      ; OUT_EXT=lzma  ;;
-*2xz)                      find_exec COMPRESS   xz        ; OUT_EXT=xz    ;;
-*)                         find_exec COMPRESS   -C        ; OUT_EXT=${0#**2};;
+*2[zZ])                    find_exec compress   compress  ; out_ext='[Zz]';;
+*2gz|*2gzip)               find_exec compress   gzip      ; out_ext=gz    ;;
+*2bz|*2bz2|*2bzip|*2bzip2) find_exec compress   bzip2     ; out_ext=bz2   ;;
+*2lz|*2lzma)               find_exec compress   lzma      ; out_ext=lzma  ;;
+*2xz)                      find_exec compress   xz        ; out_ext=xz    ;;
+*)                         find_exec compress   -C        ; out_ext=${0#**2};;
 esac
 unset __prog
 
@@ -228,7 +228,7 @@ overwrite () {
 		return 1
 	fi
 
-	__overwrite=$OVERWRITE
+	__overwrite=$overwrite
 	while :; do
 		case "$__overwrite" in
 		[yY]|[yY][eE][sS]|'')
@@ -253,63 +253,63 @@ overwrite () {
 ## Do the job
 ##
 [ $# -ne 0 ] || set -- -
-for FILE; do
+for file; do
 	## standard input -> standard output
-	if [ X"$FILE" = X- ]; then
+	if [ X"$file" = X- ]; then
 		msg Converting stdin to stdout
-		$DECOMPRESS | $COMPRESS || msg -f "$FILE: failed"
+		$decompress | $compress || msg -f "$file: failed"
 		continue
 	fi
 
 	## Get output file name
-	case "$FILE" in
-	*.tgz) OUTPUT=${FILE%.tgz}.tar.gz  ;;
-	*.tbz) OUTPUT=${FILE%.tbz}.tar.bz2 ;;
-	*.txz) OUTPUT=${FILE%.txz}.tar.xz  ;;
-	*.tlz) OUTPUT=${FILE%.tlz}.tar.lzma;;
-	*)     OUTPUT=$FILE
+	case "$file" in
+	*.tgz) output=${file%.tgz}.tar.gz  ;;
+	*.tbz) output=${file%.tbz}.tar.bz2 ;;
+	*.txz) output=${file%.txz}.tar.xz  ;;
+	*.tlz) output=${file%.tlz}.tar.lzma;;
+	*)     output=$file
 	esac
 
-	case "$OUTPUT" in
-	*.$IN_EXT)  OUTPUT="${OUTPUT%.$IN_EXT}" ;;
-	*)          msg -f "$FILE: invalid extension, skipping"; continue
+	case "$output" in
+	*.$in_ext)  output="${output%.$in_ext}" ;;
+	*)          msg -f "$file: invalid extension, skipping"; continue
 	esac
 
-	OUTPUT_COMPRESSED=$OUTPUT.$OUT_EXT
-	if [ -n "$TMP" ]; then
-		OUTPUT=$TMP/${OUTPUT##*/}
+	output_compressed=$output.$out_ext
+	if [ -n "$tmp" ]; then
+		output=$tmp/${output##*/}
 	fi
 
 	## Convert
-	OK=false
-	overwrite "$OUTPUT_COMPRESSED" || continue
-	if $KEEP_UNCOMPRESSED; then
-		overwrite "$OUTPUT" || continue
-		msg decompressing "$FILE" to "$OUTPUT"
-		if $DECOMPRESS <"$FILE" >"$OUTPUT"; then
-			msg compressing "$OUTPUT" to "$OUTPUT_COMPRESSED"
-			if ! $COMPRESS <"$OUTPUT" >"$OUTPUT_COMPRESSED"; then
-				rm -f -- "$OUTPUT_COMPRESSED"
+	ok=false
+	overwrite "$output_compressed" || continue
+	if $keep_uncompressed; then
+		overwrite "$output" || continue
+		msg decompressing "$file" to "$output"
+		if $decompress <"$file" >"$output"; then
+			msg compressing "$output" to "$output_compressed"
+			if ! $compress <"$output" >"$output_compressed"; then
+				rm -f -- "$output_compressed"
 			else
-				OK=:
+				ok=:
 			fi
 		else
-			rm -f -- "$OUTPUT"
+			rm -f -- "$output"
 		fi
 	else
-		msg converting "$FILE" to "$OUTPUT_COMPRESSED"
-		if $DECOMPRESS <"$FILE" | $COMPRESS >"$OUTPUT_COMPRESSED"; then
-			OK=:
+		msg converting "$file" to "$output_compressed"
+		if $decompress <"$file" | $compress >"$output_compressed"; then
+			ok=:
 		else
-			rm -f -- "$OUTPUT_COMPRESSED"
+			rm -f -- "$output_compressed"
 		fi
 	fi
 
 	## Finish
-	if ! $OK; then
-		msg -f "$FILE: failed"
-	elif ! $KEEP_ORIG; then
-		msg removing "$FILE"
-		rm -f -- "$FILE"
+	if ! $ok; then
+		msg -f "$file: failed"
+	elif ! $keep_orig; then
+		msg removing "$file"
+		rm -f -- "$file"
 	fi
 done
