@@ -76,6 +76,7 @@ usage: <program> <options> [ [--] file ...]
  -t --tmp                Same as --keep=/tmp
  -K --keep-orig          Keeps original file file
     --keep-both          Alias of --keep --keep-orig
+ -s --keep-smaller --smaller  Keep smaller of the original and compressed files
 
 example: gz2bz -9 *.gz
          gz2xz -9 *.gz
@@ -109,6 +110,7 @@ compress_opts=
 decompress_opts=
 keep_uncompressed=false
 keep_orig=false
+keep_smaller=false
 verbose=false
 verb_opts=
 overwrite=y
@@ -157,6 +159,7 @@ while [ $# -ne 0 ]; do
 	-t|--tmp)          keep_uncompressed=:; tmp=/tmp   ;;
 	-K|--keep-gz|--keep-orig)               keep_orig=:;;
 	--keep-both)       keep_uncompressed=:; keep_orig=:;;
+	-s|--keep-smaller|--smaller) keep_smaller=true;;
 
 	--) shift; break;;
 	-) break;;
@@ -308,7 +311,25 @@ for file; do
 	## Finish
 	if ! $ok; then
 		msg -f "$file: failed"
-	elif ! $keep_orig; then
+		continue
+	fi
+
+	if $keep_smaller; then
+		orig_size=$(stat -c %s -- "$file")
+		compressed_size=$(stat -c %s -- "$output_compressed")
+		if [ $orig_size -le $compressed_size ]; then
+			msg original no bigger then recompressed \
+				"($orig_size <= $compressed_size)"
+			msg removing "$output_compressed"
+			rm -f -- "$output_compressed"
+			continue
+		else
+			msg original bigger then recompressed \
+				"($orig_size > $compressed_size)"
+		fi
+	fi
+
+	if ! $keep_orig; then
 		msg removing "$file"
 		rm -f -- "$file"
 	fi
