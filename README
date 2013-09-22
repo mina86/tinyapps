@@ -165,6 +165,12 @@ At the moment the collection includes:
  * SlackBuild.gen  -  generates a  SlackBuild  template.   It was  not
    really debugged yet but I believe that it'll work quit good;
 
+ * surun -  a wrapper  for sudo/su tool  (whichever is  available) for
+   running given  command as root  or launching root shell.   It hides
+   differences between  the two command  semantics as well  as between
+   running the tool  as root or non-root (in the  former case, sudo/su
+   won't be invoked at all).
+
  * timer - a text-mode timer counting with accuracy to 0.01 s;
 
  * tpwd -  truncates PWD  to specified number  of characters.   May be

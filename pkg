@@ -1,0 +1,136 @@
+#!/bin/sh
+##
+## pkg - A wrapper for package management tools.
+## Copyright 2013 by Michal Nazarewicz (mina86@mina86.com)
+##
+## This program is free software; you can redistribute it and/or modify
+## it under the terms of the GNU General Public License as published by
+## the Free Software Foundation; either version 3 of the License, or
+## (at your option) any later version.
+##
+## This program is distributed in the hope that it will be useful,
+## but WITHOUT ANY WARRANTY; without even the implied warranty of
+## MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+## GNU General Public License for more details.
+##
+## You should have received a copy of the GNU General Public License
+## along with this program; if not, see <http://www.gnu.org/licenses/>.
+##
+## This is part of Tiny Applications Collection
+##   -> http://tinyapps.sourceforge.net/
+##
+
+have() {
+	have=`which "$1" 2>/dev/null` && test -n "$have"
+}
+
+if [ -e /etc/slackware-version ]; then
+	cmd=slack
+elif  have apt-get || have yum; then
+	cmd=$have
+else
+	echo "$0: could not find package manager software" >&2
+	exit 1
+fi
+
+if [ 0 -eq $(id -u) ]; then
+	sudo=
+elif have sudo; then
+	sudo=sudo
+elif have surun; then
+	sudo=surun
+else
+	echo "$0: sudo or surun required" >&2
+	exit 1
+fi
+
+# If "$1" is not one of the known commands, assume install.  Also do some
+# mapping so yum commands look more like apt-get commands.  I have nothing
+# against yum but I'm more used to apt-get.
+case "${cmd##*/}:$1" in
+yum:remove|yum:purge)
+	shift
+	set -- erase "$@"
+	;;
+
+yum:--help)
+	shift
+	set -- help "$@"
+	;;
+
+yum:check | \
+yum:check-update | \
+yum:clean | \
+yum:deplist | \
+yum:distribution-synchronization | \
+yum:downgrade | \
+yum:groupinfo | \
+yum:groupinstall | \
+yum:grouplist | \
+yum:groupremove | \
+yum:history | \
+yum:info | \
+yum:install | \
+yum:list | \
+yum:load-transaction | \
+yum:makecache | \
+yum:provides | \
+yum:reinstall | \
+yum:repolist | \
+yum:resolvedep | \
+yum:search | \
+yum:shell | \
+yum:update-minimal | \
+yum:updateinfo | \
+yum:upgrade | \
+yum:help | \
+apt-get:install | \
+apt-get:remove | \
+apt-get:purge | \
+apt-get:hold | \
+apt-get:unhold | \
+apt-get:markauto | \
+apt-get:unmarkauto | \
+apt-get:forbid-version | \
+apt-get:update | \
+apt-get:upgrade | \
+apt-get:safe-upgrade | \
+apt-get:full-upgrade | \
+apt-get:forget-new | \
+apt-get:search | \
+apt-get:show | \
+apt-get:clean | \
+apt-get:autoclean | \
+apt-get:changelog | \
+apt-get:download | \
+apt-get:reinstall | \
+apt-get:why | \
+apt-get:why-not)
+	;;
+
+yum:?*|apt-get:?*)
+	set -- install "$@"
+	;;
+
+slack:remove|slack:purge)
+	shift
+	cmd=removepkg
+	;;
+slack:upgrade|slack:update)
+	shift
+	cmd=upgradepkg
+	;;
+slack:?*.t?z)
+	cmd=upgradepkg
+	set -- --install-new "$@"
+	;;
+
+*)
+	echo "$0: do not know what to do" >&2
+	exit 1
+esac
+
+$sudo "$cmd" "$@"
+if [ $# -eq 1 ] && have apt-file && [ x"$1" = xupdate ]; then
+	exec $sudo apt-file update
+fi
