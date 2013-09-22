@@ -92,7 +92,7 @@ help:
 ##
 ## List of all applications
 ##
-all: FvwmTransFocus arpping cdiff cutcom drun infinite-logger			\
+all: FvwmTransFocus arpping cdiff cutcom drun foreach infinite-logger		\
      installkernel.8.gz load malloc mpd-show mpd-state null			\
      rot13 timer tuptime umountiso xgetclass xrun
 
@@ -100,7 +100,7 @@ all: FvwmTransFocus arpping cdiff cutcom drun infinite-logger			\
 install: install-FvwmTransFocus install-add install-ai install-arpping		\
          install-changelog.pl install-cdiff install-check.sh			\
          install-checkmail install-cpuload.sh install-cutcom			\
-         install-drun install-extractlinks.pl					\
+         install-drun install-extractlinks.pl install-foreach			\
          install-genpass install-getlyrics.pl install-gz2bz			\
          install-inplace install-installkernel install-lesspipe			\
          install-load install-moz2elinks.pl install-mp3rip			\
@@ -114,7 +114,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
            uninstall-arpping uninstall-changelog.pl uninstall-cdiff		\
            uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh		\
            uninstall-cutcom uninstall-drun uninstall-extractlinks.pl		\
-           uninstall-genpass							\
+           uninstall-forceach uninstall-genpass					\
            uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh		\
            uninstall-inplace uninstall-installkernel				\
            uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl		\

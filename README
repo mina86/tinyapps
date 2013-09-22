@@ -59,6 +59,11 @@ At the moment the collection includes:
  * extractlinks.pl  - extracts links  from a  HTML page.   Useful, for
    example, when downloading an Internet gallery;
 
+ * foreach - a  tool for running given command for  each of the values
+   specified  on command  line.  In  that, it  is almost  identical to
+   plain for loop, but it's strength comes from the possibility to run
+   many commands at once.
+
  * FvwmTransFocus  - an  FVWM  module which  changes windows'  opacity
    depending  on focus.   When  window looses  focus  it becomes  more
    transparent which looks "neet";
