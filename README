@@ -150,8 +150,6 @@ At the moment the collection includes:
 
  * pingrange.pl - pings a range of addresses;
 
- * quotes.txt - a collection of quotations (some are in Polish);
-
  * rand-files.pl - chooses a random set of files, where each file may
    have its own rank or probability, read from standard input such
    that their size is no greater then given limit.  Useful for
