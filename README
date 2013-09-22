@@ -14,14 +14,6 @@ At the moment the collection includes:
 
  * add - adds specified text to each line from stdin;
 
- * ai-pitr.pl - it's  a joke really.  A 6 line long  AI which might be
-   written    by   Pitr    from   UserFriendly.     For    more   see:
-   http://ars.userfriendly.org/cartoons/?id=19990602 ;
-
- * ai-sid.pl - it's a joke as well.   An 8 line long AI which might by
-   written    by   Sid    from   UserFriendly.     Fore    more   see:
-   http://ars.userfriendly.org/cartoons/?id=20001014 ;
-
  * arpping - tool which pings device with given IP using ARP protocol.
    It may be used without IP address assigned to our machine,
    ie. priori to calling DHCP client or such.

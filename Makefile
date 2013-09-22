@@ -97,7 +97,7 @@ all: FvwmTransFocus arpping cdiff cutcom drun foreach infinite-logger		\
      rot13 timer tuptime umountiso xgetclass xrun
 
 
-install: install-FvwmTransFocus install-add install-ai install-arpping		\
+install: install-FvwmTransFocus install-add install-arpping			\
          install-changelog.pl install-cdiff install-check.sh			\
          install-checkmail install-cpuload.sh install-cutcom			\
          install-drun install-extractlinks.pl install-foreach			\
@@ -110,7 +110,7 @@ install: install-FvwmTransFocus install-add install-ai install-arpping		\
          install-virtman.sh install-xcolor2rgb install-xgetclass install-xrun
 
 
-uninstall: uninstall-FvwmTransFocus uninstall-add uninstall-ai			\
+uninstall: uninstall-FvwmTransFocus uninstall-add				\
            uninstall-arpping uninstall-changelog.pl uninstall-cdiff		\
            uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh		\
            uninstall-cutcom uninstall-drun uninstall-extractlinks.pl		\
@@ -211,14 +211,6 @@ else
 	$(warning fvwm-config not found. Not installing FvwmTransFocus.)
 endif
 
-install-ai: install-ai-pitr.pl install-ai-sid.pl
-
-install-ai-pitr.pl: ai-pitr.pl
-	$(call install,root,root,0755,/usr/local/games,$<)
-
-install-ai-sid.pl: ai-sid.pl
-	$(call install,root,root,0755,/usr/local/games,$<)
-
 install-arpping: arpping
 	$(call install,root,bin,0755,/usr/local/sbin,$<)
 
@@ -272,14 +264,6 @@ ifeq ("$(shell which fvwm-config >/dev/null 2>&1 && echo yes)", "yes")
 else
 	$(warning fvwm-config not found. Not uninstalling FvwmTransFocus.)
 endif
-
-uninstall-ai: uninstall-ai-pitr.pl uninstall-ai-sid.pl
-
-uninstall-ai-pitr.pl:
-	$(call uninstall,/usr/local/games/ai-pitr.pl)
-
-uninstall-ai-sid.pl:
-	$(call uninstall,/usr/local/games/ai-sid.pl)
 
 uninstall-arpping:
 	$(call uninstall,/usr/local/sbin/arpping)
