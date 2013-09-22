@@ -28,28 +28,36 @@
 ##   -> http://tinyapps.sourceforge.net/
 ##
 
+CDIFF_BOLD="$(tput bold)"
+CDIFF_DELETE="$CDIFF_BOLD$(tput setaf 1)"
+CDIFF_INSERT="$CDIFF_BOLD$(tput setaf 2)"
+CDIFF_CHANGE="$CDIFF_BOLD$(tput setaf 3)"
+CDIFF_MISC="$CDIFF_BOLD$(tput setaf 6)"
+CDIFF_COMMENT="$CDIFF_BOLD$(tput setaf 5)"
+CDIFF_SGR0="$(tput sgr0)"
+
 colorize() {
 	sed -e '
-		$ s/$/\x1b[0m/
+		$ s/$/'"$CDIFF_SGR0"'/
 
-		s/^--- .* ----$/\x1b[1;36m&/
-		s/^\*\*\* .* \*\*\*\*$/\x1b[1;36m&/
-		s/^[0-9,]\+[acd][0-9,]\+$/\x1b[1;36m&/
-		s/^@@ -[0-9]\+,[0-9]\+ +[0-9]\+,[0-9]\+ @@/\x1b[1;36m&/
-		s/^\*\{15\}/\x1b[1;36m&/
+		s/^--- .* ----$/'"$CDIFF_MISC"'&/
+		s/^\*\*\* .* \*\*\*\*$/'"$CDIFF_MISC"'&/
+		s/^[0-9,]\+[acd][0-9,]\+$/'"$CDIFF_MISC"'&/
+		s/^@@ -[0-9]\+,[0-9]\+ +[0-9]\+,[0-9]\+ @@/'"$CDIFF_MISC"'&/
+		s/^\*\{15\}/'"$CDIFF_MISC"'&/
 		t
-		s/^\(---\|+++\|\*\*\*\)/\x1b[1;36m&/
-		s/^Index: /\x1b[1;36m&/
-		s/^Only in /\x1b[1;36m&/
-
-		t
-		s/^!/\x1b[1;33m&/
-		s/^[+>]/\x1b[1;32m&/
-		s/^[-<]/\x1b[1;31m&/
-		s/^#/\x1b[1;35m&/
+		s/^\(---\|+++\|\*\*\*\)/'"$CDIFF_MISC"'&/
+		s/^Index: /'"$CDIFF_MISC"'&/
+		s/^Only in /'"$CDIFF_MISC"'&/
 
 		t
-		s/^/\x1b[0m/
+		s/^!/'"$CDIFF_CHANGE"'&/
+		s/^[+>]/'"$CDIFF_INSERT"'&/
+		s/^[-<]/'"$CDIFF_DELETE"'&/
+		s/^#/'"$CDIFF_COMMENT"'&/
+
+		t
+		s/^/'"$CDIFF_SGR0"'/
 	'
 }
 
