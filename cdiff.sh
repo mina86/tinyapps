@@ -38,26 +38,27 @@ CDIFF_SGR0="$(tput sgr0)"
 
 colorize() {
 	sed -e '
-		$ s/$/'"$CDIFF_SGR0"'/
-
 		s/^--- .* ----$/'"$CDIFF_MISC"'&/
 		s/^\*\*\* .* \*\*\*\*$/'"$CDIFF_MISC"'&/
 		s/^[0-9,]\+[acd][0-9,]\+$/'"$CDIFF_MISC"'&/
 		s/^@@ -[0-9]\+,[0-9]\+ +[0-9]\+,[0-9]\+ @@/'"$CDIFF_MISC"'&/
 		s/^\*\{15\}/'"$CDIFF_MISC"'&/
-		t
+		t z
+
 		s/^\(---\|+++\|\*\*\*\)/'"$CDIFF_MISC"'&/
 		s/^Index: /'"$CDIFF_MISC"'&/
 		s/^Only in /'"$CDIFF_MISC"'&/
+		t z
 
-		t
 		s/^!/'"$CDIFF_CHANGE"'&/
 		s/^[+>]/'"$CDIFF_INSERT"'&/
 		s/^[-<]/'"$CDIFF_DELETE"'&/
 		s/^#/'"$CDIFF_COMMENT"'&/
+		t z
+		b
 
-		t
-		s/^/'"$CDIFF_SGR0"'/
+		:z
+		s/$/'"$CDIFF_SGR0"'/
 	'
 }
 
