@@ -104,7 +104,7 @@ install: install-FvwmTransFocus install-add install-arpping			\
          install-genpass install-getlyrics.pl install-gz2bz			\
          install-inplace install-installkernel install-lesspipe			\
          install-load install-moz2elinks.pl install-mp3rip			\
-         install-mpd-state install-null install-pingrange.pl			\
+         install-mpd-state install-null install-pingrange.pl install-pkg	\
          install-rot13 install-rand-files.pl install-settitle			\
          install-show install-surun install-timer install-tpwd install-traf.sh	\
          install-virtman.sh install-xcolor2rgb install-xgetclass install-xrun
@@ -119,7 +119,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add				\
            uninstall-inplace uninstall-installkernel				\
            uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl		\
            uninstall-mp3rip uninstall-mpd-state uninstall-null			\
-           uninstall-pingrange.pl uninstall-rot13				\
+           uninstall-pingrange.pl uninstall-pkg uninstall-rot13			\
            uninstall-rand-files.pl uninstall-settitle uninstall-show		\
            uninstall-surun uninstall-timer uninstall-tpwd uninstall-traf.sh	\
            uninstall-virtman.sh uninstall-xcolor2rgb uninstall-xgetclass	\

@@ -147,6 +147,11 @@ At the moment the collection includes:
 
  * pingrange.pl - pings a range of addresses;
 
+ * pkg - a wrapper for apt-get, yum and Slackware's package management
+   scripts which "does what you mean" on all of those systems and also
+   makes  the  command shorter  by  automatically  running it  through
+   sudo/surun if necessary.
+
  * rand-files.pl - chooses a random set of files, where each file may
    have its own rank or probability, read from standard input such
    that their size is no greater then given limit.  Useful for
