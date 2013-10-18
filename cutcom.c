@@ -62,9 +62,9 @@ static const struct state_function s_string_bs[] = {
 };
 
 static const struct state_function s_char[] = {
-	{ '"' , 1, 0  , 0, s_text      },
+	{ '\'', 1, 0  , 0, s_text      },
 	{ '\\', 1, 0  , 0, s_char_bs   },
-	{ 0   , 1, 0  , 0, s_string    },
+	{ 0   , 1, 0  , 0, s_char      },
 };
 
 static const struct state_function s_char_bs[] = {
