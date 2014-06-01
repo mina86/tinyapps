@@ -153,25 +153,20 @@ tmpfile () {
 	done
 
 	# tempfile exists
-	umask 077
-	if which tempfile >/dev/null 2>&1; then
-		tempfile -d "$3" -p "$1"
-		umask "$2"
-		return 0
+	if ! which mktemp >/dev/null 2>&1 && ! which tempfile >/dev/null 2>&1
+	then
+		echo unable to create temporary file, \
+		     mktemp or tempfile required >&2
+		exit 1
 	fi
 
-	# Race condition present
-	set -- "$3/$1$RANDOM.$$" "$2"
-	for __TMP in "" .0 .1 .2 .3 .4 .5 .6 .7 .8 .9; do
-		if [ -e "$1$__TMP" ] || ! :>"$1$__TMP"; then continue; fi
-		printf %s "$1$__TMP"
-		umask "$2"
-		return 0
-	done
-
-	# Unable to create temp file
-	echo unable to create temporary file >&2
-	exit 1
+	umask 077
+	if which mktemp >/dev/null 2>&1; then
+		mktemp "$3/$1.XXXXXXXX" ||
+	else
+		tempfile -d "$3" -p "$1"
+	fi
+	umask "$2"
 }
 
 

@@ -294,7 +294,7 @@ get () {
 ##
 ## Generate temporary file
 ##
-TMPFILE=ivona.$UID.$$
+TMPFILE=ivona.$(id -ru).$$
 if [ -n "$TMPDIR" ] && [ -d "$TMPDIR" ] && [ -w "$TMPDIR" ]; then
 	TMPFILE="$TMPDIR/$TMPFILE";
 elif [ -d /tmp ] && [ -w /tmp ]; then

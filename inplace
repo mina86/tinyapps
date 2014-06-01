@@ -107,22 +107,12 @@ if [ -z "$SUFFIX" ]; then
 	# tempfile exists
 	UMASK=$(umask)
 	umask 077
-	if which tempfile >/dev/null 2>&1; then
-		TMPFILE="$(tempfile -d "$CHECK_TMP" -p "inplace-")"
+	if which mktemp >/dev/null 2>&1; then
+		TMPFILE=$(mktemp "$TEMPFILE/inplace-XXXXXXXX")
+	elif which tempfile >/dev/null 2>&1; then
+		TMPFILE=$(tempfile -d "$TEMPFILE" -p "inplace-")
 	else
-	# tempfile does not exist
-		if [ X"$RANDOM" = X"$RANDOM" ]; then RANDOM=$(date +%s); fi
-		TMPFILE=$(printf %s/inplace-%x-%x "$TMPFILE" $$ "$RANDOM")
-
-		# Race condition present
-		for N in "" .0 .1 .2 .3 .4 .5 .6 .7 .8 .9; do
-			if [ -e "$TMPFILE$N" ] || ! :>"$TMPFILE$N"; then continue; fi
-			TMPFILE="$EMPFILE$N"
-			break
-		done
-
-		# Unable to create temp file
-		err unable to create temporary file
+		err unable to create temporary file, mktemp or tempfile required
 	fi
 
 	trap 'rm -f -- "$TMPFILE"' 0

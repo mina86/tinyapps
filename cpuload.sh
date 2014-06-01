@@ -8,7 +8,7 @@
 ##   -> http://tinyapps.sourceforge.net/
 ##
 
-if [ "X$1" == X-h ] || [ "X$1" == "X--help" ]; then
+if [ "X$1" = X-h ] || [ "X$1" = "X--help" ]; then
 	cat <<EOF
 usage: ${0##*/} [ -n | --nice ]
     -n --nice  includes nice value
@@ -16,31 +16,35 @@ EOF
 fi
 
 
-if [ "X$1" == X-n ] || [ "X$1" == "X--nice" ]; then NICE=y; else NICE=; fi
+if [ "X$1" = X-n ] || [ "X$1" = "X--nice" ]; then
+	nice=true
+else
+	nice=false
+fi
 
 
 while true; do
 	head -n 1 /proc/stat
 	sleep 1 || exit
 done | while true; do
-	read IGNORE A B C D IGNORE2
-	if [ -z "$NICE" ]; then
-		LOAD=$(( $A + $B + $C ))
-		TOTAL=$(( $LOAD + $D ))
+	read ignore a b c d ignore2
+	if $nice; then
+		load=$(( $a + $b + $c ))
+		total=$(( $load + $d ))
 	else
-		LOAD=$(( $A + $C ))
-		TOTAL=$(( $LOAD + $B + $D ))
+		load=$(( $a + $c ))
+		total=$(( $load + $b + $d ))
 	fi
 
-	if [ -z "$OTOTAL" ] || [ "X$TOTAL" == "X$OTOTAL" ]; then
-		CPULOAD=0
+	if [ -z "$ototal" ] || [ x"$total" = x"$ototal" ]; then
+		cpuload=0
 	else
-		CPULOAD=$((10000 * ($LOAD-$OLOAD) / ($TOTAL-$OTOTAL)))
+		cpuload=$((10000 * ($load-$oload) / ($total-$ototal)))
 	fi
 
-	printf " %3d.%02d%%\r" $(($CPULOAD / 100)) $(($CPULOAD % 100))
+	printf " %3d.%02d%%\r" $(($cpuload / 100)) $(($cpuload % 100))
 
-	OTOTAL=$TOTAL
-	OLOAD=$LOAD
+	ototal=$total
+	oload=$load
 	sleep 1
 done

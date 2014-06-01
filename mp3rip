@@ -239,7 +239,7 @@ if [ "$RUN_SETUP" ]; then
 		__NAME="$1"; shift
 		__VALUE=$(eval echo \"\$$__NAME\")
 
-		if [ "X$2" == Xbool ]; then
+		if [ "X$2" = Xbool ]; then
 			if [ -z "$__VALUE" ]; then __VALUE=no; else __VALUE=yes; fi
 		fi
 
@@ -254,7 +254,7 @@ if [ "$RUN_SETUP" ]; then
 		printf "\n# %s\n%s='%s'\n" "$1" "$__NAME" \
 			$(printf "%s" "$__VALUE" | sed -e "s/'/'\\\\''/") >>"$TMP_FILE"
 
-		if [ "X$2" == Xbool ]; then
+		if [ "X$2" = Xbool ]; then
 			__VALUE=$(printf "%s" "$__VALUE" | tr $UPPER_CHARS $LOWER_CHARS)
 			if [ "X$__VALUE" != "Xy" ] && [ "X$__VALUE" != "Xyes" ]
 			then __VALUE=; else __VALUE=y; fi
@@ -264,11 +264,14 @@ if [ "$RUN_SETUP" ]; then
 	}
 
 	## Temp file
-	TMP_FILE="${0##*/}-tmp-$RANDOM"
-	if [ -n "$TEMPDIR" ] && [ -d "$TEMPDIR" ] && [ -w "$TEMPDIR" ]; then
-		TMP_FILE="$TEMPDIR/$TMP_FILE"
-	elif [ -d /tmp ] && [ -w /tmp ]; then
-		TMP_FILE="/tmp/$TMP_FILE";
+	if which mktemp >/dev/null 2>&1; then
+		TMP_FILE=$(mktemp)
+	elif which tempfile >/dev/null 2>&1; then
+		TMP_FILE=$(tempfile)
+	else
+		echo unable to create temporary file, \
+		     mktemp or tempfile required >&2
+		exit 1
 	fi
 
 	## Config header

@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ##
 ## Wrapper for mpd-state to make it behave like state-utils.
 ## Copyright (c) 2005 by Michal Nazareicz (mina86/AT/mina86.com)
@@ -28,7 +28,7 @@
 # state-amend all pointing to this wrapper.
 #
 
-if [ "$1" == "--help" ]; then
+if [ "$1" = "--help" ]; then
 	cat<<EOF
 usage: state-save    [ <state-name> ]
        state-restore [ <state-name> ]

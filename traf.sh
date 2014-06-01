@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 ##
 ## Shows TX/RX over 1sec
 ## By Michal Nazareicz (mina86/AT/mina86.com)

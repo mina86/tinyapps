@@ -103,10 +103,9 @@ EOF
 ## Init variables
 ##
 umask 077
-if [ -n "$BASH_VERSION" ]
-then declare -i SLEEP=10 RETRY=10 COUNT=0
-else SLEEP=10; RETRY=10; COUNT=0
-fi
+SLEEP=10
+RETRY=10
+COUNT=0
 
 KEEPGOING=
 export CHECK_QUIET= CHECK_IGNORESIG=
@@ -222,22 +221,12 @@ for N in "$TMPDIR" "$TMP" "$TEMP" ~/tmp /tmp; do
 done
 
 # tempfile exists
-if which tempfile >/dev/null 2>&1; then
-	export CHECK_TMP="$(tempfile -d "$CHECK_TMP" -p "check-")"
+if which mktemp >/dev/null 2>&1; then
+	export CHECK_TMP=$(mktemp "$CHECK_TMP/check-XXXXXXXX")
+elif which tempfile >/dev/null 2>&1; then
+	export CHECK_TMP=$(tempfile -d "$CHECK_TMP" -p "check-")
 else
-# tempfile does not exist
-	if [ X"$RANDOM" = X"$RANDOM" ]; then RANDOM=$(date +%s); fi
-	export CHECK_TMP=$(printf %s/check-%x-%x "$CHECK_TMP" $$ "$RANDOM")
-
-	# Race condition present
-	for N in "" .0 .1 .2 .3 .4 .5 .6 .7 .8 .9; do
-		if [ -e "$CHECK_TMP$N" ] || ! :>"$CHECK_TMP$N"; then continue; fi
-		CHECK_TMP="$CHECK_TMP$N"
-		break;
-	done
-
-	# Unable to create temp file
-	echo unable to create temporary file >&2
+	echo unable to create temporary file, mktemp or tempfile required >&2
 	exit 0
 fi
 
