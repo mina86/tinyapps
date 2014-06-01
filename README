@@ -140,11 +140,6 @@ At the moment the collection includes:
    with arguments  and the given program  will be run  and both stdout
    and stderr will be redirected to /dev/null;
 
- * one-time-pass.sh -  another joke.  It  works like passwd  with this
-   difference that it automatically  generates a random password which
-   is  not revealed to  the user,  therefore he  doesn't know  his own
-   password;
-
  * pingrange.pl - pings a range of addresses;
 
  * pkg - a wrapper for apt-get, yum and Slackware's package management
