@@ -26,52 +26,87 @@
 
 case "$1" in
 --function)  ## Generic function
-cat <<EOF
-tpwd () {
-	set -- \$? "\$@"
-	if [ X"\$2" != X-n ] || [ X"\${3#-}" != X"\$3" ] || [ \$# -gt 6 ] || \
-		[ -z "\$HOME" ]; then shift; "\$(which tpwd)" "\$@"; return; fi
-	set -- \$1 "\${3:-30}" "\${4-...}" "\$5" "\${6:-\$PWD}"
-	[ X"\$5" = X"\${5#\$HOME}" ] || \
-		set -- "\$1" "\${2:-30}" "\${3-...}" "\$4" "~\${5#\$HOME}"
+	echo 'tpwd () {
+	__tpwd_exit_code=$?
+	if [ X"$1" != X-n ] || [ X"${2#-}" != X"$2" ] || [ $# -gt 5 ] || [ -z "$HOME" ]; then
+		"$(which tpwd)" "$@"
+		return $__tpwd_exit_code
+	fi
 
-	if [ \${#5} -le \$2 ] || [ \${4:-\${#3}} -ge \$2 ]
-	then printf %s "\$5"; return \$1; fi
-	printf %s "\$3"; set -- \$1 "\$(( \$2 - \${4:-\${#3}} ))" "\${5#?}"
-	while [ \${#3} -gt \$2 ]; do set -- \$1 "\$2" "\${3#?}"; done
-	printf %s "\$3"; return \$1
-}
-EOF
+	# tpwd -n [ <len> [ <trunc> [ <tlen> [ <path> ]
+	set -- "${2:-30}" "${3-...}" "$4" "${5:-$PWD}"
+	# tpwd <len> <trunc> <tlen> <path>
+	case "$4" in
+	"$HOME") set -- "$1" "$2" "$3" "~" ;;
+	"$HOME"/*) set -- "$1" "$2" "$3" "~${4#$HOME}"
+	esac
+
+	if [ ${#4} -le "$1" ] || [ ${3:-${#2}} -gt "$1" ]; then
+		printf %s "$4"
+		return $__tpwd_exit_code
+	fi
+
+	printf %s "$2"
+	set -- "$(( $1 - ${3:-${#2}} ))" "${4#?}"
+	while [ ${#2} -gt "$1" ]; do
+		set -- "$1" "${2#?}"
+	done
+	printf %s "$2"
+	return $__tpwd_exit_code
+}'
 	exit
 	;;
 --bash|--zsh) ## Bash/zsh function
-	cat <<EOF
-tpwd () {
-	local EC=\$? P="\$PWD" E=echo ARGS=( \$@ )
-	if [ X"\$1" = X-P ] || [ X"\$1" = X-L ]; then P="\$(pwd \$1)"; shift; fi
-	if [ X"\$1" = X-n ]; then E='echo -n'; shift; fi
-	if [ \$# -gt 4 ] || [ X"\${1#-}" != X"\$1" ] || [ -z "\$HOME" ]
-	then "\$(which tpwd)" "\${ARGS[@]}"; return \$?; fi
-
-	P="\${4-\$P}"; P="\${P/#\$HOME/~}"
-	if [ \${#P} -le \${1:-30} ]
-	then \$E "\$P"
-	else \$E "\$2\${P:\$(( \${#P} - \${1:-30} + \${3:-\${#2}} ))}"
+	echo 'tpwd () {
+	local exitcode=$? pwd="$PWD" echo=echo args=( $@ )
+	if [ X"$1" = X-P ] || [ X"$1" = X-L ]; then
+		pwd="$(pwd $1)"
+		shift
 	fi
-	return \$EC
-}
-EOF
+	if [ X"$1" = X-n ]; then
+		echo="echo -n"
+		shift
+	fi
+	if [ $# -gt 4 ] || [ x"${1#-}" != x"$1" ] || [ -z "$HOME" ]; then
+		"$(which tpwd)" "${args[@]}"
+		return $?
+	fi
+
+	pwd="${4-$pwd}";
+	case $pwd in
+	"$HOME") pwd="~" ;;
+	"$HOME"/*) pwd="~/${pwd#$HOME/}"
+	esac
+
+	set -- "${1:-30}" "${2-...}" "$3"
+	set -- "$1" "$2" "${3:-${#2}}"
+	if [ ${#pwd} -le "$1" ] || [ "$3" -gt "$1" ]; then
+		$echo "$pwd"
+	else
+		$echo "$2${pwd:$(( ${#pwd} - $1 + $3 ))}"
+	fi
+
+	return $exitcode
+}'
 	exit
 esac
 
 
 ## PWD
-if [ X"$1" = X-P ] || [ X"$1" = X-L ]
-then P="$(pwd $1)"; shift
-else P="$PWD"; fi
+if [ X"$1" = X-P ] || [ X"$1" = X-L ]; then
+	pwd="$(pwd $1)"
+	shift
+else
+	pwd="$PWD"
+fi
 
 ## New line
-if [ X"$1" = X-n ]; then E='printf %s'; shift; else E=echo; fi
+if [ X"$1" = X-n ]; then
+	echo='printf %s'
+	shift
+else
+	echo=echo
+fi
 
 ## Usage
 if [ $# -gt 4 ] || [ X"${1#-}" != X"$1" ]; then
@@ -98,18 +133,40 @@ EOF
 fi
 
 ## PWD
-P="${4-$P}"; H="${HOME:-$(eval echo ~$(id -un))}"; H="${H%/}"
-if                [ X"$P" != X"${P#//}" ]; then P="${P#/}"  ; fi
-if [ -n "$H" ] && [ X"$P" != X"${P#$H}" ]; then P="~${P#$H}"; fi
+pwd="${4-$pwd}";
+case $pwd in //*)
+	pwd="${pwd#/}"
+esac
+
+home="${HOME:-$(eval echo ~$(id -un))}"
+home="${home%/}"
+if [ -n "$home" ]; then
+	case "$pwd" in
+	"$home") pwd='~';;
+	"$home"/*) pwd="~/${pwd#$home/}"
+	esac
+fi
 
 ## Short enough or trunc too long
-LEN=${1-30}
-if [ ${#P} -le $LEN ]; then $E "$P"; exit; fi
-TRUNC=${2-...}; LEN=$(( $LEN - ${3-${#TRUNC}} ))
-if [ $LEN -le 0 ]; then $E "$TRUNC"; exit; fi
+len=${1-30}
+if [ ${#pwd} -le $len ]; then
+	$echo "$pwd"
+	exit
+fi
+
+trunc=${2-...}
+len=$(( $len - ${3-${#trunc}} ))
+if [ $len -le 0 ]; then
+	$echo "$trunc"
+	exit
+fi
 
 ## Print
-if [ -n "$BASH_VERSION" ]
-then $E "$TRUNC${P:$(( ${#P} - $LEN ))}"
-else while [ ${#P} -gt $LEN ]; do P="${P%?}"; done; $E "$TRUNC$P"
+if [ -n "$BASH_VERSION" ]; then
+	$echo "$trunc${pwd:$(( ${#pwd} - $len ))}"
+else
+	while [ ${#pwd} -gt $len ]; do
+		pwd="${pwd%?}"
+	done
+	$echo "$trunc$pwd"
 fi
