@@ -111,7 +111,7 @@ fi
 ## Usage
 if [ $# -gt 4 ] || [ X"${1#-}" != X"$1" ]; then
 	cat <<EOF
-usage: tpwd [ -L | -P ] [ -n ] [<len> [<trunc> [<tlen> [<path>]]]]
+usage: tpwd [ -L | -P ] [ -n ] [<len> [<trunc> [<tlen>]]]
        eval "\$(tpwd --bash)"      defines bash function
        eval "\$(tpwd --zsh)"       defines zsh function
        eval "\$(tpwd --function)"  defines generic POSIX shell function
@@ -121,7 +121,6 @@ usage: tpwd [ -L | -P ] [ -n ] [<len> [<trunc> [<tlen> [<path>]]]]
  <len>    maximum length of printed string                       [30]
  <trunc>  string to print at the beginning if pwd was trunced   [...]
  <tlen>   length of <trunc> (useful if using ANSI codes)
- <path>   path to use instead of \$PWD
 
 It might be used in PS1 varaible to truncate very long PWD's which
 normaly would took a whole line (or more), eg:
@@ -133,7 +132,6 @@ EOF
 fi
 
 ## PWD
-pwd="${4-$pwd}";
 case $pwd in //*)
 	pwd="${pwd#/}"
 esac
