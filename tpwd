@@ -136,8 +136,7 @@ case $pwd in //*)
 	pwd="${pwd#/}"
 esac
 
-home="${HOME:-$(eval echo ~$(id -un))}"
-home="${home%/}"
+home="${HOME%/}"
 if [ -n "$home" ]; then
 	case "$pwd" in
 	"$home") pwd='~';;
