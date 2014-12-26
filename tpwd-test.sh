@@ -28,7 +28,11 @@ set -eu
 
 run_test() {
 	run() {
-		printf "$ %s\n<" "$*"
+		(
+			shift
+			set -- tpwd "$@"
+			printf "$ %s\n<" "$*"
+		)
 		ec=0
 		HOME=$home "$@" || ec=$?
 		printf '> %d\n' $ec
@@ -45,10 +49,19 @@ run_test() {
 	done
 }
 
-case ${1:-} in --run-test)
+case ${1:-} in
+--run-test)
 	home=$PWD
 	cd foobar/qux
 	run_test "$2"
+	exit 0
+	;;
+--run-test-source)
+	home=$PWD
+	cd foobar/qux
+	__tpwd_sourcing=1
+	. "$2"
+	run_test "tpwd"
 	exit 0
 esac
 
@@ -84,80 +97,80 @@ ln -s baz qux
 cd "$temp"
 
 cat >$temp/expected <<EOF
-$ /home/mpn/code/tinyapps/tpwd
+$ tpwd
 <~/foobar/qux
 > 0
-$ /home/mpn/code/tinyapps/tpwd 5
+$ tpwd 5
 <...ux
 > 0
-$ /home/mpn/code/tinyapps/tpwd 5 {
+$ tpwd 5 {
 <{/qux
 > 0
-$ /home/mpn/code/tinyapps/tpwd 5 ... 1
+$ tpwd 5 ... 1
 <.../qux
 > 0
-$ /home/mpn/code/tinyapps/tpwd 5  1
+$ tpwd 5  1
 </qux
 > 0
-$ /home/mpn/code/tinyapps/tpwd -n
+$ tpwd -n
 <~/foobar/qux> 0
-$ /home/mpn/code/tinyapps/tpwd -n 5
+$ tpwd -n 5
 <...ux> 0
-$ /home/mpn/code/tinyapps/tpwd -n 5 {
+$ tpwd -n 5 {
 <{/qux> 0
-$ /home/mpn/code/tinyapps/tpwd -n 5 ... 1
+$ tpwd -n 5 ... 1
 <.../qux> 0
-$ /home/mpn/code/tinyapps/tpwd -n 5  1
+$ tpwd -n 5  1
 </qux> 0
-$ /home/mpn/code/tinyapps/tpwd -L
+$ tpwd -L
 <~/foobar/qux
 > 0
-$ /home/mpn/code/tinyapps/tpwd -L 5
+$ tpwd -L 5
 <...ux
 > 0
-$ /home/mpn/code/tinyapps/tpwd -L 5 {
+$ tpwd -L 5 {
 <{/qux
 > 0
-$ /home/mpn/code/tinyapps/tpwd -L 5 ... 1
+$ tpwd -L 5 ... 1
 <.../qux
 > 0
-$ /home/mpn/code/tinyapps/tpwd -L 5  1
+$ tpwd -L 5  1
 </qux
 > 0
-$ /home/mpn/code/tinyapps/tpwd -L -n
+$ tpwd -L -n
 <~/foobar/qux> 0
-$ /home/mpn/code/tinyapps/tpwd -L -n 5
+$ tpwd -L -n 5
 <...ux> 0
-$ /home/mpn/code/tinyapps/tpwd -L -n 5 {
+$ tpwd -L -n 5 {
 <{/qux> 0
-$ /home/mpn/code/tinyapps/tpwd -L -n 5 ... 1
+$ tpwd -L -n 5 ... 1
 <.../qux> 0
-$ /home/mpn/code/tinyapps/tpwd -L -n 5  1
+$ tpwd -L -n 5  1
 </qux> 0
-$ /home/mpn/code/tinyapps/tpwd -P
+$ tpwd -P
 <~/foobar/baz
 > 0
-$ /home/mpn/code/tinyapps/tpwd -P 5
+$ tpwd -P 5
 <...az
 > 0
-$ /home/mpn/code/tinyapps/tpwd -P 5 {
+$ tpwd -P 5 {
 <{/baz
 > 0
-$ /home/mpn/code/tinyapps/tpwd -P 5 ... 1
+$ tpwd -P 5 ... 1
 <.../baz
 > 0
-$ /home/mpn/code/tinyapps/tpwd -P 5  1
+$ tpwd -P 5  1
 </baz
 > 0
-$ /home/mpn/code/tinyapps/tpwd -P -n
+$ tpwd -P -n
 <~/foobar/baz> 0
-$ /home/mpn/code/tinyapps/tpwd -P -n 5
+$ tpwd -P -n 5
 <...az> 0
-$ /home/mpn/code/tinyapps/tpwd -P -n 5 {
+$ tpwd -P -n 5 {
 <{/baz> 0
-$ /home/mpn/code/tinyapps/tpwd -P -n 5 ... 1
+$ tpwd -P -n 5 ... 1
 <.../baz> 0
-$ /home/mpn/code/tinyapps/tpwd -P -n 5  1
+$ tpwd -P -n 5  1
 </baz> 0
 EOF
 
@@ -170,7 +183,7 @@ line() {
 
 assert() {
 	__ec=0
-	"$sh" "$self" --run-test "$tpwd" >got-${sh##*/} 2>&1 || __ec=$?
+	"$sh" "$self" "$1" "$tpwd" >got-${sh##*/} 2>&1 || __ec=$?
 	if [ $__ec -ne 0 ]; then
 		tput setf 4; tput bold; echo "FAILED; exit code: $__ec:"
 		line; cat "got-${sh##*/}"; line
@@ -184,9 +197,9 @@ assert() {
 
 ec=0
 for sh; do
-	tput setaf 2
-	echo "> Testing $sh"
-	tput sgr 0
-	assert
+	tput setaf 2; echo "> Testing $sh"; tput sgr 0
+	assert "--run-test"
+	tput setaf 2; echo "> Testing $sh (sourcing)"; tput sgr 0
+	assert "--run-test-source"
 done
 exit $ec
