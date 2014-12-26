@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## Truncates pwd to specified number of characters
-## Copyright (c) 2005-2009 by Michal Nazareicz (mina86/AT/mina86.com)
+## Copyright (c) 2005-2014 by Michal Nazareicz (mina86/AT/mina86.com)
 ##
 ## This software is OSI Certified Open Source Software.
 ## OSI Certified is a certification mark of the Open Source Initiative.
@@ -24,146 +24,74 @@
 ##
 
 
-case "$1" in
---function)  ## Generic function
-	echo 'tpwd () {
-	__tpwd_exit_code=$?
-	if [ X"$1" != X-n ] || [ X"${2#-}" != X"$2" ] || [ $# -gt 5 ] || [ -z "$HOME" ]; then
-		"$(which tpwd)" "$@"
-		return $__tpwd_exit_code
-	fi
-
-	# tpwd -n [ <len> [ <trunc> [ <tlen> [ <path> ]
-	set -- "${2:-30}" "${3-...}" "$4" "${5:-$PWD}"
-	# tpwd <len> <trunc> <tlen> <path>
-	case "$4" in
-	"$HOME") set -- "$1" "$2" "$3" "~" ;;
-	"$HOME"/*) set -- "$1" "$2" "$3" "~${4#$HOME}"
-	esac
-
-	if [ ${#4} -le "$1" ] || [ ${3:-${#2}} -gt "$1" ]; then
-		printf %s "$4"
-		return $__tpwd_exit_code
-	fi
-
-	printf %s "$2"
-	set -- "$(( $1 - ${3:-${#2}} ))" "${4#?}"
-	while [ ${#2} -gt "$1" ]; do
-		set -- "$1" "${2#?}"
-	done
-	printf %s "$2"
-	return $__tpwd_exit_code
-}'
-	exit
-	;;
---bash|--zsh) ## Bash/zsh function
-	echo 'tpwd () {
-	local exitcode=$? pwd="$PWD" echo=echo args=( $@ )
-	if [ X"$1" = X-P ] || [ X"$1" = X-L ]; then
-		pwd="$(pwd $1)"
-		shift
-	fi
-	if [ X"$1" = X-n ]; then
-		echo="echo -n"
-		shift
-	fi
-	if [ $# -gt 4 ] || [ x"${1#-}" != x"$1" ] || [ -z "$HOME" ]; then
-		"$(which tpwd)" "${args[@]}"
-		return $?
-	fi
-
-	pwd="${4-$pwd}";
-	case $pwd in
-	"$HOME") pwd="~" ;;
-	"$HOME"/*) pwd="~/${pwd#$HOME/}"
-	esac
-
-	set -- "${1:-30}" "${2-...}" "$3"
-	set -- "$1" "$2" "${3:-${#2}}"
-	if [ ${#pwd} -le "$1" ] || [ "$3" -gt "$1" ]; then
-		$echo "$pwd"
-	else
-		$echo "$2${pwd:$(( ${#pwd} - $1 + $3 ))}"
-	fi
-
-	return $exitcode
-}'
+case "${1-}" in --function|--bash|--zsh)
+	echo "tpwd: $1 option is deprecated" >&2
+	echo "tpwd: simply \". '$0'\" instead" >&2
+	echo ". '$0'"
 	exit
 esac
 
 
-## PWD
-if [ X"$1" = X-P ] || [ X"$1" = X-L ]; then
-	pwd="$(pwd $1)"
-	shift
-else
-	pwd="$PWD"
-fi
+tpwd() {
+	case "${1-}" in
+	-[LP]) __tpwd="$(pwd $1)"; shift ;;
+	*) __tpwd="$PWD"
+	esac
 
-## New line
-if [ X"$1" = X-n ]; then
-	echo='printf %s'
-	shift
-else
-	echo=echo
-fi
+	case "${1-}" in
+	-n) shift; set -- '%s' "$@" ;;
+	*) set -- '%s\n' "$@"
+	esac
 
-## Usage
-if [ $# -gt 4 ] || [ X"${1#-}" != X"$1" ]; then
-	cat <<EOF
+	if [ $# -gt 4 ] || ( [ $# -gt 1 ] && [ X"${2#-}" != X"$2" ] ); then
+		cat >&2 <<EOF
 usage: tpwd [ -L | -P ] [ -n ] [<len> [<trunc> [<tlen>]]]
-       eval "\$(tpwd --bash)"      defines bash function
-       eval "\$(tpwd --zsh)"       defines zsh function
-       eval "\$(tpwd --function)"  defines generic POSIX shell function
- -L       uses  'pwd -L'  instead of  \$PWD
- -P       uses  'pwd -P'  instead of  \$PWD
- -n       doesn't print new line character at the end
- <len>    maximum length of printed string                       [30]
- <trunc>  string to print at the beginning if pwd was trunced   [...]
- <tlen>   length of <trunc> (useful if using ANSI codes)
+       source /path/to/tpwd   in interactive shell, define tpwd function
+ -L or -P  use  'pwd -L'  or  'pwd -P'  instead of  \$PWD
+ -n        don't print new line character at the end
+ <len>     maximum length of printed string                         [30]
+ <trunc>   string to print at the beginning if pwd was trunced     [...]
+ <tlen>    length of <trunc> (useful if using ANSI codes)
 
-It might be used in PS1 varaible to truncate very long PWD's which
+It may be used in PS1 varaible to truncate very long PWD's which
 normaly would took a whole line (or more), eg:
     PS1='[\\u@\\h \$(tpwd -n 30 {)]\\$ '     # works in bash
 
 EOF
-	[ X"$1" = X"--help" ] || [ X"$1" = X"-h" ]
-	exit $?
-fi
+		unset __tpwd
+		[ X"${2-}" = X"--help" ] || [ X"${2-}" = X"-h" ]
+		set -u
+		return $?
+	fi
 
-## PWD
-case $pwd in //*)
-	pwd="${pwd#/}"
-esac
-
-home="${HOME%/}"
-if [ -n "$home" ]; then
-	case "$pwd" in
-	"$home") pwd='~';;
-	"$home"/*) pwd="~/${pwd#$home/}"
+	case $__tpwd in //*)
+		__tpwd="${__tpwd#/}"
 	esac
-fi
 
-## Short enough or trunc too long
-len=${1-30}
-if [ ${#pwd} -le $len ]; then
-	$echo "$pwd"
-	exit
-fi
+	if [ -n "${HOME-}" ] && [ -n "${HOME%/}" ]; then
+		case "$__tpwd" in
+		"${HOME%/}") __tpwd='~' ;;
+		"${HOME%/}"/*) __tpwd='~'/${__tpwd#"${HOME%/}/"}
+		esac
+	fi
 
-trunc=${2-...}
-len=$(( $len - ${3-${#trunc}} ))
-if [ $len -le 0 ]; then
-	$echo "$trunc"
-	exit
-fi
+	set -- "$1" "${2-30}" "${3-...}" "${4-}"
+	if [ ${#__tpwd} -le "$2" ]; then
+		set -- "$1" '' ''
+	else
+		set -- "$1" $(( $2 - ${4:-${#3}} )) "$3"
+		if [ $2 -le 0 ]; then
+			__tpwd=$
+		elif [ -n "${BASH_VERSION-}${ZSH_VERSION-}" ]; then
+			__tpwd=${__tpwd:$(( ${#__tpwd} - $2 ))}
+		else
+			__tpwd=$(expr "$__tpwd" : '.*\(.\{'$2'\}\)')
+		fi
+	fi
 
-## Print
-if [ -n "$BASH_VERSION$ZSH_VERSION" ]; then
-	$echo "$trunc${pwd:$(( ${#pwd} - $len ))}"
-else
-	while [ ${#pwd} -gt $len ]; do
-		pwd="${pwd%?}"
-	done
-	$echo "$trunc$pwd"
-fi
+	set -- "$1" "$3$__tpwd"
+	unset __tpwd
+	printf "$@"
+}
+
+[ -n "${__tpwd_sourcing-}" ] || [ -z "${-#*i*}" ] || tpwd "$@"
