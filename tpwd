@@ -94,4 +94,4 @@ EOF
 	printf "$@"
 }
 
-[ -n "${__tpwd_sourcing-}" ] || [ -z "${-#*i*}" ] || tpwd "$@"
+[ -n "${__tpwd_sourcing-}" ] || [ -z "${-##*i*}" ] || tpwd "$@"
