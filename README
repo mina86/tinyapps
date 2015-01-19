@@ -75,9 +75,6 @@ At the moment the collection includes:
    conversion  between compress,  gzip, bzip2,  xz, lzma  and anything
    else you specify.
 
- * infinite-logger - loggs every logged message including the messages
-   logget by itself :]
-
  * inplace -  a shell script which  runs given commmand  for all given
    files and replace their content with whatever the command returns;
 

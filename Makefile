@@ -92,8 +92,8 @@ help:
 ##
 ## List of all applications
 ##
-all: FvwmTransFocus arpping cdiff cutcom drun foreach infinite-logger		\
-     installkernel.8.gz load malloc mpd-show mpd-state null			\
+all: FvwmTransFocus arpping cdiff cutcom drun foreach			\
+     installkernel.8.gz load malloc mpd-show mpd-state null		\
      rot13 timer tuptime umountiso xgetclass xrun
 
 

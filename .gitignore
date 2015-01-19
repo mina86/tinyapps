@@ -12,7 +12,6 @@ core
 cutcom
 drun
 genpass
-infinite-logger
 load
 malloc
 mountiso
