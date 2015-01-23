@@ -113,7 +113,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add				\
            uninstall-check.sh uninstall-checkmail uninstall-cpuload.sh		\
            uninstall-cutcom uninstall-drun uninstall-extractlinks.pl		\
            uninstall-forceach uninstall-genpass					\
-           uninstall-getlyrics.pl uninstall-gz2bz uninstall-ivona.sh		\
+           uninstall-getlyrics.pl uninstall-gz2bz		\
            uninstall-inplace uninstall-installkernel				\
            uninstall-lesspipe uninstall-load uninstall-moz2elinks.pl		\
            uninstall-mp3rip uninstall-mpd-state uninstall-null			\

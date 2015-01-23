@@ -63,10 +63,6 @@ At the moment the collection includes:
  * genpass - generates  a  random  strong  password.  Shell  and  Perl
    versions present;
 
- * get_mks_vir_bases -  downlaods MKS-Vir virus  database.  Simplified
-   version  of mksupdate  shell script  (from mks_vir  antivirus).  It
-   does only download up-to-date virus bases and nothing more;
-
  * getlyrics.pl - downloads  lyrics of a given song  from the Internet
    (http://www.lyrc.com.ar/ actually);
 
@@ -83,12 +79,6 @@ At the moment the collection includes:
    automatic.  The first versions required bash to run but the now, it
    is believed  to run on any  POSIX compatible platform so  it can be
    run even on small embeded systems;
-
- * ivona.sh - uses IVONA speach synthetiser to say given text.  Script
-   uses  demo  available  at  http://www.ivo.pl/  so  it  requires  an
-   Interent conection to work unless  it has all required MP3s cached.
-   IVONA is  a Polish synthesiser so  the script is  rather useful for
-   Poles though it may be used as a base for some English synthesiser.
 
  * lesspipe -  an input processor  for less pager  which automatically
    decompresses  compressed  files, list  contents  of archives,  list
