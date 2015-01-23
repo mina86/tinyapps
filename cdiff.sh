@@ -21,9 +21,6 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ##
-## This software is OSI Certified Open Source Software.
-## OSI Certified is a certification mark of the Open Source Initiative.
-##
 ## This is part of Tiny Applications Collection
 ##   -> http://tinyapps.sourceforge.net/
 ##

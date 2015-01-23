@@ -5,9 +5,6 @@
 ## Copyright (c) 2009      by Mirosław "Minio" Zalewski <miniopl@gmail.com>
 ##                         http://minio.xt.pl (lyrics retrieving code)
 ##
-## This software is OSI Certified Open Source Software.
-## OSI Certified is a certification mark of the Open Source Initiative.
-##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or

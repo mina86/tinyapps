@@ -3,9 +3,6 @@
 ## Generates a random password (or some other key)
 ## Copyright (c) 2005,2007,2011,2013 by Michal Nazarewicz (mina86/AT/mina86.com)
 ##
-## This software is OSI Certified Open Source Software.
-## OSI Certified is a certification mark of the Open Source Initiative.
-##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
 ## the Free Software Foundation; either version 3 of the License, or
