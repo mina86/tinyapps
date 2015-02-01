@@ -326,7 +326,7 @@ endif
 
 	@echo '  GEN    usr/doc/tinyapps-$(RELEASE)'
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)'
-	$(Q)exec cp -- LICENSE LICENSE.AFL LICENSE.GPL3 README TODO '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
+	$(Q)exec cp -- LICENSE LICENSE.GPL3 README TODO '$(DEST_DIR)/usr/doc/tinyapps-$(RELEASE)/'
 
 	@echo '  GEN    install/doinst.sh'
 	$(Q)exec mkdir -p -- '$(DEST_DIR)/install'
