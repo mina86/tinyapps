@@ -537,8 +537,8 @@ static void output(void) {
 		tmp = '!';
 	} else {
 		switch (D.cur.state) {
-		case MPD_STATUS_STATE_STOP:  tmp = L'#'; break;
-		case MPD_STATUS_STATE_PLAY:  tmp = L'>'; break;
+		case MPD_STATUS_STATE_STOP:  tmp = L'\u25A0'; break;
+		case MPD_STATUS_STATE_PLAY:  tmp = L'\u25BA'; break;
 		case MPD_STATUS_STATE_PAUSE: tmp = L' '; break;
 		default:                     tmp = L'?'; break;
 		}

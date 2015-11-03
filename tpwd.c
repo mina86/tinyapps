@@ -20,6 +20,7 @@
  */
 
 #define _POSIX_C_SOURCE 2
+#define _GNU_SOURCE
 
 #include <errno.h>
 #include <limits.h>
@@ -55,7 +56,7 @@ struct opts {
 
 static void parse_opts(struct opts *opts, int argc, char **argv);
 static char *getpwd(bool logical);
-static char *subst_home(char *pwd);
+static char *shorten_pwd(char *pwd);
 static void output(struct opts *opts);
 
 
@@ -70,13 +71,13 @@ int main(int argc, char **argv) {
 	if (!opts.pwd) {
 		opts.pwd = getpwd(opts.logical);
 	}
-	opts.pwd = subst_home(opts.pwd);
+	opts.pwd = shorten_pwd(opts.pwd);
 	output(&opts);
 	return 0;
 }
 
 
-static unsigned uint(const char *str);
+static unsigned parse_uint(const char *str);
 static void usage(bool error);
 
 
@@ -103,13 +104,13 @@ static void parse_opts(struct opts *opts, int argc, char **argv) {
 	case 4:
 		opts->pwd = argv[optind + 3];
 	case 3:
-		opts->trunc_str_len = uint(argv[optind + 2]);
+		opts->trunc_str_len = parse_uint(argv[optind + 2]);
 	case 2:
 		opts->trunc_str = argv[optind + 1];
 		if (i < 3)
 			opts->trunc_str_len = strlen(opts->trunc_str);
 	case 1:
-		opts->max_len = uint(argv[optind]);
+		opts->max_len = parse_uint(argv[optind]);
 		break;
 	case 0: {
 		char *ch = strrchr(argv0, '/');
@@ -125,7 +126,7 @@ static void parse_opts(struct opts *opts, int argc, char **argv) {
 }
 
 
-static unsigned uint(const char *str) {
+static unsigned parse_uint(const char *str) {
 	unsigned long ret;
 	char *end;
 
@@ -209,21 +210,77 @@ nomem:
 }
 
 
-static char *subst_home(char *pwd) {
-	char *home = getenv("HOME");
-	size_t len;
+static char *shorten_pwd(char *pwd) {
+	static char tilde[] = "~";
 
-	if (!home) {
-		struct passwd *pw = getpwuid(getuid());
-		if (pw) {
-			home = pw->pw_dir;
-		}
+	char *vars = getenv("TPWD_DIRS"), *var, *dir;
+	size_t pwd_len = strlen(pwd), var_len, len;
+
+	if (!vars) {
+		vars = tilde;
 	}
 
-	if (home && (len = strlen(home)) && !strncmp(home, pwd, len) &&
-	    (pwd[len] == 0 || pwd[len] == '/')) {
-		pwd += len - 1;
-		*pwd = '~';
+	for (;;) {
+		/* Skip leading ':' from vars. */
+		for (var = vars; *var && *var == ':'; ++var) {
+			/* nop */
+		}
+		if (!*var) {
+			break;
+		}
+
+		/* Find next ':'.  Use strchrnul if possible. */
+#if (__GLIBC__ << 16) + (__GLIBC_MINOR__) >= (2 << 16 + 1)
+		vars = strchrnul(var, ':');
+		var_len = vars - var;
+		if (*vars) {
+			*vars = 0;
+			++vars;
+		}
+#else
+		vars = strchr(var, ':');
+		if (vars) {
+			var_len = vars - var;
+			*vars = 0;
+			++vars;
+		} else {
+			var_len = strlen(var);
+			vars = var + var_len;
+		}
+#endif
+
+		/* var_len == 0 indicates var is "~" which is handled specially:
+		 * we’re reading $HOME but simplifying it to just ~. */
+		if (var_len == 1 && *var == '~') {
+			var_len = 0;
+		}
+
+		/* Read the value.  If it’s not an absolute path, ignore. */
+		dir = getenv(var_len ? var : "HOME");
+		if (!dir || !*dir || *dir != '/') {
+			continue;
+		}
+
+		// Strip trailing slashes
+		for (len = strlen(dir); len && dir[len - 1] == '/'; --len) {
+			/* nop */
+		}
+		if (!len ||  /* empty string, ignore */
+		    len > pwd_len ||  /* dir cannot be prefix of pwd */
+		    len < 1 + var_len ||  /* replacement longer then dir */
+		    memcmp(pwd, dir, len) ||  /* not a prefix */
+		    (pwd[len] != '/' && pwd[len])) {  /* not a dir name */
+			continue;
+		}
+
+		pwd += len - 1 - var_len;
+		if (var_len) {
+			*pwd = '$';
+			memcpy(pwd + 1, var, var_len);
+		} else {
+			*pwd = '~';
+		}
+		break;
 	}
 
 	return pwd;

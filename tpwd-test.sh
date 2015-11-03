@@ -38,101 +38,280 @@ cd "$temp/foobar"
 ln -s baz qux
 cd "$temp/foobar/qux"
 
-cat >$temp/expected <<EOF
-$ tpwd
-<~/foobar/qux
+echo >$temp/expected '---------- >8 --------------------------------------------------
+TPWD_VARS=unset
+
+$ tpwd <~/foobar/qux
 > 0
-$ tpwd 5
-<...ux
+$ tpwd 5 <...ux
 > 0
-$ tpwd 5 {
-<{/qux
+$ tpwd 5 { <{/qux
 > 0
-$ tpwd 5 ... 1
-<.../qux
+$ tpwd 5 ... 1 <.../qux
 > 0
-$ tpwd 5  1
-</qux
+$ tpwd 5  1 </qux
 > 0
-$ tpwd -n
-<~/foobar/qux> 0
-$ tpwd -n 5
-<...ux> 0
-$ tpwd -n 5 {
-<{/qux> 0
-$ tpwd -n 5 ... 1
-<.../qux> 0
-$ tpwd -n 5  1
-</qux> 0
-$ tpwd -L
-<~/foobar/qux
+$ tpwd -n <~/foobar/qux> 0
+$ tpwd -n 5 <...ux> 0
+$ tpwd -n 5 { <{/qux> 0
+$ tpwd -n 5 ... 1 <.../qux> 0
+$ tpwd -n 5  1 </qux> 0
+$ tpwd -L <~/foobar/qux
 > 0
-$ tpwd -L 5
-<...ux
+$ tpwd -L 5 <...ux
 > 0
-$ tpwd -L 5 {
-<{/qux
+$ tpwd -L 5 { <{/qux
 > 0
-$ tpwd -L 5 ... 1
-<.../qux
+$ tpwd -L 5 ... 1 <.../qux
 > 0
-$ tpwd -L 5  1
-</qux
+$ tpwd -L 5  1 </qux
 > 0
-$ tpwd -L -n
-<~/foobar/qux> 0
-$ tpwd -L -n 5
-<...ux> 0
-$ tpwd -L -n 5 {
-<{/qux> 0
-$ tpwd -L -n 5 ... 1
-<.../qux> 0
-$ tpwd -L -n 5  1
-</qux> 0
-$ tpwd -P
-<~/foobar/baz
+$ tpwd -L -n <~/foobar/qux> 0
+$ tpwd -L -n 5 <...ux> 0
+$ tpwd -L -n 5 { <{/qux> 0
+$ tpwd -L -n 5 ... 1 <.../qux> 0
+$ tpwd -L -n 5  1 </qux> 0
+$ tpwd -P <~/foobar/baz
 > 0
-$ tpwd -P 5
-<...az
+$ tpwd -P 5 <...az
 > 0
-$ tpwd -P 5 {
-<{/baz
+$ tpwd -P 5 { <{/baz
 > 0
-$ tpwd -P 5 ... 1
-<.../baz
+$ tpwd -P 5 ... 1 <.../baz
 > 0
-$ tpwd -P 5  1
-</baz
+$ tpwd -P 5  1 </baz
 > 0
-$ tpwd -P -n
-<~/foobar/baz> 0
-$ tpwd -P -n 5
-<...az> 0
-$ tpwd -P -n 5 {
-<{/baz> 0
-$ tpwd -P -n 5 ... 1
-<.../baz> 0
-$ tpwd -P -n 5  1
-</baz> 0
-EOF
+$ tpwd -P -n <~/foobar/baz> 0
+$ tpwd -P -n 5 <...az> 0
+$ tpwd -P -n 5 { <{/baz> 0
+$ tpwd -P -n 5 ... 1 <.../baz> 0
+$ tpwd -P -n 5  1 </baz> 0
+---------- >8 --------------------------------------------------
+TPWD_VARS=HOME
+
+$ tpwd <$HOME/foobar/qux
+> 0
+$ tpwd 5 <...ux
+> 0
+$ tpwd 5 { <{/qux
+> 0
+$ tpwd 5 ... 1 <.../qux
+> 0
+$ tpwd 5  1 </qux
+> 0
+$ tpwd -n <$HOME/foobar/qux> 0
+$ tpwd -n 5 <...ux> 0
+$ tpwd -n 5 { <{/qux> 0
+$ tpwd -n 5 ... 1 <.../qux> 0
+$ tpwd -n 5  1 </qux> 0
+$ tpwd -L <$HOME/foobar/qux
+> 0
+$ tpwd -L 5 <...ux
+> 0
+$ tpwd -L 5 { <{/qux
+> 0
+$ tpwd -L 5 ... 1 <.../qux
+> 0
+$ tpwd -L 5  1 </qux
+> 0
+$ tpwd -L -n <$HOME/foobar/qux> 0
+$ tpwd -L -n 5 <...ux> 0
+$ tpwd -L -n 5 { <{/qux> 0
+$ tpwd -L -n 5 ... 1 <.../qux> 0
+$ tpwd -L -n 5  1 </qux> 0
+$ tpwd -P <$HOME/foobar/baz
+> 0
+$ tpwd -P 5 <...az
+> 0
+$ tpwd -P 5 { <{/baz
+> 0
+$ tpwd -P 5 ... 1 <.../baz
+> 0
+$ tpwd -P 5  1 </baz
+> 0
+$ tpwd -P -n <$HOME/foobar/baz> 0
+$ tpwd -P -n 5 <...az> 0
+$ tpwd -P -n 5 { <{/baz> 0
+$ tpwd -P -n 5 ... 1 <.../baz> 0
+$ tpwd -P -n 5  1 </baz> 0
+---------- >8 --------------------------------------------------
+TPWD_VARS=~
+
+$ tpwd <~/foobar/qux
+> 0
+$ tpwd 5 <...ux
+> 0
+$ tpwd 5 { <{/qux
+> 0
+$ tpwd 5 ... 1 <.../qux
+> 0
+$ tpwd 5  1 </qux
+> 0
+$ tpwd -n <~/foobar/qux> 0
+$ tpwd -n 5 <...ux> 0
+$ tpwd -n 5 { <{/qux> 0
+$ tpwd -n 5 ... 1 <.../qux> 0
+$ tpwd -n 5  1 </qux> 0
+$ tpwd -L <~/foobar/qux
+> 0
+$ tpwd -L 5 <...ux
+> 0
+$ tpwd -L 5 { <{/qux
+> 0
+$ tpwd -L 5 ... 1 <.../qux
+> 0
+$ tpwd -L 5  1 </qux
+> 0
+$ tpwd -L -n <~/foobar/qux> 0
+$ tpwd -L -n 5 <...ux> 0
+$ tpwd -L -n 5 { <{/qux> 0
+$ tpwd -L -n 5 ... 1 <.../qux> 0
+$ tpwd -L -n 5  1 </qux> 0
+$ tpwd -P <~/foobar/baz
+> 0
+$ tpwd -P 5 <...az
+> 0
+$ tpwd -P 5 { <{/baz
+> 0
+$ tpwd -P 5 ... 1 <.../baz
+> 0
+$ tpwd -P 5  1 </baz
+> 0
+$ tpwd -P -n <~/foobar/baz> 0
+$ tpwd -P -n 5 <...az> 0
+$ tpwd -P -n 5 { <{/baz> 0
+$ tpwd -P -n 5 ... 1 <.../baz> 0
+$ tpwd -P -n 5  1 </baz> 0
+---------- >8 --------------------------------------------------
+TPWD_VARS=temp
+
+$ tpwd <$temp/foobar/qux
+> 0
+$ tpwd 5 <...ux
+> 0
+$ tpwd 5 { <{/qux
+> 0
+$ tpwd 5 ... 1 <.../qux
+> 0
+$ tpwd 5  1 </qux
+> 0
+$ tpwd -n <$temp/foobar/qux> 0
+$ tpwd -n 5 <...ux> 0
+$ tpwd -n 5 { <{/qux> 0
+$ tpwd -n 5 ... 1 <.../qux> 0
+$ tpwd -n 5  1 </qux> 0
+$ tpwd -L <$temp/foobar/qux
+> 0
+$ tpwd -L 5 <...ux
+> 0
+$ tpwd -L 5 { <{/qux
+> 0
+$ tpwd -L 5 ... 1 <.../qux
+> 0
+$ tpwd -L 5  1 </qux
+> 0
+$ tpwd -L -n <$temp/foobar/qux> 0
+$ tpwd -L -n 5 <...ux> 0
+$ tpwd -L -n 5 { <{/qux> 0
+$ tpwd -L -n 5 ... 1 <.../qux> 0
+$ tpwd -L -n 5  1 </qux> 0
+$ tpwd -P <$temp/foobar/baz
+> 0
+$ tpwd -P 5 <...az
+> 0
+$ tpwd -P 5 { <{/baz
+> 0
+$ tpwd -P 5 ... 1 <.../baz
+> 0
+$ tpwd -P 5  1 </baz
+> 0
+$ tpwd -P -n <$temp/foobar/baz> 0
+$ tpwd -P -n 5 <...az> 0
+$ tpwd -P -n 5 { <{/baz> 0
+$ tpwd -P -n 5 ... 1 <.../baz> 0
+$ tpwd -P -n 5  1 </baz> 0
+---------- >8 --------------------------------------------------
+TPWD_VARS=long_variable_name_which_is_hopefully_longer_than_length_of_temp:~
+
+$ tpwd <~/foobar/qux
+> 0
+$ tpwd 5 <...ux
+> 0
+$ tpwd 5 { <{/qux
+> 0
+$ tpwd 5 ... 1 <.../qux
+> 0
+$ tpwd 5  1 </qux
+> 0
+$ tpwd -n <~/foobar/qux> 0
+$ tpwd -n 5 <...ux> 0
+$ tpwd -n 5 { <{/qux> 0
+$ tpwd -n 5 ... 1 <.../qux> 0
+$ tpwd -n 5  1 </qux> 0
+$ tpwd -L <~/foobar/qux
+> 0
+$ tpwd -L 5 <...ux
+> 0
+$ tpwd -L 5 { <{/qux
+> 0
+$ tpwd -L 5 ... 1 <.../qux
+> 0
+$ tpwd -L 5  1 </qux
+> 0
+$ tpwd -L -n <~/foobar/qux> 0
+$ tpwd -L -n 5 <...ux> 0
+$ tpwd -L -n 5 { <{/qux> 0
+$ tpwd -L -n 5 ... 1 <.../qux> 0
+$ tpwd -L -n 5  1 </qux> 0
+$ tpwd -P <~/foobar/baz
+> 0
+$ tpwd -P 5 <...az
+> 0
+$ tpwd -P 5 { <{/baz
+> 0
+$ tpwd -P 5 ... 1 <.../baz
+> 0
+$ tpwd -P 5  1 </baz
+> 0
+$ tpwd -P -n <~/foobar/baz> 0
+$ tpwd -P -n 5 <...az> 0
+$ tpwd -P -n 5 { <{/baz> 0
+$ tpwd -P -n 5 ... 1 <.../baz> 0
+$ tpwd -P -n 5  1 </baz> 0'
 
 run() {
 	set -- tpwd "$@"
-	printf "$ %s\n<" "$*"
+	printf "$ %s <" "$*"
 	shift
 	ec=0
 	HOME=$temp "$tpwd" "$@" || ec=$?
 	printf '> %d\n' $ec
 }
 
-for lp in '' -L -P; do
-	for n in '' -n; do
-		run $lp $n
-		run $lp $n 5
-		run $lp $n 5 '{'
-		run $lp $n 5 ... 1
-		run $lp $n 5 '' 1
+long_variable_name_which_is_hopefully_longer_than_length_of_temp=$temp
+export long_variable_name_which_is_hopefully_longer_than_length_of_temp
+export temp
+for vars in unset HOME '~' temp long_variable_name_which_is_hopefully_longer_than_length_of_temp:\~; do
+	echo '---------- >8 --------------------------------------------------'
+	echo "TPWD_VARS=$vars"
+	echo
+	if [ x"$vars" = xunset ]; then
+		unset TPWD_VARS
+	else
+		TPWD_VARS=$vars
+		export TPWD_VARS
+	fi
+
+	for lp in '' -L -P; do
+		for n in '' -n; do
+			run $lp $n
+			run $lp $n 5
+			run $lp $n 5 '{'
+			run $lp $n 5 ... 1
+			run $lp $n 5 '' 1
+		done
 	done
+
 done >$temp/got
 
 if cmp -s "$temp/expected" "$temp/got"; then
