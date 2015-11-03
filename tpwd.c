@@ -52,11 +52,12 @@ struct opts {
 	const char *trunc_str;
 	unsigned trunc_str_len, max_len;
 	bool logical, no_nl;
+	bool pwd_mode;
 };
 
 static void parse_opts(struct opts *opts, int argc, char **argv);
 static char *getpwd(bool logical);
-static char *shorten_pwd(char *pwd);
+static char *shorten_pwd(char *pwd, bool home_only);
 static void output(struct opts *opts);
 
 
@@ -64,14 +65,13 @@ int main(int argc, char **argv) {
 	struct opts opts = {
 		.trunc_str = "...",
 		.trunc_str_len = 3,
-		.logical = true,
 	};
 
 	parse_opts(&opts, argc, argv);
 	if (!opts.pwd) {
 		opts.pwd = getpwd(opts.logical);
 	}
-	opts.pwd = shorten_pwd(opts.pwd);
+	opts.pwd = shorten_pwd(opts.pwd, opts.pwd_mode);
 	output(&opts);
 	return 0;
 }
@@ -82,8 +82,16 @@ static void usage(bool error);
 
 
 static void parse_opts(struct opts *opts, int argc, char **argv) {
-	char *argv0 = *argv;
+	char *argv0 = *argv, *ch;
 	int i;
+
+	/* Strip directories from argv0 and check if we are run as ‘pwd’. */
+	ch = strrchr(argv0, '/');
+	if (ch) {
+		argv0 = ch + 1;
+	}
+	opts->pwd_mode = !strcmp(argv0, "pwd");
+	opts->logical = !opts->pwd_mode;
 
 	/* Parse options */
 	for (;;) {
@@ -112,13 +120,8 @@ static void parse_opts(struct opts *opts, int argc, char **argv) {
 	case 1:
 		opts->max_len = parse_uint(argv[optind]);
 		break;
-	case 0: {
-		char *ch = strrchr(argv0, '/');
-		if (ch) {
-			argv0 = ch + 1;
-		}
-		opts->max_len = *argv0 == 'p' ? 0 : 30;
-	}
+	case 0:
+		opts->max_len = opts->pwd_mode ? 0 : 30;
 		break;
 	default:
 		usage(true);
@@ -210,13 +213,13 @@ nomem:
 }
 
 
-static char *shorten_pwd(char *pwd) {
+static char *shorten_pwd(char *pwd, bool home_only) {
 	static char tilde[] = "~";
 
-	char *vars = getenv("TPWD_DIRS"), *var, *dir;
 	size_t pwd_len = strlen(pwd), var_len, len;
+	char *vars, *var, *dir;
 
-	if (!vars) {
+	if (home_only || !(vars = getenv("TPWD_DIRS"))) {
 		vars = tilde;
 	}
 
