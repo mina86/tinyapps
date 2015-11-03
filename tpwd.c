@@ -35,6 +35,17 @@
 #include <unistd.h>
 
 
+/* Cap PATH_MAX at this value when allocating initial buffer.  This only limits
+ * what the buffer can be at the beginning.  If path to the current working
+ * directory is longer, the buffer will be resized. */
+#define MAX_PATH_MAX      32768
+
+/* Cap buffer for path at this value when resizing it up.  If path to the
+ * current working directory ends up longer than this, failure message will be
+ * printed and dot used instead. */
+#define MAX_PATH_LENGTH 1048576
+
+
 struct opts {
 	char *pwd;
 	const char *trunc_str;
@@ -155,9 +166,10 @@ normally would took a whole line (or more), for example:\n\
 
 
 static char *getpwd(bool logical) {
-	static char buf[PATH_MAX], dot[] = ".";
+	static char dot[] = ".";
 
-	char *pwd;
+	size_t capacity;
+	char *pwd, *buf;
 
 	if (logical) {
 		struct stat l, p;
@@ -170,8 +182,25 @@ static char *getpwd(bool logical) {
 		}
 	}
 
-	pwd = getcwd(buf, sizeof buf);
+	capacity = PATH_MAX > MAX_PATH_MAX ? MAX_PATH_MAX : PATH_MAX;
+	buf = malloc(capacity);
+	if (!buf) {
+		goto nomem;
+	}
+
+	while (!(pwd = getcwd(buf, capacity)) &&
+	       errno == ERANGE && capacity < MAX_PATH_LENGTH) {
+		capacity *= 2;
+		pwd = realloc(buf, capacity);
+		if (!pwd) {
+			free(buf);
+			goto nomem;
+		}
+		buf = pwd;
+	}
+
 	if (!pwd) {
+nomem:
 		fputs("tpwd: unable to figure out PWD\n", stderr);
 		pwd = dot;
 	}
