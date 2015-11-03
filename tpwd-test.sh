@@ -23,61 +23,6 @@
 set -eu
 
 
-run_test() {
-	run() {
-		(
-			shift
-			set -- tpwd "$@"
-			printf "$ %s\n<" "$*"
-		)
-		ec=0
-		HOME=$home "$@" || ec=$?
-		printf '> %d\n' $ec
-	}
-
-	for lp in '' -L -P; do
-		for n in '' -n; do
-			run "$1" $lp $n
-			run "$1" $lp $n 5
-			run "$1" $lp $n 5 '{'
-			run "$1" $lp $n 5 ... 1
-			run "$1" $lp $n 5 '' 1
-		done
-	done
-}
-
-case ${1:-} in
---run-test)
-	home=$PWD
-	cd foobar/qux
-	run_test "$2"
-	exit 0
-	;;
---run-test-source)
-	home=$PWD
-	cd foobar/qux
-	__tpwd_sourcing=1
-	. "$2"
-	run_test "tpwd"
-	exit 0
-esac
-
-
-if [ $# -eq 0 ]; then
-	for sh in /bin/ash /bin/bash /bin/dash /bin/ksh /bin/ksh93 \
-		  /bin/sh /bin/zsh /usr/bin/zsh
-	do
-		if [ -x "$sh" ]; then
-			set -- "$@" "$sh"
-		fi
-	done
-	if [ $# -eq 0 ]; then
-		echo 'No shells found, pass one as command line' >&2
-		exit 2
-	fi
-fi
-
-
 self="$PWD/tpwd-test.sh"
 tpwd="$PWD/tpwd"
 if ! [ -x "$self" ] || ! [ -x "$tpwd" ]; then
@@ -86,12 +31,12 @@ if ! [ -x "$self" ] || ! [ -x "$tpwd" ]; then
 fi
 
 temp=$(mktemp -d || exit 2)
-trap 'rm -r "$temp"' 0
+trap 'rm -r -- "$temp"' 0
 
 mkdir "$temp/foobar" "$temp/foobar/baz"
 cd "$temp/foobar"
 ln -s baz qux
-cd "$temp"
+cd "$temp/foobar/qux"
 
 cat >$temp/expected <<EOF
 $ tpwd
@@ -171,32 +116,29 @@ $ tpwd -P -n 5  1
 </baz> 0
 EOF
 
-
-line() {
-	tput setf 0; tput bold
-	echo '---------- >8 --------------------------------------------------'
-	tput sgr 0
+run() {
+	set -- tpwd "$@"
+	printf "$ %s\n<" "$*"
+	shift
+	ec=0
+	HOME=$temp "$tpwd" "$@" || ec=$?
+	printf '> %d\n' $ec
 }
 
-assert() {
-	__ec=0
-	"$sh" "$self" "$1" "$tpwd" >got-${sh##*/} 2>&1 || __ec=$?
-	if [ $__ec -ne 0 ]; then
-		tput setf 4; tput bold; echo "FAILED; exit code: $__ec:"
-		line; cat "got-${sh##*/}"; line
-		ec=1
-	elif ! cmp -s "expected" "got-${sh##*/}"; then
-		tput setf 4; tput bold; echo 'FAILED; got difference:'
-		line; diff -u "expected" "got-${sh##*/}"; line
-		ec=1
-	fi
-}
+for lp in '' -L -P; do
+	for n in '' -n; do
+		run $lp $n
+		run $lp $n 5
+		run $lp $n 5 '{'
+		run $lp $n 5 ... 1
+		run $lp $n 5 '' 1
+	done
+done >$temp/got
 
-ec=0
-for sh; do
-	tput setaf 2; echo "> Testing $sh"; tput sgr 0
-	assert "--run-test"
-	tput setaf 2; echo "> Testing $sh (sourcing)"; tput sgr 0
-	assert "--run-test-source"
-done
-exit $ec
+if cmp -s "$temp/expected" "$temp/got"; then
+	echo "All good."
+else
+	tput setf 4; tput bold; echo 'FAILED; got difference:'
+	diff -u "$temp/expected" "$temp/got"
+	exit 1
+fi

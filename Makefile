@@ -92,7 +92,7 @@ help:
 ##
 all: FvwmTransFocus arpping cdiff cutcom drun foreach			\
      installkernel.8.gz load malloc mpd-show mpd-state null		\
-     rot13 timer tuptime umountiso xgetclass xrun
+     rot13 timer tpwd tuptime umountiso xgetclass xrun
 
 
 install: install-FvwmTransFocus install-add install-arpping			\
@@ -129,7 +129,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add				\
 ##
 %.o: %.c
 	@echo '  CC     $@'
-	$(Q)exec $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@ $<
+	$(Q)exec $(CC) $(CFLAGS) -std=c99 $(CPPFLAGS) -c -o $@ $<
 
 %.o: %.cpp
 	@echo '  CXX    $@'
@@ -141,7 +141,7 @@ uninstall: uninstall-FvwmTransFocus uninstall-add				\
 
 %: %.c
 	@echo '  CC     $@.o'
-	$(Q)exec $(CC) $(CFLAGS) $(CPPFLAGS) -c -o $@.o $<
+	$(Q)exec $(CC) $(CFLAGS) -std=c99 $(CPPFLAGS) -c -o $@.o $<
 	@echo '  LD     $@'
 	$(Q)exec $(CC) $(LDFLAGS) -o $@ $@.o
 	$(Q)exec rm -f -- $@.o
