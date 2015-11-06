@@ -85,6 +85,14 @@ static void parse_opts(struct opts *opts, int argc, char **argv) {
 	char *argv0 = *argv, *ch;
 	int i;
 
+	/* Backwards compatibility with shell implementation. */
+	if (argc > 1 && argv[1][0] == '-' && argv[2][1] == '-' &&
+	    (!strcmp(argv[1] + 2, "function") || !strcmp(argv[1] + 2, "bash") ||
+	     !strcmp(argv[1] + 2, "zsh"))) {
+		fprintf(stderr, "tpwd: %s is no longer functional\n", argv[1]);
+		exit(0);
+	}
+
 	/* Strip directories from argv0 and check if we are run as ‘pwd’. */
 	ch = strrchr(argv0, '/');
 	if (ch) {
