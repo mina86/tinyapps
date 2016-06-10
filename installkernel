@@ -790,9 +790,9 @@ if [ -n "$TIDY_MODULES" ]; then
 	OOVER=$(read_version_from_link bzImage~)
 
 	if [ -n "$OVERWRITE_IMAGE" ]; then
-		_=$OVER
+		tmp=$OVER
 		OVER=$OOVER
-		OOVER=$_
+		OOVER=$tmp
 	fi
 
 	if [ -n "$OOVER" ] && [ "X$OOVER" != "X$VER" ] && \
