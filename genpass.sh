@@ -27,6 +27,11 @@
 ##
 
 
+has_random() {
+	# shellcheck disable=SC2039
+	[ -n "$RANDOM" ] && [ "$RANDOM" -ne "$RANDOM" ]
+}
+
 
 if [ -r /dev/urandom ]; then
 	gen_stream () {
@@ -36,11 +41,13 @@ elif [ -r /dev/random ]; then
 	gen_stream () {
 		head -c 40 /dev/random
 	}
-elif [ -n "$RANDOM" ] && [ "$RANDOM" -ne "$RANDOM" ]; then
+elif has_random; then
+	# shellcheck disable=SC2120
 	gen_stream () {
 		set -- 10
-		while [ $1 -gt 0 ]; do
-			printf %04x $RANDOM
+		while [ "$1" -gt 0 ]; do
+			# shellcheck disable=SC2039
+			printf %04x "$RANDOM"
 			set -- $(( $1 - 1 ))
 		done
 	}
@@ -50,22 +57,22 @@ else
 fi
 
 
-got_command () { test -n "`which \"$1\" 2>/dev/null`"; }
+got_command () { test -n "$(which "$1" 2>/dev/null)"; }
 
 if got_command uuencode; then
 	gen_pass () {
-		printf %s `uuencode -m pass | tail -n +2 | head -n 1`
+		printf %s "$(uuencode -m pass | tail -n +2 | head -n 1)"
 	}
 elif got_command md5sum; then
 	gen_pass () {
-		P1=`head -c 32 | md5sum | cut -c1-32`
-		P2=`head -c 32 | md5sum | cut -c1-32`
+		P1=$(head -c 32 | md5sum | cut -c1-32)
+		P2=$(head -c 32 | md5sum | cut -c1-32)
 		printf %s "$P1" "$P2"
 	}
 elif got_command sha1sum; then
 	gen_pass () {
-		P1=`head -c 32 | sha1sum | cut -c1-32`
-		P2=`head -c 32 | sha1sum | cut -c1-32`
+		P1=$(head -c 32 | sha1sum | cut -c1-32)
+		P2=$(head -c 32 | sha1sum | cut -c1-32)
 		printf %s "$P1" "$P2"
 	}
 else
@@ -75,11 +82,12 @@ fi
 
 
 
-LEN=${1:-64}
-if [ "$LEN" -gt 0 ]; then
-	L=$LEN
-	while [ $L -gt 0 ]; do
+len=${1:-64}
+if [ "$len" -gt 0 ]; then
+	l=$len
+	while [ "$l" -gt 0 ]; do
+		# shellcheck disable=SC2119
 		gen_stream | gen_pass
-		L=`expr "$L" - 64`
-	done | cut -c 1-$LEN
+		l=$(( l - 64 ))
+	done | cut -c "1-$len"
 fi

@@ -44,15 +44,16 @@ ARG0=${0##*/}
 SHIFTED=
 while true; do case "$ARG0" in
 	(state-save|save)
-	mkdir -p ~/.mpd_states && mpd-state >~/.mpd_states/${1-default}
+	mkdir -p ~/.mpd_states && mpd-state >~/.mpd_states/"${1-default}"
 	exit $?
 	;;
 
 	(state-restore|restore)
-	if [ -f "~/.mpd_states/${1-default}" ]; then
-		mpd-state -r <"~/.mpd_sates/${1-default}"
+	if [ -f ~/".mpd_states/${1-default}" ]; then
+		mpd-state -r <~/.mpd_sates/"${1-default}"
 		exit $?
 	else
+		# shellcheck disable=SC2088
 		echo File "~/.mpd_states/${1-default}" does not exist >&2
 		exit 1
 	fi
@@ -64,10 +65,11 @@ while true; do case "$ARG0" in
 	;;
 
 	(state-amend|amend)
-	if [ -f "~/.mpd_states/${1-default}" ]; then
-		mpd-state -raP <"~/.mpd_sates/${1-default}"
+	if [ -f ~/".mpd_states/${1-default}" ]; then
+		mpd-state -raP <~/.mpd_sates/"${1-default}"
 		exit $?
 	else
+		# shellcheck disable=SC2088
 		echo File "~/.mpd_states/${1-default}" does not exist >&2
 		exit 1
 	fi

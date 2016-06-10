@@ -27,22 +27,22 @@ while true; do
 	head -n 1 /proc/stat
 	sleep 1 || exit
 done | while true; do
-	read ignore a b c d ignore2
+	read _ a b c d _
 	if $nice; then
-		load=$(( $a + $b + $c ))
-		total=$(( $load + $d ))
+		load=$(( a + b + c ))
+		total=$(( load + d ))
 	else
-		load=$(( $a + $c ))
-		total=$(( $load + $b + $d ))
+		load=$(( a + c ))
+		total=$(( load + b + d ))
 	fi
 
 	if [ -z "$ototal" ] || [ x"$total" = x"$ototal" ]; then
 		cpuload=0
 	else
-		cpuload=$((10000 * ($load-$oload) / ($total-$ototal)))
+		cpuload=$((10000 * (load-oload) / (total-ototal)))
 	fi
 
-	printf " %3d.%02d%%\r" $(($cpuload / 100)) $(($cpuload % 100))
+	printf " %3d.%02d%%\r" $((cpuload / 100)) $((cpuload % 100))
 
 	ototal=$total
 	oload=$load

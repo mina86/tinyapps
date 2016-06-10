@@ -31,7 +31,7 @@
 ## Version
 ##
 version () {
-	echo 'Check v0.2  (c) 2005,2006 by Micha≥ Nazarewicz'
+	echo 'Check v0.2  (c) 2005,2006 by Micha≈Ç Nazarewicz'
 	echo
 }
 
@@ -102,10 +102,11 @@ EOF
 umask 077
 SLEEP=10
 RETRY=10
-COUNT=0
 
 KEEPGOING=
-export CHECK_QUIET= CHECK_IGNORESIG=
+CHECK_QUIET=
+CHECK_IGNORESIG=
+export CHECK_QUIET CHECK_IGNORESIG
 TRAPCMD="exit 0"
 CMD="check_ping www.google.com"
 
@@ -123,15 +124,15 @@ while [ $# -ne 0 ]; do
 	-k|--keep-going) KEEPGOING=yes    ; ;;
 	-T|--ignore-sig) CHECK_IGNORESIG=y; ;;
 
-	-r|--retry)    RETRY="$2"; shift; ;;
-	-i|--interval) SLEEP="$2"; shift; ;;
-	-c|--count)    CMD="$2"  ; shift; ;;
-	-t|--trap)     TRAP="$2" ; shift; ;;
+	-r|--retry)    RETRY=$2  ; shift; ;;
+	-i|--interval) SLEEP=$2  ; shift; ;;
+	-c|--count)    CMD=$2    ; shift; ;;
+	-t|--trap)     TRAPCMD=$2; shift; ;;
 
-	-r*) RETRY="${1#-?}"; ;; (--retry=*)    RETRY="${1#-*=}"; ;;
-	-i*) SLEEP="${1#-?}"; ;; (--interval=*) SLEEP="${1#-*=}"; ;;
-	-c*) CMD="${1#-?}"  ; ;; (--check=*)    CMD="${1#-*=}"  ; ;;
-	-t*) TRAP="${1#-?}" ; ;; (--trap=*)     TRAP="${1#-*=}" ; ;;
+	-r*) RETRY=${1#-?}  ; ;; (--retry=*)    RETRY=${1#-*=}  ; ;;
+	-i*) SLEEP=${1#-?}  ; ;; (--interval=*) SLEEP=${1#-*=}  ; ;;
+	-c*) CMD=${1#-?}    ; ;; (--check=*)    CMD=${1#-*=}    ; ;;
+	-t*) TRAPCMD=${1#-?}; ;; (--trap=*)     TRAPCMD=${1#-*=}; ;;
 
 	--) shift; break; ;;
 	-*) echo Unknown option: "$1"; exit 1; ;;
@@ -174,9 +175,9 @@ check_proc_load () {
 		[ -n "$CHECK_QUIET" ] || printf '%s: not running\n' "$1"
 		return 0
 	fi
-	[ -n "$CHECK_QUIET" ] || printf '%s: CPU Load %5s%%\n' "$1" $LOAD
+	[ -n "$CHECK_QUIET" ] || printf '%s: CPU Load %5s%%\n' "$1" "$LOAD"
 
-	[ $(echo "$LOAD" |cut -d. -f1) -lt "$2" ]
+	[ "${LOAD%%.*}" -lt "$2" ]
 }
 heck_proc_load () { check_proc_load "$@"; }
 
@@ -244,8 +245,9 @@ catch_sig () {
 	$TRAPCMD
 }
 
-for E in HUP INT QUIT ABRT SEGV PIPE ALRM TERM USR1 USR2; do
-	trap "catch_sig $E" $E
+for e in HUP INT QUIT ABRT SEGV PIPE ALRM TERM USR1 USR2; do
+	# shellcheck disable=SC2064
+	trap "catch_sig $e" "$e"
 done
 
 
@@ -253,27 +255,28 @@ done
 ##
 ## Loop
 ##
+count=0
 while :; do
 	## OK
 	if $CMD; then
-		COUNT=0
-		sleep $SLEEP
+		count=0
+		sleep "$SLEEP"
 		continue
 	fi
 
 	## Not OK
 	export CHECK_EXIT_CODE=$?
-	COUNT=$(( $COUNT + 1 ))
-	[ -n "$CHECK_QUIET" ] || printf " !!! %3d / %3d\r" "$COUNT" "$RETRY"
+	count=$(( count + 1 ))
+	[ -n "$CHECK_QUIET" ] || printf " !!! %3d / %3d\r" "$count" "$RETRY"
 
 	## Limit reached
-	if [ $COUNT -ge $RETRY ]; then
+	if [ "$count" -ge "$RETRY" ]; then
 		[ -n "$CHECK_QUIET" ] || echo ' !!! Checking failed.'
 		[ -f "$CHECK_TMP" ] && rm -f -- "$CHECK_TMP"
 		"$@"
 		[ -n "$KEEPGOING" ] || exit 0;
-		COUNT=0
+		count=0
 	fi
 
-	sleep $SLEEP
+	sleep "$SLEEP"
 done

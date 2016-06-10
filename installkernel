@@ -36,7 +36,8 @@ trap "" USR1 USR2
 ## Converts string to integer
 ##
 toInt () {
-	expr 0$(expr "X$1" : 'X[[:space:]]*\([0-9]*\)') + 0 2>/dev/null || true
+	# shellcheck disable=SC2003
+	expr 0"$(expr "X$1" : 'X[[:space:]]*\([0-9]*\)')" + 0 2>/dev/null || true
 }
 
 
@@ -55,8 +56,8 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 
 	ERR=
 	ln -s $$ "$IK_LOCK" >/dev/null 2>&1 || ERR=y
-	PID=`readlink "$IK_LOCK"`
-	if [ -n "$ERR" ] || [ $PID -ne $$ ]; then
+	PID=$(readlink "$IK_LOCK")
+	if [ -n "$ERR" ] || [ "$PID" -ne $$ ]; then
 		cat <<EOF
 $ARG0: seems like another instance of installkernel is running
 $ARG0: with pid $PID, make sure there is only one instance and
@@ -153,11 +154,11 @@ END
 ## Printing helpers
 ##
 error () {
-	__EC="$1"
+	__EC=$1
 	shift
 	echo "${0##*/}: $*" >&2
 	INSTALLKERNEL_EXITED=$__EC
-	exit $__EC
+	exit "$__EC"
 }
 
 msg () {
@@ -177,6 +178,7 @@ sig_handler () {
 }
 
 for E in HUP INT QUIT ILL ABRT FPE SEGV PIPE ALRM TERM TSTP; do
+	# shellcheck disable=SC2064
 	trap "sig_handler $E" $E
 done
 unset E
@@ -198,8 +200,8 @@ trap exit_function 0
 ## Prints header
 ##
 if [ -z "$COLUMNS" ]; then
-	COLS=`toInt "$(stty -a | sed -ne 's/^.*columns[[:space:]][[:space:]]*\([0-9][0-9]*\).*$/\1/p')"`
-	if [ $COLS -gt 30 ]; then
+	COLS=$(toInt "$(stty -a | sed -ne 's/^.*columns[[:space:]][[:space:]]*\([0-9][0-9]*\).*$/\1/p')")
+	if [ "$COLS" -gt 30 ]; then
 		COLUMNS=$COLS
 		export COLUMNS
 	fi
@@ -213,11 +215,11 @@ header () {
 	else printf "=== %s " "$__TITLE"
 	fi
 
-	__LOOP=$(( ${COLUMNS-80} - ${#__TITLE} - 29))
+	__LOOP=$(( ${COLUMNS:-80} - ${#__TITLE} - 29))
 	__STR=
 	while [ $__LOOP -gt 0 ]; do
 		__STR="$__STR="
-		__LOOP=$(( $__LOOP - 1 ))
+		__LOOP=$(( __LOOP - 1 ))
 	done
 
 	date +"$__STR [%y/%m/%d %H:%M:%S] ==="
@@ -255,11 +257,11 @@ run () {
 
 	# Dry run
 	if [ -n "$DRY_RUN$PRINT_COMMANDS" ] && [ -z "$__SILENT" ]; then
-		if [ $__AS ]; then __MSG="[as $__AS] "; else __MSG=""; fi
-		__END=""
+		if [ -n "$__AS" ]; then __MSG="[as $__AS] "; else __MSG=; fi
+		__END=
 		if [ -n "$__INPUT"  ]; then __END="<$__INPUT "; fi
 		if [ -n "$__OUTPUT" ]; then __END="$__END>$__OUTPUT"; fi
-		msg '36' RUN "$__MSG`printf "'%s' " "$@"`$__END"
+		msg '36' RUN "$__MSG$(printf "'%s' " "$@")$__END"
 	fi
 
 	# Don't run really
@@ -276,7 +278,7 @@ run () {
 	if [ -n "$__AS" ] && [ "X$__AS" != "X$USER" ]; then
 		__ARGS=
 		while [ $# -ne 0 ]; do
-			__ARGS="$__ARGS '`echo "$1" | sed -e "s/'/'\\\\''/"`'"
+			__ARGS="$__ARGS '$(echo "$1" | sed -e "s/'/'\\\\''/")'"
 			shift
 		done
 		set -- su "$__AS" -c "$__ARGS"
@@ -318,13 +320,14 @@ fi
 ##
 r () {
 	if [ "X$1" = X-u ]; then __USR=-u; shift; else __USR=; fi
+	# shellcheck disable=SC2086
 	if eval [ -z \"\$$1\" ]; then return 0; fi
-	__NAME=`echo $1 | tr $UPPER_CHARS $LOWER_CHARS`
+	__NAME=$(echo "$1" | tr $UPPER_CHARS $LOWER_CHARS)
 	header "$2"
 	shift 2
-	run_hook pre-$__NAME $__USR
+	run_hook "pre-$__NAME" $__USR
 	run $__USR "$@"
-	run_hook post-$__NAME $__USR
+	run_hook "post-$__NAME" $__USR
 	unset __NAME __USR
 }
 
@@ -336,7 +339,7 @@ update_ver () {
 	if [ -z "$VER" ]; then
 		VER=${KBUILD_OUTPUT:-.}/include/config/kernel.release
 		if [ -e "$VER" ]; then
-			read VER <$VER
+			read VER <"$VER"
 			msg '37;1' VER "$VER"
 		else
 			error 2 "$VER: file does not exist"
@@ -500,10 +503,10 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 		--)            DASHDASH=y;;
 
 		-r*)    VALUE=y; PARAM="--run-${ARG#-r}";;
-		-nr*)   VALUE= ; PARAM="--run-${ARG#-nr}";;
+		-nr*)   VALUE=;  PARAM="--run-${ARG#-nr}";;
 
-		-n?)    VALUE= : PARAM="-${ARG#-n}";;
-		--no-*) VALUE= ; PARAM="--${ARG#--no-}";;
+		-n?)    VALUE=:  PARAM="-${ARG#-n}";;
+		--no-*) VALUE=;  PARAM="--${ARG#--no-}";;
 		--*)    VALUE=y; PARAM="--${ARG#--}";;
 		-*)     VALUE=y; PARAM="$ARG";;
 
@@ -514,7 +517,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 			elif [ $ADD_ARGS -eq 3 ]; then INSTALL_PATH="$ARG"
 			else error 1 unknown option: "$ARG"
 			fi
-			ADD_ARGS=$(( $ADD_ARGS + 1 ))
+			ADD_ARGS=$(( ADD_ARGS + 1 ))
 		esac
 
 
@@ -581,7 +584,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	done
 
 	## 'make install' run
-	if [ $NUMARGS -eq 4 ] && [ $ADD_ARGS -eq 4 ]; then
+	if [ "$NUMARGS" -eq 4 ] && [ "$ADD_ARGS" -eq 4 ]; then
 		INSTALL_IMAGE=y
 	fi
 
@@ -613,14 +616,14 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	## Calculate nice
 	##
 	if [ X"${NICE#!}" != X"$NICE" ]; then
-		NICE=$((`toInt "${NICE#!}"` - `nice`))
+		NICE=$(( $(toInt "${NICE#!}") - $(nice) ))
 	else
-		NICE=`toInt "$NICE"`
+		NICE=$(toInt "$NICE")
 	fi
 	if [ "$NICE" -gt 0 ]; then
 		msg '37;1' NICE "$NICE"
-		if [ -n "$VERBOSE" ]; then renice +$NICE -p $$
-		else renice $NICE -p $$ >/dev/null 2>&1; fi
+		if [ -n "$VERBOSE" ]; then renice "+$NICE" -p $$
+		else renice "$NICE" -p $$ >/dev/null 2>&1; fi
 	fi
 	unset NICE
 
@@ -633,9 +636,14 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	fi
 	unset __ARCH
 	if [ -z "$ARCH" ]; then
-		ARCH=`uname -m | sed -e 's/i.86/i386/' -e 's/sun4u/sparc64/' \
-	                         -e 's/arm.*/arm/' -e 's/sa110/arm/' \
-	                         -e 's/s390x/s390/' -e 's/parisc64/parisc/'`
+		ARCH=$(uname -m)
+		case $ARCH in
+		i?86)       ARCH=i386   ; ;;
+		sun4u)      ARCH=sparc64; ;;
+		arm*|sa110) ARCH=arm    ; ;;
+		s390x)      ARCH=s390   ; ;;
+		parisc64)   ARCH=parisc ; ;;
+		esac
 		msg '37;1' ARCH "$ARCH"
 	fi
 
@@ -652,7 +660,7 @@ if [ -z "$INSIDE_INSTALLKERNEL" ]; then
 	##
 	## Become root ?
 	##
-	if [ -n "$SU" ] && [ "`id -u`" -ne 0 ]; then
+	if [ -n "$SU" ] && [ "$(id -u)" -ne 0 ]; then
 		msg '37;1' SU "Becoming super user"
 		unset SU
 
@@ -704,9 +712,9 @@ fi
 ##
 if [ "X$CONFIG" = Xauto ]; then
 	if [ -n "$DISPLAY" ]; then
-		if   [ -n "`which qtconfig   2>/dev/null`" ]; then
+		if   [ -n "$(which qtconfig   2>/dev/null)" ]; then
 			CONFIG=xconfig
-		elif [ -n "`which gtk-config 2>/dev/null`" ]; then
+		elif [ -n "$(which gtk-config 2>/dev/null)" ]; then
 			CONFIG=gconfig
 		fi
 	fi
@@ -743,12 +751,13 @@ if [ -n "$TIDY_IMAGE" ]; then
 	header Removing old image
 	run_hook pre-tidy-image
 
-	if [ -z "$OVERWRITE_IMAGE" ]; then T='~'; else T=; fi
+	# shellcheck disable=SC1001
+	if [ -z "$OVERWRITE_IMAGE" ]; then T=\~; else T=; fi
 
 	for FILE in bzImage System.map config; do
 		msg '37;1' READLNK "$FILE$T"
 		run -d readlink "$INSTALL_PATH/$FILE$T"
-		LNK=`readlink "$INSTALL_PATH/$FILE$T" || true`
+		LNK=$(readlink "$INSTALL_PATH/$FILE$T" || true)
 		if [ -f "$INSTALL_PATH/$LNK" ]; then
 			msg '37;1' RM "$LNK"
 			run rm -f$V -- "$INSTALL_PATH/$LNK"
@@ -766,10 +775,8 @@ read_version_from_link() {
 	msg '37;1' READLNK "$1"
 	run -d readlink "$INSTALL_PATH/$1"
 	set -- "$(readlink "$INSTALL_PATH/$1" 2>/dev/null)"
-	if [ -z "$1" ]; then
-		set -- ${1#*-}
-		set -- ${1%-\#*}
-	fi
+	set -- "${1#*-}"
+	set -- "${1%-\#*}"
 	echo "$1"
 }
 
@@ -808,7 +815,7 @@ if [ -n "$INSTALL_IMAGE" ]; then
 	update_ver
 	if [ -s "${KBUILD_OUTPUT:-.}/.version" ]; then
 		run -ud cat "${KBUILD_OUTPUT:-.}/"
-		BUILD=$(printf %d $(run -usf cat "${KBUILD_OUTPUT:-.}/.version"))
+		BUILD=$(printf %d "$(run -usf cat "${KBUILD_OUTPUT:-.}/.version")")
 	else
 		BUILD=1
 	fi
