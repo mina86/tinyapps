@@ -159,7 +159,7 @@ tmpfile () {
 
 	umask 077
 	if which mktemp >/dev/null 2>&1; then
-		mktemp "$3/$1.XXXXXXXX" ||
+		mktemp "$3/$1.XXXXXXXX"
 	else
 		tempfile -d "$3" -p "$1"
 	fi
