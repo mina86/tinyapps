@@ -112,12 +112,12 @@ static int  error(void) __attribute__((pure));
 int main(int argc, char **argv) {
 	unsigned timeout = 1, connected = 0;
 
+	initCodesets();
 	parseArguments(argc, argv);
 	daemonize();
 	registerSignalHandlers();
 	termInit();
 	atexit(disconnectFromMPD);
-	initCodesets();
 
 	do {
 		if (!connected) {
@@ -1200,14 +1200,9 @@ static const wchar_t *wideFromMulti(const char *str) {
 	wb.capacity = 32;
 	goto realloc;
 
-	for(;;) {
+	while (len) {
 		size_t ret = mbrtowc(wb.buf + wb.len, str, len, &ps);
-
-		if (ret == (size_t)-1) {
-			/* EILSEQ, try skipping single byte */
-			++str;
-			--len;
-		} else if (ret) {
+		if (ret > 0) {
 			/* Consumed ret bytes */
 			str += ret;
 			len -= ret;
@@ -1217,13 +1212,19 @@ static const wchar_t *wideFromMulti(const char *str) {
 realloc:
 			wb.buf = realloc(wb.buf, wb.capacity * sizeof *wb.buf);
 			pdie_on(!wb.buf, "malloc");
-		} else {
-			/* Got NUL */
+		} else if (!ret || ret == (size_t)-2) {
+			/* Reached NUL or an incomplete multibyte sequence at
+			 * the end which we’re treating as end of string. */
 			break;
+		} else {
+			/* EILSEQ, try skipping single byte */
+			++str;
+			--len;
 		}
 	}
 
 done:
+	wb.buf[wb.len] = 0;
 	if (wb.capacity == wb.len + 1) {
 		return wb.buf;
 	} else {
