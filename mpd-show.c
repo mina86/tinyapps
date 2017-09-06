@@ -1202,24 +1202,23 @@ static const wchar_t *wideFromMulti(const char *str) {
 
 	while (len) {
 		size_t ret = mbrtowc(wb.buf + wb.len, str, len, &ps);
-		if (ret > 0) {
-			/* Consumed ret bytes */
+
+		if (ret == (size_t)-1) {
+			/* EILSEQ, skip a single byte */
+			str += 1;
+			len -= 1;
+		} else if (!ret || (size_t)-2) {
+			/* Reached NUL or an incomplete multibyte sequence at
+			   the end which we’re treating as end of string */
+			break;
+		} else if (++wb.len >= wb.capacity) {
+			/* Got a wide char; store it and consume ret bytes */
 			str += ret;
 			len -= ret;
-			if (++wb.len < wb.capacity) continue;
-
 			wb.capacity *= 2;
 realloc:
 			wb.buf = realloc(wb.buf, wb.capacity * sizeof *wb.buf);
 			pdie_on(!wb.buf, "malloc");
-		} else if (!ret || ret == (size_t)-2) {
-			/* Reached NUL or an incomplete multibyte sequence at
-			 * the end which we’re treating as end of string. */
-			break;
-		} else {
-			/* EILSEQ, try skipping single byte */
-			++str;
-			--len;
 		}
 	}
 
