@@ -1239,7 +1239,7 @@ wideFromMultiIconvFunc(const char *buffer, size_t len, void *_data) {
 
 	len /= sizeof *wb->buf;
 
-	if (wb->len + len + 1 < wb->capacity) {
+	if (wb->len + len >= wb->capacity) {
 		size_t cap = wb->capacity ? wb->capacity : 16;
 		size_t total = wb->len + len + 1;
 		do {
@@ -1251,7 +1251,7 @@ wideFromMultiIconvFunc(const char *buffer, size_t len, void *_data) {
 		pdie_on(!wb->buf, "malloc");
 	}
 
-	memcpy(wb->buf, buffer, len * sizeof *wb->buf);
+	memcpy(wb->buf + wb->len, buffer, len * sizeof *wb->buf);
 	wb->len += len;
 	wb->buf[wb->len] = 0;
 }
