@@ -19,6 +19,7 @@
  *   -> http://tinyapps.sourceforge.net/
  */
 
+#include <stdbool.h>
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
@@ -101,8 +102,8 @@ static int run_diff(char **argv) {
 
 /******************** Main loop; main part of the app ************************/
 struct pattern {
-	const char *pattern;
-	unsigned idx;
+	const char pattern[7];
+	unsigned char idx;
 };
 
 static unsigned find(const struct pattern *patterns, const char *str);
@@ -123,49 +124,47 @@ static void loop(void) {
 	};
 
 
-	static const struct color {
-		const char name[8];
-		const char value[8];
-	} colors[] = {
-		{ "default", "0;37" },
-		{ "ins" ,    "1;32" },
-		{ "del" ,    "1;31" },
-		{ "change",  "1;33" },
-		{ "equal",   "0;37" },
-		{ "file1",   "0;32" },
-		{ "file2",   "0;31" },
-		{ "pos1",    "0;32" },
-		{ "pos2",    "0;31" },
-		{ "misc",    "0;35" },
+	static const char colors[][8] = {
+		[COLOR_DEFAULT] = "0;37",
+		[COLOR_INS]     = "1;32",
+		[COLOR_DEL]     = "1;31",
+		[COLOR_CHANGE]  = "1;33",
+		[COLOR_EQUAL]   = "0;37",
+		[COLOR_FILE1]   = "0;32",
+		[COLOR_FILE2]   = "0;31",
+		[COLOR_POS1]    = "0;32",
+		[COLOR_POS2]    = "0;31",
+		[COLOR_MISC]    = "0;35",
 	};
 
 
 	static const struct pattern unified_ruleset[] = {
-		{ "+++ ", COLOR_FILE1   },
-		{ "--- ", COLOR_FILE2   },
-		{ "@@ " , COLOR_MISC    },
-		{ "+"   , COLOR_INS     },
-		{ "-"   , COLOR_DEL     },
-		{ " "   , COLOR_EQUAL   },
-		{ 0     , COLOR_DEFAULT },
+		{ "+++ " , COLOR_FILE1   },
+		{ "--- " , COLOR_FILE2   },
+		{ "@@ "  , COLOR_MISC    },
+		{ "+"    , COLOR_INS     },
+		{ "-"    , COLOR_DEL     },
+		{ " "    , COLOR_EQUAL   },
+		{ ""     , COLOR_DEFAULT },
 	};
 
 	static const struct pattern contex_ruleset[] = {
-		{ "*** [^0-9]", COLOR_FILE1   },
-		{ "--- [^0-9]", COLOR_FILE2   },
-		{ "*** "      , COLOR_POS1    },
-		{ "--- "      , COLOR_POS2    },
-		{ "*"         , COLOR_MISC    },
-		{ "?[^ ]"     , COLOR_MISC    },
-		{ "+ "        , COLOR_INS     },
-		{ "- "        , COLOR_DEL     },
-		{ "! "        , COLOR_CHANGE  },
-		{ "  "        , COLOR_EQUAL   },
-		{ ""          , COLOR_DEFAULT },
+		{ "*** 0", COLOR_POS1    },
+		{ "--- 0", COLOR_POS2    },
+		{ "*** " , COLOR_FILE1   },
+		{ "--- " , COLOR_FILE2   },
+		{ "*"    , COLOR_MISC    },
+		{ "+ "   , COLOR_INS     },
+		{ "- "   , COLOR_DEL     },
+		{ "! "   , COLOR_CHANGE  },
+		{ "  "   , COLOR_EQUAL   },
+		{ "? "   , COLOR_DEFAULT },
+		{ "??"   , COLOR_MISC    },
+		{ ""     , COLOR_DEFAULT },
 	};
 
 	static const struct pattern normal_ruleset[] = {
-		{ "[0-9]", COLOR_MISC   },
+		{ "0"    , COLOR_MISC   },
 		{ "---"  , COLOR_MISC   },
 		{ "> "   , COLOR_INS    },
 		{ "< "   , COLOR_DEL    },
@@ -181,16 +180,15 @@ static void loop(void) {
 
 
 	static const struct pattern modes[] = {
-		{ "-",     1 },
-		{ "*",     2 },
-		{ "[0-9]", 3 },
-		{ 0,       0 } /* side note: 0 == COLOR_DEFAULT */
+		{ "-", 1 },
+		{ "*", 2 },
+		{ "0", 3 },
+		{ "",  0 } /* side note: 0 == COLOR_DEFAULT */
 	};
 
 
 	const struct pattern *ruleset = 0;
 	char buf[4096];
-
 
 	while (fgets(buf, sizeof buf, stdin)) {
 		unsigned idx;
@@ -200,7 +198,7 @@ static void loop(void) {
 			idx = find(ruleset ? ruleset : modes, buf);
 		} while (!ruleset && (ruleset = rulesets[idx]));
 
-		printf("\x1b[%sm", colors[idx].value);
+		printf("\x1b[%sm", colors[idx]);
 
 		do {
 			ch = strchr(buf, '\n');
@@ -216,7 +214,7 @@ static void loop(void) {
 
 
 /******************** String matching ****************************************/
-static int match(const char *pattern, const char *str);
+static bool match(const char *pattern, const char *str);
 static const char *match_group(const char *pat, char ch);
 
 
@@ -228,57 +226,21 @@ static unsigned find(const struct pattern *patterns, const char *str) {
 }
 
 
-static int match(const char *pat, const char *str) {
-	if (!pat) {
-		return 1;
-	}
-
-	for (; *pat && *str; ++str, ++pat) {
+static bool match(const char *pat, const char *str) {
+	for (;;) {
 		switch (*pat) {
+		case 0:
+			return true;
 		case '?':
+			if (!*str) return false;
 			break;
-
-		case '[':
-			pat = match_group(pat, *str);
-			if (!pat) return 0;
+		case '0':
+			if (*str < '0' || '9' < *str) return false;
 			break;
-
 		default:
-			if (*pat != *str) return 0;
+			if (*pat != *str) return false;
 		}
-	}
-	return 1;
-}
-
-
-static const char *match_group(const char *pat, char ch) {
-	int ok = 0;
-
-	++pat;
-	if (*pat == '^') {
-		ok = 1;
 		++pat;
+		++str;
 	}
-
-	do {
-		if (pat[1] != '-') {
-			if (ch != *pat) continue;
-		} else {
-			const char from = *pat;
-			const char to = *(pat += 2);
-
-			if (from > to ? (to < ch   && ch < from)
-			              : (ch < from || to < ch  )) continue;
-		}
-
-		/* Found */
-		while (*++pat != ']') {
-			/* nop */
-		}
-		ok = ok ^ 1;
-		break;
-
-	} while (*++pat != ']');
-
-	return ok ? pat : 0;
 }
