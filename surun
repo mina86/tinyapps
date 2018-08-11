@@ -1,7 +1,7 @@
 #!/bin/sh
 ##
 ## surun - Wrapper running command via su or sudo
-## Copyright 2013 by Michal Nazarewicz (mina86@mina86.com)
+## Copyright 2013,2018 by Michal Nazarewicz (mina86@mina86.com)
 ##
 ## This program is free software; you can redistribute it and/or modify
 ## it under the terms of the GNU General Public License as published by
@@ -20,19 +20,18 @@
 ##   -> http://tinyapps.sourceforge.net/
 ##
 
-if [ x"$1" = x--help ] || [ x"$1" = -h ]; then
+case $1 in --help|-h)
 	cat <<EOF
 usage: $0 [ <command> <argument> ... ]
+Start a root shell (if no command given) or run given command as root.
 
-When called with no arguments, launches a root shell.
-When called with arguments, runs specified command as root.
-
-Depending on which tool is available, either sudo or su will be used
-to become a super-user.  If user is already super-user, calling sudo
-or su will be skipped all together.
+Use either sudo or su depending on which is available, unless user is already
+a super-user at which point calling sudo/su is skipped all together.
 EOF
 	exit 0
-fi
+esac
+
+umask 022
 
 if [ $(id -u) -eq 0 ]; then
 	if [ $# -eq 0 ]; then
@@ -41,33 +40,22 @@ if [ $(id -u) -eq 0 ]; then
 	exec "$@"
 fi
 
-have_sudo () {
-	sudo=`which sudo 2>/dev/null`
-	test x"$sudo" != x
-}
-
-escape() {
-	if test=$(printf %q aoeu\ \'\"\ aoeu 2>/dev/null) &&
-	   [ "x$test" = "xaoeu\\ \\'\\\"\\ aoeu" ]; then
-		printf ' %q' "$@"
-	else
-		escaped=
-		for arg; do
-			escaped="$escaped '$(printf %s "$arg" |
-			                     sed -e "s/'/'\\\\''/g")'"
-		done
-		printf %s "$escaped"
-	fi
-}
+sudo=$(which sudo 2>/dev/null)
 
 if [ $# -eq 0 ]; then
-	if have_sudo; then
-		"$sudo" -s
-	else
-		su
-	fi
-elif have_sudo; then
-	"$sudo" "$@"
-else
-	su -c "$(escape "$@")"
+	exec "${sudo:-su}" ${sudo:+-s}
+elif [ -n "$sudo" ]; then
+	exec "$sudo" "$@"
 fi
+
+if test=$(printf %q aoeu\ \'\"\ aoeu 2>/dev/null) &&
+   [ x"$test" = x"aoeu\\ \\'\\\"\\ aoeu" ]; then
+	escaped=$(printf ' %q' "$@")
+else
+	escaped=
+	for arg; do
+		arg=\'$(printf %s "$arg" | sed -e "s/'/'\\\\''/g")\'
+		escaped="$escaped $arg"
+	done
+fi
+exec su -c "$escaped"
