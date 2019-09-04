@@ -53,12 +53,9 @@
 
 
 /******** Includes ********/
-#if !DISABLE_NICE
-#  define _BSD_SOURCE 1
-#endif
-#if !DISABLE_WAIT
-#  define _POSIX_SOURCE 1
-#endif
+#define _BSD_SOURCE 1
+#define _DEFAULT_SOURCE
+#define _POSIX_SOURCE 1
 
 #include <errno.h>
 #include <sys/types.h>

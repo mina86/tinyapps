@@ -22,6 +22,7 @@
 
 #define _POSIX_C_SOURCE 2
 #define _BSD_SOURCE
+#define _DEFAULT_SOURCE
 
 #include "libmpdclient.h"
 

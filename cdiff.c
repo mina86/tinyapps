@@ -215,7 +215,6 @@ static void loop(void) {
 
 /******************** String matching ****************************************/
 static bool match(const char *pattern, const char *str);
-static const char *match_group(const char *pat, char ch);
 
 
 static unsigned find(const struct pattern *patterns, const char *str) {
