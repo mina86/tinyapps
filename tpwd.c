@@ -86,11 +86,16 @@ static void parse_opts(struct opts *opts, int argc, char **argv) {
 	int i;
 
 	/* Backwards compatibility with shell implementation. */
-	if (argc > 1 && argv[1][0] == '-' && argv[2][1] == '-' &&
-	    (!strcmp(argv[1] + 2, "function") || !strcmp(argv[1] + 2, "bash") ||
-	     !strcmp(argv[1] + 2, "zsh"))) {
-		fprintf(stderr, "tpwd: %s is no longer functional\n", argv[1]);
+	if (argc > 1 &&
+	    (!strcmp(argv[1], "--function") || !strcmp(argv[1], "--bash") ||
+	     !strcmp(argv[1], "--zsh"))) {
+		fprintf(stderr, "tpwd: %s option is no longer functional\n",
+		        argv[1]);
 		exit(0);
+	}
+
+	if (argc > 1 && !strcmp(argv[1], "--help")) {
+		usage(false);
 	}
 
 	/* Strip directories from argv0 and check if we are run as ‘pwd’. */
@@ -167,7 +172,7 @@ static void usage(bool error)
  <len>    maximum length of printed string,         [0 if run as pwd]\n\
           0 to disable truncating                      [30 otherwise]\n\
  <trunc>  string to print at the beginning if pwd was truncated [...]\n\
- <tlen>   length of <trunc> (useful if using ANSI codes or UTF-6 chars)\n\
+ <tlen>   length of <trunc> (useful if using ANSI codes or UTF-8 chars)\n\
  <path>   path to use, no validation on the path will be performed\n\
 \n\
 Command might be used in PS1 variable to truncate very long PWD's which\n\
